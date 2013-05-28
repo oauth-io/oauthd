@@ -1,0 +1,44 @@
+{
+  "name": "oauthd",
+  "description": "OAuth that just works.",
+  "version": "0.1.0",
+  "homepage": "http://oauth.io",
+  "author": "thyb, bump <team@oauth.io>",
+  "repository": {
+    "type": "git",
+    "url": "gitolite@91.121.120.153:oauthd"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://oauth.io/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "server/oauthd",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt nodeunit"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt": "~0.4.1"
+  },
+  "keywords": [],
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt-nodemon": "~0.0.4",
+    "hiredis": "~0.1.15",
+    "redis": "~0.8.3",
+    "restify": "~2.5.1"
+  },
+  "license": "MIT"
+}
