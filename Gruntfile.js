@@ -24,7 +24,7 @@ module.exports = function(grunt) {
     nodemon: {
       server: {
         options: {
-          file: 'lib/oauth.coffee'
+          file: 'lib/oauthd.coffee'
         }
       }
     },
