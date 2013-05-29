@@ -3,29 +3,43 @@
 #
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
- 
 
 'use strict'
 
 restify = require 'restify'
 fs = require 'fs'
-__rootdir = __dirname + '/..'
+Path = require 'path'
+__rootdir = Path.normalize(__dirname + '/..')
 
 redis = require "redis"
 redisClient = redis.createClient()
 
-server = restify.createServer
-	name: 'oauthd'
+config = require __rootdir + "/config"
+
+# build server options
+server_options =
+	name: 'OAuth Daemon'
 	version: '1.0.0'
 
-server.use(restify.queryParser());
+if config.ssl
+	server_options.key = fs.readFileSync Path.resolve(__rootdir, config.ssl.key)
+	server_options.certificate = fs.readFileSync Path.resolve(__rootdir, config.ssl.certificate)
+	console.log 'SSL is activated !'
+
+config.base = Path.resolve '/', config.base
+
+# create server
+server = restify.createServer server_options
+
+server.use restify.queryParser()
 server.use restify.bodyParser()
 
-server.get '/', (req, res, next) ->
+server.get config.base, (req, res, next) ->
 	res.setHeader 'content-type', 'text/plain'
 	res.writeHead 200
 	res.end "Hello world"
-	next
+	next()
 
-server.listen 6284, ->
+# listen
+server.listen config.port, ->
 	console.log '%s listening at %s', server.name, server.url
