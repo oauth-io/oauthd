@@ -2,7 +2,7 @@ OAuth = null;
 
 (function() {
 	var config = {
-		oauthd_url = 'http://public.oauth.io'
+		oauthd_url = 'http://oauth.io/auth'
 	}
 	OAuth = {
 		initialize: function(pub_key) {
@@ -10,7 +10,7 @@ OAuth = null;
 		},
 		popup: function(provider, callback) {
 			console.log('popup', provider);
-			var url = config.oauthd_url + '/auth/' + provider;
+			var url = config.oauthd_url + '/' + provider;
 			var data = {ref:window.location.host};
 			var fullurl = url + "?ref=" + data.ref; // todo: querified data
 
@@ -35,7 +35,7 @@ OAuth = null;
 		redirect: function(provider, url) {
 			return console.log('redirect', provider, url);
 
-			var url = config.oauthd_url + '/auth/' + provider;
+			var url = config.oauthd_url + '/' + provider;
 			var data = {ref:window.location.host};
 			var fullurl = url + "?ref=" + data.ref + "&redirect_uri=" + url; // todo: querified data
 

@@ -9,37 +9,41 @@
 restify = require 'restify'
 fs = require 'fs'
 Path = require 'path'
-__rootdir = Path.normalize(__dirname + '/..')
+Url = require 'url'
 
-redis = require "redis"
-redisClient = redis.createClient()
+async = require 'async'
 
-config = require __rootdir + "/config"
+config = require "../config"
+config.rootdir = Path.normalize __dirname + '/..'
 
-# build server options
-server_options =
-	name: 'OAuth Daemon'
-	version: '1.0.0'
+oauthd_server = require './server'
+db = require './db'
 
-if config.ssl
-	server_options.key = fs.readFileSync Path.resolve(__rootdir, config.ssl.key)
-	server_options.certificate = fs.readFileSync Path.resolve(__rootdir, config.ssl.certificate)
-	console.log 'SSL is activated !'
+# clean exit when possible
+cleanExit = (killer) ->
+	k = setTimeout (->
+		console.error '--- FORCING STOP'
+		process.kill process.pid
+	), 1500
+	async.series [
+		(callback) -> oauthd_server.close callback
+		(callback) -> db.close callback
+	], (err, res) ->
+		console.log '--- successfully closed !'
+		setTimeout killer, 100
 
-config.base = Path.resolve '/', config.base
+# nodemon restarting
+process.once 'SIGUSR2', ->
+	console.log '--- closing server...'
+	cleanExit -> process.kill process.pid, 'SIGUSR2'
 
-# create server
-server = restify.createServer server_options
-
-server.use restify.queryParser()
-server.use restify.bodyParser()
-
-server.get config.base, (req, res, next) ->
-	res.setHeader 'content-type', 'text/plain'
-	res.writeHead 200
-	res.end "Hello world"
-	next()
+# Fatal exception catching
+process.on 'uncaughtException', (err) ->
+	console.error '--- uncaughtException'
+	console.error err.stack.toString()
+	console.error '--- node exiting now...'
+	cleanExit -> process.exit 1
 
 # listen
-server.listen config.port, ->
+oauthd_server.listen (err, server) ->
 	console.log '%s listening at %s', server.name, server.url
