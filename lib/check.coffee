@@ -1,5 +1,13 @@
+# oauthd
+# http://oauth.io
+#
+# Copyright (c) 2013 thyb, bump
+# Licensed under the MIT license.
 
 _check = (arg, format) ->
+	if format instanceof RegExp
+		return typeof arg == 'string' && arg.match(format)
+
 	if Array.isArray(format)
 		for possibility in format
 			return true if _check arg, possibility
@@ -11,9 +19,6 @@ _check = (arg, format) ->
 				return false if not _check arg[k], v
 			return true
 		return false
-
-	if format instanceof RegExp
-		return typeof arg == 'string' && arg.match(format)
 
 	return !format ||
 		format == 'any' && arg? ||
@@ -61,5 +66,9 @@ check = ->
 
 check.clone = (cloned) -> =>
 	return cloned.apply @, _clone arguments
+
+check.format =
+	mail: /^[a-zA-Z0-9._%-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+	provider: /^[a-zA-Z0-9._-]{2,}$/
 
 module.exports = check

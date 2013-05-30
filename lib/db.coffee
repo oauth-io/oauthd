@@ -1,21 +1,21 @@
+# oauthd
+# http://oauth.io
+#
+# Copyright (c) 2013 thyb, bump
+# Licensed under the MIT license.
+
 redis = require 'redis'
 
-config = require '../config'
+db = close: (callback) ->
+	try
+		db.redis.quit() if db.redis
+	catch e
+		return callback e
+	callback()
 
-class WshDb
-	constructor: ->
-		@redis = null
+try
+	db.redis = redis.createClient()
+catch e
+	return setup e
 
-	init: (callback) ->
-		try
-			@redis = redis.createClient()
-		catch e
-			callback e
-
-	close: (callback) ->
-		try
-			@redis.quit() if @redis
-		catch e
-			callback e
-
-module.exports = new WshDb
+module.exports = db

@@ -1,3 +1,9 @@
+# oauthd
+# http://oauth.io
+#
+# Copyright (c) 2013 thyb, bump
+# Licensed under the MIT license.
+
 crypto = require 'crypto'
 async = require 'async'
 
@@ -5,13 +11,13 @@ db = require './db'
 config = require '../config'
 check = require './check'
 
-# add a new app
-exports.add = check name:/^.{6,}$/, (data, callback) ->
+# create a new app
+exports.create = check name:/^.{6,}$/, (data, callback) ->
 	shasum = crypto.createHash 'sha1'
 	shasum.update config.publicsalt
 	shasum.update (new Date).getTime()
 	shasum.update Math.floor(Math.random()*9999999)
-	key = shadum.digest 'base64'
+	key = shasum.digest 'base64'
 	key = key.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
 
 	db.redis.incr 'a:i', (err, val) ->
