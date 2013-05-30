@@ -27,7 +27,7 @@ _check = (arg, format) ->
 		format == 'number' && (arg instanceof Number || typeof arg == 'number') ||
 		format == 'int' && (parseFloat(arg) == parseInt(arg)) && !isNaN(arg) ||
 		format == 'bool' && (arg instanceof Boolean || typeof arg == 'boolean') ||
-		format == 'date' && (arg instanceof Date || arg instanceof Number || typeof arg == 'number')
+		format == 'date' && arg instanceof Date
 
 _clone = (item) ->
 	return item if not item?

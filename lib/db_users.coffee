@@ -7,6 +7,7 @@ check = require './check'
 
 format_mail = /^[a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
 
+# register a new user
 exports.register = check mail:format_mail, pass:/^.{6,}$/, (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
 	shasum = crypto.createHash 'sha1'
@@ -28,12 +29,14 @@ exports.register = check mail:format_mail, pass:/^.{6,}$/, (data, callback) ->
 			return callback err if err
 			callback null, id:val, mail:data.mail, date_inscr:date_inscr
 
+# get a user by his id
 exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 		return callback err if err
 		callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
+# get a user by his mail
 exports.getByMail = check format_mail, (mail, callback) ->
 	db.redis.get 'u:mails', mail, (err, iduser) ->
 		return callback err if err
@@ -43,9 +46,11 @@ exports.getByMail = check format_mail, (mail, callback) ->
 			return callback err if err
 			callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
+# get apps ids owned by a user
 exports.getApps = check 'int', (iduser, callback) ->
 	db.redis.smembers 'u:' + iduser + ':apps', callback
 
+# check if mail & pass match
 exports.login = check format_mail, 'string', (mail, pass, callback) ->
 	db.redis.get 'u:mails', mail, (err, iduser) ->
 		return callback err if err
