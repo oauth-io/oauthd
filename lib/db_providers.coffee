@@ -7,10 +7,10 @@
 fs = require "fs"
 Path = require "path"
 
-config = require "../config"
+config = require "./config"
 
 # get a provider's description
-exports.get: (provider, callback) ->
+exports.get = (provider, callback) ->
 	provider_name = provider
 	providers_dir = config.rootdir + '/providers'
 	provider = Path.resolve providers_dir, provider + '.json'

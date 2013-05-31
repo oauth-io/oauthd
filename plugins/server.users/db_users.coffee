@@ -7,9 +7,7 @@
 crypto = require 'crypto'
 async = require 'async'
 
-db = require './db'
-config = require '../config'
-check = require './check'
+{config,check,db} = shared = require '../shared'
 
 # register a new user
 exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
@@ -44,6 +42,17 @@ exports.get = check 'int', (iduser, callback) ->
 		return callback err if err
 		return callback null, id:iduser, mail:replies[0], date_inscr:(new Date replies[1])
 
+# delete a user account
+exports.remove = check 'int', (iduser, callback) ->
+	prefix = 'u:' + iduser + ':'
+	db.redis.get prefix+'mail', (err, mail) ->
+		return callback err if err
+		(db.multi [
+			[ 'hdel', 'u:mails', mail ]
+			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt'
+					, prefix+'apps', prefix+'date_inscr' ]
+		]).exec callback
+
 # get a user by his mail
 exports.getByMail = check check.format.mail, (mail, callback) ->
 	db.redis.hget 'u:mails', mail, (err, iduser) ->
@@ -75,3 +84,10 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 				calcpass = shadum.digest 'base64'
 				return callback new Error 'Bad password' if replies[0] != calcpass
 				return callback null, id:iduser, mail:replies[2], date_inscr:(new Date replies[3])
+
+## Event: add app to user when created
+shared.on 'app.create', (req, app) ->
+	iduser = req.user.id
+	db.redis.sadd 'u:' + iduser + ':apps', app.id
+
+db.users = exports

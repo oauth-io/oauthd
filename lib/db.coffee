@@ -5,17 +5,13 @@
 # Licensed under the MIT license.
 
 redis = require 'redis'
+exit = require './exit'
 
-db = close: (callback) ->
+exports.redis = redis.createClient()
+
+exit.push 'Redis db', (callback) ->
 	try
-		db.redis.quit() if db.redis
+		exports.redis.quit() if exports.redis
 	catch e
 		return callback e
 	callback()
-
-try
-	db.redis = redis.createClient()
-catch e
-	return setup e
-
-module.exports = db

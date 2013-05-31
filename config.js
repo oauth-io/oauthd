@@ -8,5 +8,10 @@ module.exports = {
 	},
 
 	staticsalt: 'i m a random string, change me.',
-	publicsalt: 'i m not really important.'
+	publicsalt: 'i m not really important.',
+
+	plugins: [
+		'server.auth',
+		'server.users'
+	]
 }
