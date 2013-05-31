@@ -40,28 +40,30 @@ exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 		return callback err if err
-		return callback null, id:iduser, mail:replies[0], date_inscr:(new Date replies[1])
+		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.get prefix+'mail', (err, mail) ->
 		return callback err if err
-		(db.multi [
+		return callback new Error 'Unknown mail' unless mail
+		(db.redis.multi [
 			[ 'hdel', 'u:mails', mail ]
 			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt'
 					, prefix+'apps', prefix+'date_inscr' ]
-		]).exec callback
+		]).exec (err) ->
+			callback null, mail:mail
 
 # get a user by his mail
 exports.getByMail = check check.format.mail, (mail, callback) ->
 	db.redis.hget 'u:mails', mail, (err, iduser) ->
 		return callback err if err
-		return callback new Error 'Unknow mail' unless iduser
+		return callback new Error 'Unknown mail' unless iduser
 		prefix = 'u:' + iduser + ':'
 		db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 			return callback err if err
-			return callback null, id:iduser, mail:replies[0], date_inscr:(new Date replies[1])
+			return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
 # get apps ids owned by a user
 exports.getApps = check 'int', (iduser, callback) ->
@@ -71,7 +73,7 @@ exports.getApps = check 'int', (iduser, callback) ->
 exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 	db.redis.get 'u:mails', mail, (err, iduser) ->
 		return callback err if err
-		return callback new Error 'Unknow mail' unless iduser
+		return callback new Error 'Unknown mail' unless iduser
 		prefix = 'u:' + iduser + ':'
 		db.redis.mget [
 			prefix+'pass',
@@ -83,11 +85,16 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 				shasum.update config.staticsalt + pass + replies[1]
 				calcpass = shadum.digest 'base64'
 				return callback new Error 'Bad password' if replies[0] != calcpass
-				return callback null, id:iduser, mail:replies[2], date_inscr:(new Date replies[3])
+				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
 ## Event: add app to user when created
 shared.on 'app.create', (req, app) ->
-	iduser = req.user.id
-	db.redis.sadd 'u:' + iduser + ':apps', app.id
+	if req.user?.id
+		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
+
+## Event: remove app from user when deleted
+shared.on 'app.remove', (req, app) ->
+	if req.user?.id
+		db.redis.srem 'u:' + req.user.id + ':apps', app.id
 
 db.users = exports

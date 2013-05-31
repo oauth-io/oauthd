@@ -15,7 +15,7 @@ cleanExit = (killer) ->
 	k = setTimeout (->
 		console.error '--- FORCING STOP'
 		process.kill process.pid
-	), 2000
+	), 5000
 	async.series closing_stack, (err, res) ->
 		console.log '--- successfully closed !'
 		setTimeout killer, 100

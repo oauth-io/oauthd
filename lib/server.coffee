@@ -106,7 +106,7 @@ server.post config.base + '/api/app/:key', auth.needed, (req, res, next) ->
 server.del config.base + '/api/app/:key', auth.needed, (req, res, next) ->
 	dbapps.get req.params.key, (err, r) ->
 		return next new restify.InvalidArgumentError e.message if e
-		plugins.emit 'app.delete', req, r
+		plugins.emit 'app.remove', req, r
 		dbapps.remove req.params.key, (err, r) ->
 			return next new restify.InvalidArgumentError e.message if e
 			res.setHeader 'content-type', 'application/json'
