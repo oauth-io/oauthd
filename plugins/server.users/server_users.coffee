@@ -11,11 +11,11 @@ exports.setup = (callback) ->
 
 	# register an account
 	@server.post @config.base + '/api/users', (req, res, next) =>
-		if not req.params.mail?.match(@check.format.mail)
+		if not req.body.mail?.match(@check.format.mail)
 			return next new restify.InvalidArgumentError "Invalid user mail"
-		else if not req.params.pass?.match(/^.{6,}$/)
+		else if not req.body.pass?.match(/^.{6,}$/)
 			return next new restify.InvalidArgumentError "Invalid user pass"
-		dbusers.register mail:req.params.mail, pass:req.params.pass, (e, r) ->
+		dbusers.register mail:req.body.mail, pass:req.body.pass, (e, r) ->
 			return next new restify.InvalidArgumentError e.message if e
 			res.setHeader 'content-type', 'application/json'
 			res.writeHead 200

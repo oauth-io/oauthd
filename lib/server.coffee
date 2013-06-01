@@ -34,8 +34,9 @@ if config.ssl
 # create server
 server = restify.createServer server_options
 
+server.use restify.authorizationParser()
 server.use restify.queryParser()
-server.use restify.bodyParser()
+server.use restify.bodyParser mapParams:false
 
 # dev test /!\
 server.get config.base + '/', (req, res, next) ->

@@ -2,9 +2,8 @@
 # http://oauth.io
 #
 # Copyright (c) 2013 thyb, bump
-# Licensed under the MIT license.
+# For private use only.
 
-crypto = require 'crypto'
 async = require 'async'
 
 {config,check,db} = shared = require '../shared'
@@ -12,10 +11,7 @@ async = require 'async'
 # register a new user
 exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
-	shasum = crypto.createHash 'sha1'
-	shasum.update config.staticsalt + data.pass + dynsalt
-	pass = shasum.digest 'base64'
-
+	pass = db.generateHash data.pass + dynsalt
 	date_inscr = (new Date).getTime()
 
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
@@ -40,6 +36,7 @@ exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 		return callback err if err
+		return callback new Error 'Unknown mail' if not replies[1]
 		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
 # delete a user account
@@ -71,7 +68,7 @@ exports.getApps = check 'int', (iduser, callback) ->
 
 # check if mail & pass match
 exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
-	db.redis.get 'u:mails', mail, (err, iduser) ->
+	db.redis.hget 'u:mails', mail, (err, iduser) ->
 		return callback err if err
 		return callback new Error 'Unknown mail' unless iduser
 		prefix = 'u:' + iduser + ':'
@@ -81,9 +78,7 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 			prefix+'mail',
 			prefix+'date_inscr'], (err, replies) ->
 				return callback err if err
-				shasum = crypto.createHash 'sha1'
-				shasum.update config.staticsalt + pass + replies[1]
-				calcpass = shadum.digest 'base64'
+				calcpass = db.generateHash pass + replies[1]
 				return callback new Error 'Bad password' if replies[0] != calcpass
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 

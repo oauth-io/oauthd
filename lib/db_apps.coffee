@@ -4,24 +4,15 @@
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
 
-crypto = require 'crypto'
 async = require 'async'
 
 db = require './db'
 config = require './config'
 check = require './check'
 
-generateKey = ->
-	shasum = crypto.createHash 'sha1'
-	shasum.update config.publicsalt
-	shasum.update (new Date).getTime()
-	shasum.update Math.floor(Math.random()*9999999)
-	key = shasum.digest 'base64'
-	key = key.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
-
 # create a new app
 exports.create = check name:/^.{6,}$/, (data, callback) ->
-	key = generateKey()
+	key = db.generateUid()
 
 	db.redis.incr 'a:i', (err, val) ->
 		return callback err if err
