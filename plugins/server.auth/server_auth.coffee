@@ -41,7 +41,7 @@ exports.setup = (callback) ->
 
 exports.needed = (req, res, next) ->
 	if not req.clientId
-		return res.sendUnauthorized()
+		return next new restify.UnauthorizedError("You need authentication")
 
 	req.user = req.clientId
 	return next()

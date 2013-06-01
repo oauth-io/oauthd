@@ -17,18 +17,14 @@ exports.setup = (callback) ->
 			return next new restify.InvalidArgumentError "Invalid user pass"
 		dbusers.register mail:req.body.mail, pass:req.body.pass, (e, r) ->
 			return next new restify.InvalidArgumentError e.message if e
-			res.setHeader 'content-type', 'application/json'
-			res.writeHead 200
-			res.end JSON.stringify r
+			res.send r
 			next()
 
 	# get my infos
 	@server.get @config.base + '/api/me', @auth.needed, (req, res, next) ->
 		dbusers.get req.user.id, (e, user) ->
 			return next new restify.InvalidArgumentError e.message if e
-			res.setHeader 'content-type', 'application/json'
-			res.writeHead 200
-			res.end JSON.stringify user
+			res.send user
 			next()
 
 	# update mail or password
@@ -39,9 +35,7 @@ exports.setup = (callback) ->
 	@server.del @config.base + '/api/me', @auth.needed, (req, res, next) ->
 		dbusers.remove req.user.id, (e, r) ->
 			return next new restify.InvalidArgumentError e.message if e
-			res.setHeader 'content-type', 'application/json'
-			res.writeHead 200
-			res.end JSON.stringify r
+			res.send r
 			next()
 
 	callback()
