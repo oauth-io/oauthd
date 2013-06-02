@@ -17,7 +17,7 @@
       "url": "http://oauth.io/blob/master/LICENSE-MIT"
     }
   ],
-  "main": "server/oauthd.coffee",
+  "main": "lib/oauthd.coffee",
   "engines": {
     "node": ">= 0.8.0"
   },

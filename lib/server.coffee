@@ -16,6 +16,8 @@ config = require './config'
 dbapps = require './db_apps'
 plugins = require './plugins'
 exit = require './exit'
+check = require './check'
+formatters = require './formatters'
 
 auth = plugins.data.auth
 
@@ -30,6 +32,7 @@ if config.ssl
 	server_options.certificate = fs.readFileSync Path.resolve(config.rootdir, config.ssl.certificate)
 	console.log 'SSL is enabled !'
 
+server_options.formatters = formatters
 
 # create server
 server = restify.createServer server_options
@@ -38,10 +41,21 @@ server.use restify.authorizationParser()
 server.use restify.queryParser()
 server.use restify.bodyParser mapParams:false
 
+
+# add server to shared plugins data and run init
+plugins.data.server = server
+plugins.runSync 'init'
+
+# little help
+server.send = send = (res, next) -> (e, r) ->
+	return next(e) if e
+	res.send (if r? then r else check.nullv)
+	next()
+
 # dev test /!\
 server.get config.base + '/', (req, res, next) ->
 	console.log req
-	res.send "Hello world"
+	res.send check.nullv
 	next()
 server.post config.base + '/test/:ttt', (req, res, next) ->
 	console.log req
@@ -71,96 +85,62 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
-	if not req.body.name?.match(/^.{6,}$/)
-		return next new restify.InvalidArgumentError "Invalid app name"
 	dbapps.create name:req.body.name, (e, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		plugins.emit 'app.create', req, r
-		res.send r
+		return next(e) if e
+		plugins.data.emit 'app.create', req, r
+		res.send name:r.name, key:r.key
 		next()
 
 # get infos of an app
 server.get config.base + '/api/app/:key', auth.needed, (req, res, next) ->
-	dbapps.get req.params.key, (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
+	dbapps.get req.params.key, (e, r) ->
+		return next(e) if e
+		res.send name:r.name, key:r.key, domains:'todo[]', keysets:'todo[]'
 		next()
 
 # update infos of an app
 server.post config.base + '/api/app/:key', auth.needed, (req, res, next) ->
-	dbapps.update req.params.key, name:req.params.name, (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-			res.send r
-			next()
+	dbapps.update req.params.key, req.body, send(res,next)
 
 # remove an app
 server.del config.base + '/api/app/:key', auth.needed, (req, res, next) ->
-	dbapps.get req.params.key, (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		plugins.emit 'app.remove', req, r
-		dbapps.remove req.params.key, (err, r) ->
-			return next new restify.InvalidArgumentError e.message if e
-			res.send JSON.stringify r
-			next()
+	dbapps.get req.params.key, (e, r) ->
+		return next(e) if e
+		plugins.data.emit 'app.remove', req, r
+		dbapps.remove req.params.key, send(res,next)
 
 # reset the public key of an app
 server.post config.base + '/api/app/:key/reset', auth.needed, (req, res, next) ->
-	dbapps.resetKey req.params.key, (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.resetKey req.params.key, send(res,next)
 
 # list valid domains for an app
 server.get config.base + '/api/app/:key/domains', auth.needed, (req, res, next) ->
-	dbapps.getDomains req.params.key (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.getDomains req.params.key, send(res,next)
 
 # add a valid domain for an app
 server.post config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
-	dbapps.addDomain req.params.key, req.params.domain (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.addDomain req.params, send(res,next)
 
 # remove a valid domain for an app
 server.del config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
-	dbapps.remDomain req.params.key, req.params.domain (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.remDomain req.params, send(res,next)
 
 # list keysets (provider names) for an app
 server.get config.base + '/api/app/:key/keysets', auth.needed, (req, res, next) ->
-	dbapps.getKeysets req.params.key (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.getKeysets req.params.key, send(res,next)
 
 # get a keyset for an app and a provider
 server.get config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.remKeyset req.params.key, req.params.domain (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.remKeyset req.params, send(res,next)
 
 # add or update a keyset for an app and a provider
 server.post config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.addDomain req.params.key, req.params.domain, req.body (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.addDomain req.params, req.body, send(res,next)
 
 # remove a keyset for an app and a provider
 server.del config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.remKeyset req.params.key, req.params.domain (err, r) ->
-		return next new restify.InvalidArgumentError e.message if e
-		res.send r
-		next()
+	dbapps.remKeyset req.params, send(res,next)
 
-# add server to shared plugins data
-plugins.data.server = server
 
 # listen
 exports.listen = (callback) ->
@@ -168,5 +148,6 @@ exports.listen = (callback) ->
 	plugins.run 'setup', ->
 		server.listen config.port, (err) ->
 			return callback err if err
-			exit.push 'Http(s) server', (cb) -> server.close cb
+			#exit.push 'Http(s) server', (cb) -> server.close cb
+			#/!\ server.close = timeout if at least one connection /!\ wtf?
 			callback null, server

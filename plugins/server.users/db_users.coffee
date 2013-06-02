@@ -15,13 +15,12 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 	date_inscr = (new Date).getTime()
 
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
-		console.log data.mail, '->', err, iduser
 		return callback err if err
-		return callback new Error 'Mail already exists !' if iduser
+		return callback new check.Error 'Mail already exists !' if iduser
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
-			(db.redis.multi [
+			db.redis.multi([
 				[ 'mset', prefix+'mail', data.mail,
 					prefix+'pass', pass,
 					prefix+'salt', dynsalt,
@@ -36,7 +35,7 @@ exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 		return callback err if err
-		return callback new Error 'Unknown mail' if not replies[1]
+		return callback new check.Error 'Unknown mail' if not replies[1]
 		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
 
 # delete a user account
@@ -44,19 +43,20 @@ exports.remove = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.get prefix+'mail', (err, mail) ->
 		return callback err if err
-		return callback new Error 'Unknown mail' unless mail
-		(db.redis.multi [
+		return callback new check.Error 'Unknown mail' unless mail
+		db.redis.multi([
 			[ 'hdel', 'u:mails', mail ]
 			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt'
 					, prefix+'apps', prefix+'date_inscr' ]
-		]).exec (err) ->
-			callback null, mail:mail
+		]).exec (err, replies) ->
+			return callback err if err
+			callback()
 
 # get a user by his mail
 exports.getByMail = check check.format.mail, (mail, callback) ->
 	db.redis.hget 'u:mails', mail, (err, iduser) ->
 		return callback err if err
-		return callback new Error 'Unknown mail' unless iduser
+		return callback new check.Error 'Unknown mail' unless iduser
 		prefix = 'u:' + iduser + ':'
 		db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
 			return callback err if err
@@ -64,13 +64,26 @@ exports.getByMail = check check.format.mail, (mail, callback) ->
 
 # get apps ids owned by a user
 exports.getApps = check 'int', (iduser, callback) ->
-	db.redis.smembers 'u:' + iduser + ':apps', callback
+	db.redis.smembers 'u:' + iduser + ':apps', (err, apps) ->
+		return callback err if err
+		return callback new check.Error 'Unknown mail' if not apps
+		return callback null, [] if not apps.length
+		keys = ('a:' + app + ':key' for app in apps)
+		db.redis.mget keys, (err, appkeys) ->
+			return callback err if err
+			return callback null, appkeys
+
+# is an app owned by a user
+exports.hasApp = check 'int', check.format.key, (iduser, key, callback) ->
+	db.apps.get key, (err, app) ->
+		return callback err if err
+		db.redis.sismember 'u:' + iduser + ':apps', app.id, callback
 
 # check if mail & pass match
 exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 	db.redis.hget 'u:mails', mail, (err, iduser) ->
 		return callback err if err
-		return callback new Error 'Unknown mail' unless iduser
+		return callback new check.Error 'Unknown mail' unless iduser
 		prefix = 'u:' + iduser + ':'
 		db.redis.mget [
 			prefix+'pass',
@@ -79,7 +92,7 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 			prefix+'date_inscr'], (err, replies) ->
 				return callback err if err
 				calcpass = db.generateHash pass + replies[1]
-				return callback new Error 'Bad password' if replies[0] != calcpass
+				return callback new check.Error 'Bad password' if replies[0] != calcpass
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
 ## Event: add app to user when created

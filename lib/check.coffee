@@ -4,7 +4,7 @@
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
 
-_check = (arg, format) ->
+_check = (arg, format, errors) ->
 	if format instanceof RegExp
 		return typeof arg == 'string' && arg.match(format)
 
@@ -15,9 +15,15 @@ _check = (arg, format) ->
 
 	if typeof format == 'object'
 		if arg? && typeof arg == 'object'
+			success = true
 			for k,v of format
-				return false if not _check arg[k], v
-			return true
+				if not _check arg[k], v
+					if errors?
+						errors[k] = 'Invalid format'
+						success = false
+					else
+						return false
+			return success
 		return false
 
 	return !format ||
@@ -54,18 +60,47 @@ _clone = (item) ->
 
 	return item
 
+
+# Error class
+
+class CheckError extends Error
+	constructor: ->
+		super "Invalid format"
+		@body = {}
+		if arguments.length == 1
+			@message = arguments[0]
+		else if arguments.length
+			@check.apply @, arguments
+	check: (name, arg, format) ->
+		@status = "fail"
+		return _check name, arg, @body if arguments.length == 2 # args=name, format=arg
+		o = {}; f = {}
+		o[name] = arg; f[name] = format
+		_check o, f, @body
+	error: (@message) -> @status = "error"
+	failed: -> Object.keys(@body).length || @status == "error"
+
+
+# Exports
+
 check = ->
 	checked = Array.prototype.pop.call arguments, arguments
-	format = arguments
+	formats = arguments
 	return =>
 		args = Array.prototype.slice.call arguments
 		callback = args.pop()
-		if not _check args, format
-			return callback new Error 'Bad parameters format'
+		error = new CheckError
+		for i,argformat of formats
+			if not error.check(args[i], argformat) and not error.failed()
+				error.error 'Bad parameters format'
+		return callback error if error.failed()
 		return checked.apply @, arguments
 
 check.clone = (cloned) -> =>
 	return cloned.apply @, _clone arguments
+
+check.Error = CheckError
+check.nullv = {} # this means a null
 
 check.format =
 	mail: /^[a-zA-Z0-9._%-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/

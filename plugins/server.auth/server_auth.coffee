@@ -15,7 +15,6 @@ _config =
 hooks =
 	grantClientToken: (clientId, clientSecret, cb) ->
 		shared.db.users.login clientId, clientSecret, (err, res) ->
-			console.log err if err
 			return cb null, false if err
 			token = shared.db.generateUid clientId + ':' + clientSecret
 			(shared.db.redis.multi [
@@ -31,19 +30,26 @@ hooks =
 			return cb null, false if not res
 			return cb null, res
 
-exports.setup = (callback) ->
-
+exports.init = ->
 	restifyOAuth2.cc @server,
 		hooks:hooks, tokenEndpoint:@config.base+'/token',
 		tokenExpirationTime: _config.expire
 
-	callback()
-
 exports.needed = (req, res, next) ->
 	if not req.clientId
-		return next new restify.UnauthorizedError("You need authentication")
-
+		return next new restify.UnauthorizedError "You need authentication"
 	req.user = req.clientId
-	return next()
+	req.body ?= {}
+	if not req.params.key?
+		return next()
+	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
+		return next new restify.InvalidArgumentError err.message if err
+		return next new restify.NotAuthorizedError "You have not access to this app" if not res
+		next()
+
+exports.optional = (req, res, next) ->
+	req.user = req.clientId
+	req.body ?= {}
+	next()
 
 shared.auth = exports

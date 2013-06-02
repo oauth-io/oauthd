@@ -8,6 +8,7 @@ fs = require "fs"
 Path = require "path"
 
 config = require "./config"
+check = require "./check"
 
 # get a provider's description
 exports.get = (provider, callback) ->
@@ -15,7 +16,7 @@ exports.get = (provider, callback) ->
 	providers_dir = config.rootdir + '/providers'
 	provider = Path.resolve providers_dir, provider + '.json'
 	if Path.relative(providers_dir, provider).substr(0,2) == ".."
-		return callback new Error 'Not authorized'
+		return callback new check.Error 'Not authorized'
 
 	fs.readFile provider, (err, data) ->
 		return callback err if err

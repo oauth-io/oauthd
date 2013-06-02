@@ -43,6 +43,6 @@ exports.run = (name, args, callback) ->
 		callback.apply @,arguments
 
 exports.runSync = (name, args) ->
-	for k,plugin in exports.plugin
+	for k,plugin of exports.plugin
 		if plugin[name]
 			plugin[name].apply shared, args
