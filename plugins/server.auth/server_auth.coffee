@@ -43,7 +43,7 @@ exports.needed = (req, res, next) ->
 	if not req.params.key?
 		return next()
 	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
-		return next new restify.InvalidArgumentError err.message if err
+		return next err if err
 		return next new restify.NotAuthorizedError "You have not access to this app" if not res
 		next()
 

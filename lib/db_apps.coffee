@@ -11,19 +11,27 @@ config = require './config'
 check = require './check'
 
 # create a new app
-exports.create = check name:/^.{6,}$/, (data, callback) ->
+exports.create = check name:/^.{6,}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
-
-	db.redis.incr 'a:i', (err, val) ->
+	err = new check.Error
+	for domain in data.domains
+		err.check 'domains', domain, 'string'
+	return callback err if err.failed()
+	db.redis.incr 'a:i', (err, idapp) ->
 		return callback err if err
-		prefix = 'a:' + val + ':'
-		db.redis.multi([
+		prefix = 'a:' + idapp + ':'
+		cmds = [
 			[ 'mset', prefix+'name', data.name,
 				prefix+'key', key ],
-			[ 'hset', 'a:keys', key, val ]
-		]).exec (err, res) ->
+			[ 'hset', 'a:keys', key, idapp ]
+		]
+		if data.domains
+			# todo: in redis >= 2.4, sadd accepts multiple members
+			for domain in data.domains
+				cmds.push [ 'sadd', prefix + 'domains', domain ]
+		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
-			callback null, id:val, name:data.name, key:key
+			callback null, id:idapp, name:data.name, key:key
 
 # get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->
@@ -47,24 +55,28 @@ exports.update = check check.format.key, name:['none',/^.{6,}$/], (key, data, ca
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		upinfos = {}
-		upinfos['a:' + idapp + ':name'] = data.name if data.name
+		upinfos = []
+		if data.name
+			upinfos.push 'a:' + idapp + ':name'
+			upinfos.push data.name
 		return callback() if not upinfos.length
-		db.redis.mset upinfos, callback
+		db.redis.mset upinfos, ->
+			return callback err if err
+			callback()
 
 # reset app key
 exports.resetKey = check check.format.key, (key, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		newkey = generateKey()
+		newkey = db.generateUid()
 		db.redis.multi([
-			['set', 'a:' + idapp + ':key', key]
+			['set', 'a:' + idapp + ':key', newkey]
 			['hdel', 'a:keys', key]
 			['hset', 'a:keys', newkey, idapp]
 		]).exec (err, r) ->
 			return callback err if err
-			callback key:newkey
+			callback null, key:newkey
 
 # remove an app
 exports.remove = check check.format.key, (key, callback) ->
@@ -92,14 +104,20 @@ exports.addDomain = check check.format.key, 'string', (key, domain, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.sadd 'a:' + idapp + ':domains', domain, callback
+		db.redis.sadd 'a:' + idapp + ':domains', domain, (err, res) ->
+			return callback err if err
+			return callback new check.Error 'domain', domain + ' is already valid' if not res
+			callback()
 
 # remove an authorized domain from an app
 exports.remDomain = check check.format.key, 'string', (key, domain, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.srem 'a:' + idapp + ':domains', domain, callback
+		db.redis.srem 'a:' + idapp + ':domains', domain, (err, res) ->
+			return callback err if err
+			return callback new check.Error 'domain', domain + ' is already non-valid' if not res
+			callback()
 
 # get keys infos of an app for a provider
 exports.getKeyset = check check.format.key, 'string', (key, provider, callback) ->
@@ -108,6 +126,7 @@ exports.getKeyset = check check.format.key, 'string', (key, provider, callback) 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.get 'a:' + idapp + ':k:' + provider, (err, res) ->
 			return callback err if err
+			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
 			try
 				res = JSON.parse(res)
 			catch e
@@ -130,7 +149,8 @@ exports.remKeyset = check check.format.key, 'string', (key, provider, callback) 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.del 'a:' + idapp + ':k:' + provider, (err, res) ->
 			return callback err if err
-			callback null, res
+			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+			callback()
 
 # get keys infos of an app for all providers
 exports.getKeysets = check check.format.key, (key, callback) ->

@@ -65,12 +65,15 @@ _clone = (item) ->
 
 class CheckError extends Error
 	constructor: ->
-		super "Invalid format"
+		Error.captureStackTrace @, @constructor
+		@message = "Invalid format"
 		@body = {}
 		if arguments.length == 1
 			@message = arguments[0]
 		else if arguments.length
-			@check.apply @, arguments
+			@status = "fail"
+			@body[arguments[0]] = arguments[1]
+		super @message
 	check: (name, arg, format) ->
 		@status = "fail"
 		return _check name, arg, @body if arguments.length == 2 # args=name, format=arg
@@ -89,6 +92,8 @@ check = ->
 	return =>
 		args = Array.prototype.slice.call arguments
 		callback = args.pop()
+		if args.length != formats.length
+			return callback new CheckError 'Bad parameters count'
 		error = new CheckError
 		for i,argformat of formats
 			if not error.check(args[i], argformat) and not error.failed()

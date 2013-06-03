@@ -10,6 +10,7 @@ fs = require 'fs'
 Path = require 'path'
 Url = require 'url'
 
+async = require 'async'
 restify = require 'restify'
 
 config = require './config'
@@ -85,17 +86,21 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
-	dbapps.create name:req.body.name, (e, r) ->
+	dbapps.create req.body, (e, r) ->
 		return next(e) if e
 		plugins.data.emit 'app.create', req, r
-		res.send name:r.name, key:r.key
+		res.send name:r.name, key:r.key, domains:r.domains
 		next()
 
 # get infos of an app
 server.get config.base + '/api/app/:key', auth.needed, (req, res, next) ->
-	dbapps.get req.params.key, (e, r) ->
+	async.parallel [
+		(cb) -> dbapps.get req.params.key, cb
+		(cb) -> dbapps.getDomains req.params.key, cb
+		(cb) -> dbapps.getKeysets req.params.key, cb
+	], (e, r) ->
 		return next(e) if e
-		res.send name:r.name, key:r.key, domains:'todo[]', keysets:'todo[]'
+		res.send name:r[0].name, key:r[0].key, domains:r[1], keysets:r[2]
 		next()
 
 # update infos of an app
@@ -119,11 +124,11 @@ server.get config.base + '/api/app/:key/domains', auth.needed, (req, res, next) 
 
 # add a valid domain for an app
 server.post config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
-	dbapps.addDomain req.params, send(res,next)
+	dbapps.addDomain req.params.key, req.params.domain, send(res,next)
 
 # remove a valid domain for an app
 server.del config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
-	dbapps.remDomain req.params, send(res,next)
+	dbapps.remDomain req.params.key, req.params.domain, send(res,next)
 
 # list keysets (provider names) for an app
 server.get config.base + '/api/app/:key/keysets', auth.needed, (req, res, next) ->
@@ -131,15 +136,15 @@ server.get config.base + '/api/app/:key/keysets', auth.needed, (req, res, next) 
 
 # get a keyset for an app and a provider
 server.get config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.remKeyset req.params, send(res,next)
+	dbapps.getKeyset req.params.key, req.params.provider, send(res,next)
 
 # add or update a keyset for an app and a provider
 server.post config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.addDomain req.params, req.body, send(res,next)
+	dbapps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
 # remove a keyset for an app and a provider
 server.del config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
-	dbapps.remKeyset req.params, send(res,next)
+	dbapps.remKeyset req.params.key, req.params.provider, send(res,next)
 
 
 # listen

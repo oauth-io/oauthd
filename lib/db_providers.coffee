@@ -10,6 +10,18 @@ Path = require "path"
 config = require "./config"
 check = require "./check"
 
+providers =
+	_list:{},
+	list: ->
+		now = (new Date).getTime()
+		if now > expire
+			fs.readdir config.rootdir + '/providers', (err, files) ->
+				return if err
+				_list = (file.substr(0, file.length - 5) for file in files)
+			expire = now + 15
+	expire: 0
+providers.list()
+
 # get a provider's description
 exports.get = (provider, callback) ->
 	provider_name = provider
@@ -27,3 +39,7 @@ exports.get = (provider, callback) ->
 			return callback err
 		content.provider = provider_name
 		callback null, content
+
+# get providers list
+exports.getList = (callback) ->
+	callback null, providers.list()
