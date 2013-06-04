@@ -14,8 +14,9 @@ check = require './check'
 exports.create = check name:/^.{6,}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
 	err = new check.Error
-	for domain in data.domains
-		err.check 'domains', domain, 'string'
+	if data.domains
+		for domain in data.domains
+			err.check 'domains', domain, 'string'
 	return callback err if err.failed()
 	db.redis.incr 'a:i', (err, idapp) ->
 		return callback err if err
