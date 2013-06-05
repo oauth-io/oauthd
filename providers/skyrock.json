@@ -1,0 +1,13 @@
+{
+	"name": "Skyrock",
+	"url": "https://api.skyrock.com/v2/oauth",
+	"oauth1": {
+		"request_token": "/initiate",
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

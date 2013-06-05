@@ -1,0 +1,21 @@
+{
+	"name": "Google",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": {
+			"url": "/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	}
+}

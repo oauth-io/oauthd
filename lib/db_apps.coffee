@@ -166,7 +166,7 @@ exports.addKeyset = check check.format.key, 'string', 'object', (key, provider, 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.set 'a:' + idapp + ':k:' + provider, JSON.stringify(data), (err, res) ->
 			return callback err if err
-			callback null, res
+			callback()
 
 # get keys infos of an app for a provider
 exports.remKeyset = check check.format.key, 'string', (key, provider, callback) ->

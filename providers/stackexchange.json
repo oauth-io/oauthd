@@ -1,0 +1,26 @@
+{
+	"name": "Stackexchange",
+	"api_url": "https://api.stackexchange.com/2.1/",
+	"url": "https://stackexchange.com",
+	"oauth2": {
+		"authorize": "/oauth",
+		"access_token": {
+			"url": "/oauth/access_token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}",
+				"key": "{key}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	},
+	"parameters": {
+		"key": "string"
+	}
+}

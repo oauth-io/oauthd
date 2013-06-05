@@ -1,0 +1,32 @@
+{
+	"name": "imgur",
+	"url": "https://imgur-apiv3.p.mashape.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/access_token",
+			"method": "post",
+			"headers": {
+				"X-Mashape-Authorization": "{mashape_key}"
+			},
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{callback_url}",
+				"grant_type": "authorization_code",
+				"code": "{{code}}"
+			}
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string",
+			"mashape_key": "string"
+		}
+	}
+}

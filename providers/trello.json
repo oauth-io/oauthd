@@ -1,0 +1,27 @@
+{
+	"name": "Trello",
+	"api_url": "https://api.trello.com/1/",
+	"url": "https://trello.com/1",
+	"oauth1": {
+		"request_token": {
+			"url": "/OAuthGetRequestToken",
+			"query": {
+				"oauth_consumer_key": "{client_id}",
+				"oauth_callback": "{{callback}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": "/OAuthGetAccessToken",
+		"authorize": "/OAuthAuthorizeToken",
+		"request": {
+			"query": {
+				"key": "{client_id}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	}
+}

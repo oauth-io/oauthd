@@ -1,0 +1,20 @@
+{
+	"name": "Box",
+	"url": "https://api.box.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

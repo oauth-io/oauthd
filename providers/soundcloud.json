@@ -1,0 +1,22 @@
+{
+	"name": "Soundcloud",
+	"api_url": "https://api.soundcloud.com/",
+	"url": "https:/",
+	"oauth2": {
+		"authorize": "/soundcloud.com/connect",
+		"access_token": {
+			"url": "/api.soundcloud.com/oauth2/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	}
+}

@@ -1,0 +1,14 @@
+{
+	"name": "Tumblr",
+	"api_url": "api.tumblr.com/v2/",
+	"url": "http://www.tumblr.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

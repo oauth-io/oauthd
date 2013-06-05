@@ -1,0 +1,26 @@
+{
+	"name": "Foursquare",
+	"api_url": "https://api.foursquare.com/v2",
+	"url": "https://foursquare.com/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/authenticate",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "-"
+			}
+		},
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

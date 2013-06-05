@@ -1,0 +1,19 @@
+{
+	"name": "github",
+	"api_url": "https://api.github.com/",
+	"url": "https://github.com/login/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	}
+}

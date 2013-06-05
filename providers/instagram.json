@@ -1,0 +1,24 @@
+{
+	"name": "Instagram",
+	"url": "https://api.instagram.com/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"format": "json"
+		},
+		"access_token": {
+			"url": "/access_token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": "string"
+		}
+	}
+}
