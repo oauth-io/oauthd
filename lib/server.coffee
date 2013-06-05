@@ -93,7 +93,7 @@ server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
 		next()
 
 # get infos of an app
-server.get config.base + '/api/app/:key', auth.needed, (req, res, next) ->
+server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 	async.parallel [
 		(cb) -> dbapps.get req.params.key, cb
 		(cb) -> dbapps.getDomains req.params.key, cb
@@ -104,46 +104,50 @@ server.get config.base + '/api/app/:key', auth.needed, (req, res, next) ->
 		next()
 
 # update infos of an app
-server.post config.base + '/api/app/:key', auth.needed, (req, res, next) ->
+server.post config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 	dbapps.update req.params.key, req.body, send(res,next)
 
 # remove an app
-server.del config.base + '/api/app/:key', auth.needed, (req, res, next) ->
+server.del config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 	dbapps.get req.params.key, (e, r) ->
 		return next(e) if e
 		plugins.data.emit 'app.remove', req, r
 		dbapps.remove req.params.key, send(res,next)
 
 # reset the public key of an app
-server.post config.base + '/api/app/:key/reset', auth.needed, (req, res, next) ->
+server.post config.base + '/api/apps/:key/reset', auth.needed, (req, res, next) ->
 	dbapps.resetKey req.params.key, send(res,next)
 
 # list valid domains for an app
-server.get config.base + '/api/app/:key/domains', auth.needed, (req, res, next) ->
+server.get config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
 	dbapps.getDomains req.params.key, send(res,next)
 
+# update valid domains list for an app
+server.post config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
+	dbapps.updateDomains req.params.key, req.body.domains, send(res,next)
+
 # add a valid domain for an app
-server.post config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
+server.post config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
 	dbapps.addDomain req.params.key, req.params.domain, send(res,next)
 
 # remove a valid domain for an app
-server.del config.base + '/api/app/:key/domain/:domain', auth.needed, (req, res, next) ->
+server.del config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
 	dbapps.remDomain req.params.key, req.params.domain, send(res,next)
 
 # list keysets (provider names) for an app
-server.get config.base + '/api/app/:key/keysets', auth.needed, (req, res, next) ->
+server.get config.base + '/api/apps/:key/keysets', auth.needed, (req, res, next) ->
 	dbapps.getKeysets req.params.key, send(res,next)
 
 # get a keyset for an app and a provider
-server.get config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
+server.get config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	dbapps.getKeyset req.params.key, req.params.provider, send(res,next)
 
 # add or update a keyset for an app and a provider
-server.post config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
+server.post config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	dbapps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
 # remove a keyset for an app and a provider
-server.del config.base + '/api/app/:key/keyset/:provider', auth.needed, (req, res, next) ->
+server.del config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	dbapps.remKeyset req.params.key, req.params.provider, send(res,next)
 
 

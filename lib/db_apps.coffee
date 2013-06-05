@@ -52,18 +52,28 @@ exports.get = check check.format.key, (key, callback) ->
 			callback null, id:idapp, name:replies[0], key:replies[1]
 
 # update app infos
-exports.update = check check.format.key, name:['none',/^.{6,}$/], (key, data, callback) ->
+exports.update = check check.format.key, name:['none',/^.{6,}$/], domains:['none','array'], (key, data, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		upinfos = []
-		if data.name
-			upinfos.push 'a:' + idapp + ':name'
-			upinfos.push data.name
-		return callback() if not upinfos.length
-		db.redis.mset upinfos, ->
+		async.parallel [
+			(callback) ->
+				upinfos = []
+				if data.name
+					upinfos.push 'a:' + idapp + ':name'
+					upinfos.push data.name
+				return callback() if not upinfos.length
+				db.redis.mset upinfos, ->
+					return callback err if err
+					return callback()
+			(callback) ->
+				return callback() if not data.domains
+				exports.updateDomains key, data.domains, (err, res) ->
+					return callback err if err
+					return callback()
+		], (err, res) ->
 			return callback err if err
-			callback()
+			return callback()
 
 # reset app key
 exports.resetKey = check check.format.key, (key, callback) ->
@@ -99,6 +109,21 @@ exports.getDomains = check check.format.key, (key, callback) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.smembers 'a:' + idapp + ':domains', callback
+
+# update all authorized domains of the app
+exports.updateDomains = check check.format.key, 'array', (key, domains, callback) ->
+	db.redis.hget 'a:keys', key, (err, idapp) ->
+		return callback err if err
+		return callback new check.Error 'Unknown key' unless idapp
+
+		cmds = [['del', 'a:' + idapp + ':domains']]
+		# todo: in redis >= 2.4, sadd accepts multiple members
+		for domain in domains
+			cmds.push [ 'sadd', 'a:' + idapp + ':domains', domain ]
+
+		db.redis.multi(cmds).exec (err, res) ->
+			return callback err if err
+			return callback()
 
 # add an authorized domain to an app
 exports.addDomain = check check.format.key, 'string', (key, domain, callback) ->
