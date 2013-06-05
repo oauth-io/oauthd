@@ -1,6 +1,6 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Runkeeper",
+	"url": "https://runkeeper.com/apps",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": {

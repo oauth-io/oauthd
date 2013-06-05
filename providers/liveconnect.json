@@ -1,6 +1,6 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "LiveConnect",
+	"url": "https://oauth.live.com",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": {
@@ -14,7 +14,8 @@
 		},
 		"parameters": {
 			"client_id": "string",
-			"client_secret": "string"
+			"client_secret": "string",
+			"scope": "string"
 		}
 	}
 }

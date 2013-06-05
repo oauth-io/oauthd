@@ -1,6 +1,6 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Wordpress",
+	"url": "https://public-api.wordpress.com/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": {

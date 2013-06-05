@@ -1,8 +1,8 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Assembla",
+	"url": "https://api.assembla.com",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": "/authorization",
 		"access_token": {
 			"url": "/token",
 			"method": "post"

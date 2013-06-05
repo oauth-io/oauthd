@@ -1,0 +1,13 @@
+{
+	"name": "FitBit",
+	"url": "http:/",
+	"oauth1": {
+		"request_token": "/api.fitbit.com/oauth/request_token",
+		"authorize": "/www.fitbit.com/oauth/authorize",
+		"access_token": "/api.fitbit.com/oauth/access_token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

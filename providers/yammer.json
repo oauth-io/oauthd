@@ -1,10 +1,10 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Yammer",
+	"url": "https://www.yammer.com",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": "/dialog/oauth",
 		"access_token": {
-			"url": "/token",
+			"url": "/oauth2/access_token.json",
 			"method": "post"
 		},
 		"request": {

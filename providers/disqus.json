@@ -1,10 +1,10 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Disqus",
+	"url": "https://disqus.com/api/oauth/2.0",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": "/authorize/",
 		"access_token": {
-			"url": "/token",
+			"url": "/access_token/",
 			"method": "post"
 		},
 		"request": {
@@ -14,7 +14,8 @@
 		},
 		"parameters": {
 			"client_id": "string",
-			"client_secret": "string"
+			"client_secret": "string",
+			"scope": "string"
 		}
 	}
 }

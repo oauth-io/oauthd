@@ -1,7 +1,6 @@
 {
-	"name": "Tumblr",
-	"api_url": "http://api.tumblr.com/v2/",
-	"url": "http://www.tumblr.com/oauth",
+	"name": "Miso",
+	"url": "http://gomiso.com/oauth",
 	"oauth1": {
 		"request_token": "/request_token",
 		"authorize": "/authorize",

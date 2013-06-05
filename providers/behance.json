@@ -1,8 +1,8 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Behance",
+	"url": "https://www.behance.net/v2/oauth",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": "/authenticate",
 		"access_token": {
 			"url": "/token",
 			"method": "post"
@@ -14,7 +14,8 @@
 		},
 		"parameters": {
 			"client_id": "string",
-			"client_secret": "string"
+			"client_secret": "string",
+			"scope": "string"
 		}
 	}
 }

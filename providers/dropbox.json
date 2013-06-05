@@ -1,0 +1,14 @@
+{
+	"name": "Dropbox",
+	"api_url": "https://api.dropbox.com/1/oauth/",
+	"url": "https:/",
+	"oauth1": {
+		"request_token": "/api.dropbox.com/1/oauth/request_token",
+		"authorize": "/www.dropbox.com/1/oauth/authorize",
+		"access_token": "/api.dropbox.com/1/oauth/access_token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

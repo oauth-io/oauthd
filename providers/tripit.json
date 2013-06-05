@@ -1,0 +1,13 @@
+{
+	"name": "Tripit",
+	"url": "https:/",
+	"oauth1": {
+		"request_token": "/api.tripit.com/oauth/request_token",
+		"authorize": "/www.tripit.com/oauth/authorize",
+		"access_token": "/api.tripit.com/oauth/access_token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

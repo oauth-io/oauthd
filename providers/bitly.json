@@ -1,10 +1,10 @@
 {
-	"name": "Imgur",
-	"url": "https://api.imgur.com/oauth2",
+	"name": "Bitly",
+	"url": "https:/",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": "/bitly.com/oauth/authorize",
 		"access_token": {
-			"url": "/token",
+			"url": "/api-ssl.bitly.com/oauth/access_token",
 			"method": "post"
 		},
 		"request": {
