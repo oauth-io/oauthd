@@ -11,7 +11,7 @@ config = require './config'
 check = require './check'
 
 # create a new app
-exports.create = check name:/^.{6,}$/,domains:['none','array'], (data, callback) ->
+exports.create = check name:/^.{2,}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
 	err = new check.Error
 	if data.domains
