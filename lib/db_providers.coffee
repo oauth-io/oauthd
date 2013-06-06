@@ -46,7 +46,9 @@ providers.list = ->
 		if now > providers._expire
 			fs.readdir config.rootdir + '/providers', (err, files) ->
 				return if err
-				providers._list[file.substr(0, file.length - 5)] ?= expire:0 for file in files
+				for file in files
+					if file.match /\.json$/
+						providers._list[file.substr(0, file.length - 5)] ?= expire:0
 			providers._expire = now + 30000
 		return providers._list
 providers.list()
