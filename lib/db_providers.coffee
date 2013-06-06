@@ -81,24 +81,23 @@ exports.getExtended = (name, callback) ->
 			return callback err if err
 			for oauthv in ['oauth1','oauth2']
 				if res[oauthv]?
+					found_state = false
 					for endpoint_name in ['request_token', 'authorize', 'access_token']
 						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
 						endpoint = res[oauthv][endpoint_name]
 						if typeof endpoint == 'string'
 							endpoint = res[oauthv][endpoint_name] = url:endpoint
-						endpoint.url = res.url + endpoint.url
+						endpoint.url = res.url + endpoint.url if res.url
 						if not endpoint.query
 							endpoint.query = {}
 							endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
-						else
-							found_state = false
+						for k,v of endpoint.query
+							if v.indexOf('{{state}}') != -1
+								found_state = true
+								break
+						if not found_state
 							for k,v of endpoint.query
-								if v.indexOf('{{state}}') != -1
-									found_state = true
-									break
-							if not found_state
-								for k,v of endpoint.query
-									endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
+								endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
 					params = res[oauthv].parameters
 					if params
 						for k,v of params

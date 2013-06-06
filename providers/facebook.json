@@ -2,7 +2,14 @@
 	"name": "Facebook",
 	"url": "https://graph.facebook.com/oauth",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			}
+		},
 		"access_token": "/access_token",
 		"request": {
 			"query": {

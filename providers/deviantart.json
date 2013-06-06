@@ -2,7 +2,14 @@
 	"name": "DeviantArt",
 	"url": "https://www.deviantart.com/oauth2/draft15",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}"
+			}
+		},
 		"access_token": {
 			"url": "/token",
 			"method": "post"

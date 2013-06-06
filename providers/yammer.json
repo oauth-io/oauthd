@@ -2,7 +2,14 @@
 	"name": "Yammer",
 	"url": "https://www.yammer.com",
 	"oauth2": {
-		"authorize": "/dialog/oauth",
+		"authorize": {
+			"url": "/dialog/oauth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}"
+			}
+		},
 		"access_token": {
 			"url": "/oauth2/access_token.json",
 			"method": "post"

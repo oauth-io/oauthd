@@ -1,10 +1,16 @@
 {
 	"name": "Bitly",
-	"url": "https:/",
 	"oauth2": {
-		"authorize": "/bitly.com/oauth/authorize",
+		"authorize": {
+			"url": "https://bitly.com/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}"
+			}
+		},
 		"access_token": {
-			"url": "/api-ssl.bitly.com/oauth/access_token",
+			"url": "https://api-ssl.bitly.com/oauth/access_token",
 			"method": "post"
 		},
 		"request": {

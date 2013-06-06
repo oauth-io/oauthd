@@ -75,13 +75,14 @@ rearrange = (data) ->
 		for endpoint_name in ["request_token", "authorize", "access_token"]
 			endpoint = data[oauthv]?[endpoint_name]
 			if endpoint
+				useless_params = true
 				if oauthv == 'oauth2' && endpoint.params?.redirect_uri == "{{callback}}?{{state}}"
 					endpoint.params.redirect_uri = "{{callback}}"
+					useless_params = false if endpoint_name == "authorize" # keep params to volontary omit state
 					#don't add state: add it into redirect_uri by def if not in params (state is mandatory anyway)
 					#endpoint.params.state = "{{state}}" if endpoint_name == "authorize"
 				if oauthv == 'oauth1' && endpoint.params?.oauth_callback == "{{callback}}?{{state}}"
 					endpoint.params.oauth_callback = "{{callback}}"
-				useless_params = true
 				for k,v of endpoint.params
 					if v != def[oauthv][endpoint_name].query?[k]
 						useless_params = false
@@ -96,7 +97,10 @@ rearrange = (data) ->
 	data.url = commonStr(urls).match(/^.*\//)
 	return "Could not determine common url" if not data.url
 	data.url = data.url[0]
-	data.url = data.url.substr 0, data.url.length-1
+	if data.url.length < 14
+		data.url = ""
+	else
+		data.url = data.url.substr 0, data.url.length-1
 	for oauthv in ["oauth1","oauth2"]
 		request = data[oauthv]?.request
 		if request?
@@ -162,7 +166,7 @@ rearrange = (data) ->
 	return {
 		name:data.displayName
 		api_url:data.api_url
-		url:data.url
+		url:data.url || undefined
 		oauth2:data.oauth2
 		oauth1:data.oauth1
 		parameters:data.parameters

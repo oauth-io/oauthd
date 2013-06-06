@@ -2,7 +2,14 @@
 	"name": "Dailymotion",
 	"url": "https://api.dailymotion.com/oauth",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"redirect_uri": "{{callback}}"
+			}
+		},
 		"access_token": {
 			"url": "/token",
 			"method": "post"
