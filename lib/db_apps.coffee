@@ -152,7 +152,8 @@ exports.getKeyset = check check.format.key, 'string', (key, provider, callback) 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.get 'a:' + idapp + ':k:' + provider, (err, res) ->
 			return callback err if err
-			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+			#return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+			return callback() if not res
 			try
 				res = JSON.parse(res)
 			catch e
