@@ -10,16 +10,45 @@ Path = require "path"
 config = require "./config"
 check = require "./check"
 
-providers =
-	_list:{},
-	list: ->
+def =
+	oauth2:
+		authorize:
+			query:
+				client_id: "{client_id}"
+				response_type: "code"
+				redirect_uri: "{{callback}}"
+				scope: "{scope}"
+				state: "{{state}}"
+		access_token:
+			query:
+				client_id: "{client_id}"
+				client_secret: "{client_secret}"
+				redirect_uri: "{{callback}}"
+				grant_type: "authorization_code"
+				code: "{{code}}"
+		request: {}
+	oauth1:
+		request_token:
+			query:
+				oauth_consumer_key: "{client_id}"
+				oauth_callback: "{{callback}}"
+		authorize: {}
+		access_token:
+			query:
+				oauth_consumer_key: "{client_id}"
+		request: {}
+
+
+providers = _list:{}, _expire:0
+
+providers.list = ->
 		now = (new Date).getTime()
-		if now > expire
+		if now > providers._expire
 			fs.readdir config.rootdir + '/providers', (err, files) ->
 				return if err
-				_list = (file.substr(0, file.length - 5) for file in files)
-			expire = now + 15
-	expire: 0
+				providers._list[file.substr(0, file.length - 5)] ?= expire:0 for file in files
+			providers._expire = now + 30000
+		return providers._list
 providers.list()
 
 # get a provider's description
@@ -40,6 +69,48 @@ exports.get = (provider, callback) ->
 		content.provider = provider_name
 		callback null, content
 
+# get a provider's description extended with default params
+exports.getExtended = (name, callback) ->
+	provider = providers._list[name] ?= expire:0
+	now = (new Date).getTime()
+	if now > provider.expire
+		console.log 'refresh provider ' + name
+		exports.get name, (err, res) ->
+			return callback err if err
+			for oauthv in ['oauth1','oauth2']
+				if res[oauthv]?
+					for endpoint_name in ['request_token', 'authorize', 'access_token']
+						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
+						endpoint = res[oauthv][endpoint_name]
+						if typeof endpoint == 'string'
+							endpoint = res[oauthv][endpoint_name] = url:endpoint
+						endpoint.url = res.url + endpoint.url
+						if not endpoint.query
+							endpoint.query = {}
+							endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
+						else
+							found_state = false
+							for k,v of endpoint.query
+								if v.indexOf('{{state}}') != -1
+									found_state = true
+									break
+							if not found_state
+								for k,v of endpoint.query
+									endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
+					params = res[oauthv].parameters
+					if params
+						for k,v of params
+							params[k] = type:v if typeof v == 'string'
+			params = res.parameters
+			if params
+				for k,v of params
+					params[k] = type:v if typeof v == 'string'
+			provider.data = res
+			provider.expire = now + 30000
+			callback null, res
+	else
+		callback null, provider.data
+
 # get providers list
 exports.getList = (callback) ->
-	callback null, providers.list()
+	callback null, Object.keys(providers.list())

@@ -15,6 +15,7 @@ restify = require 'restify'
 
 config = require './config'
 dbapps = require './db_apps'
+dbproviders = require './db_providers'
 plugins = require './plugins'
 exit = require './exit'
 check = require './check'
@@ -150,6 +151,16 @@ server.post config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req,
 server.del config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	dbapps.remKeyset req.params.key, req.params.provider, send(res,next)
 
+# get providers list
+server.get config.base + '/api/providers', (req, res, next) ->
+	dbproviders.getList send(res,next)
+
+# get a provider config
+server.get config.base + '/api/providers/:provider', (req, res, next) ->
+	if req.query.extend
+		dbproviders.getExtended req.params.provider, send(res,next)
+	else
+		dbproviders.get req.params.provider, send(res,next)
 
 # listen
 exports.listen = (callback) ->

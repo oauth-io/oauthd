@@ -77,7 +77,7 @@ rearrange = (data) ->
 			if endpoint
 				if oauthv == 'oauth2' && endpoint.params?.redirect_uri == "{{callback}}?{{state}}"
 					endpoint.params.redirect_uri = "{{callback}}"
-					#don't add state: add it by def if not in params (state is mandatory anyway)
+					#don't add state: add it into redirect_uri by def if not in params (state is mandatory anyway)
 					#endpoint.params.state = "{{state}}" if endpoint_name == "authorize"
 				if oauthv == 'oauth1' && endpoint.params?.oauth_callback == "{{callback}}?{{state}}"
 					endpoint.params.oauth_callback = "{{callback}}"
