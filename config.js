@@ -1,8 +1,9 @@
 module.exports = {
-	base: "/",		// base url path. e.g: "/auth"
+	host_url: "https://oauth.local/auth",	// mounted on this url
+	base: "/",								// add a base url path. e.g: "/auth"
 	port: 6284,
 
-	debug: true,
+	debug: true,							// add stack trace & infos in errors
 
 	ssl: {
 		key: 'keys/server.key',

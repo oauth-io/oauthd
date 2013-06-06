@@ -21,6 +21,10 @@ exit = require './exit'
 check = require './check'
 formatters = require './formatters'
 
+oauth =
+	oauth1: null
+	oauth2: require './oauth2'
+
 auth = plugins.data.auth
 
 
@@ -68,6 +72,7 @@ server.post config.base + '/test/:ttt', (req, res, next) ->
 server.get config.base + '/:provider', (req, res, next) ->
 	if not req.params.k
 		return next new restify.MissingParameterError 'Missing OAuth.io public key.'
+
 	### ## really need domain ? ##
 	domain = null
 	if req.headers['referer'] || req.headers['origin']
@@ -79,11 +84,24 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if req.params.redirect_uri
 		return next new restify.InvalidVersionError 'Redirection mode not supported yet'
 
-	#res.setHeader 'content-type', 'text/plain'
-	#res.writeHead 200
-	#res.end "Hello world"
-	res.setHeader 'location', 'http://httpbin.org/get?client_id=akey&redirect_uri=makemycb&state='
-	next()
+	oauthv = req.params.oauthv && {
+		"2":"oauth2"
+		"1":"oauth1"
+	}[req.params.oauthv]
+
+	dbproviders.getExtended req.params.provider, (err, provider) ->
+		return next err if err
+		if oauthv and not provider[oauthv]
+			return next new check.Error "oauthv", "Unsupported oauth version: " + oauthv
+		oauthv ?= 'oauth2' if provider.oauth2
+		oauthv ?= 'oauth1' if provider.oauth1
+		dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
+			return next err if err
+			oauth[oauthv].authorize provider, keyset, mode:oauthv, (err, url) ->
+				return next err if err
+				res.setHeader 'Location', url
+				res.send 302
+				next()
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
@@ -170,7 +188,7 @@ server.get config.base + '/api/providers/:provider/logo', ((req, res, next) ->
 		next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'
-		maxAge: 30
+		maxAge: 120
 
 # listen
 exports.listen = (callback) ->
