@@ -1,2 +1,3 @@
 /node_modules/
 /providers/*.png
+!/providers/default.png

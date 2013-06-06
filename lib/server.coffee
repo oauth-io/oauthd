@@ -63,10 +63,6 @@ server.get config.base + '/', (req, res, next) ->
 	console.log req
 	res.send check.nullv
 	next()
-server.post config.base + '/test/:ttt', (req, res, next) ->
-	console.log req
-	res.send "Hello world"
-	next()
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
@@ -182,10 +178,13 @@ server.get config.base + '/api/providers/:provider', (req, res, next) ->
 
 # get a provider config
 server.get config.base + '/api/providers/:provider/logo', ((req, res, next) ->
-		req.url = '/' + req.params.provider + '.png'
-		req._url = Url.parse req.url
-		req._path = req._url._path
-		next()
+		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
+			if not exists
+				req.params.provider = 'default'
+			req.url = '/' + req.params.provider + '.png'
+			req._url = Url.parse req.url
+			req._path = req._url._path
+			next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'
 		maxAge: 120
