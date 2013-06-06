@@ -162,6 +162,16 @@ server.get config.base + '/api/providers/:provider', (req, res, next) ->
 	else
 		dbproviders.get req.params.provider, send(res,next)
 
+# get a provider config
+server.get config.base + '/api/providers/:provider/logo', ((req, res, next) ->
+		req.url = '/' + req.params.provider + '.png'
+		req._url = Url.parse req.url
+		req._path = req._url._path
+		next()
+	), restify.serveStatic
+		directory: config.rootdir + '/providers'
+		maxAge: 30
+
 # listen
 exports.listen = (callback) ->
 	# tell plugins to configure the server if needed
