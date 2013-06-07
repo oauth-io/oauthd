@@ -11,7 +11,6 @@
 		}, 600 * 1000);
 		function getMessage(e) {
 			var data;
-			console.log(e);
 			try {
 				data = JSON.parse(e.data);
 			} catch (err) { }

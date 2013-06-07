@@ -72,17 +72,16 @@ server.get config.base + '/sdk/oauth.js', (req, res, next) ->
 server.get config.base + '/', (req, res, next) ->
 	if not req.params.state
 		# dev test /!\
-		view = '<html><head><title>OAUTH.IO DEV TEST</title>\n'
-		view += '<script src="https://oauth.local/lib/jquery/jquery.min.js"></script>\n'
+		view = '<html><head>\n'
 		view += '<script src="https://oauth.local/auth/sdk/oauth.js"></script>\n'
 		view += '<script>\n'
 		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
-		view += '$(document).ready(function() { $(".clickme").click(function() {\n'
+		view += 'function connect() {\n'
 		view += '\tOAuth.popup("facebook", function() {console.log(arguments);});\n'
-		view += '}); });\n'
+		view += '}\n'
 		view += '</script>\n'
 		view += '</head><body>\n'
-		view += '<a href="#" class="clickme">connect</a>\n'
+		view += '<a href="#" onclick="connect()">connect</a>\n'
 		view += '</body></html>'
 		res.setHeader 'Content-Type', 'text/html'
 		res.send view
@@ -94,9 +93,10 @@ server.get config.base + '/', (req, res, next) ->
 			return next e if e
 			r.provider = state.provider.toLowerCase()
 			view = '<script>var msg=' + JSON.stringify(JSON.stringify(r)) + ';\n'
-			view += 'var postmsg = (window.opener || window.parent || {}).postMessage;\n'
-			view += 'postmsg(msg, "' + state.origin + '");\n'
-			view += '//window.close();\n'
+			view += 'var opener = window.opener || window.parent\n'
+			view += 'if (opener)'
+			view += '\topener.postMessage(msg, "' + state.origin + '");\n'
+			view += 'window.close();\n'
 			view += '</script>'
 			res.setHeader 'Content-Type', 'text/html'
 			res.send view
