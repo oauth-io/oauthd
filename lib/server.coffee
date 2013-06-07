@@ -15,6 +15,7 @@ restify = require 'restify'
 
 config = require './config'
 dbapps = require './db_apps'
+dbstates = require './db_states'
 dbproviders = require './db_providers'
 plugins = require './plugins'
 exit = require './exit'
@@ -60,9 +61,16 @@ server.send = send = (res, next) -> (e, r) ->
 
 # dev test /!\
 server.get config.base + '/', (req, res, next) ->
-	console.log req
-	res.send check.nullv
-	next()
+	if not req.params.state
+		res.send check.nullv
+		next()
+	dbstates.get req.params.state, (err, state) ->
+		return callback err if err
+		return next new check.Error 'state', 'invalid or expired' if not state
+		oauth[state.oauthv].access_token state, req, (e, r) ->
+			return next e if e
+			res.send r || check.nullv
+			next()
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
@@ -93,7 +101,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		oauthv ?= 'oauth1' if provider.oauth1
 		dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
 			return next err if err
-			oauth[oauthv].authorize provider, keyset, mode:oauthv, (err, url) ->
+			oauth[oauthv].authorize provider, keyset, oauthv:oauthv, key:req.params.k, (err, url) ->
 				return next err if err
 				res.setHeader 'Location', url
 				res.send 302

@@ -40,7 +40,8 @@
     "redis": "~0.8.3",
     "restify": "~2.5.1",
     "async": "~0.2.9",
-    "restify-oauth2": "~2.1.0"
+    "restify-oauth2": "~2.1.0",
+    "request": "~2.21.0"
   },
   "license": "MIT"
 }
