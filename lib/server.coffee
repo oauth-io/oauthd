@@ -48,7 +48,9 @@ server = restify.createServer server_options
 server.use restify.authorizationParser()
 server.use restify.queryParser()
 server.use restify.bodyParser mapParams:false
-
+server.use (req, res, next) ->
+	res.setHeader 'Content-Type', 'application/json'
+	next()
 
 # add server to shared plugins data and run init
 plugins.data.server = server
