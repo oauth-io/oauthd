@@ -21,6 +21,7 @@ plugins = require './plugins'
 exit = require './exit'
 check = require './check'
 formatters = require './formatters'
+sdk_js = require './sdk_js'
 
 oauth =
 	oauth1: null
@@ -57,19 +58,48 @@ plugins.runSync 'init'
 server.send = send = (res, next) -> (e, r) ->
 	return next(e) if e
 	res.send (if r? then r else check.nullv)
-	next()
+	next() 
 
-# dev test /!\
+# generated js sdk
+server.get config.base + '/sdk/oauth.js', (req, res, next) ->
+	sdk_js.get (e, r) ->
+		return next e if e
+		res.setHeader 'Content-Type', 'application/javascript'
+		res.send r
+		next()
+
+# oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	if not req.params.state
-		res.send check.nullv
+		# dev test /!\
+		view = '<html><head><title>OAUTH.IO DEV TEST</title>\n'
+		view += '<script src="https://oauth.local/lib/jquery/jquery.min.js"></script>\n'
+		view += '<script src="https://oauth.local/auth/sdk/oauth.js"></script>\n'
+		view += '<script>\n'
+		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
+		view += '$(document).ready(function() { $(".clickme").click(function() {\n'
+		view += '\tOAuth.popup("facebook", function() {console.log(arguments);});\n'
+		view += '}); });\n'
+		view += '</script>\n'
+		view += '</head><body>\n'
+		view += '<a href="#" class="clickme">connect</a>\n'
+		view += '</body></html>'
+		res.setHeader 'Content-Type', 'text/html'
+		res.send view
 		next()
 	dbstates.get req.params.state, (err, state) ->
-		return callback err if err
+		return next err if err
 		return next new check.Error 'state', 'invalid or expired' if not state
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			return next e if e
-			res.send r || check.nullv
+			r.provider = state.provider.toLowerCase()
+			view = '<script>var msg=' + JSON.stringify(JSON.stringify(r)) + ';\n'
+			view += 'var postmsg = (window.opener || window.parent || {}).postMessage;\n'
+			view += 'postmsg(msg, "' + state.origin + '");\n'
+			view += '//window.close();\n'
+			view += '</script>'
+			res.setHeader 'Content-Type', 'text/html'
+			res.send view
 			next()
 
 # oauth: popup or redirection to provider's authorization url
@@ -77,13 +107,14 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if not req.params.k
 		return next new restify.MissingParameterError 'Missing OAuth.io public key.'
 
-	### ## really need domain ? ##
 	domain = null
+	origin = null
 	if req.headers['referer'] || req.headers['origin']
-		domain = Url.parse(req.headers['referer'] || req.headers['origin']).host
+		urlinfos = Url.parse(req.headers['referer'] || req.headers['origin'])
+		domain = urlinfos.host
+		origin = urlinfos.protocol + '//' + domain
 	if not domain
 		return next(new restify.InvalidHeaderError('Missing origin or referer.'))
-	###
 
 	if req.params.redirect_uri
 		return next new restify.InvalidVersionError 'Redirection mode not supported yet'
@@ -101,7 +132,8 @@ server.get config.base + '/:provider', (req, res, next) ->
 		oauthv ?= 'oauth1' if provider.oauth1
 		dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
 			return next err if err
-			oauth[oauthv].authorize provider, keyset, oauthv:oauthv, key:req.params.k, (err, url) ->
+			opts = oauthv:oauthv, key:req.params.k, origin:origin
+			oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
 				return next err if err
 				res.setHeader 'Location', url
 				res.send 302

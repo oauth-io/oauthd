@@ -12,8 +12,9 @@ check = require './check'
 
 # add a new token
 exports.add = check key:check.format.key, provider:check.format.provider
-	,token:['none','string'], expire:['none','number']
-	,redirect_uri:['none','string'], (data, callback) ->
+	, token:['none','string'], expire:['none','number']
+	, origin:['none','string'], redirect_uri:['none','string']
+	, (data, callback) ->
 
 		id = db.generateUid()
 		dbdata = key:data.key, provider:data.provider
@@ -21,6 +22,7 @@ exports.add = check key:check.format.key, provider:check.format.provider
 		dbdata.expire = (new Date()).getTime() + data.expire if data.expire
 		dbdata.redirect_uri = data.redirect_uri if data.redirect_uri
 		dbdata.oauthv = data.oauthv if data.oauthv
+		dbdata.origin = data.origin if data.origin
 
 		db.redis.hmset 'st:' + id, dbdata, (err, res) ->
 			return callback err if err
@@ -33,6 +35,7 @@ exports.add = check key:check.format.key, provider:check.format.provider
 exports.get = check check.format.key, (id, callback) ->
 	db.redis.hgetall 'st:' + id, (err, res) ->
 		return callback err if err
+		return callback() if not res
 		res.expire = parseInt res.expire if res?.expire
 		res.id = id
 		callback null, res

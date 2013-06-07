@@ -24,6 +24,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		provider:provider.provider
 		redirect_uri:opts.redirect_uri
 		oauthv:opts.oauthv
+		origin:opts.origin
 		expire:600
 	, (err, state) ->
 		replace_param = (param) ->
