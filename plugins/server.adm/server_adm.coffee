@@ -19,8 +19,8 @@ exports.setup = (callback) ->
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
-				for mail,iduser of users
-					users[mail] = email:mail, id:iduser, date_inscr:new Date(parseInt(r[i*2])).toUTCString(), apps:r[i*2+1]					
+				for mail,iduser of users										
+					users[mail] = email:mail, id:iduser, date_inscr:r[i*2], apps:r[i*2+1]
 					i++				
 				res.send users
 				next
