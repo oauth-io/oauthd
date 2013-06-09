@@ -9,7 +9,7 @@ restify = require 'restify'
 exports.setup = (callback) ->
 
 	# get users list
-	@server.get @config.base + '/api/adm/users', @auth.needed, (req, res, next) =>
+	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>
 			return next err if err
 			cmds = []
@@ -26,7 +26,7 @@ exports.setup = (callback) ->
 				next
 
 	# get app info with ID
-	@server.get @config.base + 'api/adm/app/:id', @auth.needed, (req, res, next) =>
+	@server.get @config.base + 'api/adm/app/:id', @auth.adm, (req, res, next) =>
 		id_app = req.params.id
 		prefix = 'a:' + id_app + ':'
 		cmds = []

@@ -18,7 +18,7 @@ hooks =
 			return cb null, false if err
 			token = shared.db.generateUid clientId + ':' + clientSecret
 			(shared.db.redis.multi [
-				['hset', 'session:' + token, 'id', res.id]
+				['hmset', 'session:' + token, 'id', res.id, 'mail', res.mail]
 				['expire', 'session:' + token, _config.expire]
 			]).exec (err, r) ->
 				return cb err if err
@@ -45,6 +45,13 @@ exports.needed = (req, res, next) ->
 	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
 		return next err if err
 		return next new restify.NotAuthorizedError "You have not access to this app" if not res
+		next()
+
+exports.adm = (req, res, next) ->
+	exports.needed req, res, (e) ->
+		return next e if e
+		if not req.user.mail.match /.*-adm@oauth\.io$/
+			return next new restify.UnauthorizedError
 		next()
 
 exports.optional = (req, res, next) ->
