@@ -25,7 +25,17 @@
 			else if (document.detachEvent)
 				document.detachEvent("onmessage", getMessage);
 
-			callback(null, data);
+			if (data.status === 'error' || data.status === 'fail') {
+				var err = new Error(data.message);
+				err.body = data.data;
+				return callback(err);
+			}
+			if (data.status !== 'success' || ! data.data) {
+				var data = new Error(data.data)
+				return callback(new Error())
+			}
+
+			return callback(null, data.data);
 		}
 		return getMessage;
 	}

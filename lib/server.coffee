@@ -40,7 +40,7 @@ if config.ssl
 	server_options.certificate = fs.readFileSync Path.resolve(config.rootdir, config.ssl.certificate)
 	console.log 'SSL is enabled !'
 
-server_options.formatters = formatters
+server_options.formatters = formatters.formatters
 
 # create server
 server = restify.createServer server_options
@@ -79,7 +79,7 @@ server.get config.base + '/', (req, res, next) ->
 		view += '<script>\n'
 		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
 		view += 'function connect() {\n'
-		view += '\tOAuth.popup("facebook", function() {console.log(arguments);});\n'
+		view += '\tOAuth.popup("soundcloud", function() {console.log(arguments);});\n'
 		view += '}\n'
 		view += '</script>\n'
 		view += '</head><body>\n'
@@ -92,9 +92,9 @@ server.get config.base + '/', (req, res, next) ->
 		return next err if err
 		return next new check.Error 'state', 'invalid or expired' if not state
 		oauth[state.oauthv].access_token state, req, (e, r) ->
-			return next e if e
-			r.provider = state.provider.toLowerCase()
-			view = '<script>var msg=' + JSON.stringify(JSON.stringify(r)) + ';\n'
+			body = formatters.build e || r
+			body.provider = state.provider.toLowerCase()
+			view = '<script>var msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			view += 'var opener = window.opener || window.parent\n'
 			view += 'if (opener)'
 			view += '\topener.postMessage(msg, "' + state.origin + '");\n'
