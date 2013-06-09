@@ -19,10 +19,36 @@ exports.setup = (callback) ->
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
-				for mail,iduser of users
-					users[mail] = id:iduser, date_inscr:parseInt(r[i*2]), apps:r[i*2+1]
-					i++
+				for mail,iduser of users										
+					users[mail] = email:mail, id:iduser, date_inscr:r[i*2], apps:r[i*2+1]
+					i++				
 				res.send users
-				next()
+				next
+
+	# get app info with ID
+	@server.get @config.base + 'api/adm/app/:id', @auth.needed, (req, res, next) =>
+		id_app = req.params.id
+		prefix = 'a:' + id_app + ':'
+		cmds = []
+		cmds.push ['mget', prefix + 'name', prefix + 'key']
+		cmds.push ['smembers', prefix + 'domains']		
+		cmds.push ['keys', prefix + 'k:*']
+	
+		@db.redis.multi(cmds).exec (err, results) ->
+			return next err if err
+			app = id:id_app, name:results[0][0], key:results[0][1], domains:results[1], providers:( result.substr(prefix.length + 2) for result in results[2] )
+			res.send app
+			next()
+
+		# @db.redis.mget [prefix + 'name', prefix + 'key'], (err, replies) ->
+		# 	return next err if err
+		# 	app = id:id_app, name:replies[0], key:replies[1]			
+		# 	res.send app
+		# 	next()
+
+		# db.redis.hget 'a:keys', key, (err, idapp) ->
+		# return callback err if err
+		# return callback new check.Error 'Unknown key' unless idapp
+		# db.redis.smembers 'a:' + idapp + ':domains', callback
 
 	callback()
