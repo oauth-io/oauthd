@@ -10,9 +10,9 @@ db = require './db'
 config = require './config'
 check = require './check' 
 
-# add a new token
+# add a new state
 exports.add = check key:check.format.key, provider:check.format.provider
-	, token:['none','string'], expire:['none','number']
+	, token:['none','string'], expire:['none','number'], oauthv:'string'
 	, origin:['none','string'], redirect_uri:['none','string']
 	, (data, callback) ->
 
@@ -31,7 +31,7 @@ exports.add = check key:check.format.key, provider:check.format.provider
 			dbdata.id = id
 			callback null, dbdata
 
-# get the token infos
+# get the state infos
 exports.get = check check.format.key, (id, callback) ->
 	db.redis.hgetall 'st:' + id, (err, res) ->
 		return callback err if err
@@ -40,8 +40,14 @@ exports.get = check check.format.key, (id, callback) ->
 		res.id = id
 		callback null, res
 
-# set the token infos
-exports.set = check check.format.key, token:['none','string'], expire:['none','date']
-	,redirect_uri:['none','string'], (id, data, callback) ->
+# set the state infos
+exports.set = check check.format.key
+	, token:['none','string'], expire:['none','number']
+	, origin:['none','string'], redirect_uri:['none','string']
+	, (id, data, callback) ->
 
 		db.redis.hmset 'st:' + id, data, callback
+
+# set the state's token
+exports.setToken = check check.format.key, 'string', (id, token, callback) ->
+	db.redis.hset 'st:' + id, 'token', token, callback

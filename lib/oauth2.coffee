@@ -35,12 +35,12 @@ errors_desc =
 exports.authorize = (provider, keyset, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
-	params[k] = v for k,v of provider[opts.oauthv].parameters
+	params[k] = v for k,v of provider.oauth2.parameters
 	dbstates.add
 		key:opts.key
 		provider:provider.provider
 		redirect_uri:opts.redirect_uri
-		oauthv:opts.oauthv
+		oauthv:'oauth2'
 		origin:opts.origin
 		expire:600
 	, (err, state) ->
@@ -88,7 +88,7 @@ exports.access_token = (state, req, callback) ->
 		[provider, keyset] = res
 		params = {}
 		params[k] = v for k,v of provider.parameters
-		params[k] = v for k,v of provider[state.oauthv].parameters
+		params[k] = v for k,v of provider.oauth2.parameters
 
 		replace_param = (param) ->
 			param = param.replace(/\{\{code\}\}/g, req.params.code)
@@ -120,7 +120,6 @@ exports.access_token = (state, req, callback) ->
 
 		# do request to access_token
 		request options, (e, r, body) ->
-			console.log e, body, r.statusCode, r.headers
 			return callback e if e
 
 			if not body && r.statusCode == 200
@@ -143,10 +142,7 @@ exports.access_token = (state, req, callback) ->
 							return callback err
 				if body.error || body.error_description
 					err = new check.Error
-					if body.error_description
-						err.error body.error_description
-					else
-						err.error errors_desc.access_token[body.error] || 'Error while requesting token'
+					err.error body.error_description || errors_desc.access_token[body.error] || 'Error while requesting token'
 					err.body.error = body.error if body.error
 					err.body.error_uri = body.error_uri if body.error_uri
 					return callback err

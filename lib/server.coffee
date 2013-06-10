@@ -24,7 +24,7 @@ formatters = require './formatters'
 sdk_js = require './sdk_js'
 
 oauth =
-	oauth1: null
+	oauth1: require './oauth1'
 	oauth2: require './oauth2'
 
 auth = plugins.data.auth
@@ -79,7 +79,7 @@ server.get config.base + '/', (req, res, next) ->
 		view += '<script>\n'
 		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
 		view += 'function connect() {\n'
-		view += '\tOAuth.popup("soundcloud", function() {console.log(arguments);});\n'
+		view += '\tOAuth.popup("twitter", function() {console.log(arguments);});\n'
 		view += '}\n'
 		view += '</script>\n'
 		view += '</head><body>\n'
