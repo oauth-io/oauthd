@@ -60,7 +60,7 @@ plugins.runSync 'init'
 server.send = send = (res, next) -> (e, r) ->
 	return next(e) if e
 	res.send (if r? then r else check.nullv)
-	next() 
+	next()
 
 # generated js sdk
 server.get config.base + '/sdk/oauth.js', (req, res, next) ->
@@ -79,7 +79,7 @@ server.get config.base + '/', (req, res, next) ->
 		view += '<script>\n'
 		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
 		view += 'function connect() {\n'
-		view += '\tOAuth.popup("twitter", function() {console.log(arguments);});\n'
+		view += '\tOAuth.popup("23andme", function() {console.log(arguments);});\n'
 		view += '}\n'
 		view += '</script>\n'
 		view += '</head><body>\n'

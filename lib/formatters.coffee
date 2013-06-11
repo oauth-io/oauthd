@@ -28,7 +28,8 @@ buildReply = (body, res) ->
 		if Buffer.isBuffer(body)
 			body = body.toString('base64')
 
-	if not (res.statusStr == 'error' && body?.error && body?.error_description) &&
+	if res.buildJsend ||
+		not (res.statusStr == 'error' && body?.error && body?.error_description) &&
 		not (res.statusStr == 'success' && body?.access_token && body?.token_type)
 			result = status: res.statusStr
 			if res.statusStr == 'error'
@@ -61,4 +62,4 @@ formatters =
 
 module.exports =
 	formatters: formatters
-	build: (e,r) -> buildReply e || r, {}
+	build: (e,r) -> buildReply e || r, buildJsend: true
