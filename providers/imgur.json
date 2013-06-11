@@ -2,7 +2,16 @@
 	"name": "Imgur",
 	"url": "https://api.imgur.com/oauth2",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": ""
+			}
+		},
 		"access_token": {
 			"url": "/token",
 			"method": "post"

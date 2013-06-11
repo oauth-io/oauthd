@@ -10,6 +10,22 @@
 			}
 		},
 		"access_token": "/access_token",
+		"request": {
+			"put": {
+				"api_key": "{client_id}"
+			},
+			"post": {
+				"api_key": "{client_id}"
+			},
+			"delete": {
+				"api_key": "{client_id}"
+			},
+			"query": {
+				"api_key": "{client_id}",
+				"format": "json",
+				"nojsoncallback": "1"
+			}
+		},
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
