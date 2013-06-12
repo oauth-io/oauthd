@@ -13,7 +13,7 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
 	# pass = db.generateHash data.pass + dynsalt
 	date_inscr = (new Date).getTime()
-	key = db.generateHash dynsalt
+	key = db.generateHash(dynsalt).replace(/\=/g, '').replace(/\+/g, '')
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
 		return callback new check.Error 'This email already exists !' if iduser
@@ -33,34 +33,40 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				return callback null, id:val, mail:data.mail, date_inscr:date_inscr
 
 
-exports.isValidable = check mail:check.format.mail, (data, callback) ->
+exports.isValidable = (data, callback) ->
 	key = data.key
-	mail = data.mail
-	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
+	iduser = data.id
+	prefix = 'u:' + iduser + ':'
+	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
 		return callback err if err
-		return callback null, is_validable: false if not iduser
-		prefix = 'u:' + iduser + ':'
-		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
-			return callback err if err
-			return callback null, is_validable: false if replies[2] || replies[1] != key
-			return callback null, is_validable: true
+		console.log replies
+		console.log key
+		console.log (replies[2] || replies[1].replace(/\=/g, '').replace(/\+/g, '') != key)
+		if replies[2] != '0' || replies[1].replace(/\=/g, '').replace(/\+/g, '') != key
+			return callback null, is_validable: false 
+		return callback null, is_validable: true, mail: replies[0], id: iduser
 
 # validate user mail
-exports.userValidate = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
+exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
+	dynsalt2 = Math.floor(Math.random()*9999999)
 	pass = db.generateHash data.pass + dynsalt
-	key = db.generateHash dynsalt
-	@isValidable {
-		mail: data.mail,
+	key = db.generateHash(dynsalt2).replace(/\=/g, '').replace(/\+/g, '').replace(/\//g, '')
+	exports.isValidable {
+		id: data.id,
 		key: data.key
-	}, (err, data) ->
-		return callback new check.Error "This page does not exists." if data.is_validable || err
+	}, (err, json) ->
+		return callback new check.Error "This page does not exists." if not json.is_validable or err
+		prefix = 'u:' + json.id + ':'
+		console.log prefix, pass, key
 		db.redis.mset [
 			prefix+'validated', 1,
 			prefix+'pass', pass,
+			prefix+'salt', dynsalt,
 			prefix+'key', key
-		]
-		return callback null, id:iduser
+		], (err, res) ->
+			return err if err
+			return callback null, mail: json.mail, id: json.id
 
 # lost password
 exports.lostPassword = check mail:check.format.mail, (data, callback) ->

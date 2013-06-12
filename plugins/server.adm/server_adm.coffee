@@ -46,4 +46,18 @@ exports.setup = (callback) ->
 			res.send app
 			next()
 
+	@server.del @config.base + 'api/adm/users/:id', (req, res, next) =>
+		prefix = 'u:' + req.params.id + ':'
+		@db.redis.get prefix+'mail', (err, mail) =>
+			res.send err if err
+			res.send new check.Error 'Unknown mail' unless mail
+			@db.redis.multi([
+				[ 'hdel', 'u:mails', mail ]
+				[ 'del', prefix+'mail', prefix+'validated', prefix+'key', prefix+'pass', prefix+'salt'
+						, prefix+'apps', prefix+'date_inscr' ]
+			]).exec (err, replies) ->
+				res.send true
+				next()	
+
+
 	callback()

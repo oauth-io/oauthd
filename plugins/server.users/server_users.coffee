@@ -14,12 +14,20 @@ exports.setup = (callback) ->
 		dbusers.register req.body, @server.send(res,next)
 
 	# validate a user
-	@server.post @config.base + '/api/users/:id/validate/:key', (req, res, next) =>
-		dbusers.validate req.body, @server.send(res,next)
+	@server.post @config.base + "/api/users/:id/validate/:key", (req, res, next) =>
+		console.log "uh?!"
+		console.log req.params
+		console.log req.body
+		dbusers.validate {
+			key: req.params.key
+			id: req.params.id
+			pass: req.body.pass
+		}, @server.send(res,next)
 
 	# get true/false if a user is validable
-	@server.get @config.base + '/api/users/:id/validate/:key', (req, res, next) =>
-		db.users.validable {
+	@server.get @config.base + "/api/users/:id/validate/:key", (req, res, next) =>
+		console.log req.params
+		dbusers.isValidable {
 			id: req.params.id
 			key: req.params.key
 		}, @server.send(res, next)
