@@ -4,40 +4,43 @@
 		oauthd_url: '{{auth_url}}'
 	};
 
-	function bindMessage(provider, callback) {
-		setTimeout(function() {
-			callback(new Error('Authorization timed out'));
-			callback = function() {};
-		}, 600 * 1000);
-		function getMessage(e) {
-			var data;
-			try {
-				data = JSON.parse(e.data);
-			} catch (err) { }
-
-			if ( ! data || ! data.provider || data.provider.toLowerCase() !== provider)
-				return;
-
-			if (window.removeEventListener)
-				window.removeEventListener("message", getMessage, false);
-			else if (window.detachEvent)
-				window.detachEvent("onmessage", getMessage);
-			else if (document.detachEvent)
-				document.detachEvent("onmessage", getMessage);
-
-			if (data.status === 'error' || data.status === 'fail') {
-				var err = new Error(data.message);
-				err.body = data.data;
-				return callback(err);
-			}
-			if (data.status !== 'success' || ! data.data) {
-				var data = new Error(data.data)
-				return callback(new Error())
-			}
-
-			return callback(null, data.data);
+	var oauth_result;
+	(function parse_urlfragment() {
+		var results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
+		if (results) {
+			document.location.hash = '';
+			oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
-		return getMessage;
+	})();
+
+	function sendCallback(opts) {
+		var data;
+		try {
+			data = JSON.parse(opts.data);
+		} catch (err) {}
+
+		if ( ! data || ! data.provider)
+			return;
+
+		if (opts.provider && data.provider.toLowerCase() !== opts.provider.toLowerCase())
+			return;
+
+		if (data.status === 'error' || data.status === 'fail') {
+			var err = new Error(data.message);
+			err.body = data.data;
+			return opts.callback(err);
+		}
+
+		if (data.status !== 'success' || ! data.data) {
+			var err = new Error();
+			err.body = data.data;
+			return opts.callback(err);
+		}
+
+		if ( ! opts.provider)
+			data.data.provider = data.provider;
+
+		return opts.callback(null, data.data);
 	}
 
 	window.OAuth = {
@@ -62,20 +65,53 @@
 			wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
 			wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
 
+			var opts = {provider:provider};
+			function getMessage(e) {
+				opts.data = e.data;
+				return sendCallback(opts);
+			}
+			opts.callback = function(e, r) {
+				if (window.removeEventListener)
+					window.removeEventListener("message", getMessage, false);
+				else if (window.detachEvent)
+					window.detachEvent("onmessage", getMessage);
+				else if (document.detachEvent)
+					document.detachEvent("onmessage", getMessage);
+				return callback(e,r);
+			}
+
 			if (window.attachEvent)
-				window.attachEvent("onmessage", bindMessage(provider, callback));
+				window.attachEvent("onmessage", getMessage);
 			else if (document.attachEvent)
-				document.attachEvent("onmessage", bindMessage(provider, callback));
+				document.attachEvent("onmessage", getMessage);
 			else if (window.addEventListener)
-				window.addEventListener("message", bindMessage(provider, callback), false);
+				window.addEventListener("message", getMessage, false);
+
+			setTimeout(function() {
+				opts.callback(new Error('Authorization timed out'));
+			}, 600 * 1000);
 
 			var wnd = window.open(url, "Authorization", wnd_options);
 			if (wnd)
 				wnd.focus();
 		},
 		redirect: function(provider, url) {
+			if (url[0] == '/')
+				url = document.location.protocol + '//' + document.location.host + url
+			else if ( ! url.match(/^.{2,5}:\/\//))
+				url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url
+
 			url = config.oauthd_url + '/' + provider + "?k=" + config.key + "&redirect_uri=" + url;
 			document.location.href = url;
+		},
+		callback: function(provider, callback) {
+			if ( ! oauth_result)
+				return;
+
+			if (arguments.length == 1)
+				return sendCallback({data:oauth_result, callback:provider});
+
+			return sendCallback({data:oauth_result, provider:provider, callback:callback});
 		}
 	};
 })();

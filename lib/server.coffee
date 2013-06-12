@@ -77,9 +77,13 @@ server.get config.base + '/', (req, res, next) ->
 		view = '<html><head>\n'
 		view += '<script src="https://oauth.local/auth/sdk/oauth.js"></script>\n'
 		view += '<script>\n'
-		view += 'OAuth.initialize("e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
+		view += 'OAuth.initialize("06WLN7IVf_SCw7km0O4ggqrV1Lc");\n'# "e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
+		view += 'OAuth.callback("facebook", function(e,r) { console.log("binded cb", e, r); });\n'
+		view += 'OAuth.callback(function(e,r) { console.log("unbinded cb", e, r); });\n'
+		view += 'OAuth.callback("lol", function(e,r) { console.log("binded cb (other)", e, r); });\n'
 		view += 'function connect() {\n'
-		view += '\tOAuth.popup("23andme", function() {console.log(arguments);});\n'
+		#view += '\tOAuth.popup("facebook", function() {console.log(arguments);});\n'
+		view += '\tOAuth.redirect("facebook", "/auth");\n'
 		view += '}\n'
 		view += '</script>\n'
 		view += '</head><body>\n'
@@ -95,10 +99,13 @@ server.get config.base + '/', (req, res, next) ->
 			body = formatters.build e || r
 			body.provider = state.provider.toLowerCase()
 			view = '<script>var msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
-			view += 'var opener = window.opener || window.parent\n'
-			view += 'if (opener)'
-			view += '\topener.postMessage(msg, "' + state.origin + '");\n'
-			view += 'window.close();\n'
+			if state.redirect_uri
+				view += 'document.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
+			else
+				view += 'var opener = window.opener || window.parent\n'
+				view += 'if (opener)'
+				view += '\topener.postMessage(msg, "' + state.origin + '");\n'
+				view += 'window.close();\n'
 			view += '</script>'
 			res.setHeader 'Content-Type', 'text/html'
 			res.send view
@@ -118,9 +125,6 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if not domain
 		return next(new restify.InvalidHeaderError('Missing origin or referer.'))
 
-	if req.params.redirect_uri
-		return next new restify.InvalidVersionError 'Redirection mode not supported yet'
-
 	oauthv = req.params.oauthv && {
 		"2":"oauth2"
 		"1":"oauth1"
@@ -134,7 +138,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		oauthv ?= 'oauth1' if provider.oauth1
 		dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
 			return next err if err
-			opts = oauthv:oauthv, key:req.params.k, origin:origin
+			opts = oauthv:oauthv, key:req.params.k, origin:origin, redirect_uri:req.params.redirect_uri
 			oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
 				return next err if err
 				res.setHeader 'Location', url
