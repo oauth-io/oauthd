@@ -2,7 +2,17 @@
 	"name": "Soundcloud",
 	"api_url": "https://api.soundcloud.com/",
 	"oauth2": {
-		"authorize": "https://soundcloud.com/connect",
+		"authorize": {
+		"url":"https://soundcloud.com/connect",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": ""
+			}
+
+		},
 		"access_token": {
 			"url": "https://api.soundcloud.com/oauth2/token",
 			"method": "post"
@@ -14,8 +24,7 @@
 		},
 		"parameters": {
 			"client_id": "string",
-			"client_secret": "string",
-			"scope": "string"
+			"client_secret": "string"
 		}
 	}
 }

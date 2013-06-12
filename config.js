@@ -21,6 +21,7 @@ module.exports = {
 	plugins: [
 		'server.auth',
 		'server.users',
-		'server.adm'
+		'server.adm',
+		'server.oauth_io'
 	]
 }

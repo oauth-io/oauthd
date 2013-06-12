@@ -15,7 +15,23 @@
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
-			"scope": "string"
+			"scope": {
+				"type":"string",
+				"separator":"|",
+				"cardinality":"*",
+				"values": {
+					"post_as":"may act on your behalf to comment, follow users, view and appreciate projects",
+					"activity_read":"Allows access to read network activity feed",
+					"collection_read":"Able to read collections you have marked as private",
+					"collection_write":"Ability to create, manipulate and delete your collections.",
+					"wip_read":"Able to read works in progress marked as private",
+					"wip_write":"Able to post, manipulate and delete a work in progress on your behalf",
+					"project_read":"Read private projects",
+					"invitations_read":"Get user's invitations.",
+					"invitations_write":"Respond to user's invitations."
+					  
+				}				 
+			 }
 		}
 	}
 }

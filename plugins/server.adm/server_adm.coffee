@@ -46,15 +46,4 @@ exports.setup = (callback) ->
 			res.send app
 			next()
 
-		# @db.redis.mget [prefix + 'name', prefix + 'key'], (err, replies) ->
-		# 	return next err if err
-		# 	app = id:id_app, name:replies[0], key:replies[1]			
-		# 	res.send app
-		# 	next()
-
-		# db.redis.hget 'a:keys', key, (err, idapp) ->
-		# return callback err if err
-		# return callback new check.Error 'Unknown key' unless idapp
-		# db.redis.smembers 'a:' + idapp + ':domains', callback
-
 	callback()
