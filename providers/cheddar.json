@@ -1,0 +1,20 @@
+{
+	"name": "Cheddar",
+	"url": "https://api.cheddarapp.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}
