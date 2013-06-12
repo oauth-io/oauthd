@@ -9,26 +9,73 @@ async = require 'async'
 {config,check,db} = shared = require '../shared'
 
 # register a new user
-exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
+exports.register = check mail:check.format.mail, (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
-	pass = db.generateHash data.pass + dynsalt
+	# pass = db.generateHash data.pass + dynsalt
 	date_inscr = (new Date).getTime()
-
+	key = db.generateHash dynsalt
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
-		return callback new check.Error 'Mail already exists !' if iduser
+		return callback new check.Error 'This email already exists !' if iduser
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
 			db.redis.multi([
 				[ 'mset', prefix+'mail', data.mail,
-					prefix+'pass', pass,
-					prefix+'salt', dynsalt,
+					# prefix+'pass', pass,
+					# prefix+'salt', dynsalt,
+					prefix+'key', key,
+					prefix+'validated', 0,
 					prefix+'date_inscr', date_inscr ],
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
 				return callback null, id:val, mail:data.mail, date_inscr:date_inscr
+
+
+exports.isValidable = check mail:check.format.mail, (data, callback) ->
+	key = data.key
+	mail = data.mail
+	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
+		return callback err if err
+		return callback null, is_validable: false if not iduser
+		prefix = 'u:' + iduser + ':'
+		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
+			return callback err if err
+			return callback null, is_validable: false if replies[2] || replies[1] != key
+			return callback null, is_validable: true
+
+# validate user mail
+exports.userValidate = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
+	dynsalt = Math.floor(Math.random()*9999999)
+	pass = db.generateHash data.pass + dynsalt
+	key = db.generateHash dynsalt
+	@isValidable {
+		mail: data.mail,
+		key: data.key
+	}, (err, data) ->
+		return callback new check.Error "This page does not exists." if data.is_validable || err
+		db.redis.mset [
+			prefix+'validated', 1,
+			prefix+'pass', pass,
+			prefix+'key', key
+		]
+		return callback null, id:iduser
+
+# lost password
+exports.lostPassword = check mail:check.format.mail, (data, callback) ->
+	mail = data.mail
+	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
+		return callback err if err
+		return callback check.Error "This email isn't registered" if not iduser
+		prefix = 'u:' + iduser + ':'
+		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
+			return callback check.Error "This email is not validated yet. Patience... :)" if replies[2] == 0
+			#send mail with key
+
+# change password
+exports.changePassword = check mail:check.format.mail, (data, callback) ->
+
 
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->

@@ -8,6 +8,10 @@ restify = require 'restify'
 
 exports.setup = (callback) ->
 
+	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
+		# send mail with u:{{iduser}}:key
+		# https://oauth.io/#/validate/:iduser/:key
+
 	# get users list
 	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>
@@ -16,12 +20,14 @@ exports.setup = (callback) ->
 			for mail,iduser of users
 				cmds.push ['get', 'u:' + iduser + ':date_inscr']
 				cmds.push ['smembers', 'u:' + iduser + ':apps']
+				cmds.push ['get', 'u:' + iduser + ':key']
+				cmds.push ['get', 'u:' + iduser + ':validated']
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
 				for mail,iduser of users										
-					users[mail] = email:mail, id:iduser, date_inscr:r[i*2], apps:r[i*2+1]
-					i++				
+					users[mail] = email:mail, id:iduser, date_inscr:r[i*4], apps:r[i*4+1], key:r[i*4+2], validated:r[i*4+3]
+					i++
 				res.send users
 				next
 

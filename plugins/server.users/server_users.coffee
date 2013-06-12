@@ -13,6 +13,17 @@ exports.setup = (callback) ->
 	@server.post @config.base + '/api/users', (req, res, next) =>
 		dbusers.register req.body, @server.send(res,next)
 
+	# validate a user
+	@server.post @config.base + '/api/users/:id/validate/:key', (req, res, next) =>
+		dbusers.validate req.body, @server.send(res,next)
+
+	# get true/false if a user is validable
+	@server.get @config.base + '/api/users/:id/validate/:key', (req, res, next) =>
+		db.users.validable {
+			id: req.params.id
+			key: req.params.key
+		}, @server.send(res, next)
+
 	# get my infos
 	@server.get @config.base + '/api/me', @auth.needed, (req, res, next) ->
 		dbusers.get req.user.id, (e, user) ->
