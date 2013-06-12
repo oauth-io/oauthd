@@ -1,0 +1,27 @@
+{
+	"name": "EventBrite",
+	"url": "https://www.eventbrite.com/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}
