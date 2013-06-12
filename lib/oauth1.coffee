@@ -106,8 +106,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 							return callback err
 				if body.error || body.error_description
 					err = new check.Error body.error_description || 'Error while requesting token'
-					err.body.error = body.error if body.error
-					err.body.error_uri = body.error_uri if body.error_uri
+					err.body = body
 					return callback err
 
 			if r.statusCode != 200
@@ -221,8 +220,7 @@ exports.access_token = (state, req, callback) ->
 				if body.error || body.error_description
 					err = new check.Error
 					err.error body.error_description || 'Error while requesting token'
-					err.body.error = body.error if body.error
-					err.body.error_uri = body.error_uri if body.error_uri
+					err.body = body
 					return callback err
 
 			if r.statusCode != 200

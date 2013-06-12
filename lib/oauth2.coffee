@@ -143,8 +143,7 @@ exports.access_token = (state, req, callback) ->
 				if body.error || body.error_description
 					err = new check.Error
 					err.error body.error_description || errors_desc.access_token[body.error] || 'Error while requesting token'
-					err.body.error = body.error if body.error
-					err.body.error_uri = body.error_uri if body.error_uri
+					err.body = body
 					return callback err
 
 			if r.statusCode != 200
