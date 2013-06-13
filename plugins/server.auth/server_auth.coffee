@@ -44,7 +44,7 @@ exports.needed = (req, res, next) ->
 		return next()
 	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
 		return next err if err
-		if not req.user.mail.match /.*-adm@oauth\.io$/
+		if not req.user.mail.match /.*@oauth\.io$/
 			return next new restify.NotAuthorizedError "You have not access to this app" if not res
 		next()
 
