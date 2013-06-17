@@ -1,6 +1,7 @@
 import sys
 import getopt
 import os
+import json
 
 from os.path import basename
 from os.path import expanduser
@@ -23,50 +24,33 @@ def conv(filename):
 	urls=open(text, 'r');
 	Conflines = conf.readlines();
 	URLlines = urls.readlines();
-	del Conflines[len(Conflines) - 1:]
 
 	nb = 0;
 	rmlineFrom = 0;
 	rmlineTo = 0;
-	for c in Conflines:
-		word = c.split();
-		if len(word) != 0:
-			if word[0] == "\"href\":":
-				rmlineFrom = nb;
-			elif rmlineTo == 0 and rmlineFrom != 0 and word[0] == '}':
-				rmlineTo = nb + 1 ;
-				break;
-		nb += 1;
 
-	if rmlineTo != 0:
-		del Conflines[rmlineFrom:rmlineTo]
-	else:
-		Conflines[len(Conflines) - 1] = Conflines[len(Conflines) - 1].rstrip('\n') + ',\n'
-	URLtoWrite = ["\t\"href\": {\n"];
+	allconf = "";	
+	for c in Conflines:
+		allconf += c;
+
+	confdecode = json.loads(allconf)
+	if (confdecode.get("href") != True):
+		confdecode.update({"href":{}})
+
 	for url in URLlines:
 		word = url.split();
 		if len(word) != 0:
 			if word[0] == "provider_url":
-				URLtoWrite.append("\t\t\"provider\": \"" + word[2].replace('\'', '') +"\"\n" );
+				confdecode["href"]["provider"] =  word[2].replace('\'', '');		
 			elif word[0] == "docs_url":
-				URLtoWrite.append("\t\t\"docs\": \"" + word[2].replace('\'', '')  +"\"\n");
+				confdecode["href"]["docs"] =  word[2].replace('\'', '');		
 			elif word[0] == "register_url":
-				URLtoWrite.append("\t\t\"keys\": \"" + word[2].replace('\'', '')  +"\"\n");
+				confdecode["href"]["keys"] =  word[2].replace('\'', '');		
 			elif word[0] == "my_apps":
-				URLtoWrite.append("\t\t\"apps\": \"" + word[2].replace('\'', '')  +"\"\n");
+				confdecode["href"]["apps"] =  word[2].replace('\'', '')		
 
-	nb = 0;
-	for url in URLtoWrite:
-		if nb != len(URLtoWrite) -1 and nb != 0:
-			URLtoWrite[nb] = URLtoWrite[nb].rstrip('\n') + ',\n'
-		nb += 1;
-
-	URLtoWrite.append('\t}\n');
-	URLtoWrite.append('}');
 	conf = open(filename, 'w');
-	conf.writelines(Conflines);
-	conf.writelines(URLtoWrite);
-
+	conf.writelines(json.dumps(confdecode, indent=2));
 
 def main():
 	if (len(sys.argv) != 2):
