@@ -10,5 +10,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.tumblr.com/",
+		"docs": "http://www.tumblr.com/docs/en/api/v2",
+		"keys": "http://www.tumblr.com/oauth/apps"
 	}
 }

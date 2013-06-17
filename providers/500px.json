@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://500px.com/",
+		"docs": "https://github.com/500px/api-documentation",
+		"keys": "http://500px.com/settings/applications"
 	}
 }

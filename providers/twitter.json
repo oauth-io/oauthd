@@ -9,5 +9,11 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://www.twitter.com/",
+		"docs": "https://dev.twitter.com/docs",
+		"keys": "https://dev.twitter.com/apps",
+		"apps": "https://dev.twitter.com/apps"
 	}
 }

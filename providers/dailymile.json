@@ -16,5 +16,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://dailymile.com",
+		"docs": "http://www.dailymile.com/api/documentation",
+		"keys": "http://www.dailymile.com/api/consumers/new"
 	}
 }

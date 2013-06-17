@@ -23,5 +23,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://www.yammer.com/",
+		"docs": "https://developer.yammer.com/api/",
+		"keys": "https://www.yammer.com/client_applications"
 	}
 }

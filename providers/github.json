@@ -30,5 +30,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "https://github.com/",
+		"docs": "http://developer.github.com/v3/",
+		"keys": "https://github.com/settings/applications/new"
 	}
 }

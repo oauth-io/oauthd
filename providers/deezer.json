@@ -43,5 +43,8 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"keys": "http://developers.deezer.com/myapps/"
 	}
 }

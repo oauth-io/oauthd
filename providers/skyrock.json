@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.skyrock.com/",
+		"docs": "http://www.skyrock.com/developer/documentation/",
+		"keys": "http://www.skyrock.com/developer/application/"
 	}
 }

@@ -8,5 +8,11 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.fitbit.com/",
+		"docs": "https://wiki.fitbit.com/display/API/Fitbit+API",
+		"keys": "https://dev.fitbit.com/apps/new",
+		"apps": "https://dev.fitbit.com/apps"
 	}
 }

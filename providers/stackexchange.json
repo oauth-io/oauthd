@@ -32,5 +32,10 @@
 	},
 	"parameters": {
 		"key": "string"
+	},
+	"href": {
+		"provider": "https://stackexchange.com/",
+		"docs": "https://api.stackexchange.com/docs",
+		"keys": "http://stackapps.com/apps/oauth/register"
 	}
 }

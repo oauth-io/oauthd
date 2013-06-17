@@ -26,5 +26,11 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://soundcloud.com",
+		"docs": "http://developers.soundcloud.com/docs/api/reference",
+		"keys": "http://soundcloud.com/you/apps/new",
+		"apps": "http://soundcloud.com/you/apps"
 	}
 }

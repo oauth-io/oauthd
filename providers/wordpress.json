@@ -16,5 +16,11 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://www.wordpress.com/",
+		"docs": "http://developer.wordpress.com/docs/api/",
+		"keys": "https://developer.wordpress.com/apps/new/",
+		"apps": "https://developer.wordpress.com/apps/"
 	}
 }

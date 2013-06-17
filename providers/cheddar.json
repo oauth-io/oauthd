@@ -16,5 +16,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://cheddarapp.com/",
+		"docs": "https://cheddarapp.com/developer/",
+		"keys": "https://cheddarapp.com/developer/apps/new"
 	}
 }

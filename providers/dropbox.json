@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://www.dropbox.com/",
+		"docs": "https://www.dropbox.com/developers/reference/api",
+		"keys": "https://www.dropbox.com/developers/apps"
 	}
 }

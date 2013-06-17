@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://bitbucket.org/",
+		"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs",
+		"keys": "https://bitbucket.org/account/user/nicolasdodemant/api"
 	}
 }

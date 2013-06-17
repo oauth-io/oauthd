@@ -36,5 +36,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "https://23andme.com/",
+		"docs": "https://api.23andme.com/docs/",
+		"keys": "https://api.23andme.com/apply/"
 	}
 }

@@ -30,5 +30,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "http://instagram.com",
+		"docs": "http://instagram.com/developer/",
+		"keys": "http://instagram.com/developer/clients/manage/"
 	}
 }

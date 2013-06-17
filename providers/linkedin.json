@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.linkedin.com/",
+		"docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+		"keys": "https://www.linkedin.com/secure/developer"
 	}
 }

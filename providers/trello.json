@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://trello.com/",
+		"docs": "https://trello.com/docs/api/",
+		"keys": "https://trello.com/1/appKey/generate"
 	}
 }

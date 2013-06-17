@@ -23,5 +23,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://www.eventbrite.com/",
+		"docs": "http://developer.eventbrite.com/doc/",
+		"keys": "http://www.eventbrite.com/api/key/"
 	}
 }

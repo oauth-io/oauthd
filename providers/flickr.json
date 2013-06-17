@@ -39,5 +39,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "http://www.flickr.com/",
+		"docs": "http://www.flickr.com/services/api/",
+		"keys": "http://www.flickr.com/services/apps/create/"
 	}
 }

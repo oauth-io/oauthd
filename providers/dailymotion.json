@@ -23,5 +23,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.dailymotion.com/",
+		"docs": "http://www.dailymotion.com/doc/api/graph-api.html",
+		"keys": "http://www.dailymotion.com/profile/developer/new"
 	}
 }

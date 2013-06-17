@@ -26,5 +26,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "http://www.meetup.com/",
+		"docs": "http://www.meetup.com/meetup_api/",
+		"keys": "http://www.meetup.com/meetup_api/oauth_consumers/create/"
 	}
 }

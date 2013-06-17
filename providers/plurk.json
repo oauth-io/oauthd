@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.plurk.com/",
+		"docs": "http://www.plurk.com/API#toc",
+		"keys": "http://www.plurk.com/PlurkApp/"
 	}
 }

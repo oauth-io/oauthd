@@ -29,5 +29,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "http://www.youtube.com/",
+		"docs": "",
+		"keys": ""
 	}
 }

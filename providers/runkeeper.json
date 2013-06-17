@@ -16,5 +16,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://runkeeper.com/",
+		"docs": "http://developer.runkeeper.com/healthgraph/overview",
+		"keys": "http://runkeeper.com/partner/applications"
 	}
 }

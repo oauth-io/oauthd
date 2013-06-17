@@ -22,5 +22,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "https://bitly.com/",
+		"docs": "https://dev.bitly.com/",
+		"keys": "http://bitly.com/a/oauth_apps"
 	}
 }

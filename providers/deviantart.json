@@ -23,5 +23,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://deviantart.com/",
+		"docs": "http://www.deviantart.com/developers/",
+		"keys": "http://www.deviantart.com/submit/app/"
 	}
 }

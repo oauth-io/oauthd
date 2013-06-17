@@ -97,5 +97,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "https://facebook.com/",
+		"docs": "https://developers.facebook.com/docs/",
+		"keys": "https://developers.facebook.com/apps"
 	}
 }

@@ -9,5 +9,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://gomiso.com/",
+		"docs": "http://gomiso.com/developers/endpoints",
+		"keys": "http://gomiso.com/oauth_clients/new"
 	}
 }

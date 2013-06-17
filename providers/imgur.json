@@ -25,5 +25,11 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://imgur.com/",
+		"docs": "http://api.imgur.com/",
+		"apps": "http://imgur.com/account/settings/apps",
+		"keys": "https://api.imgur.com/oauth2/addclient"
 	}
 }

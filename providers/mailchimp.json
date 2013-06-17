@@ -26,5 +26,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://mailchimp.com/",
+		"docs": "http://apidocs.mailchimp.com/",
+		"keys": "https://us6.admin.mailchimp.com/account/api/"
 	}
 }

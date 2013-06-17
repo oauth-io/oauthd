@@ -26,5 +26,10 @@
 				}
 			}
 		}
+	},
+	"href": {
+		"provider": "http://disqus.com/",
+		"docs": "http://disqus.com/api/docs/",
+		"keys": "http://disqus.com/api/applications/"
 	}
 }

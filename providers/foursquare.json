@@ -22,5 +22,10 @@
 			"client_id": "string",
 			"client_secret": "string"
 		}
+	},
+	"href": {
+		"provider": "http://www.foursquare.com/",
+		"docs": "https://developer.foursquare.com/overview/",
+		"keys": "https://foursquare.com/developers/apps"
 	}
 }
