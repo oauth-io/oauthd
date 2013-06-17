@@ -1,18 +1,19 @@
 {
-	"name": "Trello",
-	"url": "https://trello.com/1",
-	"oauth1": {
-		"request_token": "/OAuthGetRequestToken",
-		"authorize": "/OAuthAuthorizeToken",
-		"access_token": "/OAuthGetAccessToken",
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
-		}
-	},
-	"href": {
-		"provider": "https://trello.com/",
-		"docs": "https://trello.com/docs/api/",
-		"keys": "https://trello.com/1/appKey/generate"
-	}
+  "url": "https://trello.com/1", 
+  "oauth1": {
+    "request_token": "/OAuthGetRequestToken", 
+    "authorize": "/OAuthAuthorizeToken", 
+    "access_token": "/OAuthGetAccessToken", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://trello.com/1/appKey/generate", 
+    "docs": "https://trello.com/docs/api/", 
+    "apps": "https://trello.com/1/appKey/generate", 
+    "provider": "https://trello.com/"
+  }, 
+  "name": "Trello"
 }

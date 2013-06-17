@@ -1,26 +1,26 @@
 {
-	"name": "Wordpress",
-	"url": "https://public-api.wordpress.com/oauth2",
-	"oauth2": {
-		"authorize": "/authorize",
-		"access_token": {
-			"url": "/token",
-			"method": "post"
-		},
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
-		}
-	},
-	"href": {
-		"provider": "https://www.wordpress.com/",
-		"docs": "http://developer.wordpress.com/docs/api/",
-		"keys": "https://developer.wordpress.com/apps/new/",
-		"apps": "https://developer.wordpress.com/apps/"
-	}
+  "url": "https://public-api.wordpress.com/oauth2", 
+  "oauth2": {
+    "authorize": "/authorize", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Wordpress", 
+  "href": {
+    "keys": "https://developer.wordpress.com/apps/new/", 
+    "docs": "http://developer.wordpress.com/docs/api/", 
+    "apps": "https://developer.wordpress.com/apps/", 
+    "provider": "https://www.wordpress.com/"
+  }
 }

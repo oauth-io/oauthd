@@ -60,10 +60,10 @@ def main():
 		if (os.path.isdir(filename)):
 			dirList = os.listdir(filename);
 			for d in dirList:
-				print d;
 				if os.path.isdir(d) != True:
 					provider, fileExtension = os.path.splitext(d)
 					if fileExtension == ".json":
+						print d;
 						conv(filename + d);
 		else:
 			conv(filename);

@@ -1,36 +1,35 @@
 {
-	"name": "Soundcloud",
-	"api_url": "https://api.soundcloud.com/",
-	"oauth2": {
-		"authorize": {
-		"url":"https://soundcloud.com/connect",
-			"query": {
-				"client_id": "{client_id}",
-				"response_type": "code",
-				"redirect_uri": "{{callback}}",
-				"state": "{{state}}",
-				"scope": ""
-			}
-
-		},
-		"access_token": {
-			"url": "https://api.soundcloud.com/oauth2/token",
-			"method": "post"
-		},
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
-		}
-	},
-	"href": {
-		"provider": "http://soundcloud.com",
-		"docs": "http://developers.soundcloud.com/docs/api/reference",
-		"keys": "http://soundcloud.com/you/apps/new",
-		"apps": "http://soundcloud.com/you/apps"
-	}
+  "href": {
+    "keys": "http://soundcloud.com/you/apps/new", 
+    "docs": "http://developers.soundcloud.com/docs/api/reference", 
+    "apps": "http://soundcloud.com/you/apps", 
+    "provider": "http://soundcloud.com"
+  }, 
+  "oauth2": {
+    "authorize": {
+      "url": "https://soundcloud.com/connect", 
+      "query": {
+        "scope": "", 
+        "state": "{{state}}", 
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": {
+      "url": "https://api.soundcloud.com/oauth2/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "api_url": "https://api.soundcloud.com/", 
+  "name": "Soundcloud"
 }

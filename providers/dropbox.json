@@ -1,18 +1,19 @@
 {
-	"name": "Dropbox",
-	"api_url": "https://api.dropbox.com/1/oauth/",
-	"oauth1": {
-		"request_token": "https://api.dropbox.com/1/oauth/request_token",
-		"authorize": "https://www.dropbox.com/1/oauth/authorize",
-		"access_token": "https://api.dropbox.com/1/oauth/access_token",
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
-		}
-	},
-	"href": {
-		"provider": "https://www.dropbox.com/",
-		"docs": "https://www.dropbox.com/developers/reference/api",
-		"keys": "https://www.dropbox.com/developers/apps"
-	}
+  "oauth1": {
+    "request_token": "https://api.dropbox.com/1/oauth/request_token", 
+    "authorize": "https://www.dropbox.com/1/oauth/authorize", 
+    "access_token": "https://api.dropbox.com/1/oauth/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://www.dropbox.com/developers/apps/create", 
+    "docs": "https://www.dropbox.com/developers/reference/api", 
+    "apps": "https://www.dropbox.com/developers/apps", 
+    "provider": "https://www.dropbox.com/"
+  }, 
+  "name": "Dropbox", 
+  "api_url": "https://api.dropbox.com/1/oauth/"
 }
