@@ -1,0 +1,35 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/devstorage.read_only": "To download reports through the API a client must request both this and the above auth scope. This is because the finished report data is provided by Google Cloud Storage.", 
+          "https://www.googleapis.com/auth/dfareporting": "View and manage DoubleClick for Advertisers reports"
+      }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google DFA Reporting", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/androidpublisher": "Access to the Google Play Android Developer", 
+          "https://www.googleapis.com/auth/games": "Scope for accessing data from Google Play Games.", 
+          "https://www.googleapis.com/auth/appstate": "Scope for using the App State service.", 
+          "https://www.googleapis.com/auth/plus.login": "scope for accessing the user's name, basic profile info, list of people in the user's circles, and writing app activities to Google.", 
+          "https://www.googleapis.com/auth/plus.me": "scope for accessing the user's Google+ profile data."
+       }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Play", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

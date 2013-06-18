@@ -1,0 +1,36 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+ 	  "https://docs.google.com/feeds/":"Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+ 	  "https://docs.googleusercontent.com/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+ 	  "https://spreadsheets.google.com/feeds/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API."
+          }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Contact", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

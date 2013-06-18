@@ -1,0 +1,37 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/devstorage.full_control": "Manage your data and permissions in Google Cloud Storage", 
+   	  "https://www.googleapis.com/auth/devstorage.read_only": "View your data in Google Cloud Storage", 
+ 	  "https://www.googleapis.com/auth/devstorage.read_write": "Manage your data in Google Cloud Storage",
+	  "https://www.googleapis.com/auth/gcm_for_chrome":"CloudMessaging for chrome"
+          }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Cloud", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}
