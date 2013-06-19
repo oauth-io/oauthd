@@ -57,7 +57,11 @@ formatters =
 		return body
 
 	'text/html': (req, res, body) ->
-		return "" if body instanceof Error && not config.debug
+		if body instanceof Error
+			if body instanceof check.Error || body instanceof restify.RestError
+				body = body.message
+			else
+				body = "Internal error"
 		body = body.toString()
 		res.setHeader 'Content-Type', "text/html; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(body)

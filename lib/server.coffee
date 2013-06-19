@@ -82,6 +82,7 @@ server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
 
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
+	res.setHeader 'Content-Type', 'text/html'
 	if not req.params.state
 		# dev test /!\
 		view = '<html><head>\n'
@@ -99,7 +100,6 @@ server.get config.base + '/', (req, res, next) ->
 		view += '</head><body>\n'
 		view += '<a href="#" onclick="connect()">connect</a>\n'
 		view += '</body></html>'
-		res.setHeader 'Content-Type', 'text/html'
 		res.send view
 		next()
 	dbstates.get req.params.state, (err, state) ->
@@ -119,43 +119,48 @@ server.get config.base + '/', (req, res, next) ->
 				view += '\t\topener.postMessage(msg, "' + state.origin + '");\n'
 				view += '\twindow.close();\n'
 			view += '})();</script>'
-			res.setHeader 'Content-Type', 'text/html'
 			res.send view
 			next()
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
+	res.setHeader 'Content-Type', 'text/html'
 	if not req.params.k
 		return next new restify.MissingParameterError 'Missing OAuth.io public key.'
 
 	domain = null
 	origin = null
-	if req.headers['referer'] || req.headers['origin']
-		urlinfos = Url.parse(req.headers['referer'] || req.headers['origin'])
+	ref = req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri
+	if ref
+		urlinfos = Url.parse(ref)
 		domain = urlinfos.host
 		origin = urlinfos.protocol + '//' + domain
 	if not domain
-		return next(new restify.InvalidHeaderError('Missing origin or referer.'))
+		return next new restify.InvalidHeaderError 'Missing origin or referer.'
 
-	oauthv = req.params.oauthv && {
-		"2":"oauth2"
-		"1":"oauth1"
-	}[req.params.oauthv]
-
-	dbproviders.getExtended req.params.provider, (err, provider) ->
+	dbapps.checkDomain req.params.k, domain, (err, valid) ->
 		return next err if err
-		if oauthv and not provider[oauthv]
-			return next new check.Error "oauthv", "Unsupported oauth version: " + oauthv
-		oauthv ?= 'oauth2' if provider.oauth2
-		oauthv ?= 'oauth1' if provider.oauth1
-		dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
+		return next new check.Error 'Domain name does not match any registered domain' if not valid
+
+		oauthv = req.params.oauthv && {
+			"2":"oauth2"
+			"1":"oauth1"
+		}[req.params.oauthv]
+
+		dbproviders.getExtended req.params.provider, (err, provider) ->
 			return next err if err
-			opts = oauthv:oauthv, key:req.params.k, origin:origin, redirect_uri:req.params.redirect_uri
-			oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
+			if oauthv and not provider[oauthv]
+				return next new check.Error "oauthv", "Unsupported oauth version: " + oauthv
+			oauthv ?= 'oauth2' if provider.oauth2
+			oauthv ?= 'oauth1' if provider.oauth1
+			dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
 				return next err if err
-				res.setHeader 'Location', url
-				res.send 302
-				next()
+				opts = oauthv:oauthv, key:req.params.k, origin:origin, redirect_uri:req.params.redirect_uri
+				oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
+					return next err if err
+					res.setHeader 'Location', url
+					res.send 302
+					next()
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->

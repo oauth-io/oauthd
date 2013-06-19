@@ -60,7 +60,7 @@
 		},
 		popup: function(provider, callback) {
 			var wnd;
-			var url = config.oauthd_url + '/' + provider + "?k=" + config.key;
+			var url = config.oauthd_url + '/' + provider + "?k=" + config.key + '&d=' + encodeURIComponent(getAbsUrl('/'));
 
 			// create popup
 			var wnd_settings = {
@@ -80,7 +80,7 @@
 			var opts = {provider:provider};
 			function getMessage(e) {
 				if (e.source !== wnd || e.origin !== config.oauthd_base)
-					return opts.callback(new Error('Message origin failed'));
+					return;
 				opts.data = e.data;
 				return sendCallback(opts);
 			}
@@ -111,7 +111,7 @@
 				wnd.focus();
 		},
 		redirect: function(provider, url) {
-			url = getAbsUrl(url);
+			url = encodeURIComponent(getAbsUrl(url));
 			url = config.oauthd_url + '/' + provider + "?k=" + config.key + "&redirect_uri=" + url;
 			document.location.href = url;
 		},

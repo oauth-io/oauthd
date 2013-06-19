@@ -188,3 +188,16 @@ exports.getKeysets = check check.format.key, (key, callback) ->
 		db.redis.keys prefix + '*', (err, replies) ->
 			return callback err if err
 			callback null, (reply.substr(prefix.length) for reply in replies)
+
+# check a domain
+exports.checkDomain = check check.format.key, 'string', (key, domain, callback) ->
+	exports.getDomains key, (err, domains) ->
+		return callback err if err
+		console.log domain, config.url
+		return callback null, true if domain == config.url.host
+		for vdomain in domains
+			if domain == vdomain ||
+				vdomain[0] == '*' && vdomain[1] == '.' &&
+				domain.substr(domain.length-vdomain.length+2) == vdomain.substr(2)
+					return callback null, true
+		return callback null, false
