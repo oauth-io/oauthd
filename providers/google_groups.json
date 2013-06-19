@@ -1,0 +1,35 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {	
+	  "https://www.googleapis.com/auth/apps.groups.settings": "View and manage the settings of a Google Apps Group",
+	  "https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API."
+      }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Groups", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

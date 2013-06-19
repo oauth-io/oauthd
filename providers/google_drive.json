@@ -1,0 +1,41 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/drive.metadata.readonly": "View metadata for files and documents in your Google Drive", 
+          "https://www.googleapis.com/auth/drive.file": "View and manage Google Drive files that you have opened or created with this app", 
+          "https://www.googleapis.com/auth/drive": "View and manage the files and documents in your Google Drive", 
+          "https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive", 
+	  "https://www.googleapis.com/auth/drive.apps.readonly": "View your Google Drive apps", 
+          "https://www.googleapis.com/auth/drive.scripts": "Modify your Google Apps Script scripts' behavior", 
+	  "https://www.googleapis.com/auth/drive.install": "Special scope used to let users approve installation of an app", 
+	  "https://www.googleapis.com/auth/drive.appdata": "Allows access to the Application Data folder"
+        }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Drive", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

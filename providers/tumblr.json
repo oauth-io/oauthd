@@ -1,14 +1,20 @@
 {
-	"name": "Tumblr",
-	"api_url": "http://api.tumblr.com/v2/",
-	"url": "http://www.tumblr.com/oauth",
-	"oauth1": {
-		"request_token": "/request_token",
-		"authorize": "/authorize",
-		"access_token": "/access_token",
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
-		}
-	}
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authorize", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "http://www.tumblr.com/oauth/register", 
+    "docs": "http://www.tumblr.com/docs/en/api/v2", 
+    "apps": "http://www.tumblr.com/oauth/apps", 
+    "provider": "http://www.tumblr.com/"
+  }, 
+  "name": "Tumblr", 
+  "url": "http://www.tumblr.com/oauth", 
+  "api_url": "http://api.tumblr.com/v2/"
 }
