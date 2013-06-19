@@ -4,6 +4,8 @@
 		oauthd_url: '{{auth_url}}'
 	};
 
+	config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+
 	var oauth_result;
 	(function parse_urlfragment() {
 		var results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
@@ -12,6 +14,14 @@
 			oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
 		}
 	})();
+
+	function getAbsUrl(url) {
+		if (url[0] === '/')
+			url = document.location.protocol + '//' + document.location.host + url;
+		else if ( ! url.match(/^.{2,5}:\/\//))
+			url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url;
+		return url;
+	}
 
 	function sendCallback(opts) {
 		var data;
@@ -49,6 +59,7 @@
 			config.key = public_key;
 		},
 		popup: function(provider, callback) {
+			var wnd;
 			var url = config.oauthd_url + '/' + provider + "?k=" + config.key;
 
 			// create popup
@@ -68,7 +79,7 @@
 
 			var opts = {provider:provider};
 			function getMessage(e) {
-				if (e.origin !== config.oauthd_url)
+				if (e.source !== wnd || e.origin !== config.oauthd_base)
 					return opts.callback(new Error('Message origin failed'));
 				opts.data = e.data;
 				return sendCallback(opts);
@@ -95,16 +106,12 @@
 				opts.callback(new Error('Authorization timed out'));
 			}, 600 * 1000);
 
-			var wnd = window.open(url, "Authorization", wnd_options);
+			wnd = window.open(url, "Authorization", wnd_options);
 			if (wnd)
 				wnd.focus();
 		},
 		redirect: function(provider, url) {
-			if (url[0] === '/')
-				url = document.location.protocol + '//' + document.location.host + url;
-			else if ( ! url.match(/^.{2,5}:\/\//))
-				url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url;
-
+			url = getAbsUrl(url);
 			url = config.oauthd_url + '/' + provider + "?k=" + config.key + "&redirect_uri=" + url;
 			document.location.href = url;
 		},
