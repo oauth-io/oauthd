@@ -98,15 +98,17 @@ server.get config.base + '/', (req, res, next) ->
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			body = formatters.build e || r
 			body.provider = state.provider.toLowerCase()
-			view = '<script>var msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
+			view = '<script>(function() {\n'
+			view += '\t"use strict";\n'
+			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
-				view += 'document.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
+				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 			else
-				view += 'var opener = window.opener || window.parent\n'
-				view += 'if (opener)'
-				view += '\topener.postMessage(msg, "' + state.origin + '");\n'
-				view += 'window.close();\n'
-			view += '</script>'
+				view += '\tvar opener = window.opener || window.parent.window.opener;\n'
+				view += '\tif (opener)\n'
+				view += '\t\topener.postMessage(msg, "' + state.origin + '");\n'
+				view += '\twindow.close();\n'
+			view += '})();</script>'
 			res.setHeader 'Content-Type', 'text/html'
 			res.send view
 			next()

@@ -15,9 +15,10 @@
 
 	function sendCallback(opts) {
 		var data;
+		var err;
 		try {
 			data = JSON.parse(opts.data);
-		} catch (err) {}
+		} catch (e) {}
 
 		if ( ! data || ! data.provider)
 			return;
@@ -26,13 +27,13 @@
 			return;
 
 		if (data.status === 'error' || data.status === 'fail') {
-			var err = new Error(data.message);
+			err = new Error(data.message);
 			err.body = data.data;
 			return opts.callback(err);
 		}
 
 		if (data.status !== 'success' || ! data.data) {
-			var err = new Error();
+			err = new Error();
 			err.body = data.data;
 			return opts.callback(err);
 		}
@@ -67,6 +68,8 @@
 
 			var opts = {provider:provider};
 			function getMessage(e) {
+				if (e.origin !== config.oauthd_url)
+					return opts.callback(new Error('Message origin failed'));
 				opts.data = e.data;
 				return sendCallback(opts);
 			}
@@ -77,8 +80,9 @@
 					window.detachEvent("onmessage", getMessage);
 				else if (document.detachEvent)
 					document.detachEvent("onmessage", getMessage);
+				opts.callback = function() {};
 				return callback(e,r);
-			}
+			};
 
 			if (window.attachEvent)
 				window.attachEvent("onmessage", getMessage);
@@ -96,10 +100,10 @@
 				wnd.focus();
 		},
 		redirect: function(provider, url) {
-			if (url[0] == '/')
-				url = document.location.protocol + '//' + document.location.host + url
+			if (url[0] === '/')
+				url = document.location.protocol + '//' + document.location.host + url;
 			else if ( ! url.match(/^.{2,5}:\/\//))
-				url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url
+				url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url;
 
 			url = config.oauthd_url + '/' + provider + "?k=" + config.key + "&redirect_uri=" + url;
 			document.location.href = url;
@@ -108,7 +112,7 @@
 			if ( ! oauth_result)
 				return;
 
-			if (arguments.length == 1)
+			if (arguments.length === 1)
 				return sendCallback({data:oauth_result, callback:provider});
 
 			return sendCallback({data:oauth_result, provider:provider, callback:callback});

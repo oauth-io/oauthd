@@ -62,6 +62,8 @@ exports.get = (provider, callback) ->
 		return callback new check.Error 'Not authorized'
 
 	fs.readFile provider, (err, data) ->
+		if err?.code == 'ENOENT'
+			return callback new check.Error 'No such provider: ' + provider_name
 		return callback err if err
 		content = null
 		try

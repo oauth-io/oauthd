@@ -45,18 +45,21 @@ buildReply = (body, res) ->
 formatters =
 	'application/json': (req, res, body) ->
 		data = JSON.stringify buildReply(body, res)
+		res.setHeader 'Content-Type', "application/json; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(data)
 		return data
 
 	'application/javascript': (req, res, body) ->
 		return "" if body instanceof Error && not config.debug
 		body = body.toString()
+		res.setHeader 'Content-Type', "application/javascript; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(body)
 		return body
 
 	'text/html': (req, res, body) ->
 		return "" if body instanceof Error && not config.debug
 		body = body.toString()
+		res.setHeader 'Content-Type', "text/html; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(body)
 		return body
 
