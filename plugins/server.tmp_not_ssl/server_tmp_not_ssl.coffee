@@ -40,3 +40,5 @@ exports.setup = (callback) ->
 			console.error err
 			return
 		console.log "Http server listening on port " + (@config.port + 1)
+
+	callback()

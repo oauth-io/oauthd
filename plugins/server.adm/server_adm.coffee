@@ -73,7 +73,7 @@ OAuth.io Team'
 				next()
 
 	# get app info with ID
-	@server.get @config.base + 'api/adm/app/:id', @auth.adm, (req, res, next) =>
+	@server.get @config.base + '/api/adm/app/:id', @auth.adm, (req, res, next) =>
 		id_app = req.params.id
 		prefix = 'a:' + id_app + ':'
 		cmds = []
@@ -88,7 +88,7 @@ OAuth.io Team'
 			next()
 
 	# delete a user
-	@server.del @config.base + 'api/adm/users/:id', @auth.adm, (req, res, next) =>
+	@server.del @config.base + '/api/adm/users/:id', @auth.adm, (req, res, next) =>
 		@db.users.remove req.params.id, @server.send(res, next)
 
 	# get any statistics
