@@ -25,7 +25,8 @@ module.exports = {
 		'server.auth',
 		'server.users',
 		'server.adm',
-		'server.oauth_io'
+		'server.oauth_io',
+		'server.tmp_not_ssl'
 		/* ------------------------- */
 	]
 }
