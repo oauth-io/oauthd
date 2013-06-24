@@ -37,7 +37,7 @@ exports.setup = (callback) ->
 				subject: ''
 				body: 'Hello,\n\n
 You are in the first wave of invitation and you can now connect you on OAuth.io!\n
-You just have to click on this link https://oauth.io/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
+You just have to click on this link http://oauth.io/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
 As we are in beta, your feedbacks are the most important thing we need to keep moving!\n\n
 Thanks a lot for signed up to OAuth.io!\n\n
 --\n
