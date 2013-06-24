@@ -26,6 +26,25 @@ exports.setup = (callback) ->
 		@db.timelines.addUse target:'a:' + data.app + ':keysets', uses:-1, (->)
 		@db.timelines.addUse target:'p:' + data.provider + ':keysets', uses:-1, (->)
 
+	# reset password
+	@server.post @config.base + '/api/users/resetPassword', (req, res, next) =>			
+		@db.users.resetPassword req.body, (callback) =>			
+			res.send(callback, next)
+
+	# lost password
+	@server.post @config.base + '/api/users/lostpassword', (req, res, next) =>
+		console.log 'lost pswd'
+		@db.users.lostPassword req.body, (callback) =>			
+			res.send(callback, next)
+	
+	# key validity
+	@server.get @config.base + "/api/users/:id/keyValidity/:key", (req, res, next) =>		
+		@db.users.isValidKey {
+			key: req.params.key
+			id: req.params.id
+		}, (json) ->
+			res.send(json)
+
 	# register an account
 	@server.post @config.base + '/api/users', (req, res, next) =>
 		@db.users.register req.body, @server.send(res,next)

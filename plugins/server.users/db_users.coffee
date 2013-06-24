@@ -5,6 +5,7 @@
 # For private use only.
 
 async = require 'async'
+Mailer = require '../../lib/mailer'
 
 {config,check,db} = shared = require '../shared'
 
@@ -72,14 +73,84 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 
 # lost password
 exports.lostPassword = check mail:check.format.mail, (data, callback) ->
+
 	mail = data.mail
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
-		return callback err if err
-		return callback check.Error "This email isn't registered" if not iduser
+		return callback err if err		
+		return callback error:"This email isn't registered" if not iduser
 		prefix = 'u:' + iduser + ':'
-		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
-			return callback check.Error "This email is not validated yet. Patience... :)" if replies[2] == 0
+		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->						
+			return callback error:"This email is not validated yet. Patience... :)" if replies[2] == '0'			
+			# ok email validated  (contain password)
+			key = replies[1]
+			if key.length == 0
+				dynsalt = Math.floor(Math.random() * 9999999)
+				key = db.generateHash(dynsalt).replace(/\=/g, '').replace(/\+/g, '').replace(/\//g, '')
+
+				# set new key
+				db.redis.mset [						
+					prefix + 'key', key
+				], (err, res) ->				
+					return err if err					
+		
 			#send mail with key
+			options = 
+					to: 				
+						email: replies[0]
+					from:
+						name: 'OAuth.io'
+						email: 'team@oauth.io'
+					subject: 'OAuth.io - Lost Password'
+					body: "Hello,\n\n
+Did you forget your password ?\n
+To change it, please use the follow link to reset your password.\n\n
+
+https://oauth.io/resetpassword/#{iduser}/#{key}\n\n
+
+--\n
+OAuth.io Team"
+				mailer = new Mailer options				
+				mailer.send (error, result) ->
+					console.log error
+					console.log result
+					return callback error:error, result:result					
+
+exports.isValidKey = (data, callback) ->
+	key = data.key
+	iduser = data.id
+	prefix = 'u:' + iduser + ':'
+	db.redis.mget [prefix + 'mail', prefix + 'key'], (err, replies) ->
+
+		return callback err if err
+
+		if replies[1].replace(/\=/g, '').replace(/\+/g, '') != key			
+			return callback isValidKey: false
+		
+		return callback isValidKey: true, email: replies[0], id: iduser
+
+
+
+exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->	
+
+	exports.isValidKey {
+		id: data.id,
+		key: data.key
+	}, (json) ->
+				
+		return callback new check.Error "This page does not exists." if not json.isValidKey
+		
+		prefix = 'u:' + json.id + ':'
+		dynsalt = Math.floor(Math.random() * 9999999)	
+		pass = db.generateHash data.pass + dynsalt
+
+		db.redis.mset [
+			prefix + 'pass', pass,
+			prefix + 'salt', dynsalt,
+			prefix + 'key', '' # clear
+		], (err, res) ->
+			return err if err
+
+		return callback email:json.email, id:json.id
 
 # change password
 exports.changePassword = check mail:check.format.mail, (data, callback) ->
