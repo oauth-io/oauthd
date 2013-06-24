@@ -19,9 +19,13 @@ module.exports = {
 	},
 
 	plugins: [
+		'server.statistics',
+
+		/* --- only for oauth.io --- */
 		'server.auth',
 		'server.users',
 		'server.adm',
 		'server.oauth_io'
+		/* ------------------------- */
 	]
 }

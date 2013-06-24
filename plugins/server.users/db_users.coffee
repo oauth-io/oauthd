@@ -30,7 +30,9 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				return callback null, id:val, mail:data.mail, date_inscr:date_inscr
+				user = id:val, mail:data.mail, date_inscr:date_inscr
+				shared.emit 'user.register', user
+				return callback null, user
 
 
 exports.isValidable = (data, callback) ->
@@ -93,13 +95,16 @@ exports.get = check 'int', (iduser, callback) ->
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
+	return callback new check.Error 'Not implemented yet'
 	prefix = 'u:' + iduser + ':'
+	# TODO: remove apps and then remove user
+	# exports.getApps iduser, (err, appkeys) -> ....
 	db.redis.get prefix+'mail', (err, mail) ->
 		return callback err if err
 		return callback new check.Error 'Unknown mail' unless mail
 		db.redis.multi([
 			[ 'hdel', 'u:mails', mail ]
-			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt'
+			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
 					, prefix+'apps', prefix+'date_inscr' ]
 		]).exec (err, replies) ->
 			return callback err if err
@@ -157,5 +162,3 @@ shared.on 'app.create', (req, app) ->
 shared.on 'app.remove', (req, app) ->
 	if req.user?.id
 		db.redis.srem 'u:' + req.user.id + ':apps', app.id
-
-db.users = exports

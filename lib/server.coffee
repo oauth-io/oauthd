@@ -14,9 +14,7 @@ async = require 'async'
 restify = require 'restify'
 
 config = require './config'
-dbapps = require './db_apps'
-dbstates = require './db_states'
-dbproviders = require './db_providers'
+db = require './db'
 plugins = require './plugins'
 exit = require './exit'
 check = require './check'
@@ -84,28 +82,14 @@ server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
 server.get config.base + '/', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
 	if not req.params.state
-		# dev test /!\
-		view = '<html><head>\n'
-		view += '<script src="https://oauth.local/auth/sdk/oauth.js"></script>\n'
-		view += '<script>\n'
-		view += 'OAuth.initialize("06WLN7IVf_SCw7km0O4ggqrV1Lc");\n'# "e-X-fosYgGA7P9j6lGBGUTSwu6A");\n'
-		view += 'OAuth.callback("facebook", function(e,r) { console.log("binded cb", e, r); });\n'
-		view += 'OAuth.callback(function(e,r) { console.log("unbinded cb", e, r); });\n'
-		view += 'OAuth.callback("lol", function(e,r) { console.log("binded cb (other)", e, r); });\n'
-		view += 'function connect() {\n'
-		#view += '\tOAuth.popup("facebook", function() {console.log(arguments);});\n'
-		view += '\tOAuth.redirect("facebook", "/auth");\n'
-		view += '}\n'
-		view += '</script>\n'
-		view += '</head><body>\n'
-		view += '<a href="#" onclick="connect()">connect</a>\n'
-		view += '</body></html>'
-		res.send view
-		next()
-	dbstates.get req.params.state, (err, state) ->
+		return next new check.Error 'state', 'must be present'
+	db.states.get req.params.state, (err, state) ->
 		return next err if err
 		return next new check.Error 'state', 'invalid or expired' if not state
 		oauth[state.oauthv].access_token state, req, (e, r) ->
+			status = if e then 'error' else 'success'
+
+			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
 			body = formatters.build e || r
 			body.provider = state.provider.toLowerCase()
 			view = '<script>(function() {\n'
@@ -125,7 +109,8 @@ server.get config.base + '/', (req, res, next) ->
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
-	if not req.params.k
+	key = req.params.k
+	if not key
 		return next new restify.MissingParameterError 'Missing OAuth.io public key.'
 
 	domain = null
@@ -138,7 +123,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if not domain
 		return next new restify.InvalidHeaderError 'Missing origin or referer.'
 
-	dbapps.checkDomain req.params.k, domain, (err, valid) ->
+	db.apps.checkDomain key, domain, (err, valid) ->
 		return next err if err
 		return next new check.Error 'Domain name does not match any registered domain' if not valid
 
@@ -147,15 +132,17 @@ server.get config.base + '/:provider', (req, res, next) ->
 			"1":"oauth1"
 		}[req.params.oauthv]
 
-		dbproviders.getExtended req.params.provider, (err, provider) ->
+		db.providers.getExtended req.params.provider, (err, provider) ->
 			return next err if err
+
+			plugins.data.emit 'connect.auth', key:key, provider:provider.provider
 			if oauthv and not provider[oauthv]
 				return next new check.Error "oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
-			dbapps.getKeyset req.params.k, req.params.provider, (err, keyset) ->
+			db.apps.getKeyset key, req.params.provider, (err, keyset) ->
 				return next err if err
-				opts = oauthv:oauthv, key:req.params.k, origin:origin, redirect_uri:req.params.redirect_uri
+				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
 				oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
 					return next err if err
 					res.setHeader 'Location', url
@@ -164,7 +151,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
-	dbapps.create req.body, (e, r) ->
+	db.apps.create req.body, (e, r) ->
 		return next(e) if e
 		plugins.data.emit 'app.create', req, r
 		res.send name:r.name, key:r.key, domains:r.domains
@@ -173,9 +160,9 @@ server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
 # get infos of an app
 server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 	async.parallel [
-		(cb) -> dbapps.get req.params.key, cb
-		(cb) -> dbapps.getDomains req.params.key, cb
-		(cb) -> dbapps.getKeysets req.params.key, cb
+		(cb) -> db.apps.get req.params.key, cb
+		(cb) -> db.apps.getDomains req.params.key, cb
+		(cb) -> db.apps.getKeysets req.params.key, cb
 	], (e, r) ->
 		return next(e) if e
 		res.send name:r[0].name, key:r[0].key, domains:r[1], keysets:r[2]
@@ -183,61 +170,64 @@ server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 
 # update infos of an app
 server.post config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
-	dbapps.update req.params.key, req.body, send(res,next)
+	db.apps.update req.params.key, req.body, send(res,next)
 
 # remove an app
 server.del config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
-	dbapps.get req.params.key, (e, r) ->
+	db.apps.get req.params.key, (e, app) ->
 		return next(e) if e
-		plugins.data.emit 'app.remove', req, r
-		dbapps.remove req.params.key, send(res,next)
+		db.apps.remove req.params.key, (e, r) ->
+			return next(e) if e
+			plugins.data.emit 'app.remove', req, app
+			res.send check.nullv
+			next()
 
 # reset the public key of an app
 server.post config.base + '/api/apps/:key/reset', auth.needed, (req, res, next) ->
-	dbapps.resetKey req.params.key, send(res,next)
+	db.apps.resetKey req.params.key, send(res,next)
 
 # list valid domains for an app
 server.get config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
-	dbapps.getDomains req.params.key, send(res,next)
+	db.apps.getDomains req.params.key, send(res,next)
 
 # update valid domains list for an app
 server.post config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
-	dbapps.updateDomains req.params.key, req.body.domains, send(res,next)
+	db.apps.updateDomains req.params.key, req.body.domains, send(res,next)
 
 # add a valid domain for an app
 server.post config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
-	dbapps.addDomain req.params.key, req.params.domain, send(res,next)
+	db.apps.addDomain req.params.key, req.params.domain, send(res,next)
 
 # remove a valid domain for an app
 server.del config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
-	dbapps.remDomain req.params.key, req.params.domain, send(res,next)
+	db.apps.remDomain req.params.key, req.params.domain, send(res,next)
 
 # list keysets (provider names) for an app
 server.get config.base + '/api/apps/:key/keysets', auth.needed, (req, res, next) ->
-	dbapps.getKeysets req.params.key, send(res,next)
+	db.apps.getKeysets req.params.key, send(res,next)
 
 # get a keyset for an app and a provider
 server.get config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
-	dbapps.getKeyset req.params.key, req.params.provider, send(res,next)
+	db.apps.getKeyset req.params.key, req.params.provider, send(res,next)
 
 # add or update a keyset for an app and a provider
 server.post config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
-	dbapps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
+	db.apps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
 # remove a keyset for an app and a provider
 server.del config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
-	dbapps.remKeyset req.params.key, req.params.provider, send(res,next)
+	db.apps.remKeyset req.params.key, req.params.provider, send(res,next)
 
 # get providers list
 server.get config.base + '/api/providers', (req, res, next) ->
-	dbproviders.getList send(res,next)
+	db.providers.getList send(res,next)
 
 # get a provider config
 server.get config.base + '/api/providers/:provider', (req, res, next) ->
 	if req.query.extend
-		dbproviders.getExtended req.params.provider, send(res,next)
+		db.providers.getExtended req.params.provider, send(res,next)
 	else
-		dbproviders.get req.params.provider, send(res,next)
+		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config
 server.get config.base + '/api/providers/:provider/logo', ((req, res, next) ->

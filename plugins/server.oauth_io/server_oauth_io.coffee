@@ -1,4 +1,4 @@
-restify = require 'restify'
+
 Mailer = require '../../lib/mailer'
 
 exports.setup = (callback) ->

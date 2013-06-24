@@ -80,7 +80,13 @@ class CheckError extends Error
 		o = {}; f = {}
 		o[name] = arg; f[name] = format
 		_check o, f, @body
-	error: (@message) -> @status = "error"
+	error: (name, message) ->
+		if arguments.length == 1
+			@message = name
+			@status = "error"
+		else
+			@body[name] = message
+			@status = "fail"
 	failed: -> Object.keys(@body).length || @status == "error"
 
 

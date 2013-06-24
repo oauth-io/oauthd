@@ -35,14 +35,16 @@ exports.run = (name, args, callback) ->
 	args.push null
 	calls = []
 	for k,plugin of exports.plugin
-		if plugin[name]
+		if typeof plugin[name] == 'function'
 			do (plugin) ->
-				calls.push (cb) -> args[args.length-1] = cb; plugin[name].apply shared, args
+				calls.push (cb) ->
+					args[args.length-1] = cb
+					plugin[name].apply shared, args
 	async.series calls, ->
 		args.pop()
-		callback.apply @,arguments
+		callback.apply null,arguments
 
 exports.runSync = (name, args) ->
 	for k,plugin of exports.plugin
-		if plugin[name]
+		if typeof plugin[name] == 'function'
 			plugin[name].apply shared, args

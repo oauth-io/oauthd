@@ -9,6 +9,7 @@ async = require 'async'
 db = require './db'
 config = require './config'
 check = require './check'
+plugins = require './plugins'
 
 # create a new app
 exports.create = check name:/^.{3,}$/,domains:['none','array'], (data, callback) ->
@@ -91,17 +92,21 @@ exports.resetKey = check check.format.key, (key, callback) ->
 
 # remove an app
 exports.remove = check check.format.key, (key, callback) ->
-	db.redis.hget 'a:keys', key, (err, idapp) ->
+	exports.getKeysets key, (err, providers) ->
 		return callback err if err
-		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.multi([
-			['hdel', 'a:keys', key],
-			['keys', 'a:' + idapp + ':*']
-		]).exec (err, replies) ->
+		for provider in providers
+			plugins.data.emit 'app.remkeyset', provider:provider, app:key
+		db.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
-			db.redis.del replies[1], (err, removed) ->
+			return callback new check.Error 'Unknown key' unless idapp
+			db.redis.multi([
+				['hdel', 'a:keys', key],
+				['keys', 'a:' + idapp + ':*']
+			]).exec (err, replies) ->
 				return callback err if err
-				return callback()
+				db.redis.del replies[1], (err, removed) ->
+					return callback err if err
+					return callback()
 
 # get authorized domains of the app
 exports.getDomains = check check.format.key, (key, callback) ->
@@ -167,6 +172,7 @@ exports.addKeyset = check check.format.key, 'string', 'object', (key, provider, 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.set 'a:' + idapp + ':k:' + provider, JSON.stringify(data), (err, res) ->
 			return callback err if err
+			plugins.data.emit 'app.addkeyset', provider:provider, app:key
 			callback()
 
 # get keys infos of an app for a provider
@@ -177,6 +183,7 @@ exports.remKeyset = check check.format.key, 'string', (key, provider, callback) 
 		db.redis.del 'a:' + idapp + ':k:' + provider, (err, res) ->
 			return callback err if err
 			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+			plugins.data.emit 'app.remkeyset', provider:provider, app:key
 			callback()
 
 # get keys infos of an app for all providers

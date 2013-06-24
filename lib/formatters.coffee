@@ -43,20 +43,20 @@ buildReply = (body, res) ->
 	return body
 
 formatters =
-	'application/json': (req, res, body) ->
+	'application/json; q=0.9': (req, res, body) ->
 		data = JSON.stringify buildReply(body, res)
 		res.setHeader 'Content-Type', "application/json; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(data)
 		return data
 
-	'application/javascript': (req, res, body) ->
+	'application/javascript; q=0.1': (req, res, body) ->
 		return "" if body instanceof Error && not config.debug
 		body = body.toString()
 		res.setHeader 'Content-Type', "application/javascript; charset=utf-8"
 		res.setHeader 'Content-Length', Buffer.byteLength(body)
 		return body
 
-	'text/html': (req, res, body) ->
+	'text/html; q=0.1': (req, res, body) ->
 		if body instanceof Error
 			if body instanceof check.Error || body instanceof restify.RestError
 				body = body.message
