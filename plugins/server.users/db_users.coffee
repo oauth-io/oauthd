@@ -105,7 +105,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 Did you forget your password ?\n
 To change it, please use the follow link to reset your password.\n\n
 
-https://oauth.io/resetpassword/#{iduser}/#{key}\n\n
+http://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
 
 --\n
 OAuth.io Team"
