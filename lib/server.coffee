@@ -62,7 +62,6 @@ server.send = send = (res, next) -> (e, r) ->
 
 # generated js sdk
 server.get config.base + '/download/latest/oauth.js', (req, res, next) ->
-	console.log "ok2"
 	sdk_js.get (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'
@@ -71,7 +70,6 @@ server.get config.base + '/download/latest/oauth.js', (req, res, next) ->
 
 # generated js sdk minified
 server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
-	console.log "ok"
 	sdk_js.getmin (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'

@@ -109,13 +109,12 @@ exports.isValidKey = (data, callback) ->
 	iduser = data.id
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix + 'mail', prefix + 'key'], (err, replies) ->
-
 		return callback err if err
 
 		if replies[1].replace(/\=/g, '').replace(/\+/g, '') != key
-			return callback isValidKey: false
+			return callback null, isValidKey: false
 
-		return callback isValidKey: true, email: replies[0], id: iduser
+		return callback null, isValidKey: true, email: replies[0], id: iduser
 
 
 
@@ -124,9 +123,9 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 	exports.isValidKey {
 		id: data.id,
 		key: data.key
-	}, (json) ->
-
-		return callback new check.Error "This page does not exists." if not json.isValidKey
+	}, (err, res) ->
+		return callback err if err
+		return callback new check.Error "This page does not exists." if not res.isValidKey
 
 		prefix = 'u:' + json.id + ':'
 		dynsalt = Math.floor(Math.random() * 9999999)
@@ -137,12 +136,12 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 			prefix + 'salt', dynsalt,
 			prefix + 'key', '' # clear
 		], (err, res) ->
-			return err if err
-
-		return callback email:json.email, id:json.id
+			return callback err if err
+			return callback null, email:res.email, id:res.id
 
 # change password
 exports.changePassword = check mail:check.format.mail, (data, callback) ->
+	return callback new check.Error "Not implemented yet"
 
 
 # get a user by his id
