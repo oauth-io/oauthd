@@ -94,6 +94,9 @@ server.get config.base + '/', (req, res, next) ->
 			view += '\t"use strict";\n'
 			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
+				redirect_infos = Url.parse state.redirect_uri
+				if redirect_infos.host == config.url.host
+					return next new check.Error 'OAuth.redirect url must NOT be "' + config.url.host + '"'
 				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 			else
 				view += '\tvar opener = window.opener || window.parent.window.opener;\n'
