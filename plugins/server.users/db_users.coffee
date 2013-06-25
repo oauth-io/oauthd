@@ -135,7 +135,7 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 			prefix + 'pass', pass,
 			prefix + 'salt', dynsalt,
 			prefix + 'key', '' # clear
-		], (err, res) ->
+		], (err) ->
 			return callback err if err
 			return callback null, email:res.email, id:res.id
 
