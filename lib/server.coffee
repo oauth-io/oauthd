@@ -124,31 +124,39 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if not domain
 		return next new restify.InvalidHeaderError 'Missing origin or referer.'
 
-	db.apps.checkDomain key, domain, (err, valid) ->
-		return next err if err
-		return next new check.Error 'Domain name does not match any registered domain' if not valid
+	oauthv = req.params.oauthv && {
+		"2":"oauth2"
+		"1":"oauth1"
+	}[req.params.oauthv]
 
-		oauthv = req.params.oauthv && {
-			"2":"oauth2"
-			"1":"oauth1"
-		}[req.params.oauthv]
+	async.waterfall [
+		(cb) -> db.apps.checkDomain key, domain, cb
+		(valid, cb) ->
+			return cb new check.Error 'Domain name does not match any registered domain on ' + config.url.host if not valid
+			if req.params.redirect_uri
+				urlinfos = Url.parse(req.params.redirect_uri)
+				db.apps.checkDomain key, urlinfos.host, cb
+			else
+				cb null, true
+		(valid, cb) ->
+			return cb new check.Error 'Redirect domain name does not match any registered domain on ' + config.url.host if not valid
 
-		db.providers.getExtended req.params.provider, (err, provider) ->
-			return next err if err
-
+			db.providers.getExtended req.params.provider, cb
+		(provider, cb) ->
 			plugins.data.emit 'connect.auth', key:key, provider:provider.provider
 			if oauthv and not provider[oauthv]
-				return next new check.Error "oauthv", "Unsupported oauth version: " + oauthv
+				return cb new check.Error "oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
-			db.apps.getKeyset key, req.params.provider, (err, keyset) ->
-				return next err if err
-				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
-				oauth[oauthv].authorize provider, keyset, opts, (err, url) ->
-					return next err if err
-					res.setHeader 'Location', url
-					res.send 302
-					next()
+			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
+		(keyset, provider, cb) ->
+			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
+			oauth[oauthv].authorize provider, keyset, opts, cb
+	], (err, url) ->
+		return next err if err
+		res.setHeader 'Location', url
+		res.send 302
+		next()
 
 # create an application
 server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
