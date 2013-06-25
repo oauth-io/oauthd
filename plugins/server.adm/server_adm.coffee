@@ -28,7 +28,7 @@ exports.setup = (callback) ->
 			return next err if err
 			if replies[2] != '0'
 				return next new check.Error "not validable"
-			options = 
+			options =
 				to:
 					email: replies[0]
 				from:
@@ -37,7 +37,7 @@ exports.setup = (callback) ->
 				subject: ''
 				body: 'Hello,\n\n
 You are in the first wave of invitation and you can now connect you on OAuth.io!\n
-You just have to click on this link http://oauth.io/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
+You just have to click on this link https://oauth.io/#/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
 As we are in beta, your feedbacks are the most important thing we need to keep moving!\n\n
 Thanks a lot for signed up to OAuth.io!\n\n
 --\n
@@ -66,7 +66,7 @@ OAuth.io Team'
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
-				for mail,iduser of users										
+				for mail,iduser of users
 					users[mail] = email:mail, id:iduser, date_inscr:r[i*4], apps:r[i*4+1], key:r[i*4+2], validated:r[i*4+3]
 					i++
 				res.send users
@@ -78,9 +78,9 @@ OAuth.io Team'
 		prefix = 'a:' + id_app + ':'
 		cmds = []
 		cmds.push ['mget', prefix + 'name', prefix + 'key']
-		cmds.push ['smembers', prefix + 'domains']		
+		cmds.push ['smembers', prefix + 'domains']
 		cmds.push ['keys', prefix + 'k:*']
-	
+
 		@db.redis.multi(cmds).exec (err, results) ->
 			return next err if err
 			app = id:id_app, name:results[0][0], key:results[0][1], domains:results[1], providers:( result.substr(prefix.length + 2) for result in results[2] )
