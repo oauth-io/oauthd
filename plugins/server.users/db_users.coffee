@@ -66,10 +66,10 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 	mail = data.mail
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
-		return callback error:"This email isn't registered" if not iduser
+		return callback new check.Error "This email isn't registered" if not iduser
 		prefix = 'u:' + iduser + ':'
-		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
-			return callback error:"This email is not validated yet. Patience... :)" if replies[2] == '0'
+		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->			
+			return callback new check.Error "This email is not validated yet. Patience... :)" if replies[2] == '0'
 			# ok email validated  (contain password)
 			key = replies[1]
 			if key.length == 0
@@ -98,11 +98,10 @@ https://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
 
 --\n
 OAuth.io Team"
-				mailer = new Mailer options
+				mailer = new Mailer options		
 				mailer.send (error, result) ->
-					console.log error
-					console.log result
-					return callback error:error, result:result
+					return callback error if error
+					return callback null
 
 exports.isValidKey = (data, callback) ->
 	key = data.key
