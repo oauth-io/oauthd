@@ -94,7 +94,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 Did you forget your password ?\n
 To change it, please use the follow link to reset your password.\n\n
 
-http://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
+https://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
 
 --\n
 OAuth.io Team"
@@ -127,7 +127,7 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 		return callback err if err
 		return callback new check.Error "This page does not exists." if not res.isValidKey
 
-		prefix = 'u:' + json.id + ':'
+		prefix = 'u:' + res.id + ':'
 		dynsalt = Math.floor(Math.random() * 9999999)
 		pass = db.generateHash data.pass + dynsalt
 
