@@ -18,6 +18,14 @@ module.exports = {
 		host: '127.0.0.1'
 	},
 
+	smtp: {
+		service: "Gmail",
+		auth: {
+			user: "mytest042@gmail.com",
+			pass: "P@ssword0"
+		}
+	},
+
 	plugins: [
 		'server.statistics',
 

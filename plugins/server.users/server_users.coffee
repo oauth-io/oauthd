@@ -11,6 +11,8 @@ exports.setup = (callback) ->
 	# statistics
 	@on 'user.register', =>
 		@db.timelines.addUse target:'users', (->)
+	@on 'user.remove', =>
+		@db.timelines.addUse target:'users', uses:-1, (->)
 	@on 'user.login', =>
 		@db.timelines.addUse target:'u:login', (->)
 	@on 'app.create', =>

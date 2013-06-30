@@ -37,7 +37,7 @@ exports.isValidable = (data, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
 		return callback err if err
-		if replies[2] != '0' || replies[1] != key
+		if replies[2] == '1' || replies[1] != key
 			return callback null, is_validable: false
 		return callback null, is_validable: true, mail: replies[0], id: iduser
 
@@ -68,7 +68,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 		return callback err if err
 		return callback new check.Error "This email isn't registered" if not iduser
 		prefix = 'u:' + iduser + ':'
-		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->			
+		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
 			return callback new check.Error "This email is not validated yet. Patience... :)" if replies[2] == '0'
 			# ok email validated  (contain password)
 			key = replies[1]
@@ -98,7 +98,7 @@ https://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
 
 --\n
 OAuth.io Team"
-				mailer = new Mailer options		
+				mailer = new Mailer options
 				mailer.send (error, result) ->
 					return callback error if error
 					return callback null
@@ -153,20 +153,26 @@ exports.get = check 'int', (iduser, callback) ->
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
-	return callback new check.Error 'Not implemented yet'
 	prefix = 'u:' + iduser + ':'
-	# TODO: remove apps and then remove user
-	# exports.getApps iduser, (err, appkeys) -> ....
 	db.redis.get prefix+'mail', (err, mail) ->
 		return callback err if err
-		return callback new check.Error 'Unknown mail' unless mail
-		db.redis.multi([
-			[ 'hdel', 'u:mails', mail ]
-			[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
-					, prefix+'apps', prefix+'date_inscr' ]
-		]).exec (err, replies) ->
-			return callback err if err
-			callback()
+		return callback new check.Error 'Unknown user' unless mail
+		exports.getApps iduser, (err, appkeys) ->
+			tasks = []
+			for key in appkeys
+				do (key) ->
+					tasks.push (cb) -> db.apps.remove key, cb
+			async.series tasks, (err) ->
+				return callback err if err
+
+				db.redis.multi([
+					[ 'hdel', 'u:mails', mail ]
+					[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
+							, prefix+'apps', prefix+'date_inscr' ]
+				]).exec (err, replies) ->
+					return callback err if err
+					shared.emit 'user.remove', mail:mail
+					callback()
 
 # get a user by his mail
 exports.getByMail = check check.format.mail, (mail, callback) ->

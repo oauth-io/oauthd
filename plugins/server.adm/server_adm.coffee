@@ -24,9 +24,9 @@ exports.setup = (callback) ->
 			prefix+'mail',
 			prefix+'key',
 			prefix+'validated'
-		], (err, replies) ->
+		], (err, replies) =>
 			return next err if err
-			if replies[2] != '0'
+			if replies[2] == '1'
 				return next new check.Error "not validable"
 			options =
 				to:
@@ -35,9 +35,8 @@ exports.setup = (callback) ->
 					name: 'OAuth.io'
 					email: 'team@oauth.io'
 				subject: ''
-				body: 'Hello,\n\n
-You are in the first wave of invitation and you can now connect you on OAuth.io!\n
-You just have to click on this link https://oauth.io/#/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
+				body: 'Welcome on OAuth.io Beta!\n\n
+You just have to click on this link https://' + @config.url.host + '/#/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
 As we are in beta, your feedbacks are the most important thing we need to keep moving!\n\n
 Thanks a lot for signed up to OAuth.io!\n\n
 --\n
@@ -48,8 +47,9 @@ OAuth.io Team'
 				id: iduser
 				key: replies[1]
 			mailer = new Mailer options, data
-			mailer.send (err, result) ->
+			mailer.send (err, result) =>
 				return next err if err
+				@db.redis.set prefix+'validated', '2'
 				res.send result
 				next()
 
