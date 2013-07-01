@@ -37,7 +37,7 @@ exports.setup = (callback) ->
 				subject: 'Validate your OAuth.io Beta account'
 				body: 'Welcome on OAuth.io Beta!\n\n
 In order to validate your email address, please click the following link: https://' + @config.url.host + '/#/validate/' + iduser + '/' + replies[1] + '.\n
-Your feedback is über-important to us: it would help improve developer\'s life event more.\n\n
+Your feedback is über-important to us: it would help improve developer\'s life even more.\n\n
 So don\'t hesitate to reply to this email.\n\n
 Thanks for trying out OAuth.io beta!\n\n
 --\n
