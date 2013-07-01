@@ -15,19 +15,16 @@ exports.setup = (callback) ->
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co', (->)
 
-	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
-		# send mail with u:{{iduser}}:key
-		# https://oauth.io/#/validate/:iduser/:key
-		iduser = req.params.id
+	@userInvite = (iduser, callback) =>
 		prefix = 'u:' + iduser + ':'
 		@db.redis.mget [
 			prefix+'mail',
 			prefix+'key',
 			prefix+'validated'
 		], (err, replies) =>
-			return next err if err
+			return callback err if err
 			if replies[2] == '1'
-				return next new check.Error "not validable"
+				return callback new check.Error "not validable"
 			options =
 				to:
 					email: replies[0]
@@ -49,10 +46,12 @@ OAuth.io Team'
 				key: replies[1]
 			mailer = new Mailer options, data
 			mailer.send (err, result) =>
-				return next err if err
+				return callback err if err
 				@db.redis.set prefix+'validated', '2'
-				res.send result
-				next()
+				callback()
+
+	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
+		@userInvite req.params.id, @send(res, next)
 
 	# get users list
 	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>

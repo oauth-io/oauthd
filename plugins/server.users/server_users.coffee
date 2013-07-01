@@ -45,7 +45,12 @@ exports.setup = (callback) ->
 
 	# register an account
 	@server.post @config.base + '/api/users', (req, res, next) =>
-		@db.users.register req.body, @server.send(res,next)
+		@db.users.register req.body, (e, r) =>
+			return next e if e
+			@userInvite r.id, (e) =>
+				return next e if e
+				res.send r
+				next()
 
 	# validate a user
 	@server.post @config.base + "/api/users/:id/validate/:key", (req, res, next) =>
