@@ -51,7 +51,7 @@ OAuth.io Team'
 				callback()
 
 	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
-		@userInvite req.params.id, @send(res, next)
+		@userInvite req.params.id, @server.send(res, next)
 
 	# get users list
 	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>
