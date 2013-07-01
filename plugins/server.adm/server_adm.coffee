@@ -34,7 +34,7 @@ exports.setup = (callback) ->
 				from:
 					name: 'OAuth.io'
 					email: 'team@oauth.io'
-				subject: ''
+				subject: '[BETA] OAuth.io - Invitation'
 				body: 'Welcome on OAuth.io Beta!\n\n
 You just have to click on this link https://' + @config.url.host + '/#/validate/' + iduser + '/' + replies[1] + ' to validate your email and start playing with OAuth.\n
 As we are in beta, your feedbacks are the most important thing we need to keep moving!\n\n
