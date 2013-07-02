@@ -21,7 +21,7 @@ exports.setup = (callback) ->
 		# 	email_from: options.from.email
 		# 	body: options.body.replace(/\n/g, "<br />")
 
-		mailer = new Mailer options, data		
+		mailer = new Mailer options		
 		mailer.send (err, result) ->
 			return next err if err			
 			res.send result
