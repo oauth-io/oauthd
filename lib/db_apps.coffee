@@ -202,6 +202,10 @@ exports.checkDomain = check check.format.key, 'string', (key, domain, callback) 
 		return callback err if err
 		return callback null, true if domain == config.url.host
 		for vdomain in domains
+			checkport = vdomain.match('^(.*):[0-9]+$')
+			vdomain = checkport[1] if checkport?[1]
+			checkprotocol = vdomain.match('^.{2,6}:\/\/(.*)$')
+			vdomain = checkprotocol[1] if checkprotocol?[1]
 			if domain == vdomain ||
 				vdomain[0] == '*' && vdomain[1] == '.' &&
 				domain.substr(domain.length-vdomain.length+2) == vdomain.substr(2)
