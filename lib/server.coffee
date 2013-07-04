@@ -150,7 +150,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 			oauthv ?= 'oauth1' if provider.oauth1
 			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 		(keyset, provider, cb) ->
-			return cb new check.Error 'This app is not configured for ' + provider.provider
+			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
 			oauth[oauthv].authorize provider, keyset, opts, cb
 	], (err, url) ->
