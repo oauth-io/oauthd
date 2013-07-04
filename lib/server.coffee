@@ -95,7 +95,7 @@ server.get config.base + '/', (req, res, next) ->
 			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
 				redirect_infos = Url.parse state.redirect_uri
-				if redirect_infos.host == config.url.host
+				if redirect_infos.hostname == config.url.hostname
 					return next new check.Error 'OAuth.redirect url must NOT be "' + config.url.host + '"'
 				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 			else
@@ -119,7 +119,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 	ref = req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri
 	if ref
 		urlinfos = Url.parse(ref)
-		domain = urlinfos.host
+		domain = urlinfos.hostname
 		origin = urlinfos.protocol + '//' + domain
 	if not domain
 		return next new restify.InvalidHeaderError 'Missing origin or referer.'
@@ -135,7 +135,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 			return cb new check.Error 'Domain name does not match any registered domain on ' + config.url.host if not valid
 			if req.params.redirect_uri
 				urlinfos = Url.parse(req.params.redirect_uri)
-				db.apps.checkDomain key, urlinfos.host, cb
+				db.apps.checkDomain key, urlinfos.hostname, cb
 			else
 				cb null, true
 		(valid, cb) ->
@@ -150,6 +150,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 			oauthv ?= 'oauth1' if provider.oauth1
 			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 		(keyset, provider, cb) ->
+			return cb new check.Error 'This app is not configured for ' + provider.provider
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
 			oauth[oauthv].authorize provider, keyset, opts, cb
 	], (err, url) ->

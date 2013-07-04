@@ -60,6 +60,8 @@
 		},
 		popup: function(provider, callback) {
 			var wnd;
+			if ( ! config.key)
+				return callback(new Error('OAuth object must be initialized'));
 			var url = config.oauthd_url + '/' + provider + "?k=" + config.key + '&d=' + encodeURIComponent(getAbsUrl('/'));
 
 			// create popup
