@@ -112,6 +112,7 @@ exports.access_token = (state, req, callback) ->
 		options =
 			url: access_token.url
 			method: access_token.method?.toUpperCase() || "GET"
+			followAllRedirects: true
 
 		if options.method == "GET"
 			options.qs = query
