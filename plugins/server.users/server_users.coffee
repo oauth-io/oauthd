@@ -82,8 +82,8 @@ exports.setup = (callback) ->
 				next()
 
 	# update mail or password
-	@server.post @config.base + '/api/me', @auth.needed, (req, res, next) =>
-		next new @check.Error "Implemented soon !"
+	@server.put @config.base + '/api/me', @auth.needed, (req, res, next) =>		
+		@db.users.updateAccount req, @server.send(res, next)
 
 	# delete my account
 	@server.del @config.base + '/api/me', @auth.needed, (req, res, next) =>

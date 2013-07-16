@@ -30,6 +30,47 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				shared.emit 'user.register', user
 				return callback null, user
 
+# update user infos
+exports.updateAccount = (req, callback) ->
+
+	data = req.body	
+	user_id = req.user.id
+	old_email = req.user.mail
+	prefix = 'u:' + user_id + ':'
+
+	db.redis.hget 'u:mails', data.email, (err, iduser) ->
+
+		new_email = (old_email != data.email)
+		
+		if new_email
+			return callback err if err
+			return callback new check.Error "#{data.email} already exists" if iduser
+
+			db.redis.multi([	
+				[ 'mset', prefix + 'mail', data.email,
+					prefix + 'name', data.name,
+					prefix + 'location', data.location,
+					prefix + 'company', data.company,
+					prefix + 'website', data.website ],
+
+				[ 'hdel', 'u:mails', old_email ],
+				[ 'hset', 'u:mails', data.email, user_id ]
+
+			]).exec (err, res) ->
+				return callback err if err
+				user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
+				return callback null, user
+		else	
+			db.redis.mset [	
+				prefix + 'mail', data.email,
+				prefix + 'name', data.name,
+				prefix + 'location', data.location,
+				prefix + 'company', data.company,
+				prefix + 'website', data.website
+			], (err) ->
+				return callback err if err
+				user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
+				return callback null, user
 
 exports.isValidable = (data, callback) ->
 	key = data.key
@@ -146,10 +187,10 @@ exports.changePassword = check mail:check.format.mail, (data, callback) ->
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
+	db.redis.mget [prefix+'mail', prefix+'date_inscr', prefix + 'name', prefix + 'location', prefix + 'company', prefix + 'website'], (err, replies) ->
 		return callback err if err
 		return callback new check.Error 'Unknown mail' if not replies[1]
-		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
+		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1], name: replies[2], location: replies[3], company: replies[4], website: replies[5]
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
