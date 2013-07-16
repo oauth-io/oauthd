@@ -58,11 +58,19 @@
 		initialize: function(public_key) {
 			config.key = public_key;
 		},
-		popup: function(provider, callback) {
+		popup: function(provider, opts, callback) {
 			var wnd;
 			if ( ! config.key)
 				return callback(new Error('OAuth object must be initialized'));
-			var url = config.oauthd_url + '/' + provider + "?k=" + config.key + '&d=' + encodeURIComponent(getAbsUrl('/'));
+			if (arguments.length == 2) {
+				callback = opts;
+				opts = undefined;
+			}
+
+			var url = config.oauthd_url + '/' + provider + "?k=" + config.key
+			url += '&d=' + encodeURIComponent(getAbsUrl('/'));
+			if (opts)
+				url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
 
 			// create popup
 			var wnd_settings = {
@@ -112,9 +120,16 @@
 			if (wnd)
 				wnd.focus();
 		},
-		redirect: function(provider, url) {
-			url = encodeURIComponent(getAbsUrl(url));
-			url = config.oauthd_url + '/' + provider + "?k=" + config.key + "&redirect_uri=" + url;
+		redirect: function(provider, opts, url) {
+			if (arguments.length == 2) {
+				url = opts;
+				opts = undefined;
+			}
+			var redirect_uri = encodeURIComponent(getAbsUrl(url));
+			url = config.oauthd_url + '/' + provider + "?k=" + config.key;
+			url += "&redirect_uri=" + redirect_uri;
+			if (opts)
+				url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
 			document.location.href = url;
 		},
 		callback: function(provider, callback) {

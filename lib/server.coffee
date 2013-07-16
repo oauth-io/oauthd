@@ -120,7 +120,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if ref
 		urlinfos = Url.parse(ref)
 		domain = urlinfos.hostname
-		origin = urlinfos.protocol + '//' + domain
+		origin = urlinfos.protocol + '//' + urlinfos.host
 	if not domain
 		return next new restify.InvalidHeaderError 'Missing origin or referer.'
 
@@ -151,7 +151,13 @@ server.get config.base + '/:provider', (req, res, next) ->
 			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 		(keyset, provider, cb) ->
 			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
-			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri
+			options = {}
+			if req.params.opts
+				try
+					options = JSON.parse(req.params.opts)
+				catch e
+					cb new check.Error 'Error in request parameters'
+			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 			oauth[oauthv].authorize provider, keyset, opts, cb
 	], (err, url) ->
 		return next err if err
