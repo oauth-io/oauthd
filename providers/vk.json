@@ -1,0 +1,47 @@
+{
+	"name": "VK",
+	"url": "https://api.vkontakte.ru/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "/access_token",
+			"method": "get"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"type": "string",
+				"separator": ",",
+				"cardinality": "*",
+				"values": {
+					"notify": "The user allows receiving notifications.",
+					"friends": "Access to friends.",
+					"photos": "Access to photos.",
+					"audio": "Access to audio files.",
+					"video": "Access to videos.",
+					"notes": "Access to the user's notes.",
+					"pages": "Access to wiki pages.",
+					"offers": "Access to proposals (outdated methods).",
+					"questions": "Access to questions (outdated methods).",
+					"wall": "Access to standard and advanced methods for working with the wall.",
+					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
+					"offline": "Access to API at any time from an external server."
+				}
+			}
+		}
+	}
+}
