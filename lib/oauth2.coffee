@@ -42,6 +42,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		redirect_uri:opts.redirect_uri
 		oauthv:'oauth2'
 		origin:opts.origin
+		options:opts.options
 		expire:600
 	, (err, state) ->
 		replace_param = (param) ->
@@ -58,6 +59,8 @@ exports.authorize = (provider, keyset, opts, callback) ->
 
 		authorize = provider.oauth2.authorize
 		query = {}
+		if typeof opts.options?.authorize == 'object'
+			query = opts.options.authorize
 		for name, value of authorize.query
 			query[name] = replace_param value
 			if typeof query[name] != 'string'
