@@ -34,7 +34,7 @@ The first you connect, the given login & pass will be registered as the admin us
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
 
-## Contributing
+## Contributing and License
 
 If you want to contribute to this project, you can directly make pull requests to our Github repository that we regulary check.
 
