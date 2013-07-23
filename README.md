@@ -55,4 +55,4 @@ GNU General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-⇨ [More infos about AGPL](http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0))
+⇨ [More infos about AGPL](http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29)
