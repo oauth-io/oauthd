@@ -1,0 +1,19 @@
+{
+  "url": "https://api.twitter.com/oauth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authenticate", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://dev.twitter.com/apps/new", 
+    "docs": "https://dev.twitter.com/docs", 
+    "apps": "https://dev.twitter.com/apps", 
+    "provider": "https://www.twitter.com/"
+  }, 
+  "name": "Twitter"
+}

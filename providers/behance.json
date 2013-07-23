@@ -1,0 +1,42 @@
+{
+  "url": "https://www.behance.net/v2/oauth", 
+  "oauth2": {
+    "authorize": "/authenticate", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "collection_read": "Able to read collections you have marked as private", 
+          "collection_write": "Ability to create, manipulate and delete your collections.", 
+          "invitations_write": "Respond to user's invitations.", 
+          "invitations_read": "Get user's invitations.", 
+          "project_read": "Read private projects", 
+          "activity_read": "Allows access to read network activity feed", 
+          "wip_write": "Able to post, manipulate and delete a work in progress on your behalf", 
+          "wip_read": "Able to read works in progress marked as private", 
+          "post_as": "may act on your behalf to comment, follow users, view and appreciate projects"
+        }, 
+        "cardinality": "*", 
+        "separator": "|", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Behance", 
+  "href": {
+    "keys": "http://www.behance.net/dev/register", 
+    "docs": "http://www.behance.net/dev/api/endpoints/", 
+    "apps": "http://www.behance.net/dev/apps", 
+    "provider": "http://www.behance.net/"
+  }
+}

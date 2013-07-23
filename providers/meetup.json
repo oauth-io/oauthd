@@ -1,0 +1,36 @@
+{
+  "url": "https://secure.meetup.com/oauth2", 
+  "oauth2": {
+    "authorize": "/authorize", 
+    "access_token": {
+      "url": "/access", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "messaging": "Enables Member to Member messaging", 
+          "ageless": "Replaces the one hour expiry time from oauth2 tokens with a limit of up to two weeks", 
+          "basic": "Access to Meetup group info, Everywhere API, creating and editing Events and RSVP's, posting photos"
+        }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "MeetUp", 
+  "href": {
+    "keys": "http://www.meetup.com/meetup_api/oauth_consumers/create/", 
+    "docs": "http://www.meetup.com/meetup_api/", 
+    "apps": "http://www.meetup.com/meetup_api/oauth_consumers/", 
+    "provider": "http://www.meetup.com/"
+  }
+}

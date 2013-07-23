@@ -1,0 +1,38 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/latitude.current.best": "Manage your best-available location", 
+          "https://www.googleapis.com/auth/latitude.current.city": "Manage your city-level location", 
+          "https://www.googleapis.com/auth/latitude.all.best": "Manage your best-available location and location history", 
+          "https://www.googleapis.com/auth/latitude.all.city": "Manage your city-level location and location history"
+ 
+      }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Latitude", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

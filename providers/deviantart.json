@@ -1,0 +1,33 @@
+{
+  "url": "https://www.deviantart.com/oauth2/draft15", 
+  "oauth2": {
+    "authorize": {
+      "url": "/authorize", 
+      "query": {
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "DeviantArt", 
+  "href": {
+    "keys": "http://www.deviantart.com/submit/app/", 
+    "docs": "http://www.deviantart.com/developers/", 
+    "apps": "https://www.deviantart.com/settings/myapps", 
+    "provider": "http://deviantart.com/"
+  }
+}

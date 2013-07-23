@@ -1,0 +1,81 @@
+@colorApiText: #2da6eb;
+@colorPublicKey: green;
+@colorComment: #999;
+@colorAccessToken: #ff6600;
+@colorErr: red;
+
+ul {
+	list-style-type: none;
+	margin: 0;
+}
+
+.public-key-text {
+	color: @colorPublicKey;
+	font-weight: bold;
+}
+
+pre .err {
+	color: @colorErr;
+	font-weight: bold;
+}
+
+pre .access-token {
+	color: @colorAccessToken;
+	font-weight: bold;
+}
+
+pre .comment {
+	color: @colorComment;
+}
+
+.api-text {
+	color: @colorApiText;
+	font-weight: bold;
+}
+
+.api-example {
+  color: #404080;
+  font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;
+}
+
+.alert-grey {
+  color: rgb(100, 100, 100);
+  background-color: rgb(243, 243, 243);
+  border-color: rgb(230, 230, 230);
+}
+
+.ui-draggable {
+	min-width: 300px;
+	background-color: white;
+}
+
+.dashboard-sidenav {
+	padding: 0;
+	background-color: #fff;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+	-webkit-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	-moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
+	box-shadow: 0 1px 4px rgba(0,0,0,.065);
+}
+
+.dashboard-sidenav > li:first-child > a {
+	-webkit-border-radius: 6px 6px 0 0;
+	-moz-border-radius: 6px 6px 0 0;
+	border-radius: 6px 6px 0 0;
+}
+
+.dashboard-sidenav > li:last-child > a {
+	-webkit-border-radius: 0 0 6px 6px;
+	-moz-border-radius: 0 0 6px 6px;
+	border-radius: 0 0 6px 6px;
+}
+
+.dashboard-sidenav > li > a {
+	display: block;
+	width: 190px 9;
+	margin: 0 0 -1px;
+	padding: 8px 14px;
+	border: 1px solid #e5e5e5;
+}

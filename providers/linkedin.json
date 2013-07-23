@@ -1,0 +1,19 @@
+{
+  "url": "https://api.linkedin.com/uas/oauth", 
+  "oauth1": {
+    "request_token": "/requestToken", 
+    "access_token": "/accessToken", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }, 
+    "authorize": "/authenticate"
+  }, 
+  "href": {
+    "keys": "https://www.linkedin.com/secure/developer?newapp=", 
+    "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map", 
+    "apps": "https://www.linkedin.com/secure/developer", 
+    "provider": "http://www.linkedin.com/"
+  }, 
+  "name": "Linkedin"
+}

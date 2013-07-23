@@ -1,0 +1,19 @@
+{
+  "url": "http://gomiso.com/oauth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authorize", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "http://gomiso.com/oauth_clients/new", 
+    "docs": "http://gomiso.com/developers/endpoints", 
+    "apps": "http://gomiso.com/oauth_clients", 
+    "provider": "http://gomiso.com/"
+  }, 
+  "name": "Miso"
+}

@@ -1,0 +1,26 @@
+{
+  "url": "https://api.cheddarapp.com/oauth", 
+  "oauth2": {
+    "authorize": "/authorize", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Cheddar", 
+  "href": {
+    "keys": "https://cheddarapp.com/developer/apps/new", 
+    "docs": "https://cheddarapp.com/developer/", 
+    "apps": "https://cheddarapp.com/developer/apps", 
+    "provider": "https://cheddarapp.com/"
+  }
+}

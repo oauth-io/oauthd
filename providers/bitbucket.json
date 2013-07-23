@@ -1,0 +1,19 @@
+{
+  "url": "https://bitbucket.org/api/1.0/oauth", 
+  "oauth1": {
+    "request_token": "/request_token/", 
+    "authorize": "/authenticate/", 
+    "access_token": "/access_token/", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://bitbucket.org/account", 
+    "docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs", 
+    "apps": "https://bitbucket.org/account", 
+    "provider": "https://bitbucket.org/"
+  }, 
+  "name": "BitBucket"
+}

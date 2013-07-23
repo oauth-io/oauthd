@@ -1,0 +1,35 @@
+{
+  "url": "https://login.mailchimp.com/oauth2", 
+  "oauth2": {
+    "authorize": {
+      "url": "/authorize", 
+      "query": {
+        "scope": "", 
+        "state": "{{state}}", 
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "MailChimp", 
+  "href": {
+    "keys": "https://us6.admin.mailchimp.com/account/oauth2/client", 
+    "docs": "http://apidocs.mailchimp.com/", 
+    "apps": "https://us6.admin.mailchimp.com/account/api/", 
+    "provider": "http://mailchimp.com/"
+  }
+}

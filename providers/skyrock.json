@@ -1,0 +1,19 @@
+{
+  "url": "https://api.skyrock.com/v2/oauth", 
+  "oauth1": {
+    "request_token": "/initiate", 
+    "authorize": "/authorize", 
+    "access_token": "/token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://www.skyrock.com/developer/application/application_create.php", 
+    "docs": "http://www.skyrock.com/developer/documentation/", 
+    "apps": "http://www.skyrock.com/developer/application/", 
+    "provider": "http://www.skyrock.com/"
+  }, 
+  "name": "Skyrock"
+}

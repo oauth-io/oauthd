@@ -1,0 +1,33 @@
+{
+  "url": "https://www.eventbrite.com/oauth", 
+  "oauth2": {
+    "authorize": {
+      "url": "/authorize", 
+      "query": {
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "EventBrite", 
+  "href": {
+    "keys": "http://www.eventbrite.com/api/key/", 
+    "docs": "http://developer.eventbrite.com/doc/", 
+    "apps": "https://www.eventbrite.com/api/key", 
+    "provider": "https://www.eventbrite.com/"
+  }
+}

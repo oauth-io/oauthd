@@ -1,0 +1,19 @@
+{
+  "url": "https://www.plurk.com/OAuth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authorize", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "http://www.plurk.com/PlurkApp/register", 
+    "docs": "http://www.plurk.com/API#toc", 
+    "apps": "http://www.plurk.com/PlurkApp/", 
+    "provider": "http://www.plurk.com/"
+  }, 
+  "name": "Plurk"
+}

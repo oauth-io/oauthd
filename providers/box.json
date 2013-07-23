@@ -1,0 +1,26 @@
+{
+  "url": "https://api.box.com/oauth2", 
+  "oauth2": {
+    "authorize": "/authorize", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Box", 
+  "href": {
+    "keys": "http://box.com/developers/services/edit/", 
+    "docs": "http://developers.box.com/docs/", 
+    "apps": "https://www.box.com/developers/services", 
+    "provider": "https://www.box.com/"
+  }
+}

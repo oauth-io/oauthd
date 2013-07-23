@@ -1,0 +1,32 @@
+{
+  "href": {
+    "keys": "https://fr.foursquare.com/developers/register", 
+    "docs": "https://developer.foursquare.com/overview/", 
+    "apps": "https://foursquare.com/developers/apps", 
+    "provider": "http://www.foursquare.com/"
+  }, 
+  "api_url": "https://api.foursquare.com/v2", 
+  "url": "https://foursquare.com/oauth2", 
+  "oauth2": {
+    "authorize": {
+      "url": "/authenticate", 
+      "query": {
+        "scope": "-", 
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": "/access_token", 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Foursquare"
+}

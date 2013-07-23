@@ -1,0 +1,46 @@
+{
+  "url": "https://api.23andme.com", 
+  "oauth2": {
+    "authorize": "/authorize/", 
+    "access_token": {
+      "url": "/token/", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "profile:write": "Edit your profile information, including your picture.", 
+          "basic": "Whether each profile in your account is genotyped.", 
+          "iXX": "Access to the genotype at iXX for all the user's profiles. You can string these together to get access to multiple genes. This list of SNPs (29MB) shows which SNPs our customers are genotyped for; all of these SNPs are valid scopes.", 
+          "publish": "Publish your haplogroups, neanderthal, ancestry composition, DNA Music, and other shareable feature results, so they are readable by anyone.", 
+          "genomes": "Your entire genome for all of your profiles. This all 1,000,000+ SNP locations, except those you haven't opted into. Warning: if you accept, a third party will have a copy of all your profiles' complete genetic data. You should only click accept for institutions you trust.", 
+          "relatives": "Your relatives who have been genotyped with 23andMe.", 
+          "haplogroups": "Your maternal and paternal haplogroups for all your profiles.", 
+          "names": "The full name on your account and every profile in your account.", 
+          "ancestry": "Your ancestral breakdown for all of your profiles. Includes your Neanderthal ancestry.", 
+          "relatives:write": "The ability to add notes and update relationships for relative matches found by 23andMe.", 
+          "rsXX": "Access to the genotype at rsXX for all the user's profiles. You can string these together to get access to multiple genes. This list of SNPs (29MB) shows which SNPs our customers are genotyped for; all of these SNPs are valid scopes.", 
+          "analyses": "Your analyzed genome (not raw genetic data). That includes all of your health and disease risks, drug sensitivities, your traits, and your carrier status for diseases.", 
+          "profile:read": "View profile information, including your picture."
+        }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "23AndMe", 
+  "href": {
+    "keys": "https://api.23andme.com/apply/", 
+    "docs": "https://api.23andme.com/docs/", 
+    "apps": "https://api.23andme.com/dev/", 
+    "provider": "https://23andme.com/"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "url": "https://api.500px.com/v1/oauth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authorize", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "http://500px.com/settings/applications#", 
+    "docs": "https://github.com/500px/api-documentation", 
+    "apps": "http://500px.com/settings/applications", 
+    "provider": "http://500px.com/"
+  }, 
+  "name": "500px"
+}

@@ -1,0 +1,19 @@
+{
+  "url": "http://www.ohloh.net/oauth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": "/authorize", 
+    "access_token": "/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://www.ohloh.net/", 
+    "docs": "http://meta.ohloh.net/reference/", 
+    "apps": "https://www.ohloh.net/", 
+    "provider": "https://www.ohloh.net/"
+  }, 
+  "name": "Ohloh"
+}

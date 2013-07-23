@@ -1,0 +1,18 @@
+{
+  "oauth1": {
+    "request_token": "http://api.fitbit.com/oauth/request_token", 
+    "authorize": "http://www.fitbit.com/oauth/authorize", 
+    "access_token": "http://api.fitbit.com/oauth/access_token", 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "href": {
+    "keys": "https://dev.fitbit.com/apps/new", 
+    "docs": "https://wiki.fitbit.com/display/API/Fitbit+API", 
+    "apps": "https://dev.fitbit.com/apps", 
+    "provider": "http://www.fitbit.com/"
+  }, 
+  "name": "FitBit"
+}

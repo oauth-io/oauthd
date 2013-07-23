@@ -1,0 +1,33 @@
+{
+  "url": "https://www.yammer.com", 
+  "oauth2": {
+    "authorize": {
+      "url": "/dialog/oauth", 
+      "query": {
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}"
+      }
+    }, 
+    "access_token": {
+      "url": "/oauth2/access_token.json", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Yammer", 
+  "href": {
+    "keys": "https://www.yammer.com/client_applications", 
+    "docs": "https://developer.yammer.com/api/", 
+    "apps": "https://www.yammer.com/client_applications", 
+    "provider": "https://www.yammer.com/"
+  }
+}

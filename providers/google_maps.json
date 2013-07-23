@@ -1,0 +1,38 @@
+{
+  "url": "https://accounts.google.com/o/oauth2", 
+  "oauth2": {
+    "authorize": "/auth", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "https://www.googleapis.com/auth/coordinate.readonly": "View your Google Coordinate jobs", 
+          "https://www.googleapis.com/auth/coordinate": "View and manage your Google Maps Coordinate jobs", 
+          "https://www.googleapis.com/auth/tracks": "Google Maps Tracks API, This scope allows read and write access to your project's data.", 
+       	  "https://www.googleapis.com/auth/mapsengine": "provides read and write access to the user's Maps Engine data from your application.", 
+          "https://www.googleapis.com/auth/mapsengine.readonly": "provides read-only access to the user's Maps Engine data from your " 
+       }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Google Maps", 
+  "href": {
+    "keys": "https://code.google.com/apis/console/", 
+    "docs": "http://code.google.com/more/", 
+    "apps": "https://code.google.com/apis/console/", 
+    "provider": "http://google.com/"
+  }
+}

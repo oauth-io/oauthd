@@ -1,0 +1,26 @@
+{
+  "url": "https://runkeeper.com/apps", 
+  "oauth2": {
+    "authorize": "/authorize", 
+    "access_token": {
+      "url": "/token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  }, 
+  "name": "Runkeeper", 
+  "href": {
+    "keys": "http://runkeeper.com/partner/applications/register", 
+    "docs": "http://developer.runkeeper.com/healthgraph/overview", 
+    "apps": "http://runkeeper.com/partner/applications", 
+    "provider": "http://runkeeper.com/"
+  }
+}

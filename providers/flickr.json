@@ -1,0 +1,49 @@
+{
+  "url": "http://www.flickr.com/services/oauth", 
+  "oauth1": {
+    "request_token": "/request_token", 
+    "authorize": {
+      "url": "/authorize", 
+      "query": {
+        "perms": "{permissions}"
+      }
+    }, 
+    "access_token": "/access_token", 
+    "request": {
+      "put": {
+        "api_key": "{client_id}"
+      }, 
+      "query": {
+        "api_key": "{client_id}", 
+        "nojsoncallback": "1", 
+        "format": "json"
+      }, 
+      "post": {
+        "api_key": "{client_id}"
+      }, 
+      "delete": {
+        "api_key": "{client_id}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "permissions": {
+        "values": {
+          "read": "Read access to the api", 
+          "write": "Read and write access to the api", 
+          "delete": "Read, write and deletion access to the api"
+        }, 
+        "cardinality": "1", 
+        "type": "string"
+      }
+    }
+  }, 
+  "href": {
+    "keys": "http://www.flickr.com/services/apps/create/", 
+    "docs": "http://www.flickr.com/services/api/", 
+    "apps": "http://www.flickr.com/services/apps/", 
+    "provider": "http://www.flickr.com/"
+  }, 
+  "name": "Flickr"
+}

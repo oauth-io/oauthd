@@ -1,0 +1,36 @@
+{
+  "url": "https://disqus.com/api/oauth/2.0", 
+  "oauth2": {
+    "authorize": "/authorize/", 
+    "access_token": {
+      "url": "/access_token/", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "read": "Read access on data.", 
+          "write": "Write access on data.", 
+          "admin": "Forum moderation capabilities."
+        }, 
+        "cardinality": "*", 
+        "separator": ",", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Disqus", 
+  "href": {
+    "keys": "http://disqus.com/api/applications/register/", 
+    "docs": "http://disqus.com/api/docs/", 
+    "apps": "http://disqus.com/api/applications/", 
+    "provider": "http://disqus.com/"
+  }
+}

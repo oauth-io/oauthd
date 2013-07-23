@@ -1,0 +1,42 @@
+{
+  "oauth2": {
+    "authorize": "/oauth", 
+    "access_token": {
+      "url": "/oauth/access_token", 
+      "method": "post"
+    }, 
+    "request": {
+      "query": {
+        "access_token": "{{token}}", 
+        "key": "{key}"
+      }
+    }, 
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string", 
+      "scope": {
+        "values": {
+          "no_expiry": "access_token's with this scope do not expire", 
+          "write_access": "perform write operations as a user", 
+          "private_info": "access full history of a user's private actions on the site.", 
+          "read_inbox": "access a user's global inbox"
+        }, 
+        "cardinality": "*", 
+        "separator": " ", 
+        "type": "string"
+      }
+    }
+  }, 
+  "name": "Stackexchange", 
+  "parameters": {
+    "key": "string"
+  }, 
+  "url": "https://stackexchange.com", 
+  "href": {
+    "keys": "http://stackapps.com/apps/oauth/register", 
+    "docs": "https://api.stackexchange.com/docs", 
+    "apps": "http://stackapps.com/apps/oauth/", 
+    "provider": "https://stackexchange.com/"
+  }, 
+  "api_url": "https://api.stackexchange.com/2.1/"
+}
