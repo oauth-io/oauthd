@@ -34,9 +34,11 @@ The first you connect, the given login & pass will be registered as the admin us
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
 
-## Contributing and License
+## Contributing
 
 If you want to contribute to this project, you can directly make pull requests to our Github repository that we regulary check.
+
+## License
 
 Copyright (C) 2013 Webshell SAS
 
@@ -53,4 +55,4 @@ GNU General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-⇨ [More infos about this license](http://redis.io/topics/quickstart)
+⇨ [More infos about AGPL](http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0))
