@@ -1,6 +1,6 @@
 # OAuth daemon
 
-The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) core. This is a background api server that runs on your own server that allow your clients to authenticate to any available provider.
+The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) core. This is a background api server that runs on your own server that allow your clients to authenticate to any 70+ available OAuth provider.
 
 ## Prerequisites
 
@@ -18,32 +18,34 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 
 ## Using OAuth daemon
 
-You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
-
 Run the redis server if it's not running yet.
 
 To start, stop or restart oauthd, just use
 `npm [start|stop|restart]` in oauthd folder.
 
-Then the admin interface is available to your url / port set into config.js, at /admin.
-
 By default, you can access it by [http://localhost:6284/admin](http://localhost:6284/admin).
 
-The first you connect, the given login & pass will be registered as the admin user, so don't forget it !
+![OAuthd signin](https://oauth.io/img/oauthd-signin.png "OAuthd")
+
+The first time you connect, the given login & pass will be registered as the admin user, so don't forget it !
 
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
+
+![OAuthd Keys manager](https://oauth.io/img/oauthd-keymanager.png "Keys manager")
+
+You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
+
+Then the admin interface is available to your url / port set into config.js, at /admin.
 
 ## Contributing
 
 If you want to contribute to this project, you can directly make pull requests to our Github repository that we regulary check.
 
-## License
-
 Copyright (C) 2013 Webshell SAS
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
+it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
 
@@ -52,7 +54,5 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
-You should have received a copy of the GNU Affero General Public License
+You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-⇨ [More infos about AGPL](http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29)
