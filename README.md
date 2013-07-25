@@ -2,6 +2,8 @@
 
 The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) core. This is a background api server that runs on your own server that allow your clients to authenticate to any 70+ available OAuth provider.
 
+![OAuthd Keys manager](https://oauth.io/img/oauthd-keymanager.png "Keys manager")
+
 ## Prerequisites
 
 - A working redis database >= v2.4, check [Redis quickstart](http://redis.io/topics/quickstart) for a properly installation
@@ -31,8 +33,6 @@ The first time you connect, the given login & pass will be registered as the adm
 
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
-
-![OAuthd Keys manager](https://oauth.io/img/oauthd-keymanager.png "Keys manager")
 
 You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
 
