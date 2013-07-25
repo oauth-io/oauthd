@@ -1,3 +1,5 @@
 /node_modules/*
-!/node_modules/restify-oauth2
-/node_modules/restify-oauth2/node_modules
+!/node_modules/restify-oauth2-private
+out.log
+err.log
+forever.log
