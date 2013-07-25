@@ -126,7 +126,7 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
 	key = req.params.k
 	if not key
-		return next new restify.MissingParameterError 'Missing OAuth.io public key.'
+		return next new restify.MissingParameterError 'Missing oauthd public key.'
 
 	domain = null
 	origin = null

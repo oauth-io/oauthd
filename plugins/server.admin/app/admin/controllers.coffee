@@ -48,6 +48,8 @@ hooks.config.push ->
 			$location.path '/'
 
 		$scope.keySaved = false
+		$scope.authUrl = document.location.protocol + '//' + document.location.host + '/'
+		$scope.authDomain = document.location.host
 		$scope.createKeyProvider = 'facebook'
 		$scope.createKeyTemplate = "admin/templates/partials/create-key.html"
 		$scope.createAppTemplate = "admin/templates/partials/create-app.html"
