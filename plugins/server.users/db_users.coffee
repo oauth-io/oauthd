@@ -63,8 +63,7 @@ exports.updateAccount = (req, callback) ->
 					prefix + 'validated', 0,
 					prefix + 'key', validation_key]		
 
-			]).exec (err, res) ->
-				console.log err, res				
+			]).exec (err, res) ->						
 				return callback err if err
 
 				#send mail with key
