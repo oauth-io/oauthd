@@ -38,21 +38,23 @@ You may configure config.js in oauthd folder, to configure your ports, connectio
 
 Then the admin interface is available to your url / port set into config.js, at /admin.
 
-## Contributing
+## Contributing & Licenses
 
 If you want to contribute to this project, you can directly make pull requests to our Github repository that we regulary check.
 
 Copyright (C) 2013 Webshell SAS
 
 This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
+it under the terms of the GNU Affero General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 any later version.
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
+GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+⇨ [More infos about AGPL](http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29)
