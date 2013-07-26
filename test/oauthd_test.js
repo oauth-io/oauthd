@@ -368,6 +368,8 @@ exports.admin_api_update = {
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
+      if (data && Array.isArray(data.data))
+        data.data.sort();
       t.deepEqual(data, {
         status:"success",
         data: ['test1.local', 'test2.local']
@@ -382,6 +384,8 @@ exports.admin_api_update = {
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
+      if (data && data.data && Array.isArray(data.data.domains))
+        data.data.domains.sort();
       t.deepEqual(data, {
         status:"success",
         data: {
