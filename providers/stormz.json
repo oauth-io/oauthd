@@ -1,0 +1,36 @@
+{
+  "href": {
+    "keys": "https://stormz.me/oauth/applications/new",
+    "docs": "http://developer.stormz.me/",
+    "apps": "https://stormz.me/oauth/applications",
+    "provider": "https://stormz.me/"
+  },
+  "api_url": "https://api.stormz.me/",
+  "url": "https://stormz.me/oauth",
+  "oauth2": {
+    "authorize": "/authorize",
+    "access_token": {
+        "url": "/token",
+        "method": "post"
+    },
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    },
+    "parameters": {
+      "client_secret": "string",
+      "client_id": "string",
+      "scope": {
+        "values": {
+          "read": "Read",
+          "write": "Write"
+        },
+        "cardinality": "*",
+        "separator": " ",
+        "type": "string"
+      }
+    }
+  },
+  "name": "stormz"
+}
