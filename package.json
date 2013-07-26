@@ -1,7 +1,7 @@
 {
   "name": "oauthd",
   "description": "OAuth that just works.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://oauth.io",
   "author": "OAuth team <team@oauth.io>",
   "repository": {
@@ -41,6 +41,7 @@
     "underscore": "~1.4.4",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "restify-oauth2-oauthd": "~2.1.0"
   }
 }
