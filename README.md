@@ -23,7 +23,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 Run the redis server if it's not running yet.
 
 To start, stop or restart oauthd, just use
-`npm [start|stop|restart]` in oauthd folder.
+`npm [start|stop|restart] oauthd` in oauthd folder.
 
 By default, you can access it by [http://localhost:6284/admin](http://localhost:6284/admin).
 
