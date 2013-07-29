@@ -20,6 +20,7 @@ config = require './config'
 exit = require './exit'
 
 exports.redis = redis.createClient config.redis.port, config.redis.host, config.redis.options
+exports.redis.auth(config.redis.password) if config.redis.password
 exports.redis.select(config.redis.database) if config.redis.database
 
 exit.push 'Redis db', (callback) ->
