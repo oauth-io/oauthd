@@ -15,7 +15,10 @@ module.exports = {
 
 	redis: {
 		post: 6379,
-		host: '127.0.0.1'
+		host: '127.0.0.1',
+		// password: '...my redis password...',
+		// database: ...0~15...
+		// options: {...other options...}
 	},
 
 	smtp: {
