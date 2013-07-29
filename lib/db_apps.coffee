@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+Url = require 'url'
+
 async = require 'async'
 
 db = require './db'
@@ -207,17 +209,24 @@ exports.getKeysets = check check.format.key, (key, callback) ->
 			callback null, (reply.substr(prefix.length) for reply in replies)
 
 # check a domain
-exports.checkDomain = check check.format.key, 'string', (key, domain, callback) ->
+exports.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
 	exports.getDomains key, (err, domains) ->
 		return callback err if err
-		return callback null, true if domain == config.url.host
-		for vdomain in domains
-			checkport = vdomain.match('^(.*):[0-9]+$')
-			vdomain = checkport[1] if checkport?[1]
-			checkprotocol = vdomain.match('^.{2,6}:\/\/(.*)$')
-			vdomain = checkprotocol[1] if checkprotocol?[1]
-			if domain == vdomain ||
-				vdomain[0] == '*' && vdomain[1] == '.' &&
-				domain.substr(domain.length-vdomain.length+2) == vdomain.substr(2)
+		domain = Url.parse domain_str
+		if not domain.protocol
+			domain_str = 'http://' + domain_str
+			domain = Url.parse domain_str
+		return callback null, true if domain.host == config.url.host
+		for vdomain_str in domains
+			vdomain_str = vdomain_str.replace '*', '.'
+			if not vdomain_str.match /^{1,}:\/\//
+				vdomain_str = '.://' + vdomain_str
+			vdomain = Url.parse vdomain_str
+			continue if vdomain.protocol != '.:' && vdomain.protocol != domain.protocol
+			continue if vdomain.port && vdomain.port != domain.port
+			continue if vdomain.pathname && vdomain.pathname != '/' && vdomain.pathname != domain.pathname
+			if vdomain.hostname == domain.hostname ||
+				vdomain.hostname.substr(0,2) == '..' &&
+				domain.hostname.substr(domain.hostname.length-vdomain.hostname.length+1) == vdomain.hostname.substr(1)
 					return callback null, true
 		return callback null, false

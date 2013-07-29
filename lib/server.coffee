@@ -133,10 +133,9 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 	ref = req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri
 	if ref
 		urlinfos = Url.parse(ref)
-		domain = urlinfos.hostname
+		if not urlinfos.hostname
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 		origin = urlinfos.protocol + '//' + urlinfos.host
-	if not domain
-		return next new restify.InvalidHeaderError 'Missing origin or referer.'
 
 	oauthv = req.params.oauthv && {
 		"2":"oauth2"
@@ -144,12 +143,11 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 	}[req.params.oauthv]
 
 	async.waterfall [
-		(cb) -> db.apps.checkDomain key, domain, cb
+		(cb) -> db.apps.checkDomain key, ref, cb
 		(valid, cb) ->
 			return cb new check.Error 'Domain name does not match any registered domain on ' + config.url.host if not valid
 			if req.params.redirect_uri
-				urlinfos = Url.parse(req.params.redirect_uri)
-				db.apps.checkDomain key, urlinfos.hostname, cb
+				db.apps.checkDomain key, req.params.redirect_uri, cb
 			else
 				cb null, true
 		(valid, cb) ->
