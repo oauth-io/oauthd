@@ -1,0 +1,35 @@
+{
+  "href": {
+    "keys": "http://app.renren.com/developers/createAppNew",
+    "docs": "http://wiki.dev.renren.com/wiki/",
+    "apps": "http://app.renren.com/developers/newapp",
+    "provider": "http://renren.com"
+  },
+  "api_url": "https://api.renren.com/restserver.do",
+  "url": "http://graph.renren.com/oauth",
+  "oauth2": {
+    "authorize": "/authorize",
+    "access_token": {
+        "url": "/token",
+        "method": "post"
+    },
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    },
+    "parameters": {
+      "client_secret": "string",
+      "client_id": "string",
+      "scope": {
+        "values": {
+          "read_user_feed": "Read User Feed"
+        },
+        "cardinality": "*",
+        "separator": " ",
+        "type": "string"
+      }
+    }
+  },
+  "name": "Renren"
+}
