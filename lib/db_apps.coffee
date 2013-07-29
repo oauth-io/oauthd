@@ -219,7 +219,7 @@ exports.checkDomain = check check.format.key, 'string', (key, domain_str, callba
 		return callback null, true if domain.host == config.url.host
 		for vdomain_str in domains
 			vdomain_str = vdomain_str.replace '*', '.'
-			if not vdomain_str.match /^{1,}:\/\//
+			if not vdomain_str.match /^.{1,}:\/\//
 				vdomain_str = '.://' + vdomain_str
 			vdomain = Url.parse vdomain_str
 			continue if vdomain.protocol != '.:' && vdomain.protocol != domain.protocol
