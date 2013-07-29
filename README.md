@@ -14,11 +14,11 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 
     git clone git://github.com/oauth-io/oauthd.git
 
-## Instal global dependencies
+## Install global dependencies
 
     (sudo) npm install -g coffee-script grunt grunt-cli forever
 
-## Instal OAuth dependencies
+## Install OAuth dependencies
 
 In the cloned project dir, issue:
 
