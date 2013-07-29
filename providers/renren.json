@@ -1,0 +1,64 @@
+{
+  "href": {
+    "keys": "http://app.renren.com/developers/createAppNew",
+    "docs": "http://wiki.dev.renren.com/wiki/",
+    "apps": "http://app.renren.com/developers/newapp",
+    "provider": "http://renren.com"
+  },
+  "api_url": "https://api.renren.com/restserver.do",
+  "url": "http://graph.renren.com/oauth",
+  "oauth2": {
+    "authorize": "/authorize",
+    "access_token": {
+        "url": "/token",
+        "method": "post"
+    },
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    },
+    "parameters": {
+      "client_secret": "string",
+      "client_id": "string",
+      "scope": {
+        "values": {
+            "read_user_blog": "read_user_blog",
+            "read_user_checkin": "read_user_checkin",
+            "read_user_feed": "read_user_feed",
+            "read_user_guestbook": "read_user_guestbook",
+            "read_user_invitation": "read_user_invitation",
+            "read_user_like_history": "read_user_like_history",
+            "read_user_message": "read_user_message",
+            "read_user_notification": "read_user_notification",
+            "read_user_photo": "read_user_photo",
+            "read_user_status": "read_user_status",
+            "read_user_album": "read_user_album",
+            "read_user_comment": "read_user_comment",
+            "read_user_share": "read_user_share",
+            "read_user_request": "read_user_request",
+            "publish_blog": "publish_blog",
+            "publish_checkin": "publish_checkin",
+            "publish_feed": "publish_feed",
+            "publish_share": "publish_share",
+            "publish_comment": "publish_comment",
+            "write_guestbook": "write_guestbook",
+            "send_invitation": "send_invitation",
+            "send_request": "send_request",
+            "send_message": "send_message",
+            "send_notification": "send_notification",
+            "photo_upload": "photo_upload",
+            "status_update": "status_update",
+            "create_album": "create_album",
+            "publish_comment": "publish_comment",
+            "operate_like": "operate_like",
+            "admin_page": "admin_page"
+        },
+        "cardinality": "*",
+        "separator": " ",
+        "type": "string"
+      }
+    }
+  },
+  "name": "Renren"
+}
