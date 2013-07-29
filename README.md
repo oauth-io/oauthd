@@ -10,13 +10,21 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 - nodejs >= v0.8.2
 - npm >= v1.1
 
-## Installing global dependencies
+## Clone the project
 
-`(sudo) npm install -g coffee-script grunt grunt-cli forever`
+    git clone git://github.com/oauth-io/oauthd.git
 
-## Installing OAuth daemon
+## Instal global dependencies
 
-`npm install oauthd`
+    (sudo) npm install -g coffee-script grunt grunt-cli forever
+
+## Instal OAuth dependencies
+
+In the cloned project dir, issue:
+
+    npm install
+
+`npm` will install dependencies listed in `package.json`.
 
 ## Using OAuth daemon
 
