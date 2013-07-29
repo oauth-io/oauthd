@@ -20,14 +20,7 @@
     },
     "parameters": {
       "client_secret": "string",
-      "client_id": "string",
-      "scope": {
-        "values": {
-        },
-        "cardinality": "*",
-        "separator": " ",
-        "type": "string"
-      }
+      "client_id": "string"
     }
   },
   "name": "SinaWeibo"
