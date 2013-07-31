@@ -101,4 +101,13 @@ OAuth.io Team'
 			res.send total:r[1], timeline:r[0]
 			next()
 
+	# get provider list
+	@server.get @config.base + '/api/adm/wishlist', @auth.needed, (req, res, next) =>
+		@db.wishlist.getList @server.send(res, next)
+
+
+	@server.del @config.base + '/api/adm/wishlist/:provider', @auth.needed, (req, res, next) =>
+		console.log(req.params.provider);
+		@db.wishlist.remove req.params.provider, @server.send(res, next)
+
 	callback()

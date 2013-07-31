@@ -16,4 +16,6 @@ exports.setup = (callback) ->
 	@server.get @config.base + '/api/wishlist', @auth.needed, (req, res, next) =>
 		@db.wishlist.getList @server.send(res, next)
 
+
+
 	callback()

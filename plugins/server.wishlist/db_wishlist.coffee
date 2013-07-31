@@ -14,32 +14,34 @@ exports.add = (name, user_id, callback) ->
 	prefix = "w:providers"
 	count = 0;
 	
-	db.redis.sismember [ "#{prefix}:#{name}", user_id ], (err, res) ->
-		return callback err if err
-		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
+	if (name?)
+		db.redis.sismember [ "#{prefix}:#{name}", user_id ], (err, res) ->
+			return callback err if err
+			return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
 
-		db.redis.mget "#{prefix}:#{name}:count", (err, res) ->
+			db.redis.mget "#{prefix}:#{name}:count", (err, res) ->
 
-			if not res[0]?
-				count = 1
-				db.redis.multi([
-					[ 'sadd', "#{prefix}", name ],
-					[ 'sadd', "#{prefix}:#{name}", user_id],
-					[ 'mset', "#{prefix}:#{name}:name", name,
-							"#{prefix}:#{name}:status", "asked",
-					  		"#{prefix}:#{name}:count", count ]
-				]).exec (err) ->		
-					return callback err if err
-					return callback null
-			else
-				count = parseInt(res[0]) + 1
+				if not res[0]?
+					count = 1
+					db.redis.multi([
+						[ 'sadd', "#{prefix}", name ],
+						[ 'sadd', "#{prefix}:#{name}", user_id],
+						[ 'mset', "#{prefix}:#{name}:name", name,
+								"#{prefix}:#{name}:status", "asked",
+					  			"#{prefix}:#{name}:count", count ]
+					]).exec (err) ->		
+						return callback err if err
+						return callback null
+				else
+					count = parseInt(res[0]) + 1
 
-				db.redis.multi([					
-					[ 'sadd', "#{prefix}:#{name}", user_id],
-					[ 'mset', "#{prefix}:#{name}:count", count ]
-				]).exec (err) ->		
-					return callback err if err
-					return callback null
+					db.redis.multi([					
+						[ 'sadd', "#{prefix}:#{name}", user_id],
+						[ 'mset', "#{prefix}:#{name}:count", count ]
+					]).exec (err) ->		
+						return callback err if err
+						return callback null
+
 
 exports.getList = (callback) ->
 
@@ -65,3 +67,17 @@ exports.getList = (callback) ->
 
 			return callback null, providers
 
+
+# delete a provider
+exports.remove = check 'string', (provider, callback) ->
+	prefix = 'w:providers:' + provider
+	db.redis.sismember ['w:providers' , provider], (err, res) ->
+		return callback err if err
+		return callback new check.Error "Sorry but the provider " + provider.toUpperCase() + " doesn't exist anymore" if res == 0
+
+		db.redis.multi([
+			[ 'del', prefix+':name', prefix+':status', prefix+':count' , prefix ]
+			[ 'srem', 'w:providers', provider],
+		]).exec (err, replies) ->
+			return callback err if err
+			return callback null, provider
