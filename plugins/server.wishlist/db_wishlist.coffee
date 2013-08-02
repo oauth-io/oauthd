@@ -81,3 +81,17 @@ exports.remove = check 'string', (provider, callback) ->
 		]).exec (err, replies) ->
 			return callback err if err
 			return callback null, provider
+
+
+# change a status provider
+exports.setStatus = (provider, status, callback) ->
+	prefix = 'w:providers:' + provider
+	db.redis.sismember ['w:providers' , provider], (err, res) ->
+		return callback err if err
+		return callback new check.Error "Sorry but the provider " + provider.toUpperCase() + " doesn't exist" if res == 0
+
+		db.redis.multi([
+			[ 'set', prefix+':status', status],
+		]).exec (err, replies) ->
+			return callback err if err
+			return callback null, provider
