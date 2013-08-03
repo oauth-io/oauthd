@@ -14,7 +14,7 @@ check = require './check'
 plugins = require './plugins'
 
 # create a new app
-exports.create = check name:/^.{3,}$/,domains:['none','array'], (data, callback) ->
+exports.create = check name:/^.{3,15}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
 	err = new check.Error
 	if data.domains
@@ -55,7 +55,7 @@ exports.get = check check.format.key, (key, callback) ->
 			callback null, id:idapp, name:replies[0], key:replies[1]
 
 # update app infos
-exports.update = check check.format.key, name:['none',/^.{6,}$/], domains:['none','array'], (key, data, callback) ->
+exports.update = check check.format.key, name:['none',/^.{3,15}$/], domains:['none','array'], (key, data, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
