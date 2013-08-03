@@ -31,7 +31,7 @@ exports.add = (name, user_id, callback) ->
 					  			"#{prefix}:#{name}:count", count ]
 					]).exec (err) ->		
 						return callback err if err
-						return callback null
+						return callback null, name:name, count:count
 				else
 					count = parseInt(res[0]) + 1
 
@@ -40,7 +40,7 @@ exports.add = (name, user_id, callback) ->
 						[ 'mset', "#{prefix}:#{name}:count", count ]
 					]).exec (err) ->		
 						return callback err if err
-						return callback null
+						return callback null, name:name, count:count, updated:true
 
 
 exports.getList = (callback) ->
@@ -80,7 +80,7 @@ exports.remove = check 'string', (provider, callback) ->
 			[ 'srem', 'w:providers', provider],
 		]).exec (err, replies) ->
 			return callback err if err
-			return callback null, provider
+			return callback null, name:provider
 
 
 # change a status provider
@@ -94,4 +94,4 @@ exports.setStatus = (provider, status, callback) ->
 			[ 'set', prefix+':status', status],
 		]).exec (err, replies) ->
 			return callback err if err
-			return callback null, provider
+			return callback null, name:provider, status:status
