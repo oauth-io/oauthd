@@ -206,6 +206,7 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 			prefix + 'pass', pass,
 			prefix + 'salt', dynsalt,
 			prefix + 'key', '' # clear
+			prefix + 'validated', 1
 		], (err) ->
 			return callback err if err
 			return callback null, email:res.email, id:res.id
@@ -286,7 +287,7 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 			prefix+'date_inscr',
 			prefix+'validated'], (err, replies) ->
 				return callback err if err
-				calcpass = db.generateHash pass + replies[1]
+				calcpass = db.generateHash pass + replies[1]				
 				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
