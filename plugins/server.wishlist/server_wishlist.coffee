@@ -10,7 +10,7 @@ exports.setup = (callback) ->
 
 	# add provider to wishlist
 	@server.post @config.base + '/api/wishlist/add', (req, res, next) =>
-		@db.wishlist.add req.body.name.toLowerCase(), req.clientId.id, @server.send(res, next)
+		@db.wishlist.add req.body.name, req.clientId.id, @server.send(res, next)
 
 	# get wishlist
 	@server.get @config.base + '/api/wishlist', @auth.needed, (req, res, next) =>
