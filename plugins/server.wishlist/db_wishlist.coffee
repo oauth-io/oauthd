@@ -21,6 +21,7 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 		db.redis.mget ["#{prefix}:#{name}:count", "#{prefix}:#{name}:status"], (err, res) ->
 			return callback err if err
 			return callback new check.Error "Sorry but this name is marked as spam" if res[1] == 'spam'
+			return callback new check.Error "This provider is already supported ;)" if res[1] == 'release'
 			return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if added == 1
 
 			if not res[0]?
@@ -64,7 +65,7 @@ exports.getList = (opts, callback) ->
 
 			filtered_providers = []
 			for i of providers
-				if opts.full || res[i * 3 + 1] != 'spam'
+				if opts.full || (res[i * 3 + 1] != 'spam' && res[i * 3 + 1] != 'release')
 					filtered_providers.push name:res[i * 3], status:res[i * 3 + 1], count:parseInt(res[i * 3 + 2])
 
 			return callback null, filtered_providers
