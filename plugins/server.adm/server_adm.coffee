@@ -103,7 +103,7 @@ OAuth.io Team'
 
 	# get provider list
 	@server.get @config.base + '/api/adm/wishlist', @auth.adm, (req, res, next) =>
-		@db.wishlist.getList @server.send(res, next)
+		@db.wishlist.getList full:true, @server.send(res, next)
 
 	@server.del @config.base + '/api/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
 		@db.wishlist.remove req.params.provider, @server.send(res, next)

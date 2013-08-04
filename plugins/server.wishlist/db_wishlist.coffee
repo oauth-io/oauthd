@@ -15,13 +15,15 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 	count = 0;
 	name = name.toLowerCase()
 
-	db.redis.sismember [ "#{prefix}:#{name}", user_id ], (err, res) ->
+	db.redis.sismember [ "#{prefix}:#{name}", user_id ], (err, added) ->
 		return callback err if err
-		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
 
-		db.redis.get "#{prefix}:#{name}:count", (err, res) ->
+		db.redis.mget ["#{prefix}:#{name}:count", "#{prefix}:#{name}:status"], (err, res) ->
+			return callback err if err
+			return callback new check.Error "Sorry but this name is marked as spam" if res[1] == 'spam'
+			return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if added == 1
 
-			if not res?
+			if not res[0]?
 				count = 1
 				db.redis.multi([
 					[ 'sadd', "#{prefix}", name ],
@@ -33,7 +35,7 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 					return callback err if err
 					return callback null, name:name, count:count
 			else
-				count = parseInt(res) + 1
+				count = parseInt(res[0]) + 1
 
 				db.redis.multi([
 					[ 'sadd', "#{prefix}:#{name}", user_id],
@@ -43,7 +45,7 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 					return callback null, name:name, count:count, updated:true
 
 
-exports.getList = (callback) ->
+exports.getList = (opts, callback) ->
 
 	prefix = "w:providers"
 
@@ -60,10 +62,12 @@ exports.getList = (callback) ->
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
+			filtered_providers = []
 			for i of providers
-				providers[i] = name:res[i * 3], status:res[i * 3 + 1], count:parseInt(res[i * 3 + 2])
+				if opts.full || res[i * 3 + 1] != 'spam'
+					filtered_providers.push name:res[i * 3], status:res[i * 3 + 1], count:parseInt(res[i * 3 + 2])
 
-			return callback null, providers
+			return callback null, filtered_providers
 
 
 # delete a provider
