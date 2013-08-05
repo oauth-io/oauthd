@@ -1,0 +1,12 @@
+{
+  "name": "Viadeo",
+  "url": "https://secure.viadeo.com/oauth-provider",
+  "oauth2": {
+    "authorize": "/authorize2",
+    "access_token": "/access_token2",
+    "parameters":{
+      "client_secret": "string",
+      "client_id": "string"
+    }   
+  }
+}
