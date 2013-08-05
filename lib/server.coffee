@@ -60,8 +60,15 @@ server.send = send = (res, next) -> (e, r) ->
 	res.send (if r? then r else check.nullv)
 	next()
 
+bootPathCache = ->
+	chain = restify.conditionalRequest()
+	chain.unshift (req, res, next) ->
+		res.set 'ETag', db.generateHash req.path() + ':' + config.bootTime
+		next()
+	return chain
+
 # generated js sdk
-server.get config.base + '/download/latest/oauth.js', (req, res, next) ->
+server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
 	sdk_js.get (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'
@@ -69,7 +76,7 @@ server.get config.base + '/download/latest/oauth.js', (req, res, next) ->
 		next()
 
 # generated js sdk minified
-server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
+server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req, res, next) ->
 	sdk_js.getmin (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'
@@ -233,18 +240,18 @@ server.del config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, 
 	db.apps.remKeyset req.params.key, req.params.provider, send(res,next)
 
 # get providers list
-server.get config.base + '/api/providers', (req, res, next) ->
+server.get config.base + '/api/providers', bootPathCache(), (req, res, next) ->
 	db.providers.getList send(res,next)
 
 # get a provider config
-server.get config.base + '/api/providers/:provider', (req, res, next) ->
+server.get config.base + '/api/providers/:provider', bootPathCache(), (req, res, next) ->
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config
-server.get config.base + '/api/providers/:provider/logo', ((req, res, next) ->
+server.get config.base + '/api/providers/:provider/logo', bootPathCache(), ((req, res, next) ->
 		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
 			if not exists
 				req.params.provider = 'default'

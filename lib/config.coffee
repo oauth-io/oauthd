@@ -11,5 +11,6 @@ config = require '../config'
 config.base = Path.resolve '/', config.base
 config.base = '' if config.base = '/'
 config.url = Url.parse config.host_url
+config.bootTime = new Date
 
 module.exports = config
