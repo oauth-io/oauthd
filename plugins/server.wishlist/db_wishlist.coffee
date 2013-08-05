@@ -41,9 +41,10 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 				db.redis.multi([
 					[ 'sadd', "#{prefix}:#{name}", user_id],
 					[ 'mset', "#{prefix}:#{name}:count", count ]
-				]).exec (err) ->
-					return callback err if err
-					return callback null, name:name, count:count, updated:true
+					[ 'get', "#{prefix}:#{name}:status"]
+				]).exec (err, res) ->
+					return callback err if err										
+					return callback null, name:name, status:res[2], count:count, updated:true
 
 
 exports.getList = (opts, callback) ->
