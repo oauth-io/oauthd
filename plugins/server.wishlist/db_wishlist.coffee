@@ -21,6 +21,7 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 		db.redis.mget ["#{prefix}:#{name}:count", "#{prefix}:#{name}:status"], (err, res) ->
 			return callback err if err
 			return callback new check.Error "Sorry but this name is marked as spam" if res[1] == 'spam'
+			return callback new check.Error "Sorry but this name is marked as non-oauth" if res[1] == 'non-oauth'
 			return callback new check.Error "This provider is already supported ;)" if res[1] == 'release'
 			return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if added == 1
 
@@ -43,7 +44,7 @@ exports.add = check /^.+/, 'int', (name, user_id, callback) ->
 					[ 'mset', "#{prefix}:#{name}:count", count ]
 					[ 'get', "#{prefix}:#{name}:status"]
 				]).exec (err, res) ->
-					return callback err if err										
+					return callback err if err
 					return callback null, name:name, status:res[2], count:count, updated:true
 
 
