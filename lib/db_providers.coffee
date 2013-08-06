@@ -78,7 +78,6 @@ exports.getExtended = (name, callback) ->
 	provider = providers._list[name] ?= expire:0
 	now = (new Date).getTime()
 	if now > provider.expire
-		console.log 'refresh provider ' + name
 		exports.get name, (err, res) ->
 			return callback err if err
 			for oauthv in ['oauth1','oauth2']
