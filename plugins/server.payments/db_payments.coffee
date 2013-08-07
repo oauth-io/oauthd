@@ -2,67 +2,76 @@ async = require 'async'
 Mailer = require '../../lib/mailer'
 { db, check, config } = shared = require '../shared'
 
-exports.process = (data, client_id, callback) ->
-	
-	return callback new check.Error 'client is empty' if not client_id?
+exports.process = (data, client, callback) ->
 
 	paymill = require('paymill-node')(config.paymill.secret_key)
 
-	client_obj =		
-		email : ''
-		
-	payment_obj =  null
-	transaction_obj = null
-	subscription_obj = null
+	client_id = client.id
+	client_email = client.mail
 
-	o_prefix = "o:#{client_id}"	
+	client_obj =
+		email : ''
+
+	payment_obj =
+		token: ''
+		client: ''
+
+	subscription_obj =
+		amount: ''
+		offer: ''
+		payment: ''
+
+	o_prefix = "o:#{client_id}"
 	h_u_prefix = "u:mails"
 
 	async.series [
-		
-		# check if user had paid
+
+		# create Paymill user
 		(cb) ->
-			console.log "check if user had pay..."
-			db.redis.mget ["#{o_prefix}:offer_id"], (err, order) ->
-				return callback err if err
-				return callback new check.Error "Order exists" if order[0]?
+			console.log "creating Paymill user..."
+			db.redis.mget ["#{o_prefix}:pm_user_id"], (err, order) ->
+				return cb err if err
+				#return cb new check.Error "Order exists..., is it an update ?" if order[0]?
 
-				client_obj.email = data.email
-				paymill.client.create client_obj, (err, client) ->
-					return callback err if err
-					
-					db.redis.sadd o_prefix, client.data.id, (err, res) ->
-						return callback err if err
-						
-						cb null
+				client_obj.email = client_email
 
-		# create client and payment
+				# create Paymill user
+				paymill.clients.create client_obj, (err, client) ->
+					return cb err if err
+
+					id = client.data.id # Paymill id
+					client_obj.id = id
+
+					# Paymill user id to Redis
+					db.redis.set "#{o_prefix}:pm_user_id", id, (err, res) ->
+						return cb err if err
+						cb()
+
+		# create payment
 		(cb) ->
-			# console.log "cerate payment"
-			# paymill.payment.create payment_obj, (err, payment) ->
-			# 	return callback err if err
-			console.log client_obj
-			cb null
+			console.log "creating Paymill payment..."
 
+			payment_obj.token = data.token
+			payment_obj.client = client_obj.id
+
+			paymill.payments.create payment_obj, (err, payment) ->
+
+				# Payment : credit card infos...
+				db.redis.set "#{o_prefix}:pm_payment_id", payment.data.id, (err, res) ->
+					return cb myError if err
+					cb null
 
 		# create transaction
 		(cb) ->
-			console.log "creating subscription..."
+			console.log "creating Paymill subscription..."
 
-			# transaction_obj =
-			# 	amount: data.amount * 100
-			# 	payment : payment_obj.id
-			# 	currency: "EUR"
-			# 	token: ''
-			#	client_id: ''
+			subscription_obj.amount = data.amount * 2
+			subscription_obj.offer = data.offer
+			subscription_obj.payment = payment_obj.id
 
-			# paymill.transaction.create transaction_obj, (err, transaction) ->
-			# 	return callback err if err
-			# 	console.log "ok"
-
-			# paymill.subscription.create subscription_obj, (err, subscription) ->
-			# 	return callback err if err
-			cb null
+			paymill.subscriptions.create subscription_obj, (err, subscription) ->
+				return cb err if err
+				cb null
 
 		# notify user
 		(cb) ->
@@ -70,7 +79,7 @@ exports.process = (data, client_id, callback) ->
 			console.log "ok"
 			cb null
 
-	], (err, result) ->		
+	], (err, result) ->
 		return callback err if err
 		return callback null, result
 
