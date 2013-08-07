@@ -16,7 +16,7 @@ module.exports = {
 	publicsalt: 'i m another random string, change me.',
 
 	redis: {
-		post: 6379,
+		port: 6379,
 		host: '127.0.0.1',
 		// password: '...my redis password...',
 		// database: ...0~15...
