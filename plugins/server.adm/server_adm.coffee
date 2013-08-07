@@ -11,9 +11,15 @@ exports.setup = (callback) ->
 
 	@on 'connect.callback', (data) =>
 		@db.timelines.addUse target:'co:' + data.status, (->)
+		@db.ranking_timelines.addScore 'p:co:' + data.status, id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co:' + data.status, id:app, (->)
 
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co', (->)
+		@db.ranking_timelines.addScore 'p:co', id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co', id:app, (->)
 
 	@userInvite = (iduser, callback) =>
 		prefix = 'u:' + iduser + ':'
@@ -100,6 +106,47 @@ OAuth.io Team'
 			return next e if e
 			res.send total:r[1], timeline:r[0]
 			next()
+
+	# refresh rankings
+	@server.get @config.base + '/api/adm/rankings/refresh', @auth.adm, (req, res, next) =>
+		providers = {}
+		@db.redis.hgetall 'a:keys', (e, apps) =>
+			return next e if e
+			tasks = []
+			for k,id of apps
+				do (id) => tasks.push (cb) =>
+					@db.redis.keys 'a:' + id + ':k:*', (e, keysets) =>
+						return cb e if e
+						for keyset in keysets
+							prov = keyset.match /^a:.+?:k:(.+)$/
+							continue if not prov?[1]
+							providers[prov[1]] ?= 0
+							providers[prov[1]]++
+						@db.rankings.setScore 'a:k', id:id, val:keysets.length, cb
+			async.parallel tasks, (e) =>
+				return next e if e
+				for p,keysets of providers
+					@db.rankings.setScore 'p:k', id:p, val:keysets, (->)
+				res.send @check.nullv
+				next()
+
+	# get a ranking
+	@server.post @config.base + '/api/adm/ranking', @auth.adm, (req, res, next) =>
+		@db.ranking_timelines.getRanking req.body.target, req.body, @server.send(res, next)
+
+	# get a ranking related to apps
+	@server.post @config.base + '/api/adm/ranking/apps', @auth.adm, (req, res, next) =>
+		@db.ranking_timelines.getRanking req.body.target, req.body, (e, infos) =>
+			return next e if e
+			cmds = []
+			for info in infos
+				cmds.push ['get', 'a:' + info.name + ':name']
+				cmds.push ['smembers', 'a:' + info.name + ':domains']
+				# ... add more ? domains ? owner ?
+			@db.redis.multi(cmds).exec (e, r) ->
+				infos[i].name = r[i*2] + ' (' + r[i*2+1].join(', ') + ')' for i of infos
+				res.send infos
+				next()
 
 	# get provider list
 	@server.get @config.base + '/api/adm/wishlist', @auth.adm, (req, res, next) =>

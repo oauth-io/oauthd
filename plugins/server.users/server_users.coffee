@@ -23,10 +23,14 @@ exports.setup = (callback) ->
 		@db.timelines.addUse target:'keysets', (->)
 		@db.timelines.addUse target:'a:' + data.app + ':keysets', (->)
 		@db.timelines.addUse target:'p:' + data.provider + ':keysets', (->)
+		@db.ranking_timelines.addScore 'a:k', id:data.id, (->)
+		@db.ranking_timelines.addScore 'p:k', id:data.provider, (->)
 	@on 'app.remkeyset', (data) =>
 		@db.timelines.addUse target:'keysets', uses:-1, (->)
 		@db.timelines.addUse target:'a:' + data.app + ':keysets', uses:-1, (->)
 		@db.timelines.addUse target:'p:' + data.provider + ':keysets', uses:-1, (->)
+		@db.ranking_timelines.addScore 'a:k', id:data.id, val:-1, (->)
+		@db.ranking_timelines.addScore 'p:k', id:data.provider, val:-1, (->)
 
 	# reset password
 	@server.post @config.base + '/api/users/resetPassword', (req, res, next) =>
@@ -82,7 +86,7 @@ exports.setup = (callback) ->
 				next()
 
 	# update mail or password
-	@server.put @config.base + '/api/me', @auth.needed, (req, res, next) =>		
+	@server.put @config.base + '/api/me', @auth.needed, (req, res, next) =>
 		@db.users.updateAccount req, @server.send(res, next)
 
 	# delete my account
@@ -90,7 +94,7 @@ exports.setup = (callback) ->
 		@db.users.remove req.user.id, @server.send(res,next)
 
 	# get total connexion of an app
-	@server.get @config.base + '/api/users/app/:key', @auth.needed, (req, res, next) =>		
+	@server.get @config.base + '/api/users/app/:key', @auth.needed, (req, res, next) =>
 		@db.timelines.getTotal "co:a:#{req.params.key}", @server.send(res, next)
 
 	callback()

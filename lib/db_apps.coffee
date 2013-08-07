@@ -14,7 +14,7 @@ check = require './check'
 plugins = require './plugins'
 
 # create a new app
-exports.create = check name:/^.{3,15}$/,domains:['none','array'], (data, callback) ->
+exports.create = check name:/^.{3,50}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
 	err = new check.Error
 	if data.domains
@@ -55,7 +55,7 @@ exports.get = check check.format.key, (key, callback) ->
 			callback null, id:idapp, name:replies[0], key:replies[1]
 
 # update app infos
-exports.update = check check.format.key, name:['none',/^.{3,15}$/], domains:['none','array'], (key, data, callback) ->
+exports.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
@@ -174,7 +174,7 @@ exports.addKeyset = check check.format.key, 'string', 'object', (key, provider, 
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.set 'a:' + idapp + ':k:' + provider, JSON.stringify(data), (err, res) ->
 			return callback err if err
-			plugins.data.emit 'app.addkeyset', provider:provider, app:key
+			plugins.data.emit 'app.addkeyset', provider:provider, app:key, id:idapp
 			callback()
 
 # get keys infos of an app for a provider
@@ -185,7 +185,7 @@ exports.remKeyset = check check.format.key, 'string', (key, provider, callback) 
 		db.redis.del 'a:' + idapp + ':k:' + provider, (err, res) ->
 			return callback err if err
 			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
-			plugins.data.emit 'app.remkeyset', provider:provider, app:key
+			plugins.data.emit 'app.remkeyset', provider:provider, app:key, id:idapp
 			callback()
 
 # get keys infos of an app for all providers

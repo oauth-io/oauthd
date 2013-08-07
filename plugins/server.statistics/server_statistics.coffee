@@ -5,10 +5,11 @@
 # Licensed under the MIT license.
 
 async = require 'async'
+require './db_timelines'
+require './db_rankings'
+require './db_ranking_timelines'
 
 exports.setup = (callback) ->
-
-	@db.timelines = require './db_timelines'
 
 	@on 'connect.callback', (data) =>
 		@db.timelines.addUse target:'co:a:' + data.key + ':' + data.status, (->)
