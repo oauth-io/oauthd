@@ -26,7 +26,7 @@ module.exports = {
 		}
 	},
 
-	paymill:{		
+	paymill:{
 		secret_key: '6cc6913adcad3f37f04feda27ee75f56',
 		public_key: '235807894705702ff1aac623959c55cb'
 	},
@@ -40,6 +40,8 @@ module.exports = {
 		'server.adm',
 		'server.oauth_io',
 		'server.payments'
+		'server.mailjet',
+		'server.wishlist'
 		/* ------------------------- */
 	]
 }

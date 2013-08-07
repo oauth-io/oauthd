@@ -30,16 +30,88 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				shared.emit 'user.register', user
 				return callback null, user
 
+# update user infos
+exports.updateAccount = (req, callback) ->
+
+	data = req.body	
+	user_id = req.user.id	
+	prefix = "u:#{user_id}:"
+	old_email = null
+
+	db.redis.mget [ prefix + 'mail'], (err, res) =>
+		old_email = res[0]
+			
+	db.redis.hget 'u:mails', data.email, (err, id) ->
+		
+		is_new_email = (old_email != data.email)
+		validation_key = db.generateUid()		
+		
+		if is_new_email
+			return callback err if err
+			return callback new check.Error "#{data.email} already exists" if id
+
+			db.redis.multi([
+
+				[ 'hdel', 'u:mails', old_email ],
+				[ 'hset', 'u:mails', data.email, user_id ],
+
+				[ 'mset', prefix + 'mail', data.email,
+					prefix + 'name', data.name,
+					prefix + 'location', data.location,
+					prefix + 'company', data.company,
+					prefix + 'website', data.website,
+					prefix + 'validated', 0,
+					prefix + 'key', validation_key]		
+
+			]).exec (err, res) ->						
+				return callback err if err
+
+				#send mail with key
+				options =
+						to:
+							email: data.email
+						from:
+							name: 'OAuth.io'
+							email: 'team@oauth.io'
+						subject: 'OAuth.io - You email address has been updated'
+						body: "Hello,\n\n
+In order to validate your new email address, please click the following link: https://" + config.url.host + "/#/validate/" + user_id + "/" + validation_key + ".\n
+
+--\n
+OAuth.io Team"
+				mailer = new Mailer options
+				mailer.send (err, result) ->
+					return callback err if err						
+					user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
+					return callback null, user						
+		else	
+			db.redis.mset [	
+				prefix + 'mail', data.email,
+				prefix + 'name', data.name,
+				prefix + 'location', data.location,
+				prefix + 'company', data.company,
+				prefix + 'website', data.website
+			], (err) ->
+				return callback err if err
+				user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
+				return callback null, user
+
 
 exports.isValidable = (data, callback) ->
 	key = data.key
 	iduser = data.id
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
+	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated', prefix+'pass'], (err, replies) ->
 		return callback err if err
-		if replies[2] == '1' || replies[1] != key
-			return callback null, is_validable: false
-		return callback null, is_validable: true, mail: replies[0], id: iduser
+
+		if replies[3]? # pass ok, validate new email address		
+			db.redis.mset [prefix+'validated', 1], (err) ->				
+				return callback err if err
+				return callback null, is_updated: true, mail: replies[0], id: iduser
+		else
+			if replies[2] == '1' || replies[1] != key
+				return callback null, is_validable: false
+			return callback null, is_validable: true, mail: replies[0], id: iduser
 
 # validate user mail
 exports.validate = check pass:/^.{6,}$/, (data, callback) ->
@@ -134,6 +206,7 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 			prefix + 'pass', pass,
 			prefix + 'salt', dynsalt,
 			prefix + 'key', '' # clear
+			prefix + 'validated', 1
 		], (err) ->
 			return callback err if err
 			return callback null, email:res.email, id:res.id
@@ -146,10 +219,10 @@ exports.changePassword = check mail:check.format.mail, (data, callback) ->
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix+'mail', prefix+'date_inscr'], (err, replies) ->
+	db.redis.mget [prefix+'mail', prefix+'date_inscr', prefix + 'name', prefix + 'location', prefix + 'company', prefix + 'website'], (err, replies) ->
 		return callback err if err
 		return callback new check.Error 'Unknown mail' if not replies[1]
-		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1]
+		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1], name: replies[2], location: replies[3], company: replies[4], website: replies[5]
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
@@ -211,10 +284,11 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 			prefix+'pass',
 			prefix+'salt',
 			prefix+'mail',
-			prefix+'date_inscr'], (err, replies) ->
+			prefix+'date_inscr',
+			prefix+'validated'], (err, replies) ->
 				return callback err if err
-				calcpass = db.generateHash pass + replies[1]
-				return callback new check.Error 'Bad password' if replies[0] != calcpass
+				calcpass = db.generateHash pass + replies[1]				
+				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
 ## Event: add app to user when created
