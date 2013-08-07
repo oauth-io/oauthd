@@ -26,6 +26,11 @@ module.exports = {
 		}
 	},
 
+	paymill:{		
+		secret_key: '6cc6913adcad3f37f04feda27ee75f56',
+		public_key: '235807894705702ff1aac623959c55cb'
+	},
+
 	plugins: [
 		'server.statistics',
 
@@ -33,7 +38,8 @@ module.exports = {
 		'server.auth',
 		'server.users',
 		'server.adm',
-		'server.oauth_io'
+		'server.oauth_io',
+		'server.payments'
 		/* ------------------------- */
 	]
 }
