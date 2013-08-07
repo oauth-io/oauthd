@@ -4,7 +4,7 @@ Mailer = require '../../lib/mailer'
 
 exports.process = (data, client, callback) ->
 
-	paymill = require('paymill-node')(config.paymill.secret_key)
+	paymill = require('paymill-node')(config.paymill-node.secret_key)
 
 	client_id = client.id
 	client_email = client.mail
@@ -111,3 +111,21 @@ exports.process = (data, client, callback) ->
 		return callback null, result
 
 exports.update = (offer_id, callback) ->
+
+
+exports.createOffer = (amount, name, currency, interval) ->
+
+	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval);
+	paymill = require('paymill-node')(config.paymill-node.secret_key)
+
+	paymill.offers.create
+		amount: amount
+		currency: currency
+		interval: interval
+		name: name
+	,(err, offer) ->
+		if err
+			console.log "Couldn't create the offer record"
+			return
+		console.log "offer id " + offer.data.id
+
