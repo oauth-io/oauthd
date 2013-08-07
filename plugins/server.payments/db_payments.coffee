@@ -17,67 +17,94 @@ exports.process = (data, client, callback) ->
 		client: ''
 
 	subscription_obj =
-		amount: ''
+		client: ''
 		offer: ''
 		payment: ''
 
 	o_prefix = "o:#{client_id}"
-	h_u_prefix = "u:mails"
 
 	async.series [
 
 		# create Paymill user
 		(cb) ->
 			console.log "creating Paymill user..."
-			db.redis.mget ["#{o_prefix}:pm_user_id"], (err, order) ->
+			db.redis.hget ["#{o_prefix}", "pm_user_id"], (err, id) ->
 				return cb err if err
-				#return cb new check.Error "Order exists..., is it an update ?" if order[0]?
 
+				client_obj.id = id if id?
 				client_obj.email = client_email
 
-				# create Paymill user
-				paymill.clients.create client_obj, (err, client) ->
-					return cb err if err
-
-					id = client.data.id # Paymill id
-					client_obj.id = id
-
-					# Paymill user id to Redis
-					db.redis.set "#{o_prefix}:pm_user_id", id, (err, res) ->
+				if not id?
+					# create Paymill user
+					paymill.clients.create client_obj, (err, client) ->
 						return cb err if err
-						cb()
+
+						id = client.data.id # Paymill id
+						client_obj.id = id
+
+						# Paymill user id to Redis
+						db.redis.hset "#{o_prefix}", "pm_user_id", id, (err, res) ->
+							return cb err if err
+							cb()
+				else
+					cb()
 
 		# create payment
 		(cb) ->
 			console.log "creating Paymill payment..."
+
+			# get payment_id or define a new
 
 			payment_obj.token = data.token
 			payment_obj.client = client_obj.id
 
 			paymill.payments.create payment_obj, (err, payment) ->
 
+				payment_obj.id = payment.data.id
+
 				# Payment : credit card infos...
-				db.redis.set "#{o_prefix}:pm_payment_id", payment.data.id, (err, res) ->
+				db.redis.hset "#{o_prefix}", "pm_payment_id", payment.data.id, (err, res) ->
 					return cb myError if err
-					cb null
+					cb()
 
-		# create transaction
+		# create subscription
 		(cb) ->
-			console.log "creating Paymill subscription..."
+			if data.offer # it's a subscription to an offer
 
-			subscription_obj.amount = data.amount * 2
-			subscription_obj.offer = data.offer
-			subscription_obj.payment = payment_obj.id
+				console.log "creating Paymill subscription..."
 
-			paymill.subscriptions.create subscription_obj, (err, subscription) ->
-				return cb err if err
-				cb null
+				subscription_obj.client = client_obj.id
+				subscription_obj.offer = data.offer
+				subscription_obj.payment = payment_obj.id
+
+				paymill.subscriptions.create subscription_obj, (err, subscription) ->
+					return cb err if err
+
+					db.redis.multi [
+
+
+						[ "sadd", "#{o_prefix}:subscriptions", subscription.data.id],
+
+						[ "hset", "#{o_prefix}:subscriptions:id", subscription.data.id,
+							"#{o_prefix}:subscriptions:amount", subscription.data.amount,
+							"#{o_prefix}:subscriptions:status", subscription.data.status
+							"#{o_prefix}:subscriptions:currency", subscription.data.id,
+							"#{o_prefix}:subscriptions:created_at", subscription.data.id,
+							"#{o_prefix}:subscriptions:updated_at", subscription.data.id,
+							"#{o_prefix}:subscriptions:response_code", subscription.data.id,
+							"#{o_prefix}:subscriptions:short_id", subscription.data.id,
+							"#{o_prefix}:subscriptions:payment", subscription.data.id
+							"#{o_prefix}:subscriptions:notified", false ]
+
+					], (err) ->
+						return cb err if err
+						cb()
 
 		# notify user
 		(cb) ->
 			console.log "notify user"
 			console.log "ok"
-			cb null
+			cb()
 
 	], (err, result) ->
 		return callback err if err
