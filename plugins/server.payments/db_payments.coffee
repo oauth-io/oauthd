@@ -35,6 +35,8 @@ exports.process = (data, client, callback) ->
 				client_obj.email = client_email
 
 				if not id?
+
+					console.log "\tnew user detected"
 					# create Paymill user
 					paymill.clients.create client_obj, (err, client) ->
 						return cb err if err
@@ -47,6 +49,7 @@ exports.process = (data, client, callback) ->
 							return cb err if err
 							cb()
 				else
+					console.log "\tuser exists with id #{id}"
 					cb()
 
 		# create payment
@@ -59,12 +62,14 @@ exports.process = (data, client, callback) ->
 			payment_obj.client = client_obj.id
 
 			paymill.payments.create payment_obj, (err, payment) ->
+				return cb err if err
 
 				payment_obj.id = payment.data.id
 
 				# Payment : credit card infos...
 				db.redis.hset "#{o_prefix}", "pm_payment_id", payment.data.id, (err, res) ->
-					return cb myError if err
+					return cb err if err
+					console.log "\t prayment created"
 					cb()
 
 		# create subscription
@@ -80,25 +85,31 @@ exports.process = (data, client, callback) ->
 				paymill.subscriptions.create subscription_obj, (err, subscription) ->
 					return cb err if err
 
-					db.redis.multi [
+					console.log "\t subscription created on Paymill"
+					subscription_prefix = "#{o_prefix}:subscriptions:#{subscription.data.id}"
+					console.log "\t creating on redis..."
 
+					db.redis.multi([
 
-						[ "sadd", "#{o_prefix}:subscriptions", subscription.data.id],
+						[ "sadd", "#{o_prefix}:subscriptions", subscription.data.id ],
 
-						[ "hset", "#{o_prefix}:subscriptions:id", subscription.data.id,
-							"#{o_prefix}:subscriptions:amount", subscription.data.amount,
-							"#{o_prefix}:subscriptions:status", subscription.data.status
-							"#{o_prefix}:subscriptions:currency", subscription.data.id,
-							"#{o_prefix}:subscriptions:created_at", subscription.data.id,
-							"#{o_prefix}:subscriptions:updated_at", subscription.data.id,
-							"#{o_prefix}:subscriptions:response_code", subscription.data.id,
-							"#{o_prefix}:subscriptions:short_id", subscription.data.id,
-							"#{o_prefix}:subscriptions:payment", subscription.data.id
-							"#{o_prefix}:subscriptions:notified", false ]
+						[ "mset", "#{subscription_prefix}:id", subscription.data.id,
+							"#{subscription_prefix}:amount", subscription.data.amount,
+							"#{subscription_prefix}:status", subscription.data.status
+							"#{subscription_prefix}:currency", subscription.data.id,
+							"#{subscription_prefix}:created_at", subscription.data.id,
+							"#{subscription_prefix}:updated_at", subscription.data.id,
+							"#{subscription_prefix}:response_code", subscription.data.id,
+							"#{subscription_prefix}:short_id", subscription.data.id,
+							"#{subscription_prefix}:payment", subscription.data.id
+							"#{subscription_prefix}:notified", false ]
 
-					], (err) ->
+					]).exec (err, res) ->
 						return cb err if err
+						console.log "\t prayment created on Redis"
 						cb()
+			else
+				cb new check.Error "Missing offer !"
 
 		# notify user
 		(cb) ->
@@ -108,6 +119,4 @@ exports.process = (data, client, callback) ->
 
 	], (err, result) ->
 		return callback err if err
-		return callback null, result
-
-exports.update = (offer_id, callback) ->
+		return callback null, status:"success"
