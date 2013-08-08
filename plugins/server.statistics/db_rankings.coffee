@@ -18,7 +18,7 @@ exports.getRanking = check 'string', start:['int','none'], end:['int','none'], (
 	end ?= -1
 	db.redis.zrevrange 'sr:' + target, start, end, "withscores", (e, r) ->
 		return callback e if e
-		res = ({name:r[k], score:r[k+1]} for k in [0..r.length-1] by 2)
+		res = ({name:r[k], score:parseInt(r[k+1])} for k in [0..r.length-1] by 2)
 		callback null, res
 
 exports.addScore = check 'string', id:'string', val:['number','none'], (target, data, callback) ->
