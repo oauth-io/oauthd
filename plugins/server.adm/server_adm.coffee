@@ -114,4 +114,11 @@ OAuth.io Team'
 	@server.post @config.base + '/api/adm/payment/create/:amount/:name/:currency/:interval', (req, res, next) =>	
 		@db.payments.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
 
+	# get offer list
+	@server.get @config.base + '/api/adm/payment', @auth.adm, (req, res, next) =>
+		@db.payments.getOffersList @server.send(res, next)
+
+	@server.del @config.base + '/api/adm/payment/:name', @auth.adm, (req, res, next) =>
+		@db.payments.removeOffer req.params.name, @server.send(res, next)
+
 	callback()
