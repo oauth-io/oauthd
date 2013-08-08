@@ -1,7 +1,6 @@
 async = require 'async'
 Mailer = require '../../lib/mailer'
 { db, check, config } = shared = require '../shared'
-
 paymill = require('paymill-node')(config.paymill.secret_key)
 
 exports.process = (data, client, callback) ->
@@ -134,3 +133,88 @@ exports.process = (data, client, callback) ->
 	], (err, result) ->
 		return callback err if err
 		return callback null, result
+
+exports.update = (offer_id, callback) ->
+	console.log("UPDATE");
+
+# create an Offer
+exports.createOffer = (amount, name, currency, interval, callback) ->
+
+	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval);
+	prefix = "pm:offers"
+
+	db.redis.sismember [ "#{prefix}:#{name}", 1 ], (err, res) ->
+		return callback err if err
+		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
+
+		paymill.offers.create
+			amount: amount
+			currency: currency
+			interval: interval
+			name: name
+		,(err, offer) ->
+			return callback err if err
+
+			console.log "offer id " + offer.data.id
+
+			db.redis.multi([
+				[ 'sadd', "#{prefix}", name ],
+				[ 'sadd', "#{prefix}:#{name}", 1],
+				[ 'mset', "#{prefix}:#{name}:id", offer.data.id,
+						"#{prefix}:#{name}:currency", offer.data.currency,
+						"#{prefix}:#{name}:interval", offer.data.interval,
+						"#{prefix}:#{name}:created_at", offer.data.created_at,
+						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
+						"#{prefix}:#{name}:amount", offer.data.amount,
+					  	"#{prefix}:#{name}:subscription_count:active", offer.data.subscription_count.active,
+					  	"#{prefix}:#{name}:subscription_count:inactive", offer.data.subscription_count.inactive
+				 ]
+				]).exec (err) ->
+					return callback err if err
+					return callback null, offer
+
+# delete an Offer
+exports.removeOffer = check 'string', (name, callback) ->
+	prefix = 'pm:offers:' + name
+	db.redis.sismember ['pm:offers' , name], (err, res) ->
+		return callback err if err
+		return callback new check.Error "Sorry but the plan " + plan.toUpperCase() + " doesn't exist anymore" if res == 0
+
+		db.redis.multi([
+			[ 'del', prefix+':id', prefix+':currency', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix ]
+			[ 'srem', 'pm:offers', name],
+		]).exec (err, replies) ->
+			return callback err if err
+			return callback null, name
+
+# getList of Offer
+exports.getOffersList = (callback) ->
+
+	prefix = "pm:offers"
+
+	db.redis.smembers "#{prefix}", (err, offers) ->
+		return callback err if err
+		return callback null, [] if not offers.length
+
+		cmds = []
+		tmpName = []
+		j = 0;
+		for p in offers
+			tmpName[j++] = p
+			cmds.push [ "get", "#{prefix}:#{p}:id"]
+			cmds.push [ "get", "#{prefix}:#{p}:currency"]
+			cmds.push [ "get", "#{prefix}:#{p}:interval"]
+			cmds.push [ "get", "#{prefix}:#{p}:created_at"]
+			cmds.push [ "get", "#{prefix}:#{p}:updated_at"]
+			cmds.push [ "get", "#{prefix}:#{p}:amount"]
+			cmds.push [ "get", "#{prefix}:#{p}:subscription_count:active"]
+			cmds.push [ "get", "#{prefix}:#{p}:subscription_count:inactive"]
+
+		db.redis.multi(cmds).exec (err, res) ->
+			return callback err if err
+
+			for i of offers
+				offers[i] = id:res[i * 8], currency:res[i * 8 + 1], interval:res[i * 8 + 2], created_at:res[i * 8 + 3], updated_at:res[i * 8 + 4], amount:res[i * 8 + 5], subscription_count:active:res[i * 8 + 6], subscription_count:inactive:res[i * 8 + 7]
+				offers[i].name = tmpName[i]
+
+			return callback null, offers
