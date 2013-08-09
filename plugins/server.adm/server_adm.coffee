@@ -111,8 +111,8 @@ OAuth.io Team'
 	@server.post @config.base + '/api/adm/wishlist/:provider/status/:status', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.params.provider, req.params.status , @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/payment/create/:amount/:name/:currency/:interval', (req, res, next) =>
-		@db.payments.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
+	@server.post @config.base + '/api/adm/payment/create/:amount/:name/:currency/:interval/:status', (req, res, next) =>
+		@db.payments.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, req.params.status, @server.send(res, next)
 
 	# get offer list
 	@server.get @config.base + '/api/adm/payment', @auth.adm, (req, res, next) =>
@@ -124,5 +124,9 @@ OAuth.io Team'
 
 	@server.post @config.base + '/api/adm/payment/update/:amount/:name/:currency/:interval', (req, res, next) =>
 		@db.payments.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
+
+
+	@server.post @config.base + '/api/adm/payment/update/:name/:currentStatus', (req, res, next) =>
+		@db.payments.updateStatus req.params.name, req.params.currentStatus, @server.send(res, next)
 
 	callback()
