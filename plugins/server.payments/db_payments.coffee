@@ -157,6 +157,9 @@ exports.createOffer = (amount, name, currency, interval, callback) ->
 
 			console.log "offer id " + offer.data.id
 
+			offer.data.name = name;
+			console.log "offer name " + offer.data.name
+
 			db.redis.multi([
 				[ 'sadd', "#{prefix}", name ],
 				[ 'sadd', "#{prefix}:#{name}", 1],
@@ -171,21 +174,26 @@ exports.createOffer = (amount, name, currency, interval, callback) ->
 				 ]
 				]).exec (err) ->
 					return callback err if err
-					return callback null, offer
+					return callback null, offer.data
 
 # delete an Offer
-exports.removeOffer = check 'string', (name, callback) ->
+exports.removeOffer = (name, callback) ->
 	prefix = 'pm:offers:' + name
 	db.redis.sismember ['pm:offers' , name], (err, res) ->
 		return callback err if err
-		return callback new check.Error "Sorry but the plan " + plan.toUpperCase() + " doesn't exist anymore" if res == 0
 
-		db.redis.multi([
-			[ 'del', prefix+':id', prefix+':currency', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix ]
-			[ 'srem', 'pm:offers', name],
-		]).exec (err, replies) ->
+		db.redis.get "#{prefix}:id", (err, res) ->
 			return callback err if err
-			return callback null, name
+
+			paymill.offers.remove res, (err, offer) ->
+  				return callback err if err
+
+			db.redis.multi([
+				[ 'del', prefix+':id', prefix+':currency', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix ]
+				[ 'srem', 'pm:offers', name],
+			]).exec (err, replies) ->
+				return callback err if err
+				return callback null, name
 
 # getList of Offer
 exports.getOffersList = (callback) ->
@@ -218,3 +226,42 @@ exports.getOffersList = (callback) ->
 				offers[i].name = tmpName[i]
 
 			return callback null, offers
+
+# update an Offer
+#exports.updateOffer = (amount, name, currency, interval, callback) ->
+#
+#	console.log("update Offer "+ name + " of " + amount + " " + currency + " during " + interval);
+#	prefix = "pm:offers"
+#
+#	db.redis.sismember [ "#{prefix}:#{name}", 1 ], (err, res) ->
+#		return callback err if err
+#		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
+#
+#		paymill.offers.update
+#			amount: amount
+#			currency: currency
+#			interval: interval
+#			name: name
+#		,(err, offer) ->
+#			return callback err if err
+#
+#			console.log "offer id " + offer.data.id
+#
+#			offer.data.name = name;
+#			console.log "offer name " + offer.data.name
+#
+#			db.redis.multi([
+#				[ 'sadd', "#{prefix}", name ],
+#				[ 'sadd', "#{prefix}:#{name}", 1],
+#				[ 'mset', "#{prefix}:#{name}:id", offer.data.id,
+#						"#{prefix}:#{name}:currency", offer.data.currency,
+#						"#{prefix}:#{name}:interval", offer.data.interval,
+#						"#{prefix}:#{name}:created_at", offer.data.created_at,
+#						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
+#						"#{prefix}:#{name}:amount", offer.data.amount,
+#					  	"#{prefix}:#{name}:subscription_count:active", offer.data.subscription_count.active,
+#					  	"#{prefix}:#{name}:subscription_count:inactive", offer.data.subscription_count.inactive
+#				 ]
+#				]).exec (err) ->
+#					return callback err if err
+#					return callback null, offer.data

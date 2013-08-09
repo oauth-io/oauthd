@@ -121,4 +121,8 @@ OAuth.io Team'
 	@server.del @config.base + '/api/adm/payment/:name', @auth.adm, (req, res, next) =>
 		@db.payments.removeOffer req.params.name, @server.send(res, next)
 
+
+	@server.post @config.base + '/api/adm/payment/update/:amount/:name/:currency/:interval', (req, res, next) =>
+		@db.payments.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
+
 	callback()
