@@ -41,7 +41,8 @@ module.exports = {
 		'server.oauth_io',
 		'server.payments',
 		'server.mailjet',
-		'server.wishlist'
+		'server.wishlist',
+		'server.pricing'
 		/* ------------------------- */
 	]
 }
