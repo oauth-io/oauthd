@@ -14,6 +14,7 @@ paymill = require('paymill-node')(config.paymill.secret_key)
 
 exports.process = (data, client, callback) ->
 
+
 	client_id = client.id
 	client_email = client.mail
 	isNewUser = false
@@ -76,8 +77,6 @@ exports.process = (data, client, callback) ->
 				console.log "creating Paymill payment...(card info)"
 
 				paymill.payments.create payment_obj, (err, payment) ->
-
-					console.log err
 					return cb err if err
 
 					payment_obj.id = payment.data.id
@@ -245,11 +244,11 @@ exports.removeOffer = (name, callback) ->
 		return callback err if err
 
 		db.redis.multi([
-			[ 'get', "#{prefix}:id"], 
+			[ 'get', "#{prefix}:id"],
 			[ 'get', "#{prefix}:status"],
 		]).exec (err, replies) ->
 			return callback err if err
-			
+
 			id_offer = replies[0]
 
 			paymill.offers.remove id_offer, (err, offer) ->
@@ -306,11 +305,11 @@ exports.updateStatus = (name, currentStatus, callback) ->
 	if currentStatus == "private"
 		newStatus = "public"
 
-	prefix = "pm:offers:" + name 
+	prefix = "pm:offers:" + name
 	prefixStatus = "pm:offers:" + currentStatus + ":" + name
 	prefixNewStatus = "pm:offers:" + newStatus
 	db.redis.multi([
-		[ 'get', "#{prefix}:id"], 
+		[ 'get', "#{prefix}:id"],
 		[ 'get', "#{prefix}:amount"],
 		[ 'get', "#{prefix}:interval"],
 	]).exec (err, replies) ->
