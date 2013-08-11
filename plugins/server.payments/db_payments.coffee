@@ -14,6 +14,8 @@ paymill = require('paymill-node')(config.paymill.secret_key)
 
 exports.process = (data, client, callback) ->
 
+	return callback new check.Error "Missing offer !" if not data.offer
+
 	client_id = client.id
 	client_email = client.mail
 	isNewUser = false

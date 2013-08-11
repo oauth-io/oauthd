@@ -8,4 +8,7 @@ exports.setup = (callback) ->
 
 	@db.pricing = require './db_pricing'
 
+	@server.get @config.base + '/api/plans', (req, res, next) =>
+		@db.pricing.getPublicOffers @server.send(res, next)
+
 	callback()

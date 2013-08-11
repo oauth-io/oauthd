@@ -101,7 +101,7 @@ OAuth.io Team'
 			res.send total:r[1], timeline:r[0]
 			next()
 
-	# get provider list
+	# wishlist providers
 	@server.get @config.base + '/api/adm/wishlist', @auth.adm, (req, res, next) =>
 		@db.wishlist.getList @server.send(res, next)
 
@@ -111,10 +111,10 @@ OAuth.io Team'
 	@server.post @config.base + '/api/adm/wishlist/:provider/status/:status', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.params.provider, req.params.status , @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/plan/create/:amount/:name/:currency/:interval/:status', (req, res, next) =>
+	# plans
+	@server.post @config.base + '/api/adm/plan/create/:amount/:name/:currency/:interval/:status', @auth.adm, (req, res, next) =>
 		@db.pricing.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, req.params.status, @server.send(res, next)
 
-	# get offer list
 	@server.get @config.base + '/api/adm/plan', @auth.adm, (req, res, next) =>
 		@db.pricing.getOffersList @server.send(res, next)
 
@@ -122,11 +122,10 @@ OAuth.io Team'
 		@db.pricing.removeOffer req.params.name, @server.send(res, next)
 
 
-	@server.post @config.base + '/api/adm/plan/update/:amount/:name/:currency/:interval', (req, res, next) =>
+	@server.post @config.base + '/api/adm/plan/update/:amount/:name/:currency/:interval', @auth.adm, (req, res, next) =>
 		@db.pricing.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
 
-
-	@server.post @config.base + '/api/adm/plan/update/:name/:currentStatus', (req, res, next) =>
+	@server.post @config.base + '/api/adm/plan/update/:name/:currentStatus', @auth.adm, (req, res, next) =>
 		@db.pricing.updateStatus req.params.name, req.params.currentStatus, @server.send(res, next)
 
 	callback()
