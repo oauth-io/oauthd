@@ -194,6 +194,16 @@ exports.getPublicOffers = (callback) ->
 
 			return callback null, offers
 
+exports.getOfferByName = (name, callback) ->
+
+	return callback new check.Error if not name?
+
+	prefix = "pm:offers:#{name}"
+
+	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount" ], (err, res) ->
+		return callback err if err
+		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100
+
 # update an Offer
 #exports.updateOffer = (amount, name, currency, interval, callback) ->
 #
