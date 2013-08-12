@@ -39,7 +39,7 @@ exports.createOffer = (amount, name, currency, interval, nbConnection,status, ca
 
 				[ 'hset', "#{prefix}", name, offer.data.id ],
 
-				[ 'sadd', "#{prefix}:#{status}", name ]
+				[ 'sadd', "#{prefix}:#{status}", name ],
 
 				[ 'mset', "#{prefix}:#{name}:id", offer.data.id,
 						"#{prefix}:#{name}:name", name,
@@ -48,9 +48,8 @@ exports.createOffer = (amount, name, currency, interval, nbConnection,status, ca
 						"#{prefix}:#{name}:created_at", offer.data.created_at,
 						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
 						"#{prefix}:#{name}:amount", offer.data.amount,
-						"#{prefix}:#{name}:status", status ],
-						"#{prefix}:#{name}:nbConnection", nbConnection,
-						"#{prefix}:#{name}:status", status ],
+						"#{prefix}:#{name}:status", status,
+						"#{prefix}:#{name}:nbConnection", nbConnection],
 
 				[ "hset", "#{prefix}:offers_id", offer.data.id, name ]
 
