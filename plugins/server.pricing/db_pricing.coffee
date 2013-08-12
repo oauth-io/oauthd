@@ -37,7 +37,7 @@ exports.createOffer = (amount, name, currency, interval, nbConnection,status, ca
 
 			db.redis.multi([
 
-				[ 'hset', "#{prefix}", name, offer.data.id ],
+				[ 'sadd', "#{prefix}", name ],
 
 				[ 'sadd', "#{prefix}:#{status}", name ],
 
@@ -80,7 +80,7 @@ exports.removeOffer = (name, callback) ->
 					[ 'del', prefix+':id', prefix+':currency', prefix+':nbConnection', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix]
 					[ 'srem', "pm:offers", name],
 					[ 'srem', "pm:offers:#{status}", name],
-					[ "hdel", "#{prefix}:offers_id", id ]
+					[ "hdel", "pm:offers:offers_id", id_offer ]
 				]).exec (err) ->
 					return callback err if err
 					return callback null, name
