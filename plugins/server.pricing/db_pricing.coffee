@@ -11,10 +11,10 @@ async = require 'async'
 paymill = require('paymill-node')(config.paymill.secret_key)
 
 # create an Offer
-exports.createOffer = (amount, name, currency, interval, status, callback) ->
+exports.createOffer = (amount, name, currency, interval, nbConnection,status, callback) ->
 
 	###
-	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval + " in " + status);
+	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval + " up to " + nbConnection + " in " + status);
 	prefix = "pm:offers"
 
 	db.redis.sismember [ "#{prefix}:#{name}", 1 ], (err, res) ->
@@ -43,6 +43,7 @@ exports.createOffer = (amount, name, currency, interval, status, callback) ->
 						"#{prefix}:#{name}:created_at", offer.data.created_at,
 						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
 						"#{prefix}:#{name}:amount", offer.data.amount,
+						"#{prefix}:#{name}:nbConnection", nbConnection,
 						"#{prefix}:#{name}:status", status,					  	"#{prefix}:#{name}:subscription_count:active", offer.data.subscription_count.active,
 					  	"#{prefix}:#{name}:subscription_count:inactive", offer.data.subscription_count.inactive
 				 ]
@@ -55,7 +56,8 @@ exports.createOffer = (amount, name, currency, interval, status, callback) ->
 					return callback err if err
 					return callback null, offer.data
 	###
-	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval + " in " + status);
+	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval + " up to " + nbConnection + " in " + status);
+
 	prefix = "pm:offers"
 	name = name.toLowerCase()
 
@@ -89,6 +91,7 @@ exports.createOffer = (amount, name, currency, interval, status, callback) ->
 						"#{prefix}:#{name}:created_at", offer.data.created_at,
 						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
 						"#{prefix}:#{name}:amount", offer.data.amount,
+						"#{prefix}:#{name}:nbConnection", nbConnection,
 						"#{prefix}:#{name}:status", status ]
 
 			]).exec (err) ->
@@ -115,7 +118,7 @@ exports.removeOffer = (name, callback) ->
 				return callback err if err
 
 				db.redis.multi([
-					[ 'del', prefix+':id', prefix+':currency', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix]
+					[ 'del', prefix+':id', prefix+':currency', prefix+':nbConnection', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix]
 					[ 'srem', "pm:offers", name],
 					[ 'srem', "pm:offers:#{status}", name]
 				]).exec (err) ->
@@ -141,12 +144,13 @@ exports.getOffersList = (callback) ->
 			cmds.push [ "get", "#{prefix}:#{p}:updated_at"]
 			cmds.push [ "get", "#{prefix}:#{p}:amount"]
 			cmds.push [ "get", "#{prefix}:#{p}:status"]
+			cmds.push [ "get", "#{prefix}:#{p}:nbConnection"]
 
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 8], name:res[i * 8 + 1], currency:res[i * 8 + 2], interval:res[i * 8 + 3], created_at:res[i * 8 + 4], updated_at:res[i * 8 + 5], amount:res[i * 8 + 6], status:res[i * 8 + 7]
+				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], created_at:res[i * 9 + 4], updated_at:res[i * 9 + 5], amount:res[i * 9 + 6], status:res[i * 9 + 7], nbConnection:res[i * 9 + 8]
 
 			return callback null, offers
 
@@ -185,12 +189,13 @@ exports.getPublicOffers = (callback) ->
 			cmds.push [ "get", "#{prefix}:#{offer_name}:currency"]
 			cmds.push [ "get", "#{prefix}:#{offer_name}:interval"]
 			cmds.push [ "get", "#{prefix}:#{offer_name}:amount"]
+			cmds.push [ "get", "#{prefix}:#{offer_name}:nbConnection"]
 
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 5], name:res[i * 5 + 1], currency:res[i * 5 + 2], interval:res[i * 5 + 3], amount:res[i * 5 + 4]
+				offers[i] = id:res[i * 6], name:res[i * 6 + 1], currency:res[i * 6 + 2], interval:res[i * 6 + 3].toLowerCase() , amount:res[i * 6 + 4], nbConnection:res[i * 6 + 5]
 
 			return callback null, offers
 
@@ -200,9 +205,9 @@ exports.getOfferByName = (name, callback) ->
 
 	prefix = "pm:offers:#{name}"
 
-	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount" ], (err, res) ->
+	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection" ], (err, res) ->
 		return callback err if err
-		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100
+		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3]
 
 # update an Offer
 #exports.updateOffer = (amount, name, currency, interval, callback) ->

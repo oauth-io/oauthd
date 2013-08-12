@@ -112,8 +112,8 @@ OAuth.io Team'
 		@db.wishlist.setStatus req.params.provider, req.params.status , @server.send(res, next)
 
 	# plans
-	@server.post @config.base + '/api/adm/plan/create/:amount/:name/:currency/:interval/:status', @auth.adm, (req, res, next) =>
-		@db.pricing.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, req.params.status, @server.send(res, next)
+	@server.post @config.base + '/api/adm/plan/create/:amount/:name/:currency/:interval/:nbConnection/:status', @auth.adm, (req, res, next) =>
+		@db.pricing.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, req.params.nbConnection, req.params.status, @server.send(res, next)
 
 	@server.get @config.base + '/api/adm/plan', @auth.adm, (req, res, next) =>
 		@db.pricing.getOffersList @server.send(res, next)
