@@ -157,32 +157,33 @@ exports.getKeyset = check check.format.key, 'string', (key, provider, callback) 
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.get 'a:' + idapp + ':k:' + provider, (err, res) ->
-			return callback err if err
-			#return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
-			return callback() if not res
-			try
-				res = JSON.parse(res)
-			catch e
+		db.redis.mget 'a:' + idapp + ':k:' + provider
+			, 'a:' + idapp + ':ktype:' + provider, (err, res) ->
 				return callback err if err
-			callback null, res
+				return callback() if not res[0]
+				try
+					res[0] = JSON.parse(res[0])
+				catch e
+					return callback err if err
+				callback null, parameters:res[0], response_type:(res[1] || 'token')
 
 # get keys infos of an app for a provider
-exports.addKeyset = check check.format.key, 'string', 'object', (key, provider, data, callback) ->
+exports.addKeyset = check check.format.key, 'string', parameters:'object', response_type:'string', (key, provider, data, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.set 'a:' + idapp + ':k:' + provider, JSON.stringify(data), (err, res) ->
-			return callback err if err
-			plugins.data.emit 'app.addkeyset', provider:provider, app:key, id:idapp
-			callback()
+		db.redis.mset 'a:' + idapp + ':k:' + provider, JSON.stringify(data.parameters)
+			, 'a:' + idapp + ':ktype:' + provider, data.response_type, (err, res) ->
+				return callback err if err
+				plugins.data.emit 'app.addkeyset', provider:provider, app:key, id:idapp
+				callback()
 
 # get keys infos of an app for a provider
 exports.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.del 'a:' + idapp + ':k:' + provider, (err, res) ->
+		db.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, (err, res) ->
 			return callback err if err
 			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
 			plugins.data.emit 'app.remkeyset', provider:provider, app:key, id:idapp
