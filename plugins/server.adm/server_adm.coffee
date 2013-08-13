@@ -108,12 +108,12 @@ OAuth.io Team'
 	@server.del @config.base + '/api/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
 		@db.wishlist.remove req.params.provider, @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/wishlist/:provider/status/:status', @auth.adm, (req, res, next) =>
-		@db.wishlist.setStatus req.params.provider, req.params.status , @server.send(res, next)
+	@server.post @config.base + '/api/adm/wishlist/setStatus', @auth.adm, (req, res, next) =>
+		@db.wishlist.setStatus req.body.provider, req.body.status , @server.send(res, next)
 
 	# plans
-	@server.post @config.base + '/api/adm/plan/create/:amount/:name/:currency/:interval/:nbConnection/:status', @auth.adm, (req, res, next) =>
-		@db.pricing.createOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, req.params.nbConnection, req.params.status, @server.send(res, next)
+	@server.post @config.base + '/api/adm/plan/create', @auth.adm, (req, res, next) =>
+		@db.pricing.createOffer req.body, @server.send(res, next)
 
 	@server.get @config.base + '/api/adm/plan', @auth.adm, (req, res, next) =>
 		@db.pricing.getOffersList @server.send(res, next)
@@ -122,10 +122,10 @@ OAuth.io Team'
 		@db.pricing.removeOffer req.params.name, @server.send(res, next)
 
 
-	@server.post @config.base + '/api/adm/plan/update/:amount/:name/:currency/:interval', @auth.adm, (req, res, next) =>
-		@db.pricing.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
+#	@server.post @config.base + '/api/adm/plan/update/:amount/:name/:currency/:interval', @auth.adm, (req, res, next) =>
+#		@db.pricing.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/plan/update/:name/:currentStatus', @auth.adm, (req, res, next) =>
-		@db.pricing.updateStatus req.params.name, req.params.currentStatus, @server.send(res, next)
+	@server.post @config.base + '/api/adm/plan/update', @auth.adm, (req, res, next) =>
+		@db.pricing.updateStatus req.body.name, req.body.currentStatus, @server.send(res, next)
 
 	callback()
