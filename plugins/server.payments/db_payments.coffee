@@ -18,6 +18,7 @@ exports.process = (data, client, callback) ->
 	client_id = client.id
 	client_email = client.mail
 	isNewSubscription = false
+	current_offer_key = null
 
 	## NEW SUBSCRIPTION ##
 	client_obj =
@@ -32,9 +33,10 @@ exports.process = (data, client, callback) ->
 		offer: ''
 		payment: ''
 
-	## CURRENT SUBSCRIPTION
-
-	current_offer = null
+	## CURRENT SUBSCRIPTION ##
+	current_subscription =
+		id: ''
+		next_capture: ''
 
 	subscriptions_root_prefix = "pm:subscriptions"
 	payments_root_prefix = "pm:payments"
@@ -53,7 +55,6 @@ exports.process = (data, client, callback) ->
 				if not current_id?
 
 					console.log "\t new user detected"
-					console.log "\t creating on redis..."
 
 					isNewSubscription = true
 
@@ -71,11 +72,14 @@ exports.process = (data, client, callback) ->
 							cb null, client
 				else
 					console.log "\t user exists with id #{current_id}"
-
-					db.redis.hget ["#{subscriptions_root_prefix}:#{client_id}", "current_offer"], (err, res) ->
+					db.redis.hget "#{subscriptions_root_prefix}:#{client_id}", (err, res) ->
 						return cb err if err
-						current_offer = res
-						cb()
+
+						paymill.subscriptions.details res, (err, res) ->
+							return cb err if err
+							current_subscription.id = res.id
+							current_subscription.next_capture = res.next_capture_at
+							cb()
 
 		# create payment
 		(cb) ->
@@ -83,44 +87,42 @@ exports.process = (data, client, callback) ->
 			payment_obj.token = data.token
 			payment_obj.client = client_obj.id
 
-			if isNewSubscription
-				console.log "creating Paymill payment...(card info)"
-
-				paymill.payments.create payment_obj, (err, payment) ->
-					return cb err if err
-
-					payment_obj.id = payment.data.id
-
-					console.log "\t creating on redis..."
-
-					# Payment : credit card infos...
-					payment_prefix = "#{payments_root_prefix}:#{client_id}:#{payment.data.id}"
-
-					db.redis.multi([
-
-						[ "hset", "#{payments_root_prefix}:#{client_id}", "current_payment", payment_obj.id ],
-
-						[ "mset", "#{payment_prefix}:client", payment.data.client,
-						"#{payment_prefix}:card_type", payment.data.card_type,
-						"#{payment_prefix}:country", payment.data.country,
-						"#{payment_prefix}:expire_month", payment.data.expire_month,
-						"#{payment_prefix}:expire_year", payment.data.expire_year,
-						"#{payment_prefix}:card_holder", payment.data.card_holder,
-						"#{payment_prefix}:last4", payment.data.last4,
-						"#{payment_prefix}:created_at", payment.data.created_at ]
-
-					]).exec (err) ->
-						return cb err if err
-						cb()
-			else
-				console.log "retrieving current credit card informations..."
-
-				# get current payment
-				db.redis.mget ["#{payments_root_prefix}", "current_payment"], (err, res) ->
-					return cb err if err
+			db.redis.hget "#{payments_root_prefix}:#{client_id}", "current_payment", (err, res) ->
+				return cb err if err
+				console.log res
+				if res?
+					console.log "retrieving current credit card informations..."
 					payment_obj.id = res
 					cb()
+				else
+					console.log "creating Paymill payment...(card info)"
 
+					paymill.payments.create payment_obj, (err, payment) ->
+						return cb err if err
+
+						payment_obj.id = payment.data.id
+
+						console.log "\t creating on redis..."
+
+						# Payment : credit card infos...
+						payment_prefix = "#{payments_root_prefix}:#{client_id}:#{payment.data.id}"
+
+						db.redis.multi([
+
+							[ "hset", "#{payments_root_prefix}:#{client_id}", "current_payment", payment_obj.id ],
+
+							[ "mset", "#{payment_prefix}:client", payment.data.client,
+							"#{payment_prefix}:card_type", payment.data.card_type,
+							"#{payment_prefix}:country", payment.data.country,
+							"#{payment_prefix}:expire_month", payment.data.expire_month,
+							"#{payment_prefix}:expire_year", payment.data.expire_year,
+							"#{payment_prefix}:card_holder", payment.data.card_holder,
+							"#{payment_prefix}:last4", payment.data.last4,
+							"#{payment_prefix}:created_at", payment.data.created_at ]
+
+						]).exec (err) ->
+							return cb err if err
+							cb()
 
 		# create subscription
 		(cb) ->
@@ -135,6 +137,7 @@ exports.process = (data, client, callback) ->
 					console.log "creating Paymill subscription..."
 
 					paymill.subscriptions.create subscription_obj, (err, subscription) ->
+						console.log err
 						return cb err if err
 
 						console.log "\t subscription created on Paymill"
@@ -143,6 +146,8 @@ exports.process = (data, client, callback) ->
 						subscription_prefix = "#{subscriptions_root_prefix}:#{client_id}:#{subscription.data.id}"
 
 						db.redis.multi([
+
+							[ "hset", "#{subscriptions_root_prefix}:#{client_id}:history", subscription.data.offer.id, subscription.data.created_at],
 
 							[ "hset", "#{subscriptions_root_prefix}:#{client_id}", "current_subscription", subscription.data.id ],
 
@@ -158,7 +163,7 @@ exports.process = (data, client, callback) ->
 								"#{subscription_prefix}:client", subscription.data.client.id,
 								"#{subscription_prefix}:notified", false ]
 
-						]).exec (err, res) ->
+						]).exec (err) ->
 							return cb err if err
 							console.log "\t subscription created on Redis"
 							cb null, subscription
@@ -171,9 +176,9 @@ exports.process = (data, client, callback) ->
 
 						[ "hget", "#{subscriptions_root_prefix}:#{client_id}", "current_subscription"],
 						[ "hget", "#{subscriptions_root_prefix}:#{client_id}", "current_offer" ]
-						[ "get", "pm:offers:#{current_offer}"]
 
 					]).exec (err, res) ->
+						console.log err
 						return cb err if err
 						return cb new check.Error "An error occured, please contact support@oauth.io" if not res?
 						return cb new check.Error "You can not subscribe to the same plan" if res[1] == subscription_obj.offer
@@ -182,17 +187,41 @@ exports.process = (data, client, callback) ->
 							cancel_at_period_end : true
 							offer : subscription_obj.offer
 
-						paymill.subscriptions.update res[0], update_subscription_obj, (err, subscription_updated) ->
+						paymill.subscriptions.remove res[0], (err, subscription_updated) ->
+							console.log err
 							return cb err if err
 
-							db.redis.multi([
+							subscription_obj.start_at = current_subscription.next_capture
 
-								[ "hset", "#{subscriptions_root_prefix}:#{client_id}", "current_offer", subscription_updated.data.offer.id ],
-								[ "hset", "#{subscriptions_root_prefix}:#{client_id}:history", res[0], ]
-
-							]).exec (err) ->
+							paymill.subscriptions.create subscription_obj, (err, subscription) ->
+								console.log err
 								return cb err if err
-								cb null, subscription_updated
+
+								subscription_prefix = "#{subscriptions_root_prefix}:#{client_id}:#{subscription.data.id}"
+
+								db.redis.multi([
+
+									[ "hset", "#{subscriptions_root_prefix}:#{client_id}:history", subscription.data.offer.id, subscription.data.created_at],
+
+									[ "hset", "#{subscriptions_root_prefix}:#{client_id}", "current_subscription", subscription.data.id ],
+
+									[ "hset", "#{subscriptions_root_prefix}:#{client_id}", "current_offer", subscription_obj.offer ],
+
+									[ "mset", "#{subscription_prefix}:id", subscription.data.id,
+										"#{subscription_prefix}:offer", subscription.data.offer.id,
+										"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
+										"#{subscription_prefix}:created_at", subscription.data.created_at,
+										"#{subscription_prefix}:updated_at", subscription.data.updated_at,
+										"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
+										"#{subscription_prefix}:payment", subscription.data.payment.id,
+										"#{subscription_prefix}:client", subscription.data.client.id,
+										"#{subscription_prefix}:notified", false ]
+
+								]).exec (err) ->
+									console.log err
+									return cb err if err
+									console.log "\t subscription created on Redis"
+									cb null, subscription
 			else
 				cb new check.Error "Missing offer !"
 
