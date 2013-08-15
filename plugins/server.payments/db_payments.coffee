@@ -232,5 +232,6 @@ exports.process = (data, client, callback) ->
 			cb()
 
 	], (err, result) ->
+		console.log(err)
 		return callback err if err
 		return callback null, result

@@ -11,21 +11,22 @@ async = require 'async'
 paymill = require('paymill-node')(config.paymill.secret_key)
 
 # create an Offer
-exports.createOffer = (amount, name, currency, interval, nbConnection,status, callback) ->
+exports.createOffer = (data, callback) ->
 
 
-	console.log("create Offer "+ name + " of " + amount + " " + currency + " during " + interval + " up to " + nbConnection + " in " + status);
+	console.log("create Offer "+ data.name + " of " + data.amount + " " + data.currency + " during " + data.interval + " up to " + data.nbConnection + " in " + data.status);
 	prefix = "pm:offers"
-	name = name.toLowerCase()
+	name = data.name.toLowerCase()
+	status = data.status
 
 	db.redis.sismember [ "#{prefix}", name ], (err, res) ->
 		return callback err if err
 		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
 
 		paymill.offers.create
-			amount: amount
-			currency: currency
-			interval: interval
+			amount: data.amount
+			currency: data.currency
+			interval: data.interval
 			name: name
 		,(err, offer) ->
 			return callback err if err
@@ -49,7 +50,7 @@ exports.createOffer = (amount, name, currency, interval, nbConnection,status, ca
 						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
 						"#{prefix}:#{name}:amount", offer.data.amount,
 						"#{prefix}:#{name}:status", status,
-						"#{prefix}:#{name}:nbConnection", nbConnection],
+						"#{prefix}:#{name}:nbConnection", data.nbConnection],
 
 				[ "hset", "#{prefix}:offers_id", offer.data.id, name ]
 
