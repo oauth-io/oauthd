@@ -11,7 +11,7 @@ exports.setup = (callback) ->
 		path: '/auth/test',
 		duration: 24 * 60 * 60 * 1000,
 		httpOnly: true,
-		secure: true
+		secure: false
 
 	send_view = (req, res, data, next) =>
 		res.setHeader 'Content-Type', 'text/html'
@@ -92,13 +92,19 @@ exports.setup = (callback) ->
 
 	@server.post @config.base + '/test/auth', (req, res, next) =>
 		request.post {
-			url: 'https://oauth.local/auth/access_token',
-			form: {code:req.body.code}
+			url: 'https://oauth.local/auth/access_token'
+			form:
+				code:req.body.code
+				key: "_aR5on_YHZk7HH86EJRgzkA9sW0"
+				secret: "BB19B3RQ3L2DXjg-QN6wsIai1K4"
 		}, (e,r,body) =>
 			res.setHeader 'Content-Type', 'text/html'
 			data = JSON.parse(body)
 			req.test_sessionkey.csrf_tokens ?= "[]"
 			csrf_tokens = JSON.parse(req.test_sessionkey.csrf_tokens)
+			if not data.state
+				res.send "Got error:" + body
+				return next()
 			if csrf_tokens.indexOf(data.state) == -1
 				res.send "Oups, state does not match !"
 				return next()
