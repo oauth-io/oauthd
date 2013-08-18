@@ -200,7 +200,31 @@ exports.process = (data, client, callback) ->
 		(cb) ->
 			console.log "notified user not yet implemented !"
 			console.log "BUT EVERYTHING IS OK ;-)"
-			cb()
+			#send mail with key
+			options =
+					to:
+						email: client_obj.email
+					from:
+						name: 'OAuth.io'
+						email: 'team@oauth.io'
+					subject: 'OAuth.io - Your payment has been received'
+					body: "Dear ,\n\n 
+
+Thank you for your recent purchase on Oauth.io.\n\n
+
+This email message will serve as your receipt.\n
+\n
+For help or product support, please contact us at team@oauth.io.\n
+
+--\n
+OAuth.io Team"
+			mailer = new Mailer options
+			mailer.send (err, result) ->
+				console.log(client_obj.email)					
+				console.log err
+				return callback err if err
+				console.log(client_obj.email)					
+				cb()
 
 	], (err, result) ->
 		console.log(err)
