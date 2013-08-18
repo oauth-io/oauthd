@@ -37,6 +37,8 @@ exports.process = (data, client, callback) ->
 	current_subscription =
 		id: ''
 		next_capture: ''
+		offer: ''
+		canceled_at: false
 
 	subscriptions_root_prefix = "pm:subscriptions"
 	payments_root_prefix = "pm:payments"
@@ -72,13 +74,18 @@ exports.process = (data, client, callback) ->
 							cb null, client
 				else
 					console.log "\t user exists with id #{current_id}"
-					db.redis.hget "#{subscriptions_root_prefix}:#{client_id}", (err, res) ->
+					db.redis.hget ["#{subscriptions_root_prefix}:#{client_id}", "current_subscription"], (err, res) ->
+						console.log err if err
 						return cb err if err
 
-						paymill.subscriptions.details res, (err, res) ->
+						paymill.subscriptions.details res, (err, subscription_details) ->
+							console.log err if err
 							return cb err if err
-							current_subscription.id = res.id
-							current_subscription.next_capture = res.next_capture_at
+
+							current_subscription.id = subscription_details.data.id
+							current_subscription.next_capture = subscription_details.data.next_capture_at
+							current_subscription.canceled_at = subscription_details.data.canceled_at
+							current_subscription.offer = subscription_details.data.offer.id
 							cb()
 
 		# create payment
@@ -89,7 +96,7 @@ exports.process = (data, client, callback) ->
 
 			db.redis.hget "#{payments_root_prefix}:#{client_id}", "current_payment", (err, res) ->
 				return cb err if err
-				console.log res
+
 				if res?
 					console.log "retrieving current credit card informations..."
 					payment_obj.id = res
@@ -137,7 +144,7 @@ exports.process = (data, client, callback) ->
 					console.log "creating Paymill subscription..."
 
 					paymill.subscriptions.create subscription_obj, (err, subscription) ->
-						console.log err
+						console.log err if err
 						return cb err if err
 
 						console.log "\t subscription created on Paymill"
@@ -178,24 +185,29 @@ exports.process = (data, client, callback) ->
 						[ "hget", "#{subscriptions_root_prefix}:#{client_id}", "current_offer" ]
 
 					]).exec (err, res) ->
-						console.log err
+						console.log err if err
 						return cb err if err
 						return cb new check.Error "An error occured, please contact support@oauth.io" if not res?
 						return cb new check.Error "You can not subscribe to the same plan" if res[1] == subscription_obj.offer
 
+
 						update_subscription_obj =
 							cancel_at_period_end : true
-							offer : subscription_obj.offer
 
+						console.log "cancel at period end #{current_subscription.id} with offer #{current_subscription.offer}"
+
+						#paymill.subscriptions.update current_subscription.id, update_subscription_obj, (err, subscription_updated) ->
 						paymill.subscriptions.remove res[0], (err, subscription_updated) ->
-							console.log err
-							return cb err if err
+							console.log err if err
+							return callback err if err
 
 							subscription_obj.start_at = current_subscription.next_capture
 
 							paymill.subscriptions.create subscription_obj, (err, subscription) ->
-								console.log err
-								return cb err if err
+								console.log err if err
+								return callback err if err
+
+								console.log "and create #{subscription.data.id} with offer #{subscription.data.offer.id}"
 
 								subscription_prefix = "#{subscriptions_root_prefix}:#{client_id}:#{subscription.data.id}"
 
@@ -218,7 +230,7 @@ exports.process = (data, client, callback) ->
 										"#{subscription_prefix}:notified", false ]
 
 								]).exec (err) ->
-									console.log err
+									console.log err if err
 									return cb err if err
 									console.log "\t subscription created on Redis"
 									cb null, subscription
