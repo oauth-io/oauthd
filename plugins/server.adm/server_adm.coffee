@@ -107,6 +107,16 @@ OAuth.io Team'
 			res.send total:r[1], timeline:r[0]
 			next()
 
+	# regenerate all private keys
+	@server.get @config.base + '/api/adm/secrets/reset', @auth.adm, (req, res, next) =>
+		@db.redis.hgetall 'a:keys', (e, apps) =>
+			return next e if e
+			mset = []
+			for k,id of apps
+				mset.push 'a:' + id + ':secret'
+				mset.push @db.generateUid()
+			@db.redis.mset mset, @server.send(res,next)
+
 	# refresh rankings
 	@server.get @config.base + '/api/adm/rankings/refresh', @auth.adm, (req, res, next) =>
 		providers = {}

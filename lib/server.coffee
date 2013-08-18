@@ -83,6 +83,26 @@ server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req,
 		res.send r
 		next()
 
+# oauth: get access token from server
+server.post config.base + '/access_token', (req, res, next) ->
+	e = new check.Error
+	e.check req.body, code:check.format.key, key:check.format.key, secret:check.format.key
+	return next e if e.failed()
+	db.states.get req.body.code, (err, state) ->
+		return next err if err
+		return next new check.Error 'code', 'invalid or expired' if not state || state.step != "1"
+		return next new check.Error 'code', 'invalid or expired' if state.key != req.body.key
+		db.apps.checkSecret state.key, req.body.secret, (e,r) ->
+			return next e if e
+			return next new check.Error "invalid credentials" if not r
+			db.states.del req.body.code, (->)
+			r = JSON.parse(state.token)
+			r.state = state.options.state
+			r.provider = state.provider
+			res.buildJsend = false
+			res.send r
+			next()
+
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
@@ -90,18 +110,27 @@ server.get config.base + '/', (req, res, next) ->
 		return next new check.Error 'state', 'must be present'
 	db.states.get req.params.state, (err, state) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state
+		return next new check.Error 'state', 'invalid or expired' if not state || state.step != "0"
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
 			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
+			if not e
+				if state.options.response_type != 'token'
+					db.states.set req.params.state, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
+				if state.options.response_type == 'code'
+					r = {}
+				if state.options.response_type != 'token'
+					r.code = req.params.state
+				if state.options.response_type == 'token'
+					db.states.del req.params.state, (->)
 			body = formatters.build e || r
 			body.provider = state.provider.toLowerCase()
 			view = '<script>(function() {\n'
 			view += '\t"use strict";\n'
 			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
-				redirect_infos = Url.parse state.redirect_uri
+				redirect_infos = Url.parse state.redirect_uri, true
 				if redirect_infos.hostname == config.url.hostname
 					return next new check.Error 'OAuth.redirect url must NOT be "' + config.url.host + '"'
 				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
@@ -155,15 +184,20 @@ server.get config.base + '/:provider', (req, res, next) ->
 			oauthv ?= 'oauth1' if provider.oauth1
 			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 		(keyset, provider, cb) ->
-			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
+			{parameters, response_type} = keyset
+			return cb new check.Error 'This app is not configured for ' + provider.provider if not parameters
 			options = {}
 			if req.params.opts
 				try
 					options = JSON.parse(req.params.opts)
+					return cb new check.Error 'Options must be an object' if typeof options != 'object'
 				catch e
-					cb new check.Error 'Error in request parameters'
+					return cb new check.Error 'Error in request parameters'
+			if response_type != 'token' and not options.state
+				return cb new check.Error 'You must provide a state when server-side auth'
+			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-			oauth[oauthv].authorize provider, keyset, opts, cb
+			oauth[oauthv].authorize provider, parameters, opts, cb
 	], (err, url) ->
 		return next err if err
 		res.setHeader 'Location', url
@@ -186,7 +220,7 @@ server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 		(cb) -> db.apps.getKeysets req.params.key, cb
 	], (e, r) ->
 		return next(e) if e
-		res.send name:r[0].name, key:r[0].key, domains:r[1], keysets:r[2]
+		res.send name:r[0].name, key:r[0].key, secret:r[0].secret, domains:r[1], keysets:r[2]
 		next()
 
 # update infos of an app
