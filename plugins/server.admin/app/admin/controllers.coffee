@@ -22,7 +22,9 @@ hooks.config.push ->
 
 	app.controller 'ProviderCtrl', ($filter, $scope, ProviderService, $timeout) ->
 		ProviderService.list (json) ->
-			$scope.providers = json.data
+			$scope.providers = (provider.provider for provider in json.data)
+			$scope.providers_name = {}
+			$scope.providers_name[provider.provider] = provider.name for provider in json.data
 			$scope.filtered = $filter('filter')($scope.providers, $scope.query)
 
 			$scope.pagination =
