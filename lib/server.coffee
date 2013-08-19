@@ -305,4 +305,6 @@ exports.listen = (callback) ->
 			return callback err if err
 			#exit.push 'Http(s) server', (cb) -> server.close cb
 			#/!\ server.close = timeout if at least one connection /!\ wtf?
+			console.log '%s listening at %s', server.name, server.url
+			plugins.data.emit 'server', null
 			callback null, server
