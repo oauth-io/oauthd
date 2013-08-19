@@ -16,6 +16,7 @@
 
 Path = require 'path'
 config = require "./config"
+async = require "async"
 config.rootdir = Path.normalize __dirname + '/..'
 
 # initialize plugins
@@ -24,10 +25,10 @@ plugins.init()
 
 # start server
 exports.server = server = require './server'
-server.listen (err, srv) ->
+async.series [
+	plugins.data.db.providers.getList,
+	server.listen
+], (err) ->
 	if err
 		console.error 'Error while initialisation', err.stack.toString()
 		plugins.data.emit 'server', err
-	else
-		console.log '%s listening at %s', srv.name, srv.url
-		plugins.data.emit 'server', null

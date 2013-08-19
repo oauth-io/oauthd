@@ -17,6 +17,8 @@
 fs = require "fs"
 Path = require "path"
 
+async = require "async"
+
 config = require "./config"
 check = require "./check"
 
@@ -49,19 +51,31 @@ def =
 		request: {}
 
 
-providers = _list:{}, _expire:0
+providers = _list:{}, _cached:false
 
-providers.list = ->
-		now = (new Date).getTime()
-		if now > providers._expire
-			fs.readdir config.rootdir + '/providers', (err, files) ->
-				return if err
-				for file in files
+# get providers list
+exports.getList = (callback) ->
+	if not providers._cached
+		fs.readdir config.rootdir + '/providers', (err, files) ->
+			return callback err if err
+			cmds = []
+			for file in files
+				do (file) ->
 					if file.match /\.json$/
-						providers._list[file.substr(0, file.length - 5)] ?= expire:0
-			providers._expire = now + 30000
-		return providers._list
-providers.list()
+						cmds.push (callback) ->
+							provider = file.substr(0, file.length - 5)
+							exports.get provider, (err, data) ->
+								if err
+									console.error "Error in " + provider + ".json:", err, "skipping this provider"
+									return callback null
+								providers._list[provider] ?= cached:false, name:(data.name || provider)
+								callback null
+			async.parallel cmds, (err, res) ->
+				return callback err if err
+				providers._cached = true
+				return callback null, ({provider:k, name:v.name} for k,v of providers._list)
+	else
+		return callback null, ({provider:k, name:v.name} for k,v of providers._list)
 
 # get a provider's description
 exports.get = (provider, callback) ->
@@ -85,9 +99,8 @@ exports.get = (provider, callback) ->
 
 # get a provider's description extended with default params
 exports.getExtended = (name, callback) ->
-	provider = providers._list[name] ?= expire:0
-	now = (new Date).getTime()
-	if now > provider.expire
+	provider = providers._list[name] ?= cache:false
+	if not provider.cache
 		exports.get name, (err, res) ->
 			return callback err if err
 			for oauthv in ['oauth1','oauth2']
@@ -118,11 +131,7 @@ exports.getExtended = (name, callback) ->
 				for k,v of params
 					params[k] = type:v if typeof v == 'string'
 			provider.data = res
-			provider.expire = now + 30000
+			provider.cache = true
 			callback null, res
 	else
 		callback null, provider.data
-
-# get providers list
-exports.getList = (callback) ->
-	callback null, Object.keys(providers.list())
