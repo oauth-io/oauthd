@@ -47,7 +47,6 @@ exports.process = (data, client, callback) ->
 
 		# create Paymill user
 		(cb) ->
-			console.log "creating Paymill user..."
 			db.redis.hget ["#{subscriptions_root_prefix}", client_id], (err, current_id) ->
 				return cb err if err
 
@@ -55,8 +54,6 @@ exports.process = (data, client, callback) ->
 				client_obj.email = client_email
 
 				if not current_id?
-
-					console.log "\t new user detected"
 
 					isNewSubscription = true
 
@@ -70,16 +67,12 @@ exports.process = (data, client, callback) ->
 						# Paymill user id to Redis
 						db.redis.hset "#{subscriptions_root_prefix}", client_id, id, (err, res) ->
 							return cb err if err
-							console.log "\t [OK]"
 							cb null, client
 				else
-					console.log "\t user exists with id #{current_id}"
 					db.redis.hget ["#{subscriptions_root_prefix}:#{client_id}", "current_subscription"], (err, res) ->
-						console.log err if err
 						return cb err if err
 
 						paymill.subscriptions.details res, (err, subscription_details) ->
-							console.log err if err
 							return cb err if err
 
 							current_subscription.id = subscription_details.data.id
@@ -98,12 +91,9 @@ exports.process = (data, client, callback) ->
 				return cb err if err
 
 				if res?
-					console.log "retrieving current credit card informations..."
 					payment_obj.id = res
 					cb()
 				else
-					console.log "creating Paymill payment...(card info)"
-
 					paymill.payments.create payment_obj, (err, payment) ->
 						return cb err if err
 
@@ -141,14 +131,9 @@ exports.process = (data, client, callback) ->
 				subscription_obj.payment = payment_obj.id
 
 				if isNewSubscription
-					console.log "creating Paymill subscription..."
 
 					paymill.subscriptions.create subscription_obj, (err, subscription) ->
-						console.log err if err
 						return cb err if err
-
-						console.log "\t subscription created on Paymill"
-						console.log "\t creating on redis..."
 
 						subscription_prefix = "#{subscriptions_root_prefix}:#{client_id}:#{subscription.data.id}"
 
@@ -172,42 +157,30 @@ exports.process = (data, client, callback) ->
 
 						]).exec (err) ->
 							return cb err if err
-							console.log "\t subscription created on Redis"
 							cb null, subscription
 
 				else
-
-					console.log "update Paymill subscription..."
-
 					db.redis.multi([
 
 						[ "hget", "#{subscriptions_root_prefix}:#{client_id}", "current_subscription"],
 						[ "hget", "#{subscriptions_root_prefix}:#{client_id}", "current_offer" ]
 
 					]).exec (err, res) ->
-						console.log err if err
 						return cb err if err
 						return cb new check.Error "An error occured, please contact support@oauth.io" if not res?
 						return cb new check.Error "You can not subscribe to the same plan" if res[1] == subscription_obj.offer
 
-
 						update_subscription_obj =
-							cancel_at_period_end : true
-
-						console.log "cancel at period end #{current_subscription.id} with offer #{current_subscription.offer}"
+							cancel_at_period_end : false
 
 						#paymill.subscriptions.update current_subscription.id, update_subscription_obj, (err, subscription_updated) ->
 						paymill.subscriptions.remove res[0], (err, subscription_updated) ->
-							console.log err if err
 							return callback err if err
 
 							subscription_obj.start_at = current_subscription.next_capture
 
 							paymill.subscriptions.create subscription_obj, (err, subscription) ->
-								console.log err if err
 								return callback err if err
-
-								console.log "and create #{subscription.data.id} with offer #{subscription.data.offer.id}"
 
 								subscription_prefix = "#{subscriptions_root_prefix}:#{client_id}:#{subscription.data.id}"
 
@@ -230,17 +203,13 @@ exports.process = (data, client, callback) ->
 										"#{subscription_prefix}:notified", false ]
 
 								]).exec (err) ->
-									console.log err if err
 									return cb err if err
-									console.log "\t subscription created on Redis"
 									cb null, subscription
 			else
 				cb new check.Error "Missing offer !"
 
 		# notify user
 		(cb) ->
-			console.log "notified user not yet implemented !"
-			console.log "BUT EVERYTHING IS OK ;-)"
 			#send mail with key
 			options =
 					to:
@@ -249,7 +218,7 @@ exports.process = (data, client, callback) ->
 						name: 'OAuth.io'
 						email: 'team@oauth.io'
 					subject: 'OAuth.io - Your payment has been received'
-					body: "Dear ,\n\n 
+					body: "Dear ,\n\n
 
 Thank you for your recent purchase on Oauth.io.\n\n
 
@@ -261,13 +230,12 @@ For help or product support, please contact us at team@oauth.io.\n
 OAuth.io Team"
 			mailer = new Mailer options
 			mailer.send (err, result) ->
-				console.log(client_obj.email)					
+				console.log(client_obj.email)
 				console.log err
 				return callback err if err
-				console.log(client_obj.email)					
+				console.log(client_obj.email)
 				cb()
 
 	], (err, result) ->
-		console.log(err)
 		return callback err if err
 		return callback null, result
