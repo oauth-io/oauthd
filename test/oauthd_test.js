@@ -413,15 +413,22 @@ exports.admin_api_update = {
 
 exports.admin_api_providers = {
   'list': check_setUp(function(t) {
-    t.expect(6);
+    t.expect(7);
     gb.auth_request.get(config.host_url + config.base + '/api/providers', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
       t.equal(data.status, 'success', "api replied an error");
-      t.ok(Array.isArray(data.data), "api replied an error (data)");
-      t.ok(Array.isArray(data.data) && data.data.indexOf('facebook') != -1, "missing providers ?");
+      t.ok(Array.isArray(data.data) && data.data.length > 10, "api replied an error (data)");
+      types = true, fbhere = false
+      for (var k in data.data) {
+        var provider = data.data[k];
+        types = types && typeof provider == 'object' && provider.provider && provider.name
+        fbhere = fbhere || provider.provider == 'facebook' && provider.name == 'Facebook'
+      }
+      t.ok(types, "api replied an error (format)");
+      t.ok(fbhere, "missing facebook provider");
       t.done();
     });
   }),
