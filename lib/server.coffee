@@ -125,6 +125,7 @@ server.get config.base + '/', (req, res, next) ->
 				if state.options.response_type == 'token'
 					db.states.del req.params.state, (->)
 			body = formatters.build e || r
+			body.state = state.options.state
 			body.provider = state.provider.toLowerCase()
 			view = '<script>(function() {\n'
 			view += '\t"use strict";\n'
@@ -193,7 +194,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 					return cb new check.Error 'Options must be an object' if typeof options != 'object'
 				catch e
 					return cb new check.Error 'Error in request parameters'
-			if response_type != 'token' and not options.state
+			if response_type != 'token' and not options.state and req.params.state_type
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options

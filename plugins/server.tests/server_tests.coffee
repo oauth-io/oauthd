@@ -21,10 +21,11 @@ exports.setup = (callback) ->
 		csrf_tokens.push csrf_token
 		req.test_sessionkey.csrf_tokens = JSON.stringify(csrf_tokens)
 		view = '<html><head>\n'
-		view += '<script src="https://code.jquery.com/jquery.min.js"></script>\n'
+		view += '<script src="/lib/jquery/jquery2.js"></script>\n'
 		view += '<script src="/auth/download/latest/oauth.js"></script>\n'
 		view += '<script>\n'
 		view += 'function cons() {\n'
+		view += '  console[{"black":"log","red":"error"}[cons.color]].apply(console, arguments);\n'
 		view += '  $("#content").append("<div style=\\"color:" + cons.color + "\\">");\n'
 		view += '  for (var i in arguments) {\n'
 		view += '    var o = arguments[i];\n'
@@ -50,7 +51,7 @@ exports.setup = (callback) ->
 
 	# server-side test: popup
 	@server.get @config.base + '/test/srv/popup', (req, res, next) =>
-		auth =  'OAuth.popup("salesforce", {state:[[state]]}, function(e,r) {\n'
+		auth =  'OAuth.popup("facebook", {state:[[state]]}, function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("sending code", r);\n'
 		auth += '  $.ajax("/auth/test/auth", {type:"post", data:{code:r.code}, success:function(data) {\n'
@@ -69,12 +70,20 @@ exports.setup = (callback) ->
 		code += '  }});\n'
 		code += '});\n'
 
-		auth =  'OAuth.redirect("salesforce", {state:[[state]]}, "/auth/test/srv/redirect");\n'
+		auth =  'OAuth.redirect("facebook", {state:[[state]]}, "/auth/test/srv/redirect");\n'
 		send_view req, res, code:code, auth:auth, next
 
 	# client-side test: popup
 	@server.get @config.base + '/test/popup', (req, res, next) =>
-		auth =  'OAuth.popup("salesforce", {state:[[state]]}, function(e,r) {\n'
+		auth =  'OAuth.popup("facebook", function(e,r) {\n'
+		auth += '  if (e) return cons.error("callback error", e);\n'
+		auth += '  cons.log ("result", r);\n'
+		auth += '});\n'
+		send_view req, res, auth:auth, next
+
+	# client-side test: popup, with authorize options
+	@server.get @config.base + '/test/popup-display', (req, res, next) =>
+		auth =  'OAuth.popup("facebook", {authorize:{display:"popup"}}, function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("result", r);\n'
 		auth += '});\n'
@@ -87,7 +96,7 @@ exports.setup = (callback) ->
 		code += '  cons.log ("result", r);\n'
 		code += '});\n'
 
-		auth =  'OAuth.redirect("salesforce", {state:[[state]]}, "/auth/test/redirect");\n'
+		auth =  'OAuth.redirect("facebook", "/auth/test/redirect");\n'
 		send_view req, res, code:code, auth:auth, next
 
 	@server.post @config.base + '/test/auth', (req, res, next) =>
