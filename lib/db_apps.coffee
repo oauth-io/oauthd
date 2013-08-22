@@ -24,8 +24,9 @@ check = require './check'
 plugins = require './plugins'
 
 # create a new app
-exports.create = check name:/^.{3,15}$/,domains:['none','array'], (data, callback) ->
+exports.create = check name:/^.{3,50}$/,domains:['none','array'], (data, callback) ->
 	key = db.generateUid()
+	secret = db.generateUid()
 	err = new check.Error
 	if data.domains
 		for domain in data.domains
@@ -36,7 +37,7 @@ exports.create = check name:/^.{3,15}$/,domains:['none','array'], (data, callbac
 		prefix = 'a:' + idapp + ':'
 		cmds = [
 			[ 'mset', prefix+'name', data.name,
-				prefix+'key', key ],
+				prefix+'key', key, prefix+'secret', secret ],
 			[ 'hset', 'a:keys', key, idapp ]
 		]
 		if data.domains
@@ -50,9 +51,9 @@ exports.create = check name:/^.{3,15}$/,domains:['none','array'], (data, callbac
 # get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->
 	prefix = 'a:' + idapp + ':'
-	db.redis.mget [prefix+'name', prefix+'key'], (err, replies) ->
+	db.redis.mget [prefix+'name', prefix+'key', prefix+'secret'], (err, replies) ->
 		return callback err if err
-		callback null, id:idapp, name:replies[0], key:replies[1]
+		callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2]
 
 # get the app infos
 exports.get = check check.format.key, (key, callback) ->
@@ -60,9 +61,9 @@ exports.get = check check.format.key, (key, callback) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
 		prefix = 'a:' + idapp + ':'
-		db.redis.mget [prefix+'name', prefix+'key'], (err, replies) ->
+		db.redis.mget [prefix+'name', prefix+'key', prefix+'secret'], (err, replies) ->
 			return callback err if err
-			callback null, id:idapp, name:replies[0], key:replies[1]
+			callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2]
 
 # update app infos
 exports.update = check check.format.key, name:['none',/^.{3,15}$/], domains:['none','array'], (key, data, callback) ->
@@ -94,8 +95,9 @@ exports.resetKey = check check.format.key, (key, callback) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
 		newkey = db.generateUid()
+		newsecret = db.generateUid()
 		db.redis.multi([
-			['set', 'a:' + idapp + ':key', newkey]
+			['mset', 'a:' + idapp + ':key', newkey, 'a:' + idapp + ':secret', newsecret]
 			['hdel', 'a:keys', key]
 			['hset', 'a:keys', newkey, idapp]
 		]).exec (err, r) ->
@@ -232,3 +234,11 @@ exports.checkDomain = check check.format.key, 'string', (key, domain_str, callba
 				domain.hostname.substr(domain.hostname.length-vdomain.hostname.length+1) == vdomain.hostname.substr(1)
 					return callback null, true
 		return callback null, false
+
+# check the secret
+exports.checkSecret = check check.format.key, check.format.key, (key, secret, callback) ->
+	db.redis.hget 'a:keys', key, (err, idapp) ->
+		return callback err if err
+		db.redis.get 'a:' + idapp + ':secret', (err, sec) ->
+			return callback err if err
+			return callback null, sec == secret

@@ -88,18 +88,23 @@ server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
 
 # oauth: get access token from server
 server.post config.base + '/access_token', (req, res, next) ->
-	if not req.body.code
-		return next new check.Error 'code', 'must be present'
+	e = new check.Error
+	e.check req.body, code:check.format.key, key:check.format.key, secret:check.format.key
+	return next e if e.failed()
 	db.states.get req.body.code, (err, state) ->
 		return next err if err
 		return next new check.Error 'code', 'invalid or expired' if not state || state.step != "1"
-		db.states.del req.body.code, (->)
-		r = JSON.parse(state.token)
-		r.state = state.options.state
-		r.provider = state.provider
-		res.buildJsend = false
-		res.send r
-		next()
+		return next new check.Error 'code', 'invalid or expired' if state.key != req.body.key
+		db.apps.checkSecret state.key, req.body.secret, (e,r) ->
+			return next e if e
+			return next new check.Error "invalid credentials" if not r
+			db.states.del req.body.code, (->)
+			r = JSON.parse(state.token)
+			r.state = state.options.state
+			r.provider = state.provider
+			res.buildJsend = false
+			res.send r
+			next()
 
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
@@ -220,7 +225,7 @@ server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 		(cb) -> db.apps.getKeysets req.params.key, cb
 	], (e, r) ->
 		return next(e) if e
-		res.send name:r[0].name, key:r[0].key, domains:r[1], keysets:r[2]
+		res.send name:r[0].name, key:r[0].key, secret:r[0].secret, domains:r[1], keysets:r[2]
 		next()
 
 # update infos of an app
