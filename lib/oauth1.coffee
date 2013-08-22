@@ -70,8 +70,8 @@ exports.authorize = (provider, keyset, opts, callback) ->
 
 		request_token = provider.oauth1.request_token
 		query = {}
-		if typeof opts.options?.authorize == 'object'
-			query = opts.options.authorize
+		if typeof opts.options?.request_token == 'object'
+			query = opts.options.request_token
 		for name, value of request_token.query
 			query[name] = replace_param value
 			if typeof query[name] != 'string'
@@ -134,6 +134,8 @@ exports.authorize = (provider, keyset, opts, callback) ->
 				return callback e if e
 				authorize = provider.oauth1.authorize
 				query = {}
+				if typeof opts.options?.authorize == 'object'
+					query = opts.options.authorize
 				for name, value of authorize.query
 					query[name] = replace_param value
 					if typeof query[name] != 'string'
