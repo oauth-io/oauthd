@@ -42,7 +42,7 @@ errors_desc =
 		'invalid_grant': "The provided access grant is invalid, expired, or revoked (e.g. invalid assertion, expired authorization token, bad end-user password credentials, or mismatching authorization code and redirection URI).",
 		'unsupported_grant_type': "The access grant included - its type or another attribute - is not supported by the authorization server."
 
-exports.authorize = (provider, keyset, opts, callback) ->
+exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
 	params[k] = v for k,v of provider.oauth2.parameters
@@ -58,7 +58,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		replace_param = (param) ->
 			param = param.replace(/\{\{state\}\}/g, state.id)
 			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of keyset
+			for apiname, apivalue of parameters
 				if params[apiname]
 					if Array.isArray(apivalue)
 						separator = params[apiname].separator
@@ -98,7 +98,7 @@ exports.access_token = (state, req, callback) ->
 		(callback) -> dbproviders.getExtended state.provider, callback
 		(callback) -> dbapps.getKeyset state.key, state.provider, callback
 	], (err, res) ->
-		[provider, keyset] = res
+		[provider, {parameters,response_type}] = res
 		params = {}
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth2.parameters
@@ -107,7 +107,7 @@ exports.access_token = (state, req, callback) ->
 			param = param.replace(/\{\{code\}\}/g, req.params.code)
 			param = param.replace(/\{\{state\}\}/g, state.id)
 			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of keyset
+			for apiname, apivalue of parameters
 				if params[apiname]
 					if Array.isArray(apivalue)
 						separator = params[apiname].separator

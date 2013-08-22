@@ -43,7 +43,7 @@ sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
 	hmacsha1.update data
 	hmacsha1.digest "base64"
 
-exports.authorize = (provider, keyset, opts, callback) ->
+exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
 	params[k] = v for k,v of provider.oauth1.parameters
@@ -59,7 +59,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		replace_param = (param) ->
 			param = param.replace(/\{\{state\}\}/g, state.id)
 			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of keyset
+			for apiname, apivalue of parameters
 				if params[apiname]
 					if Array.isArray(apivalue)
 						separator = params[apiname].separator
@@ -89,7 +89,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		else
 			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
 		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, keyset.client_secret + '&', query)
+			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&', query)
 		else
 			return callback new check.Error 'Unknown signature method'
 		options.form = {}
@@ -167,7 +167,7 @@ exports.access_token = (state, req, callback) ->
 		(callback) -> dbproviders.getExtended state.provider, callback
 		(callback) -> dbapps.getKeyset state.key, state.provider, callback
 	], (err, res) ->
-		[provider, keyset] = res
+		[provider, {parameters,response_type}] = res
 		params = {}
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth1.parameters
@@ -175,7 +175,7 @@ exports.access_token = (state, req, callback) ->
 		replace_param = (param) ->
 			param = param.replace(/\{\{state\}\}/g, state.id)
 			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of keyset
+			for apiname, apivalue of parameters
 				if params[apiname]
 					if Array.isArray(apivalue)
 						separator = params[apiname].separator
@@ -204,7 +204,7 @@ exports.access_token = (state, req, callback) ->
 		else
 			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
 		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, keyset.client_secret + '&' + state.token, query)
+			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&' + state.token, query)
 		else
 			return callback new check.Error 'Unknown signature method'
 		options.form = {}
