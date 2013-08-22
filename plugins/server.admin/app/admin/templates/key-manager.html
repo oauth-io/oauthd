@@ -56,7 +56,7 @@
 					<div class="panel-header">
 						<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
 							<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo">
-							<span style="position: relative; top: 2px">{{providers_name[keyProvider]}}</span>
+							<span style="position: relative; top: 2px">{{providers_name[keyProvider]|capitalize}}</span>
 						</a>
 					</div>
 					<div class="panel-info" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
