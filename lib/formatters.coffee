@@ -38,7 +38,7 @@ buildReply = (body, res) ->
 		if Buffer.isBuffer(body)
 			body = body.toString('base64')
 
-	if res.buildJsend ||
+	if res.buildJsend || res.buildJsend != false &&
 		not (res.statusStr == 'error' && body?.error && body?.error_description) &&
 		not (res.statusStr == 'success' && body?.access_token && body?.token_type)
 			result = status: res.statusStr
