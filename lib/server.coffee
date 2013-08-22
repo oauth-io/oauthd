@@ -199,7 +199,7 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 					return cb new check.Error 'Options must be an object' if typeof options != 'object'
 				catch e
 					return cb new check.Error 'Error in request parameters'
-			if response_type != 'token' and not options.state and req.params.state_type
+			if response_type != 'token' and (not options.state or options.state_type)
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
