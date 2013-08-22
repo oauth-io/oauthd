@@ -185,8 +185,8 @@ server.get config.base + '/:provider', (req, res, next) ->
 			oauthv ?= 'oauth1' if provider.oauth1
 			db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 		(keyset, provider, cb) ->
+			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			{parameters, response_type} = keyset
-			return cb new check.Error 'This app is not configured for ' + provider.provider if not parameters
 			options = {}
 			if req.params.opts
 				try
