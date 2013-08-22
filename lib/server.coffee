@@ -103,6 +103,7 @@ server.get config.base + '/', (req, res, next) ->
 
 			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
 			body = formatters.build e || r
+			body.state = state.options.state
 			body.provider = state.provider.toLowerCase()
 			view = '<script>(function() {\n'
 			view += '\t"use strict";\n'
@@ -166,7 +167,10 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 				try
 					options = JSON.parse(req.params.opts)
 				catch e
-					cb new check.Error 'Error in request parameters'
+					return cb new check.Error 'Error in request parameters'
+			if response_type != 'token' and not options.state and req.params.state_type
+				return cb new check.Error 'You must provide a state when server-side auth'
+			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 			oauth[oauthv].authorize provider, keyset, opts, cb
 	], (err, url) ->
