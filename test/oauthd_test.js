@@ -202,7 +202,7 @@ exports.admin_api_create = {
     t.expect(4);
     gb.auth_request.post({
       url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook',
-      form: {client_id:"aaaa", client_secret:"bbbbbbbbb", scope: ["yy", "zz"]}
+      form: {response_type:"code",parameters:{client_id:"aaaa", client_secret:"bbbbbbbbb", scope: ["yy", "zz"]}}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -235,7 +235,7 @@ exports.admin_api_create = {
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
       t.deepEqual(data, {
         status:"success",
-        data: {client_id:"aaaa", client_secret:"bbbbbbbbb", scope: ["yy", "zz"]}
+        data: {response_type:"code",parameters:{client_id:"aaaa", client_secret:"bbbbbbbbb", scope: ["yy", "zz"]}}
       }, "api replied an error");
       t.done();
     });
@@ -261,11 +261,13 @@ exports.admin_api_create = {
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
+      gb.app_secret = data.data && data.data.secret
       t.deepEqual(data, {
         status:"success",
         data: {
           name:"A test app",
           key:gb.app_key,
+          secret:gb.app_secret,
           domains:['test.local'],
           keysets:['facebook']
         }
@@ -302,7 +304,7 @@ exports.admin_api_update = {
     });
   }),
   'app key': check_setUp(function(t) {
-    t.expect(7);
+    t.expect(9);
     gb.auth_request.post({
       url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/reset',
       form: {name: 'Renamed app'}
@@ -315,7 +317,10 @@ exports.admin_api_update = {
       t.ok(typeof data.data == 'object', "malformed response");
       t.ok(typeof data.data.key == 'string', "invalid response (key)");
       t.notEqual(data.data.key, gb.app_key, "invalid response (key)");
+      t.ok(typeof data.data.secret == 'string', "invalid response (secret)");
+      t.notEqual(data.data.secret, gb.app_secret, "invalid response (secret)");
       gb.app_key = data.data.key;
+      gb.app_secret = data.data.secret;
       t.done();
     });
   }),
@@ -337,7 +342,7 @@ exports.admin_api_update = {
     t.expect(4);
     gb.auth_request.post({
       url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook',
-      form: {client_id:"AAAAA", client_secret:"BBBBBBB", scope: ["YY", "ZZ"]}
+      form: {response_type:"token",parameters:{client_id:"AAAAA", client_secret:"BBBBBBB", scope: ["YY", "ZZ"]}}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -356,7 +361,7 @@ exports.admin_api_update = {
       t.doesNotThrow(function(){data=JSON.parse(body);}, "could not parse body");
       t.deepEqual(data, {
         status:"success",
-        data: {client_id:"AAAAA", client_secret:"BBBBBBB", scope: ["YY", "ZZ"]}
+        data: {response_type:"token",parameters:{client_id:"AAAAA", client_secret:"BBBBBBB", scope: ["YY", "ZZ"]}}
       }, "api replied an error");
       t.done();
     });
@@ -391,6 +396,7 @@ exports.admin_api_update = {
         data: {
           name:"Renamed app",
           key:gb.app_key,
+          secret:gb.app_secret,
           domains:['test1.local', 'test2.local'],
           keysets:['facebook']
         }
@@ -573,6 +579,7 @@ exports.admin_api_delete = {
         data: {
           name:"Renamed app",
           key:gb.app_key,
+          secret:gb.app_secret,
           domains:['test2.local'],
           keysets:[]
         }

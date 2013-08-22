@@ -9,13 +9,15 @@
 	</div>
 	<div class="row">
 		<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
-			<li style="cursor: pointer" ng-click="keyFormOpen(provider)" ng-repeat="provider in filtered.sort() | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" data-drag="true" ng-show="true" ng-model="providers" data-jqyoui-options="{helper: 'clone', zIndex: '1'}" jqyoui-draggable="{index: {{$index}},placeholder:'keep',zIndex: 100,animate:true,onStart:'startDrag',onStop:'stopDrag'}">
+			<li style="cursor: pointer" ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" data-drag="true" ng-show="true" ng-model="providers" data-jqyoui-options="{helper: 'clone', zIndex: '1'}" jqyoui-draggable="{index: {{$index}},placeholder:'keep',zIndex: 100,animate:true,onStart:'startDrag',onStop:'stopDrag'}" ng-click="keyFormOpen(provider)" ng-mouseover="hoverItem = provider" ng-mouseleave="hoverItem = null">
 				<a style="padding: 10px 20px">
-					<img style="margin-left: 10px" class="pull-right" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em"><span style="position: relative; top: 2px">{{providers_name[provider]|capitalize}}</span></span>
+					<img style="margin-left: 10px" class="pull-right" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em"><span class="pull-right" style="position :relative; top: -2px" ng-show="hoverItem == provider"><button ng-click="keyFormOpen(provider)" class="btn btn-success btn-small">Add</button></span>
+					<span style="position: relative; top: 2px" class="provider-text" data-provider="{{provider}}">{{providers_name[provider]|capitalize}}</span> </span>
 				</a>
 			</li>
 		</ul>
 	</div>
+	<div ng-show="filtered.length == 0">No results</div>
 	<div class="row">
 		<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
 	</div>

@@ -102,7 +102,7 @@ exports.resetKey = check check.format.key, (key, callback) ->
 			['hset', 'a:keys', newkey, idapp]
 		]).exec (err, r) ->
 			return callback err if err
-			callback null, key:newkey
+			callback null, key:newkey, secret:newsecret
 
 # remove an app
 exports.remove = check check.format.key, (key, callback) ->
@@ -176,7 +176,7 @@ exports.getKeyset = check check.format.key, 'string', (key, provider, callback) 
 				try
 					res[0] = JSON.parse(res[0])
 				catch e
-					return callback err if err
+					return callback e
 				callback null, parameters:res[0], response_type:(res[1] || 'token')
 
 

@@ -15,6 +15,19 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 hooks.config.push ->
+	app.filter 'toUpper', ->
+		return (input, scope) ->
+			if input
+				return input.toUpperCase()
+
+	app.filter 'trunc', ->
+		return (input, chars) ->
+			return input if isNaN(chars)
+			return '' if chars <= 0
+			if input && input.length >= chars
+				return input.substring(0, chars).trim() + '...'
+			return input
+
 	app.filter 'capitalize', -> (input, scope) ->
 		return input if not input
 		str = ''

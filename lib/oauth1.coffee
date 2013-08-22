@@ -167,6 +167,7 @@ exports.access_token = (state, req, callback) ->
 		(callback) -> dbproviders.getExtended state.provider, callback
 		(callback) -> dbapps.getKeyset state.key, state.provider, callback
 	], (err, res) ->
+		return callback err if err
 		[provider, {parameters,response_type}] = res
 		params = {}
 		params[k] = v for k,v of provider.parameters

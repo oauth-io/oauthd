@@ -82,8 +82,10 @@ hooks.config.push ->
 			get: (app, provider, success, error) ->
 				api 'apps/' + app + '/keysets/' + provider, success, error
 
-			add: (app, provider, keys, success, error) ->
-				api 'apps/' + app + '/keysets/' + provider, success, error, data:keys
+			add: (app, provider, keys, response_type, success, error) ->
+				api 'apps/' + app + '/keysets/' + provider, success, error, data:
+					parameters: keys
+					response_type: response_type
 
 			remove: (app, provider, success, error) ->
 				api 'apps/' + app + '/keysets/' + provider, success, error, method:'delete'

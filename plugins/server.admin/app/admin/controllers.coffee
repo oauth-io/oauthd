@@ -20,11 +20,12 @@ hooks.config.push ->
 		UserService.logout()
 		$location.path '/'
 
-	app.controller 'ProviderCtrl', ($filter, $scope, ProviderService, $timeout) ->
+	app.controller 'ProviderCtrl', ($filter, $scope, $rootScope, ProviderService, $timeout) ->
 		ProviderService.list (json) ->
 			$scope.providers = (provider.provider for provider in json.data)
-			$scope.providers_name = {}
-			$scope.providers_name[provider.provider] = provider.name for provider in json.data
+			$rootScope.providers_name = {} if not $rootScope.providers_name
+			$rootScope.providers_name[provider.provider] = provider.name for provider in json.data
+			$scope.providers_name = $rootScope.providers_name
 			$scope.filtered = $filter('filter')($scope.providers, $scope.query)
 
 			$scope.pagination =
@@ -49,6 +50,8 @@ hooks.config.push ->
 		if not UserService.isLogin()
 			$location.path '/'
 
+		$rootScope.providers_name = {} if not $rootScope.providers_name
+		$scope.providers_name = $rootScope.providers_name
 		$scope.keySaved = false
 		$scope.authUrl = document.location.protocol + '//' + document.location.host + '/'
 		$scope.authDomain = document.location.host
@@ -80,6 +83,9 @@ hooks.config.push ->
 		$scope.stopDrag = (a) ->
 			$('.col-lg-4 .dashboard-sidenav li').css('z-index', 0)
 
+		$scope.modifyType = (a) ->
+			$scope.createKeyType = a
+
 		$scope.createKeySubmit = ->
 
 			provider = $scope.createKeyProvider
@@ -92,6 +98,7 @@ hooks.config.push ->
 
 				key = $scope.createKeyAppKey
 				conf = $scope.createKeyConf
+				response_type = $scope.createKeyType
 
 				data = {}
 				for field of conf
@@ -103,13 +110,15 @@ hooks.config.push ->
 					data[field] = conf[field].value
 
 				if not $rootScope.error.state
-					KeysetService.add key, provider, data, ((keysetEntry) ->
+					KeysetService.add key, provider, data, response_type, ((keysetEntry) ->
 
 						app = $rootScope.apps.find (n) ->
 							return n.key == $scope.createKeyAppKey
 
-						app.keys = {} if typeof app.keys == "undefined"
+						app.keys = {} if not app.keys
+						app.response_type = {} if not app.response_type
 						app.showKeys = true
+						app.response_type[provider] = response_type
 						app.keys[provider] = data
 						if not $scope.apikeyUpdate
 							app.keysets.add provider
@@ -157,11 +166,13 @@ hooks.config.push ->
 				KeysetService.get $scope.createKeyAppKey, $scope.createKeyProvider, ((json) ->
 					if json.data?
 						$scope.apikeyUpdate = true
-						for field of json.data
-							$scope.createKeyConf[field].value = json.data[field]
+						for field of json.data.parameters
+							$scope.createKeyConf[field].value = json.data.parameters[field]
+						$scope.createKeyType = json.data.response_type
 					else
 						for field in $scope.createKeyConf
 							field.value = ""
+						$scope.createKeyType = "token"
 				), (error) ->
 
 
@@ -175,7 +186,7 @@ hooks.config.push ->
 				key = $rootScope.apps[0].key
 				$scope.isDropped = false
 			else
-				name = helper.draggable.text().trim().toLowerCase()
+				name = $('.provider-text', helper.draggable).attr('data-provider')
 				$scope.isDropped = true
 				key = $(droppable.target).find('.app-public-key').text().trim()
 
@@ -184,6 +195,7 @@ hooks.config.push ->
 				$scope.$broadcast 'btShow'
 				$scope.createKeyProvider = name
 				$scope.createKeyAppKey = key
+				$scope.createKeyHref = data.data.href
 				a = $rootScope.apps.find (n) ->
 					return n.key == $scope.createKeyAppKey
 
@@ -223,6 +235,18 @@ hooks.config.push ->
 
 		$scope.loaderApps = true
 
+		serializeObject = (form) ->
+			o = {}
+			a = form.serializeArray()
+			$.each a, ->
+				pname = this.name.replace /\[\]/, ''
+				if o[pname]?
+					o[pname] = [o[pname]] if not o[this.name].push
+					o[pname].push this.value || ''
+				else
+					o[pname] = this.value || ''
+			return o
+
 		AdmService.me ((me)->
 			$rootScope.apps = me.data.apps
 
@@ -238,9 +262,11 @@ hooks.config.push ->
 				do (i, n) ->
 					AppService.get $rootScope.apps[i], ((app) =>
 						$scope.counter++
+						delete app.data.secret
 						$rootScope.apps[i] = app.data
-						$rootScope.apps[i].keysets.sort();
+						$rootScope.apps[i].keysets.sort()
 						$rootScope.apps[i].keys = {}
+						$rootScope.apps[i].response_type = {}
 						$rootScope.apps[i].showKeys = false
 						$timeout (->
 							if $scope.counter == n
@@ -262,6 +288,11 @@ hooks.config.push ->
 				"localhost"
 			]
 
+		$scope.displaySecret = (app, disp) ->
+			if not disp
+				return (app.secret = undefined)
+			AppService.get app.key, (r) ->
+				app.secret = r.data?.secret
 
 		$scope.tryAuth = (provider, key) ->
 
@@ -327,7 +358,8 @@ hooks.config.push ->
 				if not app.keys[provider]
 					KeysetService.get app.key, provider, (data) ->
 						setKeysField app, provider
-						app.keys[provider] = data.data
+						app.keys[provider] = data.data.parameters
+						app.response_type[provider] = data.data.response_type
 						app.showKeys = provider
 				else
 					app.showKeys = provider
@@ -383,8 +415,8 @@ hooks.config.push ->
 
 
 		#reset public key
-		$scope.resetPublicKey = (key)->
-			if confirm 'Are you sure you want to reset your Public Key? You\'ll need to update the public key in your application.'
+		$scope.resetKeys = (key)->
+			if confirm 'Are you sure you want to reset your Keys? You\'ll need to update the keys in your application.'
 				AppService.resetKey key, (data)->
 					app = $rootScope.apps.find (n)->
 						n.key == key
@@ -399,7 +431,9 @@ hooks.config.push ->
 				message : ''
 				type : ''
 
-			keys = Object.fromQueryString $('#appkey-' + app.key + '-' + provider).serialize()
+			keys = serializeObject $('#appkey-' + app.key + '-' + provider)
+			response_type = keys.response_type
+			delete keys.response_type
 			selector = $('#appkey-' + app.key + '-' + provider + ' select[ui-select2=scopeSelect]')
 			select = false
 			if selector.length > 0
@@ -414,7 +448,7 @@ hooks.config.push ->
 					break;
 
 			if not $rootScope.error.state
-				KeysetService.add app.key, provider, keys, (data)->
+				KeysetService.add app.key, provider, keys, response_type, (data)->
 					$scope.keySaved = true
 					app.editProvider = {}
 					$timeout (->

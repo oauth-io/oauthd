@@ -3,7 +3,6 @@
 		<div class="col col-lg-6 col-offset-3" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
 	</div>
 	<div ng-show="createKeyStep == 2">
-
 		<div class="row" style="margin-top: 5px">
 			<label class="col col-lg-4">Application</label>
 			<div class="col col-lg-8">
@@ -28,14 +27,14 @@
 			<label class="col col-lg-4">Domain callback</label>
 			<div class="col col-lg-8">{{authDomain}}</div>
 		</div>
+		<hr />
+		<h5 ng-show="createKeyHref.docs">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>
+		<h5 ng-show="createKeyHref.apps">{{createKeyProvider|capitalize}} apps page: <a href="{{createKeyHref.apps}}" target="_blank">{{createKeyHref.apps|trunc:35}}</a></h5>
 	</div>
 	<div ng-show="createKeyStep == 3">
 		<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
 	      {{error.message}}
 		</div>
-		<div class="row">
-			<h4 class="col col-lg-8 col-offset-4">Enter your keys</h4>
-		</div>
-		<div ng-include src="createKeyLastStepTemplate" style="margin-top: 20px"></div>
+		<div ng-include src="createKeyLastStepTemplate"></div>
 	</div>
 </div>

@@ -11,20 +11,20 @@
 	<div class="row">
 		<label class="control-label col col-lg-4" for="createapp-domain">Domains available</label>
 		<div class="col col-lg-8">
-		<div class="input-group">
-			<input type="text" placeholder="my-domain.com" ng-model="createAppForm.input" id="createapp-domain" name="createapp-domain">
+			<div class="input-group">
+				<input type="text" placeholder="my-domain.com" ng-model="createAppForm.input" id="createapp-domain" name="createapp-domain">
 				<span class="input-group-btn">
-				<button ng-click="addDomain()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</button>
-			</span>
-		    </div>
-		<ul style="position:relative; top:5px;" class="nav nav-tabs nav-stacked">
-			<li ng-repeat="domain in createAppForm.domains">
-				<a>
-					<i style="cursor: pointer; position: relative; top: 2px" ng-click="removeDomain(domain)" class="glyphicon glyphicon-remove pull-right"></i>
-					{{domain}}
-				</a>
-			</li>
-		</ul>
+					<button ng-click="addDomain()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</button>
+				</span>
+			</div>
+			<ul style="position:relative; top:5px;" class="nav nav-tabs nav-stacked">
+				<li ng-repeat="domain in createAppForm.domains">
+					<a>
+						<i style="cursor: pointer; position: relative; top: 2px" ng-click="removeDomain(domain)" class="glyphicon glyphicon-remove pull-right"></i>
+						{{domain}}
+					</a>
+				</li>
+			</ul>
 		</div>
 	</div>
 </form>

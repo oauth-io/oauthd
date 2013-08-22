@@ -31,10 +31,16 @@
 				</div>
 				<div class="well" style="margin-top: 10px">
 					<h5><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
+					<h5>
+						<i class="glyphicon glyphicon-hand-right"></i>
+						Secret key: <span style="color: green" class="app-public-secret" ng-show="app.secret">{{app.secret}}</span>
+						<a style="color:red;cursor:pointer" ng-show="app.secret" ng-click="displaySecret(app,false)">&lt;hide&gt;</a>
+						<a style="color:red;cursor:pointer" ng-hide="app.secret" ng-click="displaySecret(app,true)">&lt;show&gt;</a>
+					</h5>
 					<span style="font-size: 0.9em">
 						<a ng-hide="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = true">Quick install</a>
 						<a ng-show="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = false">Hide quick install</a>&nbsp;&nbsp;&nbsp;&nbsp;
-						<a ng-click="resetPublicKey(app.key)" style="cursor: pointer;">Reset public key</a>
+						<a ng-click="resetKeys(app.key)" style="cursor: pointer;">Reset public key</a>
 					</span>
 					<div ng-show="showQuickInstall">
 						<hr />
@@ -50,7 +56,7 @@
 					<div class="panel-header">
 						<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
 							<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo">
-							<span style="position: relative; top: 2px">{{keyProvider|capitalize}}</span>
+							<span style="position: relative; top: 2px">{{providers_name[keyProvider]}}</span>
 						</a>
 					</div>
 					<div class="panel-info" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
@@ -61,7 +67,7 @@
 								<label class="col col-lg-4 control-label">Sample</label>
 								<div class="text-danger col col-lg-8" style="position: relative; top: 6px">
 									<pre><span class="text-muted">//Using popup (option 1)</span>
-OAuth.popup('<span class="api-text">{{keyProvider}}</span>', function(<span class="err">error</span>, <strong>result</strong>) {
+OAuth.popup('<span class="api-text">{{keyProvider.trim()}}</span>', function(<span class="err">error</span>, <strong>result</strong>) {
   <span class="text-muted">//handle error with <span class="err">error</span></span>
   <span class="text-muted">//use <strong style="color: #333">result.</strong><span class="access-token">access_token</span> in your API request</span>
 });
@@ -86,13 +92,13 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 										{{error.message}}
 							</div>
 							<div ng-show="app.editProvider[keyProvider]">
-								<div data-ng-switch on="app.keysField[keyProvider][field].cardinality" ng-repeat="(field, value) in app.keys[keyProvider]" style="margin-bottom: 15px">
+								<div data-ng-switch on="app.keysField[keyProvider][field].cardinality" ng-repeat="(field, value) in app.keys[keyProvider]" style="margin: 0px 15px">
 									<div data-ng-switch-when="*" class="row">
 										<label class="col col-lg-4 control-label">{{field}}</label>
 										<div class="col col-lg-8">
 											<select name="{{field}}" multiple ui-select2="scopeSelect" data-ng-model="value">
 												<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
-										</select>
+											</select>
 										</div>
 									</div>
 									<!--
@@ -106,7 +112,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 										<div class="col col-lg-8">
 											<select name="{{field}}" ui-select2="scopeSelect" data-ng-model="value">
 												<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
-										</select>
+											</select>
 										</div>
 									</div>
 									<div data-ng-switch-default class="row">
@@ -115,6 +121,12 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 											<input type="text" name="{{field}}" ng-model="value" />
 										</div>
 									</div>
+								</div>
+								<label class="col col-lg-4 control-label">Response type</label>
+								<div class="col col-lg-8" style="margin-bottom: 15px">
+									<input type="radio" name="response_type" value="token" ng-model="app.response_type[keyProvider]" />Client-side (token)
+									<input type="radio" name="response_type" value="code" ng-model="app.response_type[keyProvider]" />Server-side (code)
+									<input type="radio" name="response_type" value="both" ng-model="app.response_type[keyProvider]" />Both
 								</div>
 							</div>
 							<div class="row">
@@ -137,7 +149,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 
 <div bootstrap-modal style="display: none" class="modal fade">
 	<div class="modal-dialog">
-	<div class="modal-content">
+		<div class="modal-content">
 			<div class="modal-header">
 				<h4>
 					<img width="32" height="32" ng-src="/api/providers/{{createKeyProvider}}/logo">
