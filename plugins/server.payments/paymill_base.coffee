@@ -1,0 +1,12 @@
+emailer = require 'nodemailer'
+config = require '../../lib/config'
+
+class PaymillBase
+
+	@paymill = require('paymill-node')(config.paymill.secret_key)
+	@subscriptions_root_prefix = "pm:subscriptions"
+	@payments_root_prefix = "pm:payments"
+
+	constructor : () ->
+
+exports = module.exports = PaymillBase
