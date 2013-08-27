@@ -129,4 +129,6 @@ exports.process = (data, client, callback) ->
 
 	], (err, result) ->
 		return callback err if err
+		console.log @pm_subscription
+		result.subscription = @pm_subscription
 		return callback null, result
