@@ -33,19 +33,19 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 # update user infos
 exports.updateAccount = (req, callback) ->
 
-	data = req.body	
-	user_id = req.user.id	
+	data = req.body
+	user_id = req.user.id
 	prefix = "u:#{user_id}:"
 	old_email = null
 
 	db.redis.mget [ prefix + 'mail'], (err, res) =>
 		old_email = res[0]
-			
+
 	db.redis.hget 'u:mails', data.email, (err, id) ->
-		
+
 		is_new_email = (old_email != data.email)
-		validation_key = db.generateUid()		
-		
+		validation_key = db.generateUid()
+
 		if is_new_email
 			return callback err if err
 			return callback new check.Error "#{data.email} already exists" if id
@@ -61,9 +61,9 @@ exports.updateAccount = (req, callback) ->
 					prefix + 'company', data.company,
 					prefix + 'website', data.website,
 					prefix + 'validated', 0,
-					prefix + 'key', validation_key]		
+					prefix + 'key', validation_key]
 
-			]).exec (err, res) ->						
+			]).exec (err, res) ->
 				return callback err if err
 
 				#send mail with key
@@ -81,11 +81,11 @@ In order to validate your new email address, please click the following link: ht
 OAuth.io Team"
 				mailer = new Mailer options
 				mailer.send (err, result) ->
-					return callback err if err						
+					return callback err if err
 					user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
-					return callback null, user						
-		else	
-			db.redis.mset [	
+					return callback null, user
+		else
+			db.redis.mset [
 				prefix + 'mail', data.email,
 				prefix + 'name', data.name,
 				prefix + 'location', data.location,
@@ -104,8 +104,8 @@ exports.isValidable = (data, callback) ->
 	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated', prefix+'pass'], (err, replies) ->
 		return callback err if err
 
-		if replies[3]? # pass ok, validate new email address		
-			db.redis.mset [prefix+'validated', 1], (err) ->				
+		if replies[3]? # pass ok, validate new email address
+			db.redis.mset [prefix+'validated', 1], (err) ->
 				return callback err if err
 				return callback null, is_updated: true, mail: replies[0], id: iduser
 		else
@@ -222,7 +222,10 @@ exports.get = check 'int', (iduser, callback) ->
 	db.redis.mget [prefix+'mail', prefix+'date_inscr', prefix + 'name', prefix + 'location', prefix + 'company', prefix + 'website'], (err, replies) ->
 		return callback err if err
 		return callback new check.Error 'Unknown mail' if not replies[1]
-		return callback null, id:iduser, mail:replies[0], date_inscr:replies[1], name: replies[2], location: replies[3], company: replies[4], website: replies[5]
+
+		exports.getPlan iduser, (err, plan) ->
+			return callback err if err
+			return callback null, id:iduser, mail:replies[0], date_inscr:replies[1], name: replies[2], location: replies[3], company: replies[4], website: replies[5], plan: plan
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
@@ -268,6 +271,23 @@ exports.getApps = check 'int', (iduser, callback) ->
 			return callback err if err
 			return callback null, appkeys
 
+# get apps ids owned by a user
+exports.getPlan = check 'int', (iduser, callback) ->
+	db.redis.hget ["pm:subscriptions:#{iduser}", "current_offer"], (err, offer_id) ->
+		return callback err if err
+		# nothing ?, return free plan
+		#...
+		# else
+		db.redis.hget ["pm:offers:offers_id", offer_id], (err, offer) ->
+			return callback err if err
+			prefix = "pm:offers:#{offer}"
+			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection"], (err, replies) ->
+				return callback err if err
+				return callback null, replies
+
+
+
+
 # is an app owned by a user
 exports.hasApp = check 'int', check.format.key, (iduser, key, callback) ->
 	db.apps.get key, (err, app) ->
@@ -287,7 +307,7 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 			prefix+'date_inscr',
 			prefix+'validated'], (err, replies) ->
 				return callback err if err
-				calcpass = db.generateHash pass + replies[1]				
+				calcpass = db.generateHash pass + replies[1]
 				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
