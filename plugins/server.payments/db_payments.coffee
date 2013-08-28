@@ -127,8 +127,6 @@ exports.process = (data, client, callback) ->
 			console.log "mail..."
 			cb()
 
-	], (err, result) ->
+	], (err, result) =>
 		return callback err if err
-		console.log @pm_subscription
-		result.subscription = @pm_subscription
 		return callback null, result
