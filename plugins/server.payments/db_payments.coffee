@@ -61,21 +61,29 @@ exports.process = (data, client, callback) ->
 		# create payment
 		(cb) =>
 
-			db.redis.hget "#{PaymillBase.payments_root_prefix}:#{client_id}", "current_payment", (err, res) =>
+			console.log "create payment"
+			@pm_payment = new PaymillPayment
+			@pm_payment.token = data.token
+			@pm_payment.client = @pm_client
+			@pm_payment.save (err, res) ->
 				return cb err if err
+				cb()
 
-				if not res?
-					console.log "create payment"
-					@pm_payment = new PaymillPayment
-					@pm_payment.token = data.token
-					@pm_payment.client = @pm_client
-					@pm_payment.save (err, res) ->
-						return cb err if err
-						cb()
-				else
-					console.log "payment exists"
-					@pm_payment = new PaymillPayment res
-					cb()
+			# db.redis.hget "#{PaymillBase.payments_root_prefix}:#{client_id}", "current_payment", (err, res) =>
+			# 	return cb err if err
+
+			# 	if not res?
+			# 		console.log "create payment"
+			# 		@pm_payment = new PaymillPayment
+			# 		@pm_payment.token = data.token
+			# 		@pm_payment.client = @pm_client
+			# 		@pm_payment.save (err, res) ->
+			# 			return cb err if err
+			# 			cb()
+			# 	else
+			# 		console.log "payment exists"
+			# 		@pm_payment = new PaymillPayment res
+			# 		cb()
 
 		# create subscription
 		(cb) =>

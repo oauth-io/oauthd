@@ -125,7 +125,7 @@ class PaymillSubscription
 						]).exec (err) =>
 							return callback err if err
 							console.log "subscription updated"
-							return callback null, @populate subscription
+							return callback null, subscription
 
 	populate : (data) ->
 		return
