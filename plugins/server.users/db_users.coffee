@@ -30,10 +30,55 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				shared.emit 'user.register', user
 				return callback null, user
 
+exports.updateBilling = (req, callback) ->
+
+	profile = req.body.profile
+	billing = req.body.billing
+	user_id = req.user.id
+	profile_prefix = "u:#{user_id}:"
+	billing_prefix = "u:#{user_id}:billing:"
+	cmds = []
+
+	if profile?
+		cmds.push [ 'mset', profile_prefix + 'mail', db.emptyStrIfNull(profile.mail),
+			profile_prefix + 'name', db.emptyStrIfNull(profile.name),
+			profile_prefix + 'company', db.emptyStrIfNull(profile.company),
+			profile_prefix + 'website', db.emptyStrIfNull(profile.website),
+			profile_prefix + 'addr_one', db.emptyStrIfNull(profile.addr_one),
+			profile_prefix + 'addr_second', db.emptyStrIfNull(profile.addr_second),
+			profile_prefix + 'city', db.emptyStrIfNull(profile.city),
+			profile_prefix + 'zipcode', db.emptyStrIfNull(profile.zipcode),
+			profile_prefix + 'country_code', db.emptyStrIfNull(profile.country_code),
+			profile_prefix + 'state', db.emptyStrIfNull(profile.state),
+			profile_prefix + 'phone', db.emptyStrIfNull(profile.phone),
+			profile_prefix + 'type', profile.type,
+			profile_prefix + 'vat', db.emptyStrIfNull(profile.vat),
+			profile_prefix + 'use_profile_for_billing', profile.use_profile_for_billing ]
+
+	if billing?
+		cmds.push [ 'mset', billing_prefix + 'mail', db.emptyStrIfNull(billing.mail),
+			billing_prefix + 'name', db.emptyStrIfNull(billing.name),
+			billing_prefix + 'company', db.emptyStrIfNull(billing.company),
+			billing_prefix + 'website', db.emptyStrIfNull(billing.website),
+			billing_prefix + 'addr_one', db.emptyStrIfNull(billing.addr_one),
+			billing_prefix + 'addr_second', db.emptyStrIfNull(billing.addr_second),
+			billing_prefix + 'city', db.emptyStrIfNull(billing.city),
+			billing_prefix + 'zipcode', db.emptyStrIfNull(billing.zipcode),
+			billing_prefix + 'country_code', db.emptyStrIfNull(billing.country_code),
+			billing_prefix + 'state', db.emptyStrIfNull(billing.state),
+			billing_prefix + 'phone', db.emptyStrIfNull(billing.phone),
+			billing_prefix + 'type', billing.type,
+			billing_prefix + 'vat', db.emptyStrIfNull(billing.vat) ]
+
+	db.redis.multi(cmds).exec (err) ->
+		return callback err if err
+		user = id:user_id, mail:profile.email, name:profile.name, company:profile.company, website:profile.website, location:profile.location
+		return callback null, user
+
 # update user infos
 exports.updateAccount = (req, callback) ->
 
-	data = req.body
+	data = req.body.profile
 	user_id = req.user.id
 	prefix = "u:#{user_id}:"
 	old_email = null
@@ -90,7 +135,16 @@ OAuth.io Team"
 				prefix + 'name', data.name,
 				prefix + 'location', data.location,
 				prefix + 'company', data.company,
-				prefix + 'website', data.website
+				prefix + 'website', data.website,
+				prefix + 'addr_one', data.addr_one,
+				prefix + 'addr_second', data.addr_second,
+				prefix + 'city', data.city,
+				prefix + 'zipcode', data.zipcode,
+				prefix + 'country', data.country,
+				prefix + 'country_code', data.country_code,
+				prefix + 'state', data.state,
+				prefix + 'phone', data.phone
+
 			], (err) ->
 				return callback err if err
 				user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
@@ -219,13 +273,89 @@ exports.changePassword = check mail:check.format.mail, (data, callback) ->
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix+'mail', prefix+'date_inscr', prefix + 'name', prefix + 'location', prefix + 'company', prefix + 'website'], (err, replies) ->
+	db.redis.mget [ prefix + 'mail',
+		prefix + 'date_inscr',
+		prefix + 'name',
+		prefix + 'location',
+		prefix + 'company',
+		prefix + 'website',
+		prefix + 'addr_one',
+		prefix + 'addr_second',
+		prefix + 'company',
+		prefix + 'country_code',
+		prefix + 'name',
+		prefix + 'phone',
+		prefix + 'type',
+		prefix + 'zipcode',
+		prefix + 'city',
+		prefix + 'vat',
+		prefix + 'use_profile_for_billing' ]
+	, (err, replies) ->
 		return callback err if err
-		return callback new check.Error 'Unknown mail' if not replies[1]
-
+		profile =
+		{
+			id:iduser,
+			mail:replies[0],
+			date_inscr:replies[1],
+			name: replies[2],
+			location: replies[3],
+			company: replies[4],
+			website: replies[5],
+			addr_one: replies[6],
+			addr_second: replies[7],
+			company: replies[8],
+			country_code: replies[9],
+			name: replies[10],
+			phone: replies[11],
+			type: replies[12],
+			zipcode: replies[13],
+			city : replies[14],
+			vat: replies[15],
+			use_profile_for_billing: replies[16] == "true" ? true : false
+		}
 		exports.getPlan iduser, (err, plan) ->
 			return callback err if err
-			return callback null, id:iduser, mail:replies[0], date_inscr:replies[1], name: replies[2], location: replies[3], company: replies[4], website: replies[5], plan: plan
+			exports.getBilling iduser, (err, billing) ->
+				return callback err if err
+				return callback null, profile: profile, plan: plan, billing: billing
+
+# get user billing
+exports.getBilling = check 'int', (iduser, callback) ->
+
+	prefix_billing = 'u:' + iduser + ':billing:'
+	db.redis.mget [ prefix_billing+'addr_one',
+		prefix_billing+'addr_second',
+		prefix_billing + 'city',
+		prefix_billing + 'company',
+		prefix_billing + 'country_code',
+		prefix_billing + 'mail',
+		prefix_billing + 'name',
+		prefix_billing + 'phone',
+		prefix_billing + 'state',
+		prefix_billing + 'type',
+		prefix_billing + 'website',
+		prefix_billing + 'zipcode',
+	 	prefix_billing + 'vat' ]
+	, (err, replies) ->
+		return callback err if err
+
+		billing =
+		{
+			addr_one:  replies[0],
+			addr_second:  replies[1],
+			city: replies[2],
+			company: replies[3],
+			country_code: replies[4],
+			mail: replies[5],
+			name: replies[6],
+			phone: replies[7],
+			state: replies[8],
+			type: replies[9],
+			website: replies[10],
+			zipcode: replies[11],
+			vat: replies[12]
+		}
+		return callback null, billing
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
@@ -275,9 +405,7 @@ exports.getApps = check 'int', (iduser, callback) ->
 exports.getPlan = check 'int', (iduser, callback) ->
 	db.redis.hget ["pm:subscriptions:#{iduser}", "current_offer"], (err, offer_id) ->
 		return callback err if err
-		# nothing ?, return free plan
-		#...
-		# else
+		return callback null if not offer_id?
 		db.redis.hget ["pm:offers:offers_id", offer_id], (err, offer) ->
 			return callback err if err
 			prefix = "pm:offers:#{offer}"

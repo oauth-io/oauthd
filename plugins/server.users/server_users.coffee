@@ -75,22 +75,26 @@ exports.setup = (callback) ->
 	@server.get @config.base + '/api/me', @auth.needed, (req, res, next) =>
 		@db.users.get req.user.id, (e, user) =>
 			return next(e) if e
-			@db.users.getApps user.id, (e, appkeys) ->
+			@db.users.getApps user.profile.id, (e, appkeys) ->
 				return next(e) if e
 				user.apps = appkeys
 				res.send user
 				next()
 
 	# update mail or password
-	@server.put @config.base + '/api/me', @auth.needed, (req, res, next) =>		
+	@server.put @config.base + '/api/me', @auth.needed, (req, res, next) =>
 		@db.users.updateAccount req, @server.send(res, next)
+
+	# update billing info
+	@server.post @config.base + '/api/me/billing', @auth.needed, (req, res, next) =>
+		@db.users.updateBilling req, @server.send(res, next)
 
 	# delete my account
 	@server.del @config.base + '/api/me', @auth.needed, (req, res, next) =>
 		@db.users.remove req.user.id, @server.send(res,next)
 
 	# get total connexion of an app
-	@server.get @config.base + '/api/users/app/:key', @auth.needed, (req, res, next) =>		
+	@server.get @config.base + '/api/users/app/:key', @auth.needed, (req, res, next) =>
 		@db.timelines.getTotal "co:a:#{req.params.key}", @server.send(res, next)
 
 	callback()
