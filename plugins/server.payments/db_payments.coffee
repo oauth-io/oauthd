@@ -108,6 +108,8 @@ exports.process = (data, client, callback) ->
 		(cb) =>
 			#send mail with key
 # 			options =
+#					templateName:"oauth.html"
+#					templatePath:"./app/template/"
 # 					to:
 # 						email: pm_client.email
 # 					from:
@@ -120,7 +122,11 @@ exports.process = (data, client, callback) ->
 
 # This email message will serve as your receipt.\n
 # \n
-# For help or product support, please contact us at team@oauth.io.\n
+# You have suscribed to the " + @pm_subscription.offer.name + " offer \n
+# with an amount of " + @pm_subscription.offer.amount/100 + "$\n
+# your subscription number is : " + @pm_subscription.id + "\n
+# your client id is : " + @@pm_client.user_id + "\n
+# For help or product support, please contact us at support@oauth.io.\n
 
 # --\n
 # OAuth.io Team"
