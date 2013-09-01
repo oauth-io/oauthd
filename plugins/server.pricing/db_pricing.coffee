@@ -7,8 +7,10 @@
 #
 
 async = require 'async'
+restify = require 'restify'
 { db, check, config } = shared = require '../shared'
 paymill = require('paymill-node')(config.paymill.secret_key)
+PaymillBase = require '../server.payments/paymill_base'
 
 # create an Offer
 exports.createOffer = (data, callback) ->
@@ -171,41 +173,37 @@ exports.getOfferByName = (name, callback) ->
 		return callback new check.Error "This plan does not exists" if not res?
 		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3], status:res[4]
 
-# update an Offer
-#exports.updateOffer = (amount, name, currency, interval, callback) ->
-#
-#	console.log("update Offer "+ name + " of " + amount + " " + currency + " during " + interval);
-#	prefix = "pm:offers"
-#
-#	db.redis.sismember [ "#{prefix}:#{name}", 1 ], (err, res) ->
-#		return callback err if err
-#		return callback new check.Error "Sorry but you have already added " + name.toUpperCase() if res == 1
-#
-#		paymill.offers.update
-#			amount: amount
-#			currency: currency
-#			interval: interval
-#			name: name
-#		,(err, offer) ->
-#			return callback err if err
-#
-#			console.log "offer id " + offer.data.id
-#
-#			offer.data.name = name;
-#			console.log "offer name " + offer.data.name
-#
-#			db.redis.multi([
-#				[ 'sadd', "#{prefix}", name ],
-#				[ 'sadd', "#{prefix}:#{name}", 1],
-#				[ 'mset', "#{prefix}:#{name}:id", offer.data.id,
-#						"#{prefix}:#{name}:currency", offer.data.currency,
-#						"#{prefix}:#{name}:interval", offer.data.interval,
-#						"#{prefix}:#{name}:created_at", offer.data.created_at,
-#						"#{prefix}:#{name}:updated_at", offer.data.updated_at,
-#						"#{prefix}:#{name}:amount", offer.data.amount,
-#					  	"#{prefix}:#{name}:subscription_count:active", offer.data.subscription_count.active,
-#					  	"#{prefix}:#{name}:subscription_count:inactive", offer.data.subscription_count.inactive
-#				 ]
-#				]).exec (err) ->
-#					return callback err if err
-#					return callback null, offer.data
+exports.unsubscribe = (client, callback) ->
+	return callback new restify.NotAuthorizedError if not client?
+
+	db.redis.multi([
+
+		[ "hget", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_subscription"],
+		[ "hget", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_offer" ]
+
+	]).exec (err, res) =>
+		return callback err if err
+		return callback new check.Error "An error occured, please contact support@oauth.io" if not res?
+
+		PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
+
+			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{client.id}:#{res[0]}"
+
+			db.redis.multi([
+
+					[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_subscription" ],
+					[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_offer"],
+
+					[ "del", "#{subscription_prefix}:id" ],
+					[ "del", "#{subscription_prefix}:offer" ],
+					[ "del", "#{subscription_prefix}:next_capture_at" ],
+					[ "del", "#{subscription_prefix}:created_at" ],
+					[ "del", "#{subscription_prefix}:updated_at" ],
+					[ "del", "#{subscription_prefix}:canceled_at" ],
+					[ "del", "#{subscription_prefix}:payment" ],
+					[ "del", "#{subscription_prefix}:client" ],
+					[ "del", "#{subscription_prefix}:notified" ]
+
+				]).exec (err) =>
+					return callback err if err
+					return callback null, subscription_updated

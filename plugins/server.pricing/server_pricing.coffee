@@ -14,4 +14,7 @@ exports.setup = (callback) ->
 	@server.get @config.base + '/api/plans/:name', (req, res, next) =>
 		@db.pricing.getOfferByName req.params.name.toLowerCase(), @server.send(res, next)
 
+	@server.del @config.base + '/api/plan/unsubscribe', @auth.needed, (req, res, next) =>
+		@db.pricing.unsubscribe req.clientId, @server.send(res, next)
+
 	callback()
