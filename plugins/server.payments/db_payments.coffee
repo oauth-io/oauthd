@@ -16,6 +16,42 @@ PaymillSubscription = require './paymill_subscription'
 PaymillPayment = require './paymill_payment'
 PaymillClient = require './paymill_client'
 
+
+exports.paddingLeft = (padding, value) ->
+	zeroes = "0"
+	zeroes += "0" for i in [1..padding]
+
+	(zeroes + value).slice(padding * -1)
+
+exports.addOrder = (client_id, callback) ->
+
+	return callback new check.Error "Cannot create order" if not client_id?
+
+	exports.getCart client_id, (err, cart) ->
+		return callback err if err
+
+		db.redis.incr "#{PaymillBase.orders_root_prefix}:i", (err, num) ->
+			return callback err if err
+			num_order = exports.paddingLeft(10, num)
+
+			db.redis.hset "#{PaymillBase.orders_root_prefix}:num_orders", num_order, cart.client_id, (err, res) ->
+				return callback err if err
+
+				db.redis.mset [
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:num_order", num_order
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:plan_id", cart.plan_id,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:plan_name", cart.plan_name,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:unit_price", cart.unit_price,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:quantity", cart.quantity,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT", cart.VAT,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:total", cart.total,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:email", cart.email
+				], (err) ->
+					return callback err if err
+					return callback null
+
+
 exports.addCart = (data, client, callback) ->
 
 	client_id = client.id
@@ -38,6 +74,7 @@ exports.addCart = (data, client, callback) ->
 			"#{prefix_cart}:VAT_percent", "",
 			"#{prefix_cart}:total", "",
 			"#{prefix_cart}:email", client_email,
+			"#{prefix_cart}:client_id", client_id,
 		], (err) ->
 			return callback err if err
 			return callback null
@@ -53,7 +90,8 @@ exports.getCart = check 'int', (client_id, callback) ->
 		"#{prefix_cart}:VAT",
 		"#{prefix_cart}:VAT_percent",
 		"#{prefix_cart}:total",
-		"#{prefix_cart}:email"]
+		"#{prefix_cart}:email",
+		"#{prefix_cart}:client_id"]
 	, (err, replies) ->
 		return callback err if err
 		cart =
@@ -65,11 +103,14 @@ exports.getCart = check 'int', (client_id, callback) ->
 			VAT : replies[4],
 			VAT_percent: replies[5],
 			total: replies[6],
-			email : replies[7]
+			email : replies[7],
+			client_id: replies[8]
 		}
 		return callback null, cart
 
 exports.delCart = check 'int', (client_id, callback) ->
+
+	return callback new check.Error "Cannot delete cart" if not client_id?
 
 	prefix_cart = "pm:carts:#{client_id}"
 	db.redis.del [
@@ -80,11 +121,10 @@ exports.delCart = check 'int', (client_id, callback) ->
 		"#{prefix_cart}:VAT",
 		"#{prefix_cart}:VAT_percent",
 		"#{prefix_cart}:total",
-		"#{prefix_cart}:email"]
+		"#{prefix_cart}:email"
+		"#{prefix_cart}:client_id"]
 	, (err, replies) ->
-		console.log err if err
 		return callback err if err
-		console.log replies
 		return callback null
 
 
@@ -125,6 +165,7 @@ exports.process = (data, client, callback) ->
 					isNewSubscription = false
 					@pm_client = new PaymillClient current_id
 					@pm_client.user_id = client_id
+					@pm_client.email = client_email
 					@pm_client.getCurrentSubscription (err, res) =>
 						return cb err if err
 						@pm_subscription = res
@@ -179,39 +220,40 @@ exports.process = (data, client, callback) ->
 		# notify user
 		(cb) =>
 			#send mail with key
-# 			options =
-#					templateName:"oauth.html"
-#					templatePath:"./app/template/"
-# 					to:
-# 						email: pm_client.email
-# 					from:
-# 						name: 'OAuth.io'
-# 						email: 'team@oauth.io'
-# 					subject: 'OAuth.io - Your payment has been received'
+			options =
+					templateName:"oauth"
+					templatePath:"./app/template/"
+					to:
+						email: @pm_client.email
+					from:
+						name: 'OAuth.io'
+						email: 'team@oauth.io'
+					subject: 'OAuth.io - Your payment has been received'
 # 					body: "Dear ,\n\n
-
 # Thank you for your recent purchase on Oauth.io.\n\n
-
 # This email message will serve as your receipt.\n
 # \n
 # You have suscribed to the " + @pm_subscription.offer.name + " offer \n
 # with an amount of " + @pm_subscription.offer.amount/100 + "$\n
 # your subscription number is : " + @pm_subscription.id + "\n
-# your client id is : " + @@pm_client.user_id + "\n
+# your client id is : " + @pm_client.user_id + "\n
 # For help or product support, please contact us at support@oauth.io.\n
 
 # --\n
 # OAuth.io Team"
-# 			mailer = new Mailer options
-# 			mailer.send (err, result) ->
-# 				console.log(client_obj.email)
-# 				console.log err
-# 				return callback err if err
-# 				console.log(client_obj.email)
-# 				cb()
+			data =
+				id : 1
+				name : "lll"
+
+			mailer = new Mailer options, data
+			console.log @pm_client.email
+			mailer.send (err, result) ->
+				console.log err if err
+				return callback err if err
+				console.log result
+				cb()
 
 			console.log "mail..."
-			cb()
 
 	], (err, result) =>
 		return callback err if err
@@ -223,4 +265,3 @@ exports.getSubscription = (client_id, callback) ->
 	pm_client.getCurrentSubscription (err, res) =>
 		return callback err if err
 		return callback null, res.id
-		

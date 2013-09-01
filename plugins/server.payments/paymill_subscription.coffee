@@ -1,6 +1,6 @@
 emailer = require 'nodemailer'
 PaymillBase = require './paymill_base'
-Cart = require './db_payments'
+Payment = require './db_payments'
 Offer = require '../server.pricing/db_pricing'
 
 { db, check, config } = shared = require '../shared'
@@ -57,7 +57,7 @@ class PaymillSubscription
 
 		if not @id? # create subscription
 
-			Cart.getCart @client.user_id, (err, success) =>
+			Payment.getCart @client.user_id, (err, success) =>
 
 				cart = success
 				hasTVA = parseFloat(cart.VAT_percent) != 0
@@ -71,6 +71,7 @@ class PaymillSubscription
 
 						payment_obj = @prepare()
 						@create payment_obj, (err, res) ->
+							console.log err if err
 							return callback err if err
 							console.log "created fr"
 							return callback null, res
@@ -97,7 +98,7 @@ class PaymillSubscription
 
 				PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
 
-					Cart.getCart @client.user_id, (err, success) =>
+					Payment.getCart @client.user_id, (err, success) =>
 
 						cart = success
 						hasTVA = parseFloat(cart.VAT_percent) != 0
@@ -150,9 +151,13 @@ class PaymillSubscription
 
 			]).exec (err) =>
 				return callback err if err
-				Cart.delCart @client.user_id, (err, res) ->
+
+				Payment.addOrder @client.user_id, (err, res) =>
 					return callback err if err
-					return callback null, subscription
+
+					Payment.delCart @client.user_id, (err, res) ->
+						return callback err if err
+						return callback null, subscription
 
 	populate : (data) ->
 		return
