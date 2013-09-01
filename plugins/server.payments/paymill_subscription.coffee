@@ -1,5 +1,8 @@
 emailer = require 'nodemailer'
 PaymillBase = require './paymill_base'
+Cart = require './db_payments'
+Offer = require '../server.pricing/db_pricing'
+
 { db, check, config } = shared = require '../shared'
 
 class PaymillSubscription
@@ -18,6 +21,9 @@ class PaymillSubscription
 
 	# Object
 	@offer = null
+
+	# Object
+	@cart = null
 
 	# Object
 	@client = null
@@ -51,34 +57,76 @@ class PaymillSubscription
 
 		if not @id? # create subscription
 
-			payment_obj = @prepare()
+			Cart.getCart @client.user_id, (err, success) =>
 
-			PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
-				return callback err if err
+				cart = success
+				hasTVA = cart.VAT_percent?
 
-				subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
+				if hasTVA # true => FR
+					plan_fr = (cart.plan_name + "FR").toLowerCase()
+					Offer.getOfferByName plan_fr, (err, offer) =>
 
-				db.redis.multi([
+						@offer = { id: offer.offer }
 
-					[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
+						payment_obj = @prepare()
 
-					[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
+						PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
+							return callback new check.Error err.response.error if err
+							console.log "subscription created on paymill"
+							subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
 
-					[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
+							db.redis.multi([
 
-					[ "mset", "#{subscription_prefix}:id", subscription.data.id,
-						"#{subscription_prefix}:offer", subscription.data.offer.id,
-						"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
-						"#{subscription_prefix}:created_at", subscription.data.created_at,
-						"#{subscription_prefix}:updated_at", subscription.data.updated_at,
-						"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
-						"#{subscription_prefix}:payment", subscription.data.payment.id,
-						"#{subscription_prefix}:client", subscription.data.client.id,
-						"#{subscription_prefix}:notified", false ]
+								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
 
-				]).exec (err) ->
-					return callback err if err
-					return callback null, subscription
+								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
+
+								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
+
+								[ "mset", "#{subscription_prefix}:id", subscription.data.id,
+									"#{subscription_prefix}:offer", subscription.data.offer.id,
+									"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
+									"#{subscription_prefix}:created_at", subscription.data.created_at,
+									"#{subscription_prefix}:updated_at", subscription.data.updated_at,
+									"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
+									"#{subscription_prefix}:payment", subscription.data.payment.id,
+									"#{subscription_prefix}:client", subscription.data.client.id,
+									"#{subscription_prefix}:notified", false ]
+
+							]).exec (err) ->
+								return callback err if err
+								return callback null, subscription
+				else
+
+					payment_obj = { client : @client.id, offer : @offer.id, payment : @payment.id }
+
+					PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
+						return callback err if err
+
+						subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
+
+						db.redis.multi([
+
+							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
+
+							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
+
+							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
+
+							[ "mset", "#{subscription_prefix}:id", subscription.data.id,
+								"#{subscription_prefix}:offer", subscription.data.offer.id,
+								"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
+								"#{subscription_prefix}:created_at", subscription.data.created_at,
+								"#{subscription_prefix}:updated_at", subscription.data.updated_at,
+								"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
+								"#{subscription_prefix}:payment", subscription.data.payment.id,
+								"#{subscription_prefix}:client", subscription.data.client.id,
+								"#{subscription_prefix}:notified", false ]
+
+						]).exec (err) ->
+							return callback err if err
+							return callback null, subscription
+
 
 		else # update (upgrade or downgrade)
 
@@ -140,12 +188,5 @@ class PaymillSubscription
 
 	prepare : ->
 		return { client : @client.id, offer : @offer.id, payment : @payment.id }
-
-	#exists : (id) ->
-
-	# details : (id) ->
-
-	# remove : (subscription) ->
-
 
 exports = module.exports = PaymillSubscription

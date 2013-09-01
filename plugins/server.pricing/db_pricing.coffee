@@ -162,13 +162,14 @@ exports.getPublicOffers = (callback) ->
 
 exports.getOfferByName = (name, callback) ->
 
-	return callback new check.Error if not name?
+	return callback new check.Error "This plan does not exists" if not name?
 
 	prefix = "pm:offers:#{name}"
 
-	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection" ], (err, res) ->
+	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection", "#{prefix}:status" ], (err, res) ->
 		return callback err if err
-		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3]
+		return callback new check.Error "This plan does not exists" if not res?
+		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3], status:res[4]
 
 # update an Offer
 #exports.updateOffer = (amount, name, currency, interval, callback) ->

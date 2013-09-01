@@ -14,4 +14,10 @@ exports.setup = (callback) ->
 	@server.post @config.base + '/api/payment/process', @auth.needed, (req, res, next) =>
 		@db.payments.process req.body, req.clientId, @server.send(res, next)
 
+	@server.post @config.base + '/api/payment/cart/new', @auth.needed, (req, res, next) =>
+		@db.payments.addCart req.body, req.clientId, @server.send(res, next)
+
+	@server.get @config.base + '/api/payment/cart/get', @auth.needed, (req, res, next) =>
+		@db.payments.getCart req.clientId.id, @server.send(res, next)
+
 	callback()

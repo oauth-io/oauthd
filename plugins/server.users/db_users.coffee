@@ -6,6 +6,7 @@
 
 async = require 'async'
 Mailer = require '../../lib/mailer'
+Payment = require '../server.payments/db_payments'
 
 {config,check,db} = shared = require '../shared'
 
@@ -49,31 +50,50 @@ exports.updateBilling = (req, callback) ->
 			profile_prefix + 'city', db.emptyStrIfNull(profile.city),
 			profile_prefix + 'zipcode', db.emptyStrIfNull(profile.zipcode),
 			profile_prefix + 'country_code', db.emptyStrIfNull(profile.country_code),
+			profile_prefix + 'country', db.emptyStrIfNull(profile.country),
 			profile_prefix + 'state', db.emptyStrIfNull(profile.state),
 			profile_prefix + 'phone', db.emptyStrIfNull(profile.phone),
 			profile_prefix + 'type', profile.type,
-			profile_prefix + 'vat', db.emptyStrIfNull(profile.vat),
+			profile_prefix + 'vat_number', db.emptyStrIfNull(profile.vat_number),
 			profile_prefix + 'use_profile_for_billing', profile.use_profile_for_billing ]
 
 	if billing?
-		cmds.push [ 'mset', billing_prefix + 'mail', db.emptyStrIfNull(billing.mail),
-			billing_prefix + 'name', db.emptyStrIfNull(billing.name),
-			billing_prefix + 'company', db.emptyStrIfNull(billing.company),
-			billing_prefix + 'website', db.emptyStrIfNull(billing.website),
-			billing_prefix + 'addr_one', db.emptyStrIfNull(billing.addr_one),
-			billing_prefix + 'addr_second', db.emptyStrIfNull(billing.addr_second),
-			billing_prefix + 'city', db.emptyStrIfNull(billing.city),
-			billing_prefix + 'zipcode', db.emptyStrIfNull(billing.zipcode),
-			billing_prefix + 'country_code', db.emptyStrIfNull(billing.country_code),
-			billing_prefix + 'state', db.emptyStrIfNull(billing.state),
-			billing_prefix + 'phone', db.emptyStrIfNull(billing.phone),
-			billing_prefix + 'type', billing.type,
-			billing_prefix + 'vat', db.emptyStrIfNull(billing.vat) ]
 
-	db.redis.multi(cmds).exec (err) ->
-		return callback err if err
-		user = id:user_id, mail:profile.email, name:profile.name, company:profile.company, website:profile.website, location:profile.location
-		return callback null, user
+		Payment.getCart user_id, (err, cart) ->
+			return callback err if err
+
+			cart_prefix = "pm:carts:#{user_id}:"
+			total = cart.unit_price * cart.quantity
+			if billing.country_code == "FR"
+				tva = 0.196
+				total_tva = Math.floor((total * tva) * 100) / 100
+				total += total_tva
+			else
+				tva = 0
+				total_tva = 0
+
+			cmds.push [ 'mset', billing_prefix + 'mail', db.emptyStrIfNull(billing.mail),
+				billing_prefix + 'name', db.emptyStrIfNull(billing.name),
+				billing_prefix + 'company', db.emptyStrIfNull(billing.company),
+				billing_prefix + 'website', db.emptyStrIfNull(billing.website),
+				billing_prefix + 'addr_one', db.emptyStrIfNull(billing.addr_one),
+				billing_prefix + 'addr_second', db.emptyStrIfNull(billing.addr_second),
+				billing_prefix + 'city', db.emptyStrIfNull(billing.city),
+				billing_prefix + 'zipcode', db.emptyStrIfNull(billing.zipcode),
+				billing_prefix + 'country_code', db.emptyStrIfNull(billing.country_code),
+				billing_prefix + 'country', db.emptyStrIfNull(billing.country),
+				billing_prefix + 'state', db.emptyStrIfNull(billing.state),
+				billing_prefix + 'phone', db.emptyStrIfNull(billing.phone),
+				billing_prefix + 'type', billing.type,
+				billing_prefix + 'vat_number', db.emptyStrIfNull(billing.vat_number),
+
+				cart_prefix + 'VAT_percent', tva * 100,
+				cart_prefix + 'VAT', total_tva,
+				cart_prefix + 'total', total ]
+
+			db.redis.multi(cmds).exec (err) ->
+				return callback err if err
+				return callback null
 
 # update user infos
 exports.updateAccount = (req, callback) ->
@@ -288,8 +308,10 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'type',
 		prefix + 'zipcode',
 		prefix + 'city',
-		prefix + 'vat',
-		prefix + 'use_profile_for_billing' ]
+		prefix + 'vat_number',
+		prefix + 'use_profile_for_billing',
+		prefix + 'state',
+		prefix + 'country' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -310,8 +332,10 @@ exports.get = check 'int', (iduser, callback) ->
 			type: replies[12],
 			zipcode: replies[13],
 			city : replies[14],
-			vat: replies[15],
+			vat_number: replies[15],
 			use_profile_for_billing: replies[16] == "true" ? true : false
+			state : replies[17],
+			country : replies[18]
 		}
 		exports.getPlan iduser, (err, plan) ->
 			return callback err if err
@@ -323,8 +347,8 @@ exports.get = check 'int', (iduser, callback) ->
 exports.getBilling = check 'int', (iduser, callback) ->
 
 	prefix_billing = 'u:' + iduser + ':billing:'
-	db.redis.mget [ prefix_billing+'addr_one',
-		prefix_billing+'addr_second',
+	db.redis.mget [ prefix_billing + 'addr_one',
+		prefix_billing + 'addr_second',
 		prefix_billing + 'city',
 		prefix_billing + 'company',
 		prefix_billing + 'country_code',
@@ -335,10 +359,10 @@ exports.getBilling = check 'int', (iduser, callback) ->
 		prefix_billing + 'type',
 		prefix_billing + 'website',
 		prefix_billing + 'zipcode',
-	 	prefix_billing + 'vat' ]
+	 	prefix_billing + 'vat',
+	 	prefix_billing + 'country' ]
 	, (err, replies) ->
 		return callback err if err
-
 		billing =
 		{
 			addr_one:  replies[0],
@@ -353,7 +377,8 @@ exports.getBilling = check 'int', (iduser, callback) ->
 			type: replies[9],
 			website: replies[10],
 			zipcode: replies[11],
-			vat: replies[12]
+			vat: replies[12],
+			country: replies[13]
 		}
 		return callback null, billing
 

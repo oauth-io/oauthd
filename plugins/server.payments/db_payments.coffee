@@ -16,6 +16,60 @@ PaymillSubscription = require './paymill_subscription'
 PaymillPayment = require './paymill_payment'
 PaymillClient = require './paymill_client'
 
+exports.addCart = (data, client, callback) ->
+
+	client_id = client.id
+	client_email = client.mail
+	plan = data.plan
+	prefix_cart = "pm:carts:#{client_id}"
+	prefix_plan = "pm:offers:#{plan.name}"
+
+	db.redis.get "#{prefix_plan}:amount", (err, amount) ->
+		return callback err if err
+		return callback new check.Error "This plan does not exist" if not amount?
+		return callback new check.Error "Oh !, Why are you doing this ? :(" if amount != plan.amount
+
+		db.redis.mset [
+			"#{prefix_cart}:plan_id", plan.id,
+			"#{prefix_cart}:plan_name", plan.name,
+			"#{prefix_cart}:unit_price", plan.amount,
+			"#{prefix_cart}:quantity", 1,
+			"#{prefix_cart}:VAT", "",
+			"#{prefix_cart}:VAT_percent", "",
+			"#{prefix_cart}:total", "",
+			"#{prefix_cart}:email", client_email,
+		], (err) ->
+			return callback err if err
+			return callback null
+
+exports.getCart = check 'int', (client_id, callback) ->
+
+	prefix_cart = "pm:carts:#{client_id}"
+	db.redis.mget [
+		"#{prefix_cart}:plan_id",
+		"#{prefix_cart}:plan_name",
+		"#{prefix_cart}:unit_price",
+		"#{prefix_cart}:quantity",
+		"#{prefix_cart}:VAT",
+		"#{prefix_cart}:VAT_percent",
+		"#{prefix_cart}:total",
+		"#{prefix_cart}:email"]
+	, (err, replies) ->
+		return callback err if err
+		cart =
+		{
+			plan_id : replies[0],
+			plan_name : replies[1],
+			unit_price : (replies[2] / 100).toFixed(2),
+			quantity : parseInt(replies[3]),
+			VAT : replies[4],
+			VAT_percent: replies[5],
+			total: replies[6],
+			email : replies[7]
+		}
+		return callback null, cart
+
+
 exports.process = (data, client, callback) ->
 
 	client_id = client.id
