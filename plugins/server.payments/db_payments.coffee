@@ -23,11 +23,11 @@ exports.paddingLeft = (padding, value) ->
 
 	(zeroes + value).slice(padding * -1)
 
-exports.addInvoice = (cart, num_order, callback) ->
+exports.addInvoice = (cart, num_order, subscription, callback) ->
 
 	return callback new check.Error "Cannot create invoice, please contact support@oauth.io" if not cart? or not num_order?
 
-	db.redis.incr "#{PaymillBase.orders_root_prefix}:i", (err, num) ->
+	db.redis.incr "#{PaymillBase.invoices_root_prefix}:i", (err, num) ->
 		return callback err if err
 
 		date = new Date
@@ -52,13 +52,16 @@ exports.addInvoice = (cart, num_order, callback) ->
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:VAT", cart.VAT,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:VAT_percent", cart.VAT_percent,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:total", cart.total,
-				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:email", cart.email
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:email", cart.email,
+
+				"#{PaymillBase.subscriptions_root_prefix}:#{cart.client_id}:#{subscription.data.id}:num_order", num_order,
+				"#{PaymillBase.subscriptions_root_prefix}:#{cart.client_id}:#{subscription.data.id}:num_invoice", num_invoice
 			], (err) ->
 				return callback err if err
 				return callback null
 
 
-exports.addOrder = (client_id, callback) ->
+exports.addOrder = (client_id, subscription, callback) ->
 
 	return callback new check.Error "Cannot create order, please contact support@oauth.io" if not client_id?
 
@@ -87,11 +90,11 @@ exports.addOrder = (client_id, callback) ->
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:unit_price", cart.unit_price,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:quantity", cart.quantity,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT", cart.VAT,
-					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent,
 				], (err) =>
 					return callback err if err
 
-					exports.addInvoice cart, num_order, (err, res) ->
+					exports.addInvoice cart, num_order, subscription, (err, res) ->
 						return callback err if err
 						return callback null
 

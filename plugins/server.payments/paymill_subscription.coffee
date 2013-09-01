@@ -152,7 +152,7 @@ class PaymillSubscription
 			]).exec (err) =>
 				return callback err if err
 
-				Payment.addOrder @client.user_id, (err, res) =>
+				Payment.addOrder @client.user_id, subscription, (err, res) =>
 					return callback err if err
 
 					Payment.delCart @client.user_id, (err, res) ->
