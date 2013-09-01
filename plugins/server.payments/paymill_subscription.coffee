@@ -60,73 +60,27 @@ class PaymillSubscription
 			Cart.getCart @client.user_id, (err, success) =>
 
 				cart = success
-				hasTVA = cart.VAT_percent?
+				hasTVA = parseFloat(cart.VAT_percent) != 0
 
 				if hasTVA # true => FR
 					plan_fr = (cart.plan_name + "FR").toLowerCase()
 					Offer.getOfferByName plan_fr, (err, offer) =>
 
+						# assign FR plan
 						@offer = { id: offer.offer }
 
 						payment_obj = @prepare()
-
-						PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
-							return callback new check.Error err.response.error if err
-							console.log "subscription created on paymill"
-							subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
-
-							db.redis.multi([
-
-								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
-
-								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
-
-								[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
-
-								[ "mset", "#{subscription_prefix}:id", subscription.data.id,
-									"#{subscription_prefix}:offer", subscription.data.offer.id,
-									"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
-									"#{subscription_prefix}:created_at", subscription.data.created_at,
-									"#{subscription_prefix}:updated_at", subscription.data.updated_at,
-									"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
-									"#{subscription_prefix}:payment", subscription.data.payment.id,
-									"#{subscription_prefix}:client", subscription.data.client.id,
-									"#{subscription_prefix}:notified", false ]
-
-							]).exec (err) ->
-								return callback err if err
-								return callback null, subscription
+						@create payment_obj, (err, res) ->
+							return callback err if err
+							console.log "created fr"
+							return callback null, res
 				else
 
-					payment_obj = { client : @client.id, offer : @offer.id, payment : @payment.id }
-
-					PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
+					payment_obj = @prepare()
+					@create payment_obj, (err, res) ->
 						return callback err if err
-
-						subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
-
-						db.redis.multi([
-
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
-
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
-
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
-
-							[ "mset", "#{subscription_prefix}:id", subscription.data.id,
-								"#{subscription_prefix}:offer", subscription.data.offer.id,
-								"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
-								"#{subscription_prefix}:created_at", subscription.data.created_at,
-								"#{subscription_prefix}:updated_at", subscription.data.updated_at,
-								"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
-								"#{subscription_prefix}:payment", subscription.data.payment.id,
-								"#{subscription_prefix}:client", subscription.data.client.id,
-								"#{subscription_prefix}:notified", false ]
-
-						]).exec (err) ->
-							return callback err if err
-							return callback null, subscription
-
+						console.log "created non fr"
+						return callback null, res
 
 		else # update (upgrade or downgrade)
 
@@ -143,37 +97,62 @@ class PaymillSubscription
 
 				PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
 
-					subscription_obj = @prepare()
-					subscription_obj.start_at = @next_capture
+					Cart.getCart @client.user_id, (err, success) =>
 
-					PaymillBase.paymill.subscriptions.create subscription_obj, (err, subscription) =>
-						console.log err if err
-						return callback err if err
+						cart = success
+						hasTVA = parseFloat(cart.VAT_percent) != 0
 
-						subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
+						subscription_obj = @prepare()
 
-						db.redis.multi([
+						if hasTVA # true => FR
+							plan_fr = (cart.plan_name + "FR").toLowerCase()
+							Offer.getOfferByName plan_fr, (err, offer) =>
 
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.created_at, subscription.data.offer.id ],
+								# assign FR plan
+								@offer = { id: offer.offer }
+								subscription_obj = @prepare()
 
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
+								@create subscription_obj, (err, res) ->
+									return callback err if err
+									console.log "created fr"
+									return callback null, res
+						else
 
-							[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
+							payment_obj = @prepare()
+							@create subscription_obj, (err, res) ->
+								return callback err if err
+								console.log "created non fr"
+								return callback null, res
 
-							[ "mset", "#{subscription_prefix}:id", subscription.data.id,
-								"#{subscription_prefix}:offer", subscription.data.offer.id,
-								"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
-								"#{subscription_prefix}:created_at", subscription.data.created_at,
-								"#{subscription_prefix}:updated_at", subscription.data.updated_at,
-								"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
-								"#{subscription_prefix}:payment", subscription.data.payment.id,
-								"#{subscription_prefix}:client", subscription.data.client.id,
-								"#{subscription_prefix}:notified", false ]
+	create : (payment_obj, callback) ->
 
-						]).exec (err) =>
-							return callback err if err
-							console.log "subscription updated"
-							return callback null, subscription
+		PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
+			return callback new check.Error err.response.error if err
+			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
+
+			db.redis.multi([
+
+				[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
+
+				[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
+
+				[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_offer", @offer.id ],
+
+				[ "mset", "#{subscription_prefix}:id", subscription.data.id,
+					"#{subscription_prefix}:offer", subscription.data.offer.id,
+					"#{subscription_prefix}:next_capture_at", subscription.data.next_capture_at,
+					"#{subscription_prefix}:created_at", subscription.data.created_at,
+					"#{subscription_prefix}:updated_at", subscription.data.updated_at,
+					"#{subscription_prefix}:canceled_at", subscription.data.canceled_at,
+					"#{subscription_prefix}:payment", subscription.data.payment.id,
+					"#{subscription_prefix}:client", subscription.data.client.id,
+					"#{subscription_prefix}:notified", false ]
+
+			]).exec (err) =>
+				return callback err if err
+				Cart.delCart @client.user_id, (err, res) ->
+					return callback err if err
+					return callback null, subscription
 
 	populate : (data) ->
 		return

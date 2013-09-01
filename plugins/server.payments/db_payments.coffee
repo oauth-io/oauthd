@@ -69,6 +69,24 @@ exports.getCart = check 'int', (client_id, callback) ->
 		}
 		return callback null, cart
 
+exports.delCart = check 'int', (client_id, callback) ->
+
+	prefix_cart = "pm:carts:#{client_id}"
+	db.redis.del [
+		"#{prefix_cart}:plan_id",
+		"#{prefix_cart}:plan_name",
+		"#{prefix_cart}:unit_price",
+		"#{prefix_cart}:quantity",
+		"#{prefix_cart}:VAT",
+		"#{prefix_cart}:VAT_percent",
+		"#{prefix_cart}:total",
+		"#{prefix_cart}:email"]
+	, (err, replies) ->
+		console.log err if err
+		return callback err if err
+		console.log replies
+		return callback null
+
 
 exports.process = (data, client, callback) ->
 
