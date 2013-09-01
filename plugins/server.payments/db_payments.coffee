@@ -44,6 +44,7 @@ exports.addInvoice = (cart, num_order, callback) ->
 			db.redis.mset [
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:num_invoice", num_invoice,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:num_order", num_order,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:date_invoice", Math.round((new Date()).getTime() / 1000),
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:plan_id", cart.plan_id,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:plan_name", cart.plan_name,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:unit_price", cart.unit_price,
@@ -79,15 +80,14 @@ exports.addOrder = (client_id, callback) ->
 				return callback err if err
 
 				db.redis.mset [
-					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:num_order", num_order
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:num_order", num_order,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:date_order", Math.round((new Date()).getTime() / 1000),
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:plan_id", cart.plan_id,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:plan_name", cart.plan_name,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:unit_price", cart.unit_price,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:quantity", cart.quantity,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT", cart.VAT,
-					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent,
-					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:total", cart.total,
-					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:email", cart.email
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent
 				], (err) =>
 					return callback err if err
 
