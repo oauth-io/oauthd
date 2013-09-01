@@ -216,3 +216,11 @@ exports.process = (data, client, callback) ->
 	], (err, result) =>
 		return callback err if err
 		return callback null, result
+
+exports.getSubscription = (client_id, callback) ->
+	pm_client = new PaymillClient client_id
+	pm_client.user_id = client_id
+	pm_client.getCurrentSubscription (err, res) =>
+		return callback err if err
+		return callback null, res.id
+		
