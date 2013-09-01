@@ -8,6 +8,7 @@ class PaymillBase
 	@payments_root_prefix = "pm:payments"
 	@carts_root_prefix = "pm:carts"
 	@orders_root_prefix = "pm:orders"
+	@invoices_root_prefix = "pm:invoices"
 
 	constructor : () ->
 

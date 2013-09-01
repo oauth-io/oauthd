@@ -23,16 +23,57 @@ exports.paddingLeft = (padding, value) ->
 
 	(zeroes + value).slice(padding * -1)
 
+exports.addInvoice = (cart, num_order, callback) ->
+
+	return callback new check.Error "Cannot create invoice, please contact support@oauth.io" if not cart? or not num_order?
+
+	db.redis.incr "#{PaymillBase.orders_root_prefix}:i", (err, num) ->
+		return callback err if err
+
+		date = new Date
+		day = exports.paddingLeft(2, date.getDate())
+		month = exports.paddingLeft(2, date.getMonth() + 1)
+		year = date.getFullYear()
+
+		num_invoice = exports.paddingLeft(7, num)
+		num_invoice = "I#{day}#{month}#{year}-#{num_invoice}"
+
+		db.redis.hset "#{PaymillBase.invoices_root_prefix}:num_invoices", num_invoice, num_order, (err, res) ->
+			return callback err if err
+
+			db.redis.mset [
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:num_invoice", num_invoice,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:num_order", num_order,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:plan_id", cart.plan_id,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:plan_name", cart.plan_name,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:unit_price", cart.unit_price,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:quantity", cart.quantity,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:VAT", cart.VAT,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:VAT_percent", cart.VAT_percent,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:total", cart.total,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:email", cart.email
+			], (err) ->
+				return callback err if err
+				return callback null
+
+
 exports.addOrder = (client_id, callback) ->
 
-	return callback new check.Error "Cannot create order" if not client_id?
+	return callback new check.Error "Cannot create order, please contact support@oauth.io" if not client_id?
 
 	exports.getCart client_id, (err, cart) ->
 		return callback err if err
 
 		db.redis.incr "#{PaymillBase.orders_root_prefix}:i", (err, num) ->
 			return callback err if err
-			num_order = exports.paddingLeft(10, num)
+
+			date = new Date
+			day = exports.paddingLeft(2, date.getDate())
+			month = exports.paddingLeft(2, date.getMonth() + 1)
+			year = date.getFullYear()
+
+			num_order = exports.paddingLeft(7, num)
+			num_order = "O#{day}#{month}#{year}-#{num_order}"
 
 			db.redis.hset "#{PaymillBase.orders_root_prefix}:num_orders", num_order, cart.client_id, (err, res) ->
 				return callback err if err
@@ -47,9 +88,13 @@ exports.addOrder = (client_id, callback) ->
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:total", cart.total,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:email", cart.email
-				], (err) ->
+				], (err) =>
 					return callback err if err
-					return callback null
+
+					exports.addInvoice cart, num_order, (err, res) ->
+						return callback err if err
+						return callback null
+
 
 
 exports.addCart = (data, client, callback) ->
@@ -229,28 +274,15 @@ exports.process = (data, client, callback) ->
 						name: 'OAuth.io'
 						email: 'team@oauth.io'
 					subject: 'OAuth.io - Your payment has been received'
-# 					body: "Dear ,\n\n
-# Thank you for your recent purchase on Oauth.io.\n\n
-# This email message will serve as your receipt.\n
-# \n
-# You have suscribed to the " + @pm_subscription.offer.name + " offer \n
-# with an amount of " + @pm_subscription.offer.amount/100 + "$\n
-# your subscription number is : " + @pm_subscription.id + "\n
-# your client id is : " + @pm_client.user_id + "\n
-# For help or product support, please contact us at support@oauth.io.\n
 
-# --\n
-# OAuth.io Team"
+			# set invoice to data for the template
 			data =
 				id : 1
 				name : "lll"
 
 			mailer = new Mailer options, data
-			console.log @pm_client.email
 			mailer.send (err, result) ->
-				console.log err if err
 				return callback err if err
-				console.log result
 				cb()
 
 			console.log "mail..."
