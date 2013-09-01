@@ -68,6 +68,7 @@ exports.updateBilling = (req, callback) ->
 				tva = 0.196
 				total_tva = Math.floor((total * tva) * 100) / 100
 				total += total_tva
+				total = Math.floor(total * 100) / 100
 			else
 				tva = 0
 				total_tva = 0
@@ -434,7 +435,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 		db.redis.hget ["pm:offers:offers_id", offer_id], (err, offer) ->
 			return callback err if err
 			prefix = "pm:offers:#{offer}"
-			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection"], (err, replies) ->
+			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection", "#{prefix}:parent"], (err, replies) ->
 				return callback err if err
 				return callback null, replies
 
