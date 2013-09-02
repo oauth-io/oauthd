@@ -19,6 +19,7 @@ ol li {
 
 }
  
+
 td p {
 text-align: justify; font-size: 17px; line-height: 1.4; color: rgb(89,101,115); font-weight:normal;
   padding-left: 10px;
@@ -70,11 +71,74 @@ border-width: 1px">
                   <td width="498">
                     <div style="color: black;">
             
+                      <p>Dear {{user.profile.name}},</p>
+                      <p>
+                       You have chosen the {{cart.plan_name}} offer. 
+                      </p>
+                      <p>
+                      For any questions about integration and following you plan you can email us directly at support@oauth.io. 
+                      </p>
+                      <p>
+                      Don't forget to mention your customer reference for us to treat your mail in high priority.
+                      </p>
+                      <p>
+                      Here after your receipt, with all your plan details.
+                       </p>
 
-                   
+                      <hr>
+
+                      <div style="margin-bottom:30px;overflow:hidden">
+                        <p class="other">Billing information </p>
+                        <p style="line-height: 0.5;">{{user.billing.name}}</p>
+                        <p style="line-height: 0.5;">{{user.billing.addr_one}}</p>
+                        <p style="line-height: 0.5;">{{user.billing.addr_second}}</p>
+                        <p style="line-height: 0.5;">{{user.billing.zipcode}}, {{user.billing.city}}</p>
+                        <p style="line-height: 0.5;">{{user.billing.country}}</p>
+                      </div>
+
+                      <div style="margin-bottom:30px;overflow:hidden">
+                      <p style="line-height: 0.5;">Date : {{date}} </p>
+                      <p style="line-height: 0.5;">Payment date : {{payment.date}} </p>
+                      <p style="line-height: 0.5;">Payment type : Credit Card </p>
+                      </div>
+                      <table BORDER="1"  cellpadding="10" style="border-color:#000000; border-collapse:collapse; width:100%" > 
+                        <caption> <strong>Invoice</strong> </caption> 
+                        <tr> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> ID </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> Offer </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> Quantity </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> Unit Price </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> Total </th> 
+                        </tr> 
+                        <tr> 
+                         <td > {{payment.id}} </td> 
+                         <td > {{cart.plan_name}} </td> 
+                         <td > 1 </td> 
+                         <td > ${{cart.unit_price}} </td> 
+                         <td > ${{cart.unit_price}} </td> 
+                        </tr>
+                        <tr>
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;" > VAT </th>
+                          <td  >{{cart.VAT_percent}}%</td>
+                        <tr>
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;" > Total DUE </th>
+                          <td>{{cart.total}}</td>
+                        </tr>
+                      </table> 
+
+                    </p>
+
+                  <p class="other">
+                    Thank you for your purchase
+                  </p
                     </div>
-                  </td>
-                      
+                  </td>  
                       
                   <td width="40"></td>
                       

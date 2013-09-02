@@ -15,7 +15,8 @@ PaymillBase = require './paymill_base'
 PaymillSubscription = require './paymill_subscription'
 PaymillPayment = require './paymill_payment'
 PaymillClient = require './paymill_client'
-
+DbUser = require '../server.users/db_users'
+Payment = require '../server.payments/db_payments'
 
 exports.paddingLeft = (padding, value) ->
 	zeroes = "0"
@@ -278,17 +279,32 @@ exports.process = (data, client, callback) ->
 						email: 'team@oauth.io'
 					subject: 'OAuth.io - Your payment has been received'
 
+
 			# set invoice to data for the template
-			data =
-				id : 1
-				name : "lll"
 
-			mailer = new Mailer options, data
-			mailer.send (err, result) ->
-				return callback err if err
-				cb()
+			DbUser.get @pm_client.user_id, (e, user) =>
+				Payment.getCart @pm_client.user_id, (err, success) =>
 
-			console.log "mail..."
+					date = new Date()
+					data =
+						id : 1
+						name : "lll"
+						payment:
+							date: @pm_subscription.payment.date
+							id: @pm_subscription.payment.id
+						offer:
+							name: @pm_subscription.offer.name
+							amount: @pm_subscription.offer.amount
+						date: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+						user: user
+						cart: success
+
+					mailer = new Mailer options, data
+					mailer.send (err, result) ->
+						return callback err if err
+						cb()
+
+					console.log "mail..."
 
 	], (err, result) =>
 		return callback err if err
