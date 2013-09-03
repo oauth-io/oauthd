@@ -62,6 +62,40 @@ exports.addInvoice = (cart, num_order, subscription, callback) ->
 				return callback null
 
 
+exports.getInvoice = (client_id, subscription_id, callback) ->
+	db.redis.get "#{PaymillBase.subscriptions_root_prefix}:#{client_id}:#{subscription_id}:num_invoice" , (err, res) ->
+		return callback err if err
+		prefix = "#{PaymillBase.invoices_root_prefix}:#{client_id}:#{res}:"
+		db.redis.mget [ prefix + 'num_invoice',
+			prefix + 'num_order',
+			prefix + 'date_invoice',
+			prefix + 'plan_id',
+			prefix + 'plan_name',
+			prefix + 'unit_price',
+			prefix + 'quantity',
+			prefix + 'VAT',
+			prefix + 'VAT_percent',
+			prefix + 'total',
+			prefix + 'email' ]
+		, (err, replies) ->
+			return callback err if err
+			date = new Date(replies[2] * 1000)
+			invoice =
+			{
+				num_invoice:replies[0],
+				num_order:replies[1],
+				date_invoice: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(),
+				plan_id: replies[3],
+				plan_name: replies[4],
+				unit_price: replies[5],
+				quantity: replies[6],
+				VAT: replies[7],
+				VAT_percent: replies[8],
+				total: replies[9],
+				email: replies[10]
+			}
+			return callback null, invoice
+
 exports.addOrder = (client_id, subscription, callback) ->
 
 	return callback new check.Error "Cannot create order, please contact support@oauth.io" if not client_id?
@@ -282,29 +316,24 @@ exports.process = (data, client, callback) ->
 
 			# set invoice to data for the template
 
-			DbUser.get @pm_client.user_id, (e, user) =>
-				Payment.getCart @pm_client.user_id, (err, success) =>
+			exports.getSubscription @pm_client.user_id, (error, subscription_id) =>
+				return error if error
+				DbUser.get @pm_client.user_id, (e, user) =>
+					return e if e
+					exports.getInvoice @pm_client.user_id, subscription_id , (err, invoice) =>
+						return err if err
+						date = new Date()
+						data =
+							date: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+							user: user
+							invoice: invoice
 
-					date = new Date()
-					data =
-						id : 1
-						name : "lll"
-						payment:
-							date: @pm_subscription.payment.date
-							id: @pm_subscription.payment.id
-						offer:
-							name: @pm_subscription.offer.name
-							amount: @pm_subscription.offer.amount
-						date: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
-						user: user
-						cart: success
+						mailer = new Mailer options, data
+						mailer.send (err, result) ->
+							return callback err if err
+							cb()
 
-					mailer = new Mailer options, data
-					mailer.send (err, result) ->
-						return callback err if err
-						cb()
-
-					console.log "mail..."
+						console.log "mail..."
 
 	], (err, result) =>
 		return callback err if err

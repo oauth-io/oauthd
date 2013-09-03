@@ -73,7 +73,7 @@ border-width: 1px">
             
                       <p>Dear {{user.profile.name}},</p>
                       <p>
-                       You have chosen the {{cart.plan_name}} offer. 
+                       You have chosen the {{invoice.plan_name}} offer. 
                       </p>
                       <p>
                       For any questions about integration and following you plan you can email us directly at support@oauth.io. 
@@ -87,8 +87,18 @@ border-width: 1px">
 
                       <hr>
 
-                      <div style="margin-bottom:30px;overflow:hidden">
-                        <p class="other">Billing information </p>
+                      <div style="margin-bottom:30px;overflow:hidden; border-width: 1px; border-style: solid; border-color:#000000;float:left;width:60%">
+                        <p class="other"><strong>Your information</strong> </p>
+                        <p style="line-height: 0.5;">{{user.profile.company}}</p>
+                        <p style="line-height: 0.5;">{{user.profile.name}}</p>
+                        <p style="line-height: 0.5;">{{user.profile.addr_one}}</p>
+                        <p style="line-height: 0.5;">{{user.profile.addr_second}}</p>
+                        <p style="line-height: 0.5;">{{user.profile.zipcode}}, {{user.profile.city}}</p>
+                        <p style="line-height: 0.5;">{{user.profile.country}}</p>
+                      </div>
+                      <div style="margin-bottom:30px;overflow:hidden; border-width: 1px; border-style: solid; border-color:#000000;float:right;width:50%">
+                        <p class="other"><strong>Billing information</strong> </p>
+                        <p style="line-height: 0.5;">{{user.billing.company}}</p>
                         <p style="line-height: 0.5;">{{user.billing.name}}</p>
                         <p style="line-height: 0.5;">{{user.billing.addr_one}}</p>
                         <p style="line-height: 0.5;">{{user.billing.addr_second}}</p>
@@ -96,39 +106,47 @@ border-width: 1px">
                         <p style="line-height: 0.5;">{{user.billing.country}}</p>
                       </div>
 
-                      <div style="margin-bottom:30px;overflow:hidden">
+                      <div style="margin-bottom:30px;overflow:hidden;float:left;width:50%">
                       <p style="line-height: 0.5;">Date : {{date}} </p>
-                      <p style="line-height: 0.5;">Payment date : {{payment.date}} </p>
+                      <p style="line-height: 0.5;">Payment date : {{invoice.date_invoice}} </p>
                       <p style="line-height: 0.5;">Payment type : Credit Card </p>
                       </div>
                       <table BORDER="1"  cellpadding="10" style="border-color:#000000; border-collapse:collapse; width:100%" > 
                         <caption> <strong>Invoice</strong> </caption> 
                         <tr> 
-                          <th style="background-color: #cbe7f9; color: #0074a2;"> ID </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;"> Order number </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Offer </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Quantity </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Unit Price </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Total </th> 
                         </tr> 
                         <tr> 
-                         <td > {{payment.id}} </td> 
-                         <td > {{cart.plan_name}} </td> 
-                         <td > 1 </td> 
-                         <td > ${{cart.unit_price}} </td> 
-                         <td > ${{cart.unit_price}} </td> 
+                         <td > {{invoice.num_order}} </td> 
+                         <td > {{invoice.plan_name}} </td> 
+                         <td > {{invoice.quantity}} </td> 
+                         <td > ${{invoice.unit_price}} </td> 
+                         <td > ${{invoice.total}} </td> 
                         </tr>
                         <tr>
                           <th>  </th> 
                           <th>  </th> 
                           <th>  </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;" > VAT </th>
-                          <td  >{{cart.VAT_percent}}%</td>
+                          <td  >{{invoice.VAT}}</td>
+                        </tr>
+                        <tr>
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th>  </th> 
+                          <th style="background-color: #cbe7f9; color: #0074a2;" > VAT Percent </th>
+                          <td  >{{invoice.VAT_percent}}%</td>
+                        </tr>
                         <tr>
                           <th>  </th> 
                           <th>  </th> 
                           <th>  </th> 
                           <th style="background-color: #cbe7f9; color: #0074a2;" > Total DUE </th>
-                          <td>{{cart.total}}</td>
+                          <td>${{invoice.total}}</td>
                         </tr>
                       </table> 
 
@@ -136,7 +154,11 @@ border-width: 1px">
 
                   <p class="other">
                     Thank you for your purchase
-                  </p
+                  </p>
+                  <hr>
+                  <div style="margin-bottom:30px;overflow:hidden; text-align:center;width:100%">
+                        <p style="line-height: 0.5;"><strong>Webshell SAS, 86 rue de Paris , 91400 Orsay</strong></p>
+                      </div>
                     </div>
                   </td>  
                       
