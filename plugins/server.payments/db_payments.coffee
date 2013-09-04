@@ -80,11 +80,12 @@ exports.getInvoice = (client_id, subscription_id, callback) ->
 		, (err, replies) ->
 			return callback err if err
 			date = new Date(replies[2] * 1000)
+			months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'Jully', 'August', 'September', 'October', 'November', 'December');
 			invoice =
 			{
 				num_invoice:replies[0],
 				num_order:replies[1],
-				date_invoice: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(),
+				date_invoice: (months[date.getMonth()]) + " " + date.getDate() + ", " + date.getFullYear(),
 				plan_id: replies[3],
 				plan_name: replies[4],
 				unit_price: replies[5],
@@ -302,19 +303,10 @@ exports.process = (data, client, callback) ->
 
 		# notify user
 		(cb) =>
-			#send mail with key
-			options =
-					templateName:"oauth"
-					templatePath:"./app/template/"
-					to:
-						email: @pm_client.email
-					from:
-						name: 'OAuth.io'
-						email: 'team@oauth.io'
-					subject: 'OAuth.io - Your payment has been received'
 
 
 			# set invoice to data for the template
+			name_template = "mail_payment"
 
 			exports.getSubscription @pm_client.user_id, (error, subscription_id) =>
 				return error if error
@@ -322,9 +314,24 @@ exports.process = (data, client, callback) ->
 					return e if e
 					exports.getInvoice @pm_client.user_id, subscription_id , (err, invoice) =>
 						return err if err
+
+						#send mail with key
+						if invoice.VAT_percent != "0"
+							name_template += "_fr"
+						options =
+							templateName:name_template
+							templatePath:"./app/template/"
+							to:
+								email: @pm_client.email
+							from:
+								name: 'OAuth.io'
+								email: 'team@oauth.io'
+							subject: 'OAuth.io - Your payment has been received'
+
+						months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'Jully', 'August', 'September', 'October', 'November', 'December');
 						date = new Date()
 						data =
-							date: date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+							date:  (months[date.getMonth()]) + " " + date.getDate() + ", " + date.getFullYear()
 							user: user
 							invoice: invoice
 
