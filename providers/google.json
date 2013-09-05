@@ -41,6 +41,7 @@
 					"https://www.googleapis.com/auth/apps.licensing": "Read/write access to License Manager API.",
 					"https://www.googleapis.com/auth/bigquery": "View and manage your data in Google BigQuery",
 					"https://www.googleapis.com/auth/coordinate.readonly": "View your Google Coordinate jobs",
+					"https://www.googleapis.com/auth/cloudprint": "View and manage your google cloud print data",
 					"https://www.googleapis.com/auth/coordinate": "View and manage your Google Maps Coordinate jobs",
 					"https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive",
 					"https://www.googleapis.com/auth/compute.readonly": "View your Google Compute Engine resources",

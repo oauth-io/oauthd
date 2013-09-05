@@ -1,0 +1,38 @@
+{
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": {
+			"url": "/token",
+			"method": "post"
+		},
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/plus.me": "Know who you are on Google",
+					"https://www.googleapis.com/auth/cloudprint": "View and manage your google cloud print data",
+					"openid":"Access to your id",
+					"email":"Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile":"Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
+				},
+				"cardinality": "*",
+				"separator": " ",
+				"type": "string"
+			}
+		}
+	},
+	"name": "Google CloudPrint",
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}
