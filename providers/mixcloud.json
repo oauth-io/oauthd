@@ -1,0 +1,30 @@
+{
+  "name": "MixCloud",
+  "url": "https://www.mixcloud.com/oauth",
+  "oauth2": {
+    "authorize": {
+      "url": "/authorize",
+      "query": {
+        "client_id": "{client_id}",
+        "redirect_uri": "{{callback}}"
+      }
+    },
+    "access_token": {
+      "url": "/access_token",
+      "query": {
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}",
+        "redirect_uri": "{{callback}}",
+        "code": "{{code}}"
+      }
+    },
+    "parameters": {
+      "client_id": "string",
+      "client_secret": "string"
+    }
+  },
+  "provider": "mixcloud",
+  "href": {
+    "docs": "http://www.mixcloud.com/developers/documentation"
+  }
+}
