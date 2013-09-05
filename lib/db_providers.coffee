@@ -108,7 +108,8 @@ exports.getExtended = (name, callback) ->
 						for k,v of endpoint.query
 							if v.indexOf('{{state}}') != -1
 								found_state = true
-								break
+							if v.indexOf('{scope}') != -1 && ! res[oauthv].parameters?.scope && ! res.parameters?.scope
+								delete endpoint.query[k]
 						if not found_state
 							for k,v of endpoint.query
 								endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'

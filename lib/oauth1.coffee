@@ -149,9 +149,6 @@ exports.access_token = (state, req, callback) ->
 		err.body.error = req.params.error if req.params.error
 		err.body.error_uri = req.params.error_uri if req.params.error_uri
 		return callback err
-	err = new check.Error
-	err.check req.params, oauth_token:'string', oauth_verifier:'string'
-	return callback err if err.failed()
 
 	# get infos from state
 	async.parallel [
@@ -160,6 +157,12 @@ exports.access_token = (state, req, callback) ->
 	], (err, res) ->
 		return callback err if err
 		[provider, {parameters,response_type}] = res
+		err = new check.Error
+		if provider.oauth1.authorize.ignore_verifier == true
+			err.check req.params, oauth_token:'string'
+		else
+			err.check req.params, oauth_token:'string', oauth_verifier:'string'
+		return callback err if err.failed()
 		params = {}
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth1.parameters
@@ -190,7 +193,8 @@ exports.access_token = (state, req, callback) ->
 		query.oauth_timestamp = Math.floor new Date / 1000
 		query.oauth_version = "1.0"
 		query.oauth_token = req.params.oauth_token
-		query.oauth_verifier = req.params.oauth_verifier
+		if provider.oauth1.authorize.ignore_verifier != true
+			query.oauth_verifier = req.params.oauth_verifier
 		if not query.oauth_signature_method
 			query.oauth_signature_method = 'HMAC-SHA1'
 		else
