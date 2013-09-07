@@ -184,12 +184,13 @@ exports.getOffersList = (callback) ->
 			cmds.push [ "get", "#{prefix}:#{p}:amount"]
 			cmds.push [ "get", "#{prefix}:#{p}:status"]
 			cmds.push [ "get", "#{prefix}:#{p}:nbConnection"]
+			cmds.push [ "get", "#{prefix}:#{p}:parent"]
 
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], created_at:res[i * 9 + 4], updated_at:res[i * 9 + 5], amount:res[i * 9 + 6], status:res[i * 9 + 7], nbConnection:res[i * 9 + 8]
+				offers[i] = id:res[i * 10], name:res[i * 10 + 1], currency:res[i * 10 + 2], interval:res[i * 10 + 3], created_at:res[i * 9 + 4], updated_at:res[i * 10 + 5], amount:res[i * 10 + 6], status:res[i * 10 + 7], nbConnection:res[i * 10 + 8], parent: res[i * 10 + 9]
 
 			return callback null, offers
 
