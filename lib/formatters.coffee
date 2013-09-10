@@ -59,7 +59,12 @@ formatters =
 	'text/html; q=0.1': (req, res, body) ->
 		if body instanceof Error
 			if body instanceof check.Error || body instanceof restify.RestError
-				body = body.message
+				msg = body.message
+				if body.body? && Object.keys(body.body).length
+					msg += "<br/>"
+					for k,v of body.body
+						msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
+				body = msg
 			else
 				body = "Internal error"
 		body = body.toString()

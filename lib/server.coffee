@@ -114,7 +114,7 @@ server.get config.base + '/', (req, res, next) ->
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
-			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
+			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
 			if not e
 				if state.options.response_type != 'token'
 					db.states.set req.params.state, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
@@ -178,7 +178,6 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 			db.providers.getExtended req.params.provider, cb
 		(provider, cb) ->
-			plugins.data.emit 'connect.auth', key:key, provider:provider.provider
 			if oauthv and not provider[oauthv]
 				return cb new check.Error "oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
@@ -187,6 +186,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		(keyset, provider, cb) ->
 			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			{parameters, response_type} = keyset
+			plugins.data.emit 'connect.auth', key:key, provider:provider.provider, parameters:parameters
 			options = {}
 			if req.params.opts
 				try
@@ -197,6 +197,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 			if response_type != 'token' and (not options.state or options.state_type)
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
+			options.parameters = parameters
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 			oauth[oauthv].authorize provider, parameters, opts, cb
 	], (err, url) ->

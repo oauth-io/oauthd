@@ -11,15 +11,31 @@ require './db_ranking_timelines'
 
 exports.setup = (callback) ->
 
+	auth_array = (data) =>
+		status = if data.status then ':' + data.status else ''
+		@db.providers.getExtended data.provider, (e, provider) =>
+			return if e
+			params = {}
+			params[k] = v for k,v of provider.parameters
+			params[k] = v for k,v of provider.oauth2.parameters
+			for apiname, apivalue of data.parameters
+				if params[apiname]
+					if Array.isArray(apivalue)
+						for elt in apivalue
+							@db.ranking_timelines.addScore 'a:auth_array:' + data.key + ':p:' + data.provider + status, id:elt, (->)
+							@db.ranking_timelines.addScore 'p:auth_array:' + data.provider + status, id:elt, (->)
+
 	@on 'connect.callback', (data) =>
 		@db.timelines.addUse target:'co:a:' + data.key + ':' + data.status, (->)
 		@db.timelines.addUse target:'co:p:' + data.provider + ':' + data.status, (->)
 		@db.timelines.addUse target:'co:a:' + data.key + ':p:' + data.provider + ':' + data.status, (->)
+		auth_array data
 
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co:p:' + data.provider, (->)
 		@db.timelines.addUse target:'co:a:' + data.key + ':p:' + data.provider, (->)
 		@db.timelines.addUse target:'co:a:' + data.key, (->)
+		auth_array data
 
 	sendStats = @check target:'string', unit:['string','none'], start:'int', end:['int','none'], (data, callback) =>
 		now = Math.floor((new Date).getTime() / 1000)
