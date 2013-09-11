@@ -17,7 +17,7 @@ exports.setup = (callback) ->
 			return if e
 			params = {}
 			params[k] = v for k,v of provider.parameters
-			params[k] = v for k,v of provider.oauth2.parameters
+			params[k] = v for k,v of provider.oauth2?.parameters
 			for apiname, apivalue of data.parameters
 				if params[apiname]
 					if Array.isArray(apivalue)
