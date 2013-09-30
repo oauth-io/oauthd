@@ -29,6 +29,8 @@ def =
 				grant_type: "authorization_code"
 				code: "{{code}}"
 		request: {}
+		refresh: {}
+		revoke: {}
 	oauth1:
 		request_token:
 			query:
@@ -96,13 +98,14 @@ exports.getExtended = (name, callback) ->
 			for oauthv in ['oauth1','oauth2']
 				if res[oauthv]?
 					found_state = false
-					for endpoint_name in ['request_token', 'authorize', 'access_token']
+					for endpoint_name in ['request_token', 'authorize', 'access_token', 'request', 'refresh', 'revoke']
 						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
 						endpoint = res[oauthv][endpoint_name]
+						continue if not endpoint
 						if typeof endpoint == 'string'
 							endpoint = res[oauthv][endpoint_name] = url:endpoint
-						endpoint.url = res.url + endpoint.url if res.url
-						if not endpoint.query
+						endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
+						if not endpoint.query && def[oauthv][endpoint_name].query
 							endpoint.query = {}
 							endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
 						for k,v of endpoint.query
