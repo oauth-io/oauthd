@@ -181,3 +181,5 @@ exports.access_token = (state, req, callback) ->
 				refresh_token: body.refresh_token
 				token_type: body.token_type
 				expires_in: expire
+				base: provider.baseurl
+				request: provider.oauth2.request

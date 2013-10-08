@@ -11,6 +11,7 @@
     },
     "access_token": "/access_token",
     "request": {
+      "baseUrl": "https://graph.facebook.com",
       "query": {
         "oauth_token": "{{token}}"
       }

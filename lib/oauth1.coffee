@@ -264,3 +264,4 @@ exports.access_token = (state, req, callback) ->
 				oauth_token: body.oauth_token
 				oauth_token_secret: body.oauth_token_secret
 				expires_in: expire
+				request: provider.oauth1.request
