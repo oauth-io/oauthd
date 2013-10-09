@@ -86,12 +86,10 @@ server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req,
 
 # generated jar sdk
 server.get config.base + '/download/latest/oauth.jar', (req, res, next) ->
-	sdk_android.get (e, r) ->
-		return next e if e
-		res.setHeader 'Content-Type', 'application/java-archive'
-		res.send r
-		next()
-
+	res.setHeader 'Content-Type', 'application/java-archive'
+	fileStream = fs.createReadStream(config.rootdir + '/app/jar/oauth.jar')
+	fileStream.pipe(res);
+	res.once 'end', -> next false
 
 # oauth: refresh token
 server.post config.base + '/refresh_token/:provider', (req, res, next) ->
