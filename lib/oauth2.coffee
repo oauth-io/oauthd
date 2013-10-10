@@ -176,13 +176,98 @@ exports.access_token = (state, req, callback) ->
 				expire = parseInt expire
 				now = (new Date).getTime()
 				expire -= now if expire > now
-			callback null,
+			result =
 				access_token: body.access_token
-				refresh_token: body.refresh_token
 				token_type: body.token_type
 				expires_in: expire
 				base: provider.baseurl
 				request: provider.oauth2.request
+			result.refresh_token = body.refresh_token if body.refresh_token && response_type == "code"
+			callback null, result
+
+exports.refresh = (keyset, provider, token, callback) ->
+	parameters = keyset.parameters
+	params = {}
+	params[k] = v for k,v of provider.parameters
+	params[k] = v for k,v of provider.oauth2.parameters
+
+	replace_param = (param) ->
+		param = param.replace(/\{\{callback\}\}/g, config.host_url)
+		param = param.replace(/\{\{refresh_token\}\}/g, token)
+		for apiname, apivalue of parameters
+			if params[apiname]
+				if Array.isArray(apivalue)
+					separator = params[apiname].separator
+					return new check.Error if not separator
+					apivalue = apivalue.join separator
+				param = param.replace("{" + apiname + "}", apivalue)
+		return param
+
+	refresh = provider.oauth2.refresh
+	query = {}
+	for name, value of refresh.query
+		query[name] = replace_param value
+		if typeof query[name] != 'string'
+			return callback query[name]
+	options =
+		url: refresh.url
+		method: refresh.method?.toUpperCase() || "GET"
+		followAllRedirects: true
+
+	if options.method == "GET"
+		options.qs = query
+	else
+		options.form = query # or .json = qs for json post
+
+	# request new token
+	request options, (e, r, body) ->
+		return callback e if e
+
+		if not body && r.statusCode == 200
+			return callback new check.Error 'Http error while requesting new token (empty response)'
+
+		if body
+			if refresh.format == 'json' or r.headers['content-type'] == 'application/json'
+				body = JSON.parse(body)
+			else if refresh.format == 'url' or r.headers['content-type'] == 'application/x-www-form-urlencoded'
+				body = querystring.parse(body)
+			else
+				try
+					body = JSON.parse(body)
+				catch err
+					try
+						body = querystring.parse(body)
+					catch err
+						err = new check.Error 'Unable to parse body of refresh token response'
+						err.body.body = body
+						return callback err
+			if body.error || body.error_description
+				err = new check.Error
+				err.error body.error_description || errors_desc.access_token[body.error] || 'Error while requesting new token'
+				err.body = body
+				return callback err
+
+		if r.statusCode != 200
+			err = new check.Error 'Http error while requesting new token (' + r.statusCode + ')'
+			err.body = body
+			return callback err
+
+		if not body.access_token
+			return callback new check.Error 'Could not find access_token in response'
+		expire = body.expire
+		expire ?= body.expires
+		expire ?= body.expires_in
+		expire ?= body.expires_at
+		if expire
+			expire = parseInt expire
+			now = (new Date).getTime()
+			expire -= now if expire > now
+		result =
+			access_token: body.access_token
+			token_type: body.token_type
+			expires_in: expire
+		result.refresh_token = body.refresh_token if body.refresh_token && keyset.response_type == "code"
+		callback null, result
 
 exports.request = (provider, parameters, req, callback) ->
 	params = {}

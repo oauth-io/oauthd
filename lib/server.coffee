@@ -86,6 +86,27 @@ server.get config.base + '/download/latest/oauth.min.js', (req, res, next) ->
 		res.send r
 		next()
 
+# oauth: refresh token
+server.post config.base + '/refresh_token/:provider', (req, res, next) ->
+	e = new check.Error
+	e.check req.body, key:check.format.key, secret:check.format.key, token:'string'
+	e.check req.params, provider:'string'
+	return next e if e.failed()
+	db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
+		return next e if e
+		return next new check.Error "invalid credentials" if not r
+		db.apps.getKeyset req.body.key, req.params.provider, (e, keyset) ->
+			return next e if e
+			if keyset.response_type != "code"
+				return next new check.Error "refresh token is a server-side feature only"
+			db.providers.getExtended req.params.provider, (e, provider) ->
+				return next e if e
+				if not provider.oauth2?.refresh
+					return next new check.Error "refresh token not supported for " + req.params.provider
+				oauth.oauth2.refresh keyset, provider, req.body.token, send(res,next)
+
+
+
 # oauth: get access token from server
 server.post config.base + '/access_token', (req, res, next) ->
 	e = new check.Error
