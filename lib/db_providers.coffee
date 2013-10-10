@@ -101,7 +101,9 @@ exports.getExtended = (name, callback) ->
 					for endpoint_name in ['request_token', 'authorize', 'access_token', 'request', 'refresh', 'revoke']
 						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
 						endpoint = res[oauthv][endpoint_name]
-						continue if not endpoint
+						if not endpoint
+							res[oauthv][endpoint_name] = {}
+							continue
 						if typeof endpoint == 'string'
 							endpoint = res[oauthv][endpoint_name] = url:endpoint
 						endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
