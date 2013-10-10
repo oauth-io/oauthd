@@ -265,3 +265,58 @@ exports.access_token = (state, req, callback) ->
 				oauth_token_secret: body.oauth_token_secret
 				expires_in: expire
 				request: provider.oauth1.request
+
+exports.request = (provider, parameters, req, callback) ->
+	params = {}
+	params[k] = v for k,v of provider.parameters
+	params[k] = v for k,v of provider.oauth1.parameters
+
+	if ! parameters.oauthio.access_token
+		return callback new check.Error "You must provide an 'access_token' in 'oauthio' http header"
+
+	replace_param = (param) ->
+		for apiname, apivalue of parameters
+			if params[apiname]
+				if Array.isArray(apivalue)
+					separator = params[apiname].separator
+					return new check.Error if not separator
+					apivalue = apivalue.join separator
+				param = param.replace("{" + apiname + "}", apivalue)
+		return param
+
+	oauthrequest = provider.oauth1.request
+
+	options =
+		method: req.method
+		followAllRedirects: true
+
+	# build url
+	options.url = req.params[1] # todo: relative path with provider.api_url
+
+	# build query
+	options.qs = {}
+	options.qs[name] = value for name, value of req.query
+	for name, value of oauthrequest.query
+		options.qs[name] = replace_param value
+
+	options.oauth =
+		consumer_key: parameters.client_id
+		consumer_secret: parameters.client_secret
+		token: parameters.oauthio.oauth_token
+		token_secret: parameters.oauthio.oauth_token_secret
+
+	# build headers
+	options.headers =
+		accept:req.headers.accept
+		'accept-encoding':req.headers['accept-encoding']
+		'accept-language':req.headers['accept-language']
+		'content-type':req.headers['content-type']
+	for name, value of oauthrequest.headers
+		options.headers[name] = replace_param value
+
+	# build body
+	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
+		options.body = req._body
+
+	# do request
+	callback null, request(options)
