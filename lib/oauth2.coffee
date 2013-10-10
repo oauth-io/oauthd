@@ -42,6 +42,15 @@ errors_desc =
 		'invalid_grant': "The provided access grant is invalid, expired, or revoked (e.g. invalid assertion, expired authorization token, bad end-user password credentials, or mismatching authorization code and redirection URI).",
 		'unsupported_grant_type': "The access grant included - its type or another attribute - is not supported by the authorization server."
 
+replace_param = (param, params, hard_params, keyset) ->
+	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+		return hard_params[val] || ""
+	return param.replace /\{(.*?)\}/g, (match, val) ->
+		return "" if ! params[val] || ! keyset[val]
+		if Array.isArray(keyset[val])
+			return keyset[val].join params[val].separator || ","
+		return keyset[val]
+
 exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
@@ -55,26 +64,15 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		options:opts.options
 		expire:600
 	, (err, state) ->
-		replace_param = (param) ->
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of parameters
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
 		authorize = provider.oauth2.authorize
 		query = {}
 		if typeof opts.options?.authorize == 'object'
 			query = opts.options.authorize
 		for name, value of authorize.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		url = authorize.url
 		url += "?" + querystring.stringify query
 		callback null, url
@@ -104,25 +102,13 @@ exports.access_token = (state, req, callback) ->
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth2.parameters
 
-		replace_param = (param) ->
-			param = param.replace(/\{\{code\}\}/g, req.params.code)
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of parameters
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
 		access_token = provider.oauth2.access_token
 		query = {}
 		for name, value of access_token.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, code:req.params.code, state:state.id, callback:config.host_url+config.relbase, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		options =
 			url: access_token.url
 			method: access_token.method?.toUpperCase() || "GET"
@@ -191,24 +177,13 @@ exports.refresh = (keyset, provider, token, callback) ->
 	params[k] = v for k,v of provider.parameters
 	params[k] = v for k,v of provider.oauth2.parameters
 
-	replace_param = (param) ->
-		param = param.replace(/\{\{callback\}\}/g, config.host_url)
-		param = param.replace(/\{\{refresh_token\}\}/g, token)
-		for apiname, apivalue of parameters
-			if params[apiname]
-				if Array.isArray(apivalue)
-					separator = params[apiname].separator
-					return new check.Error if not separator
-					apivalue = apivalue.join separator
-				param = param.replace("{" + apiname + "}", apivalue)
-		return param
-
 	refresh = provider.oauth2.refresh
 	query = {}
 	for name, value of refresh.query
-		query[name] = replace_param value
-		if typeof query[name] != 'string'
-			return callback query[name]
+		param = replace_param value, params, refresh_token:token, parameters
+		if typeof param != 'string'
+			return callback param
+		query[name] = param if param
 	options =
 		url: refresh.url
 		method: refresh.method?.toUpperCase() || "GET"
@@ -277,17 +252,6 @@ exports.request = (provider, parameters, req, callback) ->
 	if ! parameters.oauthio.access_token
 		return callback new check.Error "You must provide an 'access_token' in 'oauthio' http header"
 
-	replace_param = (param) ->
-		param = param.replace(/\{\{token\}\}/g, parameters.oauthio.access_token)
-		for apiname, apivalue of parameters
-			if params[apiname]
-				if Array.isArray(apivalue)
-					separator = params[apiname].separator
-					return new check.Error if not separator
-					apivalue = apivalue.join separator
-				param = param.replace("{" + apiname + "}", apivalue)
-		return param
-
 	oauthrequest = provider.oauth2.request
 
 	options =
@@ -301,7 +265,10 @@ exports.request = (provider, parameters, req, callback) ->
 	options.qs = {}
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
-		options.qs[name] = replace_param value
+		param = replace_param value, params, token:parameters.oauthio.access_token, parameters
+		if typeof param != 'string'
+			return callback param
+		options.qs[name] = param if param
 
 	# build headers
 	options.headers =
@@ -310,7 +277,10 @@ exports.request = (provider, parameters, req, callback) ->
 		'accept-language':req.headers['accept-language']
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
-		options.headers[name] = replace_param value
+		param = replace_param value, params, token:parameters.oauthio.access_token, parameters
+		if typeof param != 'string'
+			return callback param
+		options.headers[name] = param if param
 
 	# build body
 	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"

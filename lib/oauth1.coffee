@@ -43,6 +43,15 @@ sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
 	hmacsha1.update data
 	hmacsha1.digest "base64"
 
+replace_param = (param, params, hard_params, keyset) ->
+	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+		return hard_params[val] || ""
+	return param.replace /\{(.*?)\}/g, (match, val) ->
+		return "" if ! params[val] || ! keyset[val]
+		if Array.isArray(keyset[val])
+			return keyset[val].join params[val].separator || ","
+		return keyset[val]
+
 exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
@@ -56,26 +65,15 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		options:opts.options
 		expire:600
 	, (err, state) ->
-		replace_param = (param) ->
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of parameters
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
 		request_token = provider.oauth1.request_token
 		query = {}
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
 		for name, value of request_token.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		options =
 			url: request_token.url
 			method: 'POST'
@@ -137,9 +135,10 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				if typeof opts.options?.authorize == 'object'
 					query = opts.options.authorize
 				for name, value of authorize.query
-					query[name] = replace_param value
-					if typeof query[name] != 'string'
-						return callback query[name]
+					param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+					if typeof param != 'string'
+						return callback param
+					query[name] = param if param
 				query.oauth_token = body.oauth_token
 				url = authorize.url
 				url += "?" + querystring.stringify query
@@ -176,24 +175,13 @@ exports.access_token = (state, req, callback) ->
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth1.parameters
 
-		replace_param = (param) ->
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url + config.relbase)
-			for apiname, apivalue of parameters
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
 		access_token = provider.oauth1.access_token
 		query = {}
 		for name, value of access_token.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		options =
 			url: access_token.url
 			method: 'POST'
@@ -274,16 +262,6 @@ exports.request = (provider, parameters, req, callback) ->
 	if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
 		return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 
-	replace_param = (param) ->
-		for apiname, apivalue of parameters
-			if params[apiname]
-				if Array.isArray(apivalue)
-					separator = params[apiname].separator
-					return new check.Error if not separator
-					apivalue = apivalue.join separator
-				param = param.replace("{" + apiname + "}", apivalue)
-		return param
-
 	oauthrequest = provider.oauth1.request
 
 	options =
@@ -297,7 +275,10 @@ exports.request = (provider, parameters, req, callback) ->
 	options.qs = {}
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
-		options.qs[name] = replace_param value
+		param = replace_param value, params, {}, parameters
+		if typeof param != 'string'
+			return callback param
+		options.qs[name] = param if param
 
 	options.oauth =
 		consumer_key: parameters.client_id
@@ -312,7 +293,10 @@ exports.request = (provider, parameters, req, callback) ->
 		'accept-language':req.headers['accept-language']
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
-		options.headers[name] = replace_param value
+		param = replace_param value, params, {}, parameters
+		if typeof param != 'string'
+			return callback param
+		options.headers[name] = param if param
 
 	# build body
 	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
