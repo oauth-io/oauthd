@@ -30,7 +30,7 @@
       "client_id": "string",
       "scope": {
         "values": {
-          "non-expiring": "To obtain a non expiring access token",
+          "non-expiring": "To obtain a non expiring access token"
         },
         "cardinality": "*",
         "separator": ",",
