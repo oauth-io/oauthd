@@ -91,43 +91,45 @@ exports.get = (provider, callback) ->
 
 # get a provider's description extended with default params
 exports.getExtended = (name, callback) ->
-	provider = providers._list[name] ?= cache:false
-	if not provider.cache
-		exports.get name, (err, res) ->
-			return callback err if err
-			for oauthv in ['oauth1','oauth2']
-				if res[oauthv]?
-					found_state = false
-					for endpoint_name in ['request_token', 'authorize', 'access_token', 'request', 'refresh', 'revoke']
-						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
-						endpoint = res[oauthv][endpoint_name]
-						if not endpoint
-							res[oauthv][endpoint_name] = {}
-							continue
-						if typeof endpoint == 'string'
-							endpoint = res[oauthv][endpoint_name] = url:endpoint
-						endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
-						if not endpoint.query && def[oauthv][endpoint_name].query
-							endpoint.query = {}
-							endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
+	provider = providers._list[name]
+	if provider?.cache
+		return callback null, provider.data
+
+	exports.get name, (err, res) ->
+		return callback err if err
+		provider = providers._list[name] ?= cache:false
+		for oauthv in ['oauth1','oauth2']
+			if res[oauthv]?
+				found_state = false
+				for endpoint_name in ['request_token', 'authorize', 'access_token', 'request', 'refresh', 'revoke']
+					continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
+					endpoint = res[oauthv][endpoint_name]
+					if not endpoint
+						res[oauthv][endpoint_name] = {}
+						continue
+					if typeof endpoint == 'string'
+						endpoint = res[oauthv][endpoint_name] = url:endpoint
+					endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
+					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url[endpoint.url.legnth-1] == '/'
+					if not endpoint.query && def[oauthv][endpoint_name].query
+						endpoint.query = {}
+						endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
+					for k,v of endpoint.query
+						if v.indexOf('{{state}}') != -1
+							found_state = true
+						if v.indexOf('{scope}') != -1 && ! res[oauthv].parameters?.scope && ! res.parameters?.scope
+							delete endpoint.query[k]
+					if not found_state
 						for k,v of endpoint.query
-							if v.indexOf('{{state}}') != -1
-								found_state = true
-							if v.indexOf('{scope}') != -1 && ! res[oauthv].parameters?.scope && ! res.parameters?.scope
-								delete endpoint.query[k]
-						if not found_state
-							for k,v of endpoint.query
-								endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
-					params = res[oauthv].parameters
-					if params
-						for k,v of params
-							params[k] = type:v if typeof v == 'string'
-			params = res.parameters
-			if params
-				for k,v of params
-					params[k] = type:v if typeof v == 'string'
-			provider.data = res
-			provider.cache = true
-			callback null, res
-	else
-		callback null, provider.data
+							endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
+				params = res[oauthv].parameters
+				if params
+					for k,v of params
+						params[k] = type:v if typeof v == 'string'
+		params = res.parameters
+		if params
+			for k,v of params
+				params[k] = type:v if typeof v == 'string'
+		provider.data = res
+		provider.cache = true
+		callback null, res

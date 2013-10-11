@@ -7,7 +7,8 @@
     "parameters": {
       "client_secret": "string",
       "client_id": "string"
-    }
+    },
+    "request": "https://api.twitter.com"
   },
   "href": {
     "keys": "https://dev.twitter.com/apps/new",
