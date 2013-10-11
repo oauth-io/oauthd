@@ -12,6 +12,7 @@
     "access_token": "/access_token",
     "request": {
       "url": "https://graph.facebook.com",
+      "cors": true,
       "query": {
         "access_token": "{{token}}"
       }

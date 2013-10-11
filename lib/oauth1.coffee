@@ -269,7 +269,11 @@ exports.request = (provider, parameters, req, callback) ->
 		followAllRedirects: true
 
 	# build url
-	options.url = req.params[1] # todo: relative path with provider.api_url
+	options.url = req.params[1]
+	if ! options.url.match(/^[a-z]{2,16}:\/\//)
+		if options.url[0] != '/'
+			options.url = '/' + options.url
+		options.url = oauthrequest.url + options.url
 
 	# build query
 	options.qs = {}
