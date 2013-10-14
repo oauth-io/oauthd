@@ -110,7 +110,7 @@ exports.getExtended = (name, callback) ->
 					if typeof endpoint == 'string'
 						endpoint = res[oauthv][endpoint_name] = url:endpoint
 					endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
-					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url[endpoint.url.legnth-1] == '/'
+					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url and endpoint.url[endpoint.url.length-1] == '/'
 					if not endpoint.query && def[oauthv][endpoint_name].query
 						endpoint.query = {}
 						endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
