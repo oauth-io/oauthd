@@ -14,7 +14,8 @@
 		},
 		"access_token": {
 			"url": "/token",
-			"method": "post"
+			"method": "post",
+			"extra": ["id_token"]
 		},
 		"request": {
 			"query": {

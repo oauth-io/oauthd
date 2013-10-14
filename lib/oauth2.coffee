@@ -169,6 +169,8 @@ exports.access_token = (state, req, callback) ->
 				base: provider.baseurl
 				request: provider.oauth2.request
 			result.refresh_token = body.refresh_token if body.refresh_token && response_type == "code"
+			for extra in (access_token.extra||[])
+				result[extra] = body[extra] if body[extra]
 			callback null, result
 
 exports.refresh = (keyset, provider, token, callback) ->
