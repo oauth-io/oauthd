@@ -33,9 +33,12 @@
 	function sendCallback(opts) {
 		var data;
 		var err;
+
 		try {
 			data = JSON.parse(opts.data);
 		} catch (e) {}
+
+		console.log(data)
 
 		if ( ! data || ! data.provider)
 			return;
@@ -61,7 +64,65 @@
 		if ( ! opts.provider)
 			data.data.provider = data.provider;
 
-		return opts.callback(null, data.data);
+		var res = data.data
+		var req = res.request
+		delete res.request
+		var tokens = { access_token: res.access_token }
+		if ( ! tokens.access_token )
+			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret}
+
+		res.get = function(endpoint, params, callback) {
+			OAuth.http({
+				provider: res.provider, 
+				tokens: tokens, 
+				endpoint: endpoint, 
+				method: "GET",
+				params: params
+			}, callback)
+		}
+
+		res.post = function(endpoint, params, callback) {
+			OAuth.http({
+				provider: res.provider, 
+				tokens: tokens, 
+				endpoint: endpoint, 
+				method: "POST",
+				params: params
+			}, callback)
+		}
+
+		res.put = function(endpoint, params, callback) {
+			OAuth.http({
+				provider: res.provider, 
+				tokens: tokens, 
+				endpoint: endpoint, 
+				method: "PUT",
+				params: params
+			}, callback)
+		}
+
+		res.delete = function(endpoint, params, callback) {
+			OAuth.http({
+				provider: res.provider, 
+				tokens: tokens, 
+				endpoint: endpoint, 
+				method: "DELETE",
+				params: params
+			}, callback)
+		}
+
+		res.patch = function(endpoint, params, callback) {
+			OAuth.http({
+				provider: res.provider, 
+				tokens: tokens, 
+				endpoint: endpoint, 
+				method: "PUT",
+				params: params
+			}, callback)
+		}
+		console.log("callback", res, req);
+
+		return opts.callback(null, res, req);
 	}
 
 	window.OAuth = {
@@ -160,6 +221,15 @@
 				return sendCallback({data:oauth_result, callback:provider});
 
 			return sendCallback({data:oauth_result, provider:provider, callback:callback});
+		},
+		http: function(obj, callback) {
+			console.log("OAuth.http", obj)
+			if (obj.tokens.access_token) {
+				//oauth2
+			}
+			else {
+
+			}
 		}
 	};
 

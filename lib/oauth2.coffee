@@ -171,6 +171,8 @@ exports.access_token = (state, req, callback) ->
 				access_token: body.access_token
 				token_type: body.token_type
 				expires_in: expire
+				base: provider.baseurl
+				request: provider.oauth2.request
 			result.refresh_token = body.refresh_token if body.refresh_token && response_type == "code"
 			callback null, result
 
