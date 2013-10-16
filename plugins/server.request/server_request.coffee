@@ -16,6 +16,7 @@
 
 async = require 'async'
 qs = require 'querystring'
+Url = require 'url'
 
 oauth =
 	oauth1: require '../../lib/oauth1'
@@ -31,12 +32,25 @@ exports.setup = (callback) ->
 		oauthio = qs.parse(oauthio)
 		if ! oauthio.k
 			return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
+
+		origin = null
+		ref = req.headers['referer'] || req.headers['origin']
+		if ref
+			urlinfos = Url.parse(ref)
+			if not urlinfos.hostname
+				return next new restify.InvalidHeaderError 'Missing origin or referer.'
+			origin = urlinfos.protocol + '//' + urlinfos.host
+
 		async.parallel [
 			(callback) => @db.providers.getExtended req.params[0], callback
 			(callback) => @db.apps.getKeyset oauthio.k, req.params[0], callback
+			(callback) => @db.apps.checkDomain oauthio.k, ref, callback
 		], (err, results) =>
 			return cb err if err
-			[provider, {parameters}] = results
+			[provider, {parameters}, domaincheck] = results
+
+			if ! domaincheck
+				return cb new @check.Error 'Domain name does not match any registered domain on ' + @config.url.host
 
 			# select oauth version
 			oauthv = oauthio.oauthv && {
@@ -53,8 +67,10 @@ exports.setup = (callback) ->
 			# let oauth modules do the request
 			oauth[oauthv].request provider, parameters, req, (err, api_request) ->
 				return cb err if err
-				res.setHeader('Access-Control-Allow-Origin', 'http://localhost:6284') # todo <- override by request's pipe, make domain list
-				res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE') # todo <- override by request's pipe
+
+				api_request.pipefilter = (response, dest) ->
+					dest.setHeader 'access-control-allow-origin', origin
+					dest.setHeader 'access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE'
 				api_request.pipe(res)
 				api_request.once 'end', -> next false
 
