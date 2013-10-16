@@ -24,7 +24,6 @@ module.exports = {
 	smtp: {},
 
 	plugins: [
-		//'server.tests',
 		/* --- only for oauth.io --- */
 		'server.auth',
 		'server.users',
@@ -34,6 +33,7 @@ module.exports = {
 		'server.wishlist',
 		/* ------------------------- */
 
+		//'server.tests',
 		'server.statistics',
 		'server.request'
 	]

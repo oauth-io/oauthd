@@ -13,6 +13,7 @@ exports.setup = (callback) ->
 		httpOnly: true,
 		secure: false
 
+	provider = "salesforce"
 	auth_button_id = 0
 	auth_code = ""
 	body_code = ""
@@ -46,7 +47,7 @@ exports.setup = (callback) ->
 		console.log "after adding token", req.test_sessionkey.csrf_tokens
 		view = '<html><head>\n'
 		view += '<script src="/lib/jquery/jquery2.js"></script>\n'
-		view += '<script src="/auth/download/latest/oauth.js"></script>\n'
+		view += '<script src="/auth/download/latest/oauth.min.js"></script>\n'
 		view += '<script>\n'
 		view += 'var state="' + csrf_token + '";\n'
 		view += 'var initialized = false;\n'
@@ -97,7 +98,7 @@ exports.setup = (callback) ->
 	@server.get @config.base + '/test/all', init_tests, (req, res, next) =>
 		add_separator 'Working samples'
 
-		auth =  'OAuth.popup("facebook", {state:state}, function(e,r) {\n'
+		auth =  'OAuth.popup("' + provider + '", {state:state}, function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("sending code", r);\n'
 		auth += '  $.ajax("/auth/test/auth", {type:"post", data:{code:r.code}, success:function(data) {\n'
@@ -106,26 +107,26 @@ exports.setup = (callback) ->
 		auth += '});\n'
 		add_button 'server-side auth, popup', auth
 
-		auth =  'OAuth.redirect("facebook", {state:state}, "/auth/test/all");\n'
+		auth =  'OAuth.redirect("' + provider + '", {state:state}, "/auth/test/all");\n'
 		add_button 'server-side auth, redirect', auth
 
-		auth =  'OAuth.popup("facebook", function(e,r) {\n'
+		auth =  'OAuth.popup("' + provider + '", function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("result", r);\n'
 		auth += '});\n'
 		add_button 'client-side auth, popup', auth
 
-		auth =  'OAuth.popup("facebook", {authorize:{display:"popup"}}, function(e,r) {\n'
+		auth =  'OAuth.popup("' + provider + '", {authorize:{display:"popup"}}, function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("result", r);\n'
 		auth += '});\n'
 		add_button 'client-side auth, popup, display=popup', auth
 
-		auth =  'OAuth.redirect("facebook", "/auth/test/all");\n'
+		auth =  'OAuth.redirect("' + provider + '", "/auth/test/all");\n'
 		add_button 'client-side auth, redirect', auth
 
 		add_separator 'Errors samples'
-		auth =  'OAuth.popup("facebook", function(e,r) {\n'
+		auth =  'OAuth.popup("' + provider + '", function(e,r) {\n'
 		auth += '  if (e) return cons.error("callback error", e);\n'
 		auth += '  cons.log ("sending code", r);\n'
 		auth += '  $.ajax("/auth/test/auth", {type:"post", data:{code:r.code}, success:function(data) {\n'
@@ -134,7 +135,7 @@ exports.setup = (callback) ->
 		auth += '});\n'
 		add_button 'server-side auth, popup | missing state', auth
 
-		auth =  'OAuth.redirect("facebook", "/auth/test/all");\n'
+		auth =  'OAuth.redirect("' + provider + '", "/auth/test/all");\n'
 		add_button 'server-side auth, redirect | missing state ', auth
 
 		send_view req, res, next
