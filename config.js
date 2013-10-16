@@ -31,7 +31,7 @@ module.exports = {
 		'server.adm',
 		'server.oauth_io',
 		'server.mailjet',
-		'server.wishlist'
+		'server.wishlist',
 		/* ------------------------- */
 
 		'server.statistics',
