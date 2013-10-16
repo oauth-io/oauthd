@@ -4,11 +4,13 @@
     "authorize": "/authorize",
     "access_token": {
       "url": "/token",
+      "extra": ["refresh_token", "instance_url", "signature"],
       "method": "POST"
     },
     "refresh": {
       "url": "/token",
       "method": "post",
+      "extra": ["id"],
       "query": {
         "refresh_token":"{{refresh_token}}",
         "client_id":"{client_id}",
