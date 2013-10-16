@@ -69,7 +69,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		if typeof opts.options?.authorize == 'object'
 			query = opts.options.authorize
 		for name, value of authorize.query
-			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
 			if typeof param != 'string'
 				return callback param
 			query[name] = param if param
@@ -105,7 +105,7 @@ exports.access_token = (state, req, callback) ->
 		access_token = provider.oauth2.access_token
 		query = {}
 		for name, value of access_token.query
-			param = replace_param value, params, code:req.params.code, state:state.id, callback:config.host_url+config.relbase, parameters
+			param = replace_param value, params, code:req.params.code, state:state.id, callback:config.host_url+config.base, parameters
 			if typeof param != 'string'
 				return callback param
 			query[name] = param if param
