@@ -38,7 +38,7 @@
 			data = JSON.parse(opts.data);
 		} catch (e) {}
 
-		console.log(data)
+		console.log("oauthio auth raw result", data)
 
 		if ( ! data || ! data.provider)
 			return;
@@ -64,65 +64,37 @@
 		if ( ! opts.provider)
 			data.data.provider = data.provider;
 
+		function make_res(provider, tokens, request, method) {
+			return function(opts) {
+				var options = {};
+				if (typeof opts === 'string')
+					options = {url:opts};
+				else if (typeof opts === 'object')
+					for (var i in opts) { options[i] = opts[i]; }
+				options.method = options.method || method;
+				options.oauthio = {provider:provider, tokens:tokens, request:request};
+				return OAuth.http(options);
+			}
+		}
+
 		var res = data.data
-		var req = res.request
+		var request = res.request
 		delete res.request
-		var tokens = { access_token: res.access_token }
-		if ( ! tokens.access_token )
+		var tokens;
+		if (res.access_token)
+			tokens = { access_token: res.access_token }
+		else if (res.oauth_token && res.oauth_token_secret)
 			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret}
 
-		res.get = function(endpoint, params, callback) {
-			OAuth.http({
-				provider: res.provider, 
-				tokens: tokens, 
-				endpoint: endpoint, 
-				method: "GET",
-				params: params
-			}, callback)
-		}
+		res.get = make_res(data.provider, tokens, request, 'GET');
+		res.post = make_res(data.provider, tokens, request, 'POST');
+		res.put = make_res(data.provider, tokens, request, 'PUT');
+		res.patch = make_res(data.provider, tokens, request, 'PATCH');
+		res.del = make_res(data.provider, tokens, request, 'DELETE');
 
-		res.post = function(endpoint, params, callback) {
-			OAuth.http({
-				provider: res.provider, 
-				tokens: tokens, 
-				endpoint: endpoint, 
-				method: "POST",
-				params: params
-			}, callback)
-		}
+		console.log("oauthio auth callback", res, request);
 
-		res.put = function(endpoint, params, callback) {
-			OAuth.http({
-				provider: res.provider, 
-				tokens: tokens, 
-				endpoint: endpoint, 
-				method: "PUT",
-				params: params
-			}, callback)
-		}
-
-		res.delete = function(endpoint, params, callback) {
-			OAuth.http({
-				provider: res.provider, 
-				tokens: tokens, 
-				endpoint: endpoint, 
-				method: "DELETE",
-				params: params
-			}, callback)
-		}
-
-		res.patch = function(endpoint, params, callback) {
-			OAuth.http({
-				provider: res.provider, 
-				tokens: tokens, 
-				endpoint: endpoint, 
-				method: "PUT",
-				params: params
-			}, callback)
-		}
-		console.log("callback", res, req);
-
-		return opts.callback(null, res, req);
+		return opts.callback(null, res, request);
 	}
 
 	window.OAuth = {
@@ -143,7 +115,7 @@
 			}
 			client_states.push(opts.state);
 
-			var url = config.oauthd_url + '/' + provider + "?k=" + config.key
+			var url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key
 			url += '&d=' + encodeURIComponent(getAbsUrl('/'));
 			if (opts)
 				url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
@@ -207,7 +179,7 @@
 			}
 			createCookie("oauthio_state", opts.state);
 			var redirect_uri = encodeURIComponent(getAbsUrl(url));
-			url = config.oauthd_url + '/' + provider + "?k=" + config.key;
+			url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
 			url += "&redirect_uri=" + redirect_uri;
 			if (opts)
 				url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
@@ -222,13 +194,27 @@
 
 			return sendCallback({data:oauth_result, provider:provider, callback:callback});
 		},
-		http: function(obj, callback) {
-			console.log("OAuth.http", obj)
-			if (obj.tokens.access_token) {
-				//oauth2
+		http: function(opts) {
+			console.log("OAuth.http", opts)
+			var options = {};
+			for (var i in opts) { options[i] = opts[i]; }
+			if ( ! options.oauthio.request.cors) {
+				if (options.url && options.url[0] != '/' )
+					options.url = '/' + options.url;
+				options.url = config.oauthd_url + '/request/' + options.oauthio.provider + options.url
+				options.headers = options.headers || {};
+				options.headers.oauthio = 'k=' + config.key;
+				if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret)
+					options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
+				for (var k in options.oauthio.tokens)
+					options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
+				delete options.oauthio;
+				return $.ajax(options);
+			}
+			if (options.oauthio.tokens.access_token) {
+				//oauth 2
 			}
 			else {
-
 			}
 		}
 	};

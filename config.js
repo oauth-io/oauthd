@@ -21,17 +21,9 @@ module.exports = {
 		// options: {...other options...}
 	},
 
-	smtp: {
-		service: "Gmail",
-		auth: {
-			user: "mytest042@gmail.com",
-			pass: "P@ssword0"
-		}
-	},
+	smtp: {},
 
 	plugins: [
-		'server.statistics',
-
 		//'server.tests',
 		/* --- only for oauth.io --- */
 		'server.auth',
@@ -41,5 +33,8 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist'
 		/* ------------------------- */
+
+		'server.statistics',
+		'server.request'
 	]
 }
