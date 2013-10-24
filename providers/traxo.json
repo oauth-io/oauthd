@@ -1,0 +1,52 @@
+{
+  "name": "Traxo",
+  "url": "https://www.traxo.com/oauth",
+  "api_url": "https://api.traxo.com",
+  "oauth2": {
+    "authorize": {
+      "url": "/authenticate",
+      "query": {
+        "client_id": "{client_id}",
+        "redirect_uri": "{{callback}}",
+        "state": "{{state}}",
+        "response_type": "code"
+      }
+    },
+    "access_token": {
+      "url": "/token", 
+      "method": "post",
+      "query": {
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}",
+        "code": "{{code}}",
+        "grant_type": "authorization_code",
+        "redirect_uri": "{{callback}}"
+      }
+    }, 
+    "refresh": {
+      "url": "/token",
+      "method": "post",
+      "query": {
+        "refresh_token":"{{refresh_token}}",
+        "client_id":"{client_id}",
+        "client_secret":"{client_secret}",
+        "grant_type":"refresh_token"
+      }
+    },
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    },
+    "parameters": {
+      "client_secret": "string", 
+      "client_id": "string"
+    }
+  },
+  "href": {
+    "keys": "https://developer.traxo.com", 
+    "docs": "https://developer.traxo.com", 
+    "apps": "https://developer.traxo.com", 
+    "provider": "https://www.traxo.com"
+  }
+}
