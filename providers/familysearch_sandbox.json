@@ -1,0 +1,39 @@
+{
+  "href": {
+    "keys": "https://familysearch.org/developers", 
+    "docs": "https://familysearch.org/developers", 
+    "apps": "https://familysearch.org/products", 
+    "provider": "https://familysearch.com/"
+  },
+  "url": "https://sandbox.familysearch.org/cis-web/oauth2/v3",
+  "api_url": "https://sandbox.familysearch.org/.well-known/app-meta",
+  "oauth2": {
+    "authorize": {
+      "url": "/authorization", 
+      "query": {
+        "redirect_uri": "{{callback}}", 
+        "response_type": "code", 
+        "client_id": "{client_id}",
+        "state": "{{state}}"
+      }
+    },
+    "access_token": {
+      "url": "/token", 
+      "method": "post",
+      "query": {
+        "grant_type": "authorization_code",
+        "code": "{{code}}",
+        "client_id": "{client_id}"
+      }
+    },
+    "request": {
+      "query": {
+        "oauth_token": "{{token}}"
+      }
+    }, 
+    "parameters": {
+      "client_id": "string"
+    }
+  }, 
+  "name": "FamilySearch - Sandbox"
+}
