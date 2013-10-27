@@ -4,6 +4,7 @@
     "authorize": "/authorize",
     "access_token": {
       "url": "/token",
+      "extra": ["id", "refresh_token", "instance_url", "signature"],
       "method": "POST"
     },
     "refresh": {
