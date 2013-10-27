@@ -56,11 +56,11 @@ OAuth.io Team'
 				@db.redis.set prefix+'validated', '2'
 				callback()
 
-	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/users/:id/invite', @auth.adm, (req, res, next) =>
 		@userInvite req.params.id, @server.send(res, next)
 
 	# get users list
-	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/users', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>
 			return next err if err
 			cmds = []
@@ -79,7 +79,7 @@ OAuth.io Team'
 				next()
 
 	# get app info with ID
-	@server.get @config.base + '/api/adm/app/:id', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/app/:id', @auth.adm, (req, res, next) =>
 		id_app = req.params.id
 		prefix = 'a:' + id_app + ':'
 		cmds = []
@@ -94,11 +94,11 @@ OAuth.io Team'
 			next()
 
 	# delete a user
-	@server.del @config.base + '/api/adm/users/:id', @auth.adm, (req, res, next) =>
+	@server.del @config.base_api + '/adm/users/:id', @auth.adm, (req, res, next) =>
 		@db.users.remove req.params.id, @server.send(res, next)
 
 	# get any statistics
-	@server.get new RegExp(@config.base + 'api/adm/stats/(.+)'), @auth.adm, (req, res, next) =>
+	@server.get new RegExp('^' + @config.base_api + '/adm/stats/(.+)'), @auth.adm, (req, res, next) =>
 		async.parallel [
 			(cb) => @db.timelines.getTimeline req.params[0], req.query, cb
 			(cb) => @db.timelines.getTotal req.params[0], cb
@@ -108,7 +108,7 @@ OAuth.io Team'
 			next()
 
 	# regenerate all private keys
-	@server.get @config.base + '/api/adm/secrets/reset', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/secrets/reset', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'a:keys', (e, apps) =>
 			return next e if e
 			mset = []
@@ -118,7 +118,7 @@ OAuth.io Team'
 			@db.redis.mset mset, @server.send(res,next)
 
 	# refresh rankings
-	@server.get @config.base + '/api/adm/rankings/refresh', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/rankings/refresh', @auth.adm, (req, res, next) =>
 		providers = {}
 		@db.redis.hgetall 'a:keys', (e, apps) =>
 			return next e if e
@@ -141,11 +141,11 @@ OAuth.io Team'
 				next()
 
 	# get a ranking
-	@server.post @config.base + '/api/adm/ranking', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/ranking', @auth.adm, (req, res, next) =>
 		@db.ranking_timelines.getRanking req.body.target, req.body, @server.send(res, next)
 
 	# get a ranking related to apps
-	@server.post @config.base + '/api/adm/ranking/apps', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/ranking/apps', @auth.adm, (req, res, next) =>
 		@db.ranking_timelines.getRanking req.body.target, req.body, (e, infos) =>
 			return next e if e
 			cmds = []
@@ -159,13 +159,13 @@ OAuth.io Team'
 				next()
 
 	# get provider list
-	@server.get @config.base + '/api/adm/wishlist', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/wishlist', @auth.adm, (req, res, next) =>
 		@db.wishlist.getList full:true, @server.send(res, next)
 
-	@server.del @config.base + '/api/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
+	@server.del @config.base_api + '/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
 		@db.wishlist.remove req.params.provider, @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/wishlist/:provider/status/:status', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/wishlist/:provider/status/:status', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.params.provider, req.params.status , @server.send(res, next)
 
 	callback()

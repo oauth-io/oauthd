@@ -24,7 +24,7 @@ exports.setup = (callback) ->
 				contact:user.mail
 		}, (e,r,body) =>
 
-	@server.get @config.base + '/api/adm/update_mailjet', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/update_mailjet', @auth.adm, (req, res, next) =>
 		@db.redis.hkeys 'u:mails', (err, mails) =>
 			return next err if err
 			mailjet.post {

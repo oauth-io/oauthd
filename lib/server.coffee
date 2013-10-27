@@ -236,7 +236,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		next()
 
 # create an application
-server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
 	db.apps.create req.body, (e, r) ->
 		return next(e) if e
 		plugins.data.emit 'app.create', req, r
@@ -244,7 +244,7 @@ server.post config.base + '/api/apps', auth.needed, (req, res, next) ->
 		next()
 
 # get infos of an app
-server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
+server.get config.base_api + '/apps/:key', auth.needed, (req, res, next) ->
 	async.parallel [
 		(cb) -> db.apps.get req.params.key, cb
 		(cb) -> db.apps.getDomains req.params.key, cb
@@ -255,11 +255,11 @@ server.get config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 		next()
 
 # update infos of an app
-server.post config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps/:key', auth.needed, (req, res, next) ->
 	db.apps.update req.params.key, req.body, send(res,next)
 
 # remove an app
-server.del config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
+server.del config.base_api + '/apps/:key', auth.needed, (req, res, next) ->
 	db.apps.get req.params.key, (e, app) ->
 		return next(e) if e
 		db.apps.remove req.params.key, (e, r) ->
@@ -269,54 +269,54 @@ server.del config.base + '/api/apps/:key', auth.needed, (req, res, next) ->
 			next()
 
 # reset the public key of an app
-server.post config.base + '/api/apps/:key/reset', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps/:key/reset', auth.needed, (req, res, next) ->
 	db.apps.resetKey req.params.key, send(res,next)
 
 # list valid domains for an app
-server.get config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
+server.get config.base_api + '/apps/:key/domains', auth.needed, (req, res, next) ->
 	db.apps.getDomains req.params.key, send(res,next)
 
 # update valid domains list for an app
-server.post config.base + '/api/apps/:key/domains', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps/:key/domains', auth.needed, (req, res, next) ->
 	db.apps.updateDomains req.params.key, req.body.domains, send(res,next)
 
 # add a valid domain for an app
-server.post config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
 	db.apps.addDomain req.params.key, req.params.domain, send(res,next)
 
 # remove a valid domain for an app
-server.del config.base + '/api/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
+server.del config.base_api + '/apps/:key/domains/:domain', auth.needed, (req, res, next) ->
 	db.apps.remDomain req.params.key, req.params.domain, send(res,next)
 
 # list keysets (provider names) for an app
-server.get config.base + '/api/apps/:key/keysets', auth.needed, (req, res, next) ->
+server.get config.base_api + '/apps/:key/keysets', auth.needed, (req, res, next) ->
 	db.apps.getKeysets req.params.key, send(res,next)
 
 # get a keyset for an app and a provider
-server.get config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
+server.get config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.getKeyset req.params.key, req.params.provider, send(res,next)
 
 # add or update a keyset for an app and a provider
-server.post config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
 # remove a keyset for an app and a provider
-server.del config.base + '/api/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
+server.del config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.remKeyset req.params.key, req.params.provider, send(res,next)
 
 # get providers list
-server.get config.base + '/api/providers', bootPathCache(), (req, res, next) ->
+server.get config.base_api + '/providers', bootPathCache(), (req, res, next) ->
 	db.providers.getList send(res,next)
 
 # get a provider config
-server.get config.base + '/api/providers/:provider', bootPathCache(), (req, res, next) ->
+server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res, next) ->
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config
-server.get config.base + '/api/providers/:provider/logo', bootPathCache(), ((req, res, next) ->
+server.get config.base_api + '/providers/:provider/logo', bootPathCache(), ((req, res, next) ->
 		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
 			if not exists
 				req.params.provider = 'default'

@@ -1,6 +1,7 @@
 module.exports = {
-	host_url: "https://oauth.local/auth",	// mounted on this url
-	base: "/",								// add a base url path. e.g: "/auth"
+	host_url: "https://oauth.local",		// mounted on this url
+	base: "/auth",							// add a base url path. e.g: "/auth"
+	base_api: "/api",						// api base path
 	port: 6284,
 
 	debug: true,							// add stack trace & infos in errors
@@ -31,6 +32,7 @@ module.exports = {
 		'server.oauth_io',
 		'server.mailjet',
 		'server.wishlist',
+		'server.front',
 		/* ------------------------- */
 
 		//'server.tests',

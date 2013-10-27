@@ -66,17 +66,17 @@ exports.setup = (callback) ->
 			callback null, res
 
 	# get statistics for an app
-	@server.get @config.base + '/api/apps/:key/stats', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/apps/:key/stats', @auth.adm, (req, res, next) =>
 		req.params.target = 'co:a:' + req.params.key
 		sendStats req.params, @server.send(res, next)
 
 	# get statistics for a keyset
-	@server.get @config.base + '/api/apps/:key/keysets/:provider/stats', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/apps/:key/keysets/:provider/stats', @auth.adm, (req, res, next) =>
 		req.params.target = 'co:a:' + req.params.key + ':p:' + req.params.provider
 		sendStats req.params, @server.send(res, next)
 
 	# get statistics for a provider
-	@server.get @config.base + '/api/providers/:provider/stats', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/providers/:provider/stats', @auth.adm, (req, res, next) =>
 		req.params.target = 'co:p:' + req.params.provider
 		sendStats req.params, @server.send(res, next)
 
