@@ -326,7 +326,7 @@ server.get config.base_api + '/providers/:provider/logo', bootPathCache(), ((req
 			next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'
-		maxAge: 120
+		maxAge: config.cacheTime
 
 # listen
 exports.listen = (callback) ->
