@@ -7,6 +7,8 @@
 fs = require "fs"
 Path = require "path"
 
+async = require "async"
+
 config = require "./config"
 check = require "./check"
 
@@ -27,6 +29,8 @@ def =
 				grant_type: "authorization_code"
 				code: "{{code}}"
 		request: {}
+		refresh: {}
+		revoke: {}
 	oauth1:
 		request_token:
 			query:
@@ -39,19 +43,31 @@ def =
 		request: {}
 
 
-providers = _list:{}, _expire:0
+providers = _list:{}, _cached:false
 
-providers.list = ->
-		now = (new Date).getTime()
-		if now > providers._expire
-			fs.readdir config.rootdir + '/providers', (err, files) ->
-				return if err
-				for file in files
+# get providers list
+exports.getList = (callback) ->
+	if not providers._cached
+		fs.readdir config.rootdir + '/providers', (err, files) ->
+			return callback err if err
+			cmds = []
+			for file in files
+				do (file) ->
 					if file.match /\.json$/
-						providers._list[file.substr(0, file.length - 5)] ?= expire:0
-			providers._expire = now + 30000
-		return providers._list
-providers.list()
+						cmds.push (callback) ->
+							provider = file.substr(0, file.length - 5)
+							exports.get provider, (err, data) ->
+								if err
+									console.error "Error in " + provider + ".json:", err, "skipping this provider"
+									return callback null
+								providers._list[provider] ?= cached:false, name:(data.name || provider)
+								callback null
+			async.parallel cmds, (err, res) ->
+				return callback err if err
+				providers._cached = true
+				return callback null, ({provider:k, name:v.name} for k,v of providers._list)
+	else
+		return callback null, ({provider:k, name:v.name} for k,v of providers._list)
 
 # get a provider's description
 exports.get = (provider, callback) ->
@@ -75,45 +91,45 @@ exports.get = (provider, callback) ->
 
 # get a provider's description extended with default params
 exports.getExtended = (name, callback) ->
-	provider = providers._list[name] ?= expire:0
-	now = (new Date).getTime()
-	if now > provider.expire
-		console.log 'refresh provider ' + name
-		exports.get name, (err, res) ->
-			return callback err if err
-			for oauthv in ['oauth1','oauth2']
-				if res[oauthv]?
-					found_state = false
-					for endpoint_name in ['request_token', 'authorize', 'access_token']
-						continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
-						endpoint = res[oauthv][endpoint_name]
-						if typeof endpoint == 'string'
-							endpoint = res[oauthv][endpoint_name] = url:endpoint
-						endpoint.url = res.url + endpoint.url if res.url
-						if not endpoint.query
-							endpoint.query = {}
-							endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
-						for k,v of endpoint.query
-							if v.indexOf('{{state}}') != -1
-								found_state = true
-								break
-						if not found_state
-							for k,v of endpoint.query
-								endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
-					params = res[oauthv].parameters
-					if params
-						for k,v of params
-							params[k] = type:v if typeof v == 'string'
-			params = res.parameters
-			if params
-				for k,v of params
-					params[k] = type:v if typeof v == 'string'
-			provider.data = res
-			provider.expire = now + 30000
-			callback null, res
-	else
-		callback null, provider.data
+	provider = providers._list[name]
+	if provider?.cache
+		return callback null, provider.data
 
-# get providers list
-exports.getList = (callback) ->
-	callback null, Object.keys(providers.list())
+	exports.get name, (err, res) ->
+		return callback err if err
+		provider = providers._list[name] ?= cache:false
+		for oauthv in ['oauth1','oauth2']
+			if res[oauthv]?
+				found_state = false
+				for endpoint_name in ['request_token', 'authorize', 'access_token', 'request', 'refresh', 'revoke']
+					continue if oauthv == 'oauth2' && endpoint_name == 'request_token'
+					endpoint = res[oauthv][endpoint_name]
+					if not endpoint
+						res[oauthv][endpoint_name] = {}
+						continue
+					if typeof endpoint == 'string'
+						endpoint = res[oauthv][endpoint_name] = url:endpoint
+					endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
+					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url and endpoint.url[endpoint.url.length-1] == '/'
+					if not endpoint.query && def[oauthv][endpoint_name].query
+						endpoint.query = {}
+						endpoint.query[k] = v for k,v of def[oauthv][endpoint_name].query
+					for k,v of endpoint.query
+						if v.indexOf('{{state}}') != -1
+							found_state = true
+						if v.indexOf('{scope}') != -1 && ! res[oauthv].parameters?.scope && ! res.parameters?.scope
+							delete endpoint.query[k]
+					if not found_state
+						for k,v of endpoint.query
+							endpoint.query[k] = v.replace /\{\{callback\}\}/g, '{{callback}}?state={{state}}'
+				params = res[oauthv].parameters
+				if params
+					for k,v of params
+						params[k] = type:v if typeof v == 'string'
+		params = res.parameters
+		if params
+			for k,v of params
+				params[k] = type:v if typeof v == 'string'
+		provider.data = res
+		provider.cache = true
+		callback null, res

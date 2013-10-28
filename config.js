@@ -1,6 +1,7 @@
 module.exports = {
-	host_url: "https://oauth.io/auth",	// mounted on this url
-	base: "/",								// add a base url path. e.g: "/auth"
+	host_url: "https://oauth.local",		// mounted on this url
+	base: "/auth",							// add a base url path. e.g: "/auth"
+	base_api: "/api",						// api base path
 	port: 6284,
 
 	debug: true,							// add stack trace & infos in errors
@@ -14,8 +15,11 @@ module.exports = {
 	publicsalt: 'i m not really important.',
 
 	redis: {
-		post: 6379,
-		host: '127.0.0.1'
+		port: 6379,
+		host: '127.0.0.1',
+		// password: '...my redis password...',
+		// database: ...0~15...
+		// options: {...other options...}
 	},
 
 	smtp: {
@@ -32,8 +36,6 @@ module.exports = {
 	},
 
 	plugins: [
-		'server.statistics',
-
 		/* --- only for oauth.io --- */
 		'server.auth',
 		'server.users',
@@ -42,7 +44,12 @@ module.exports = {
 		'server.payments',
 		'server.mailjet',
 		'server.wishlist',
-		'server.pricing'
+		'server.pricing',
+		'server.front',
 		/* ------------------------- */
+
+		//'server.tests',
+		'server.statistics',
+		'server.request'
 	]
 }

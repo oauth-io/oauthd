@@ -28,7 +28,7 @@ buildReply = (body, res) ->
 		if Buffer.isBuffer(body)
 			body = body.toString('base64')
 
-	if res.buildJsend ||
+	if res.buildJsend || res.buildJsend != false &&
 		not (res.statusStr == 'error' && body?.error && body?.error_description) &&
 		not (res.statusStr == 'success' && body?.access_token && body?.token_type)
 			result = status: res.statusStr
@@ -59,7 +59,12 @@ formatters =
 	'text/html; q=0.1': (req, res, body) ->
 		if body instanceof Error
 			if body instanceof check.Error || body instanceof restify.RestError
-				body = body.message
+				msg = body.message
+				if body.body? && Object.keys(body.body).length
+					msg += "<br/>"
+					for k,v of body.body
+						msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
+				body = msg
 			else
 				body = "Internal error"
 		body = body.toString()

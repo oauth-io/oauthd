@@ -1,0 +1,31 @@
+{
+  "name": "Asana",
+  "url": "https://app.asana.com/-",
+  "provider": "asana",
+  "oauth2": {
+    "authorize": {
+      "url": "/oauth_authorize",
+      "query": {
+        "client_id": "{client_id}",
+        "redirect_uri": "{{callback}}",
+        "state": "{{state}}",
+        "response_type": "code"
+      }
+    },
+    "access_token": {
+      "url": "/oauth_token",
+      "method": "post",
+      "query": {
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}",
+        "code": "{{code}}",
+        "grant_type": "authorization_code",
+        "redirect_uri": "{{callback}}"
+      }
+    },
+    "parameters": {
+      "client_id": "string",
+      "client_secret": "string"
+    }
+  }
+}

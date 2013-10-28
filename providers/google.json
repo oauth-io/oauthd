@@ -1,14 +1,42 @@
 {
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
-		"authorize": "/auth",
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id":"{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
 		"access_token": {
 			"url": "/token",
-			"method": "post"
+			"method": "post",
+			"extra": ["id_token"]
 		},
 		"request": {
 			"query": {
 				"oauth_token": "{{token}}"
+			}
+		},
+		"refresh": {
+			"url": "/token",
+			"method": "post",
+			"query": {
+				"refresh_token":"{{refresh_token}}",
+				"client_id":"{client_id}",
+				"client_secret":"{client_secret}",
+				"grant_type":"refresh_token"
+			}
+		},
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
 			}
 		},
 		"parameters": {
@@ -41,6 +69,7 @@
 					"https://www.googleapis.com/auth/apps.licensing": "Read/write access to License Manager API.",
 					"https://www.googleapis.com/auth/bigquery": "View and manage your data in Google BigQuery",
 					"https://www.googleapis.com/auth/coordinate.readonly": "View your Google Coordinate jobs",
+					"https://www.googleapis.com/auth/cloudprint": "View and manage your google cloud print data",
 					"https://www.googleapis.com/auth/coordinate": "View and manage your Google Maps Coordinate jobs",
 					"https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive",
 					"https://www.googleapis.com/auth/compute.readonly": "View your Google Compute Engine resources",
@@ -98,12 +127,21 @@
 					"https://docs.googleusercontent.com/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://spreadsheets.google.com/feeds/":"Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://www.googleapis.com/auth/apps.groups.migration":"Read and write access to Groups Migration API.",
+					"https://mail.google.com/":"The scope for IMAP and SMTP access",
 					"openid":"Access to your id",
 					"email":"Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
 					"profile":"Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
 				},
 				"cardinality": "*",
 				"separator": " ",
+				"type": "string"
+			},
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1",
 				"type": "string"
 			}
 		}

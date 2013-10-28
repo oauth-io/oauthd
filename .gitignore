@@ -1,5 +1,5 @@
-/node_modules/*
-!/node_modules/restify-oauth2-private
-out.log
-err.log
-forever.log
+/node_modules/
+/npm-debug.log
+/out.log
+/err.log
+/forever.log

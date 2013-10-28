@@ -11,9 +11,15 @@ exports.setup = (callback) ->
 
 	@on 'connect.callback', (data) =>
 		@db.timelines.addUse target:'co:' + data.status, (->)
+		@db.ranking_timelines.addScore 'p:co:' + data.status, id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co:' + data.status, id:app, (->)
 
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co', (->)
+		@db.ranking_timelines.addScore 'p:co', id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co', id:app, (->)
 
 	@userInvite = (iduser, callback) =>
 		prefix = 'u:' + iduser + ':'
@@ -33,7 +39,7 @@ exports.setup = (callback) ->
 					email: 'team@oauth.io'
 				subject: 'Validate your OAuth.io Beta account'
 				body: 'Welcome on OAuth.io Beta!\n\n
-In order to validate your email address, please click the following link: https://' + @config.url.host + '/#/validate/' + iduser + '/' + replies[1] + '.\n
+In order to validate your email address, please click the following link: https://' + @config.url.host + '/validate/' + iduser + '/' + replies[1] + '.\n
 Your feedback is über-important to us: it would help improve developer\'s life even more.\n\n
 So don\'t hesitate to reply to this email.\n\n
 Thanks for trying out OAuth.io beta!\n\n
@@ -50,11 +56,11 @@ OAuth.io Team'
 				@db.redis.set prefix+'validated', '2'
 				callback()
 
-	@server.post @config.base + '/api/adm/users/:id/invite', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/users/:id/invite', @auth.adm, (req, res, next) =>
 		@userInvite req.params.id, @server.send(res, next)
 
 	# get users list
-	@server.get @config.base + '/api/adm/users', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/users', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>
 			return next err if err
 			cmds = []
@@ -73,7 +79,7 @@ OAuth.io Team'
 				next()
 
 	# get app info with ID
-	@server.get @config.base + '/api/adm/app/:id', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/app/:id', @auth.adm, (req, res, next) =>
 		id_app = req.params.id
 		prefix = 'a:' + id_app + ':'
 		cmds = []
@@ -88,11 +94,11 @@ OAuth.io Team'
 			next()
 
 	# delete a user
-	@server.del @config.base + '/api/adm/users/:id', @auth.adm, (req, res, next) =>
+	@server.del @config.base_api + '/adm/users/:id', @auth.adm, (req, res, next) =>
 		@db.users.remove req.params.id, @server.send(res, next)
 
 	# get any statistics
-	@server.get new RegExp(@config.base + 'api/adm/stats/(.+)'), @auth.adm, (req, res, next) =>
+	@server.get new RegExp('^' + @config.base_api + '/adm/stats/(.+)'), @auth.adm, (req, res, next) =>
 		async.parallel [
 			(cb) => @db.timelines.getTimeline req.params[0], req.query, cb
 			(cb) => @db.timelines.getTotal req.params[0], cb
@@ -101,31 +107,83 @@ OAuth.io Team'
 			res.send total:r[1], timeline:r[0]
 			next()
 
-	# wishlist providers
-	@server.get @config.base + '/api/adm/wishlist', @auth.adm, (req, res, next) =>
-		@db.wishlist.getList @server.send(res, next)
+	# regenerate all private keys
+	@server.get @config.base_api + '/adm/secrets/reset', @auth.adm, (req, res, next) =>
+		@db.redis.hgetall 'a:keys', (e, apps) =>
+			return next e if e
+			mset = []
+			for k,id of apps
+				mset.push 'a:' + id + ':secret'
+				mset.push @db.generateUid()
+			@db.redis.mset mset, @server.send(res,next)
 
-	@server.del @config.base + '/api/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
+	# refresh rankings
+	@server.get @config.base_api + '/adm/rankings/refresh', @auth.adm, (req, res, next) =>
+		providers = {}
+		@db.redis.hgetall 'a:keys', (e, apps) =>
+			return next e if e
+			tasks = []
+			for k,id of apps
+				do (id) => tasks.push (cb) =>
+					@db.redis.keys 'a:' + id + ':k:*', (e, keysets) =>
+						return cb e if e
+						for keyset in keysets
+							prov = keyset.match /^a:.+?:k:(.+)$/
+							continue if not prov?[1]
+							providers[prov[1]] ?= 0
+							providers[prov[1]]++
+						@db.rankings.setScore 'a:k', id:id, val:keysets.length, cb
+			async.parallel tasks, (e) =>
+				return next e if e
+				for p,keysets of providers
+					@db.rankings.setScore 'p:k', id:p, val:keysets, (->)
+				res.send @check.nullv
+				next()
+
+	# get a ranking
+	@server.post @config.base_api + '/adm/ranking', @auth.adm, (req, res, next) =>
+		@db.ranking_timelines.getRanking req.body.target, req.body, @server.send(res, next)
+
+	# get a ranking related to apps
+	@server.post @config.base_api + '/adm/ranking/apps', @auth.adm, (req, res, next) =>
+		@db.ranking_timelines.getRanking req.body.target, req.body, (e, infos) =>
+			return next e if e
+			cmds = []
+			for info in infos
+				cmds.push ['get', 'a:' + info.name + ':name']
+				cmds.push ['smembers', 'a:' + info.name + ':domains']
+				# ... add more ? domains ? owner ?
+			@db.redis.multi(cmds).exec (e, r) ->
+				infos[i].name = r[i*2] + ' (' + r[i*2+1].join(', ') + ')' for i of infos
+				res.send infos
+				next()
+
+	# get provider list
+	@server.get @config.base_api + '/adm/wishlist', @auth.adm, (req, res, next) =>
+		@db.wishlist.getList full:true, @server.send(res, next)
+
+	@server.del @config.base_api + '/adm/wishlist/:provider', @auth.adm, (req, res, next) =>
 		@db.wishlist.remove req.params.provider, @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/wishlist/setStatus', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/wishlist/setStatus', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.body.provider, req.body.status , @server.send(res, next)
 
 	# plans
-	@server.post @config.base + '/api/adm/plan/create', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/plan/create', @auth.adm, (req, res, next) =>
 		@db.pricing.createOffer req.body, @server.send(res, next)
 
-	@server.get @config.base + '/api/adm/plan', @auth.adm, (req, res, next) =>
+	@server.get @config.base_api + '/adm/plan', @auth.adm, (req, res, next) =>
 		@db.pricing.getOffersList @server.send(res, next)
 
-	@server.del @config.base + '/api/adm/plan/:name', @auth.adm, (req, res, next) =>
+	@server.del @config.base_api + '/adm/plan/:name', @auth.adm, (req, res, next) =>
 		@db.pricing.removeOffer req.params.name, @server.send(res, next)
 
 
-#	@server.post @config.base + '/api/adm/plan/update/:amount/:name/:currency/:interval', @auth.adm, (req, res, next) =>
-#		@db.pricing.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
+	#@server.post @config.base_api + '/adm/plan/update/:amount/:name/:currency/:interval', @auth.adm, (req, res, next) =>
+	#	@db.pricing.updateOffer req.params.amount, req.params.name, req.params.currency, req.params.interval, @server.send(res, next)
 
-	@server.post @config.base + '/api/adm/plan/update', @auth.adm, (req, res, next) =>
+	@server.post @config.base_api + '/adm/plan/update', @auth.adm, (req, res, next) =>
 		@db.pricing.updateStatus req.body.name, req.body.currentStatus, @server.send(res, next)
+
 
 	callback()

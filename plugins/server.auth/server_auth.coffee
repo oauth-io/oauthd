@@ -6,7 +6,7 @@
 
 crypto = require 'crypto'
 restify = require 'restify'
-restifyOAuth2 = require 'restify-oauth2-private'
+restifyOAuth2 = require 'restify-oauth2-oauthd'
 shared = require '../shared'
 
 _config =

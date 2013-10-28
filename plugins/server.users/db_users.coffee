@@ -141,7 +141,7 @@ exports.updateAccount = (req, callback) ->
 							email: 'team@oauth.io'
 						subject: 'OAuth.io - You email address has been updated'
 						body: "Hello,\n\n
-In order to validate your new email address, please click the following link: https://" + config.url.host + "/#/validate/" + user_id + "/" + validation_key + ".\n
+In order to validate your new email address, please click the following link: https://" + config.url.host + "/validate/" + user_id + "/" + validation_key + ".\n
 
 --\n
 OAuth.io Team"

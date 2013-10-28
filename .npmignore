@@ -1,0 +1,6 @@
+/node_modules/
+/npm-debug.log
+/.npmignore
+/out.log
+/err.log
+/forever.log

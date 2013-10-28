@@ -33,7 +33,16 @@ sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
 	hmacsha1.update data
 	hmacsha1.digest "base64"
 
-exports.authorize = (provider, keyset, opts, callback) ->
+replace_param = (param, params, hard_params, keyset) ->
+	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+		return hard_params[val] || ""
+	return param.replace /\{(.*?)\}/g, (match, val) ->
+		return "" if ! params[val] || ! keyset[val]
+		if Array.isArray(keyset[val])
+			return keyset[val].join params[val].separator || ","
+		return keyset[val]
+
+exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
 	params[k] = v for k,v of provider.oauth1.parameters
@@ -46,26 +55,16 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		options:opts.options
 		expire:600
 	, (err, state) ->
-		replace_param = (param) ->
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url)
-			for apiname, apivalue of keyset
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
+		return callback err if err
 		request_token = provider.oauth1.request_token
 		query = {}
-		if typeof opts.options?.authorize == 'object'
-			query = opts.options.authorize
+		if typeof opts.options?.request_token == 'object'
+			query = opts.options.request_token
 		for name, value of request_token.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		options =
 			url: request_token.url
 			method: 'POST'
@@ -79,7 +78,7 @@ exports.authorize = (provider, keyset, opts, callback) ->
 		else
 			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
 		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, keyset.client_secret + '&', query)
+			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&', query)
 		else
 			return callback new check.Error 'Unknown signature method'
 		options.form = {}
@@ -124,10 +123,13 @@ exports.authorize = (provider, keyset, opts, callback) ->
 				return callback e if e
 				authorize = provider.oauth1.authorize
 				query = {}
+				if typeof opts.options?.authorize == 'object'
+					query = opts.options.authorize
 				for name, value of authorize.query
-					query[name] = replace_param value
-					if typeof query[name] != 'string'
-						return callback query[name]
+					param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
+					if typeof param != 'string'
+						return callback param
+					query[name] = param if param
 				query.oauth_token = body.oauth_token
 				url = authorize.url
 				url += "?" + querystring.stringify query
@@ -146,38 +148,31 @@ exports.access_token = (state, req, callback) ->
 		err.body.error = req.params.error if req.params.error
 		err.body.error_uri = req.params.error_uri if req.params.error_uri
 		return callback err
-	err = new check.Error
-	err.check req.params, oauth_token:'string', oauth_verifier:'string'
-	return callback err if err.failed()
 
 	# get infos from state
 	async.parallel [
 		(callback) -> dbproviders.getExtended state.provider, callback
 		(callback) -> dbapps.getKeyset state.key, state.provider, callback
 	], (err, res) ->
-		[provider, keyset] = res
+		return callback err if err
+		[provider, {parameters,response_type}] = res
+		err = new check.Error
+		if provider.oauth1.authorize.ignore_verifier == true
+			err.check req.params, oauth_token:'string'
+		else
+			err.check req.params, oauth_token:'string', oauth_verifier:'string'
+		return callback err if err.failed()
 		params = {}
 		params[k] = v for k,v of provider.parameters
 		params[k] = v for k,v of provider.oauth1.parameters
 
-		replace_param = (param) ->
-			param = param.replace(/\{\{state\}\}/g, state.id)
-			param = param.replace(/\{\{callback\}\}/g, config.host_url)
-			for apiname, apivalue of keyset
-				if params[apiname]
-					if Array.isArray(apivalue)
-						separator = params[apiname].separator
-						return new check.Error if not separator
-						apivalue = apivalue.join separator
-					param = param.replace("{" + apiname + "}", apivalue)
-			return param
-
 		access_token = provider.oauth1.access_token
 		query = {}
 		for name, value of access_token.query
-			query[name] = replace_param value
-			if typeof query[name] != 'string'
-				return callback query[name]
+			param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
+			if typeof param != 'string'
+				return callback param
+			query[name] = param if param
 		options =
 			url: access_token.url
 			method: 'POST'
@@ -186,13 +181,14 @@ exports.access_token = (state, req, callback) ->
 		query.oauth_timestamp = Math.floor new Date / 1000
 		query.oauth_version = "1.0"
 		query.oauth_token = req.params.oauth_token
-		query.oauth_verifier = req.params.oauth_verifier
+		if provider.oauth1.authorize.ignore_verifier != true
+			query.oauth_verifier = req.params.oauth_verifier
 		if not query.oauth_signature_method
 			query.oauth_signature_method = 'HMAC-SHA1'
 		else
 			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
 		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, keyset.client_secret + '&' + state.token, query)
+			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&' + state.token, query)
 		else
 			return callback new check.Error 'Unknown signature method'
 		options.form = {}
@@ -247,3 +243,59 @@ exports.access_token = (state, req, callback) ->
 				oauth_token: body.oauth_token
 				oauth_token_secret: body.oauth_token_secret
 				expires_in: expire
+				request: provider.oauth1.request
+
+exports.request = (provider, parameters, req, callback) ->
+	params = {}
+	params[k] = v for k,v of provider.parameters
+	params[k] = v for k,v of provider.oauth1.parameters
+
+	if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
+		return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
+
+	oauthrequest = provider.oauth1.request
+
+	options =
+		method: req.method
+		followAllRedirects: true
+
+	# build url
+	options.url = req.params[1]
+	if ! options.url.match(/^[a-z]{2,16}:\/\//)
+		if options.url[0] != '/'
+			options.url = '/' + options.url
+		options.url = oauthrequest.url + options.url
+
+	# build query
+	options.qs = {}
+	options.qs[name] = value for name, value of req.query
+	for name, value of oauthrequest.query
+		param = replace_param value, params, {}, parameters
+		if typeof param != 'string'
+			return callback param
+		options.qs[name] = param if param
+
+	options.oauth =
+		consumer_key: parameters.client_id
+		consumer_secret: parameters.client_secret
+		token: parameters.oauthio.oauth_token
+		token_secret: parameters.oauthio.oauth_token_secret
+
+	# build headers
+	options.headers =
+		accept:req.headers.accept
+		'accept-encoding':req.headers['accept-encoding']
+		'accept-language':req.headers['accept-language']
+		'content-type':req.headers['content-type']
+	for name, value of oauthrequest.headers
+		param = replace_param value, params, {}, parameters
+		if typeof param != 'string'
+			return callback param
+		options.headers[name] = param if param
+
+	# build body
+	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
+		options.body = req._body
+
+	# do request
+	callback null, request(options)

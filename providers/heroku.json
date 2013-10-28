@@ -1,0 +1,40 @@
+{
+  "href": {
+    "keys": "https://dashboard.heroku.com/account#api-clients",
+    "docs": "https://devcenter.heroku.com/articles/oauth",
+    "apps": "https://dashboard.heroku.com/account#authorized-applications",
+    "provider": "https://heroku.com/"
+  },
+  "api_url": "https://api.github.com/",
+  "url": "https://id.heroku.com/",
+  "oauth2": {
+    "authorize": "/oauth/authorize",
+    "access_token": {
+      "url": "/oauth/token",
+      "method": "post"
+    },
+    "request": {
+      "query": {
+        "access_token": "{{token}}"
+      }
+    },
+    "parameters": {
+      "client_secret": "string",
+      "client_id": "string",
+      "scope": {
+        "values": {
+          "global": "Read and write access to all of your account, apps and resources.",
+          "identity": "Read-only access to your account information.",
+          "read": "Read-only access to all of your apps and resources, excluding account information and configuration variables.",
+          "read-protected": "Read-only access to all of your apps and resources, excluding account information. Includes configuration variables, which may include runtime secrets.",
+          "write": "Read and write access to all of your apps and resources, excluding account information and configuration variables.",
+          "write-protected": "Read and write access to all of your apps and resources, excluding account information. Includes configuration variables, which may include runtime secrets."
+        },
+        "cardinality": "1",
+        "separator": " ",
+        "type": "string"
+      }
+    }
+  },
+  "name": "Heroku"
+}
