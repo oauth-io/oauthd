@@ -3,3 +3,9 @@
 /out.log
 /err.log
 /forever.log
+/plugins/server.*/*.js
+!/plugins/server.*/gruntConfig.js
+/lib/*.js
+.nodemonignore
+nohup.out
+config.local.js

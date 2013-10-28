@@ -18,10 +18,6 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "~0.1.2",
-    "grunt-contrib-watch": "~0.2.0",
-    "grunt": "~0.4.1"
   },
   "keywords": [],
   "directories": {
@@ -38,6 +34,10 @@
     "underscore": "~1.4.4",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-less": "~0.8.1",
+    "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
     "restify-oauth2-oauthd": "~2.1.0",
     "paymill-node": "0.0.4"
