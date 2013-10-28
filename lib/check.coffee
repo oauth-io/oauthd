@@ -89,7 +89,7 @@ class CheckError extends Error
 		return _check name, arg, @body if arguments.length == 2 # args=name, format=arg
 		o = {}; f = {}
 		o[name] = arg; f[name] = format
-		_check o, f, @body
+		return _check o, f, @body
 	error: (name, message) ->
 		if arguments.length == 1
 			@message = name
@@ -97,7 +97,8 @@ class CheckError extends Error
 		else
 			@body[name] = message
 			@status = "fail"
-	failed: -> Object.keys(@body).length || @status == "error"
+		return
+	failed: -> return Object.keys(@body).length || @status == "error"
 
 
 # Exports
