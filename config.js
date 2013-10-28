@@ -43,3 +43,8 @@ module.exports = {
 		'server.request'
 	]
 }
+if (require('fs').existsSync(__dirname + '/config.local.js')) {
+	var override = require('./config.local.js');
+	for (var i in override)
+		module.exports[i] = override[i];
+}
