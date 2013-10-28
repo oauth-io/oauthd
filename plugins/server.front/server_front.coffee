@@ -50,21 +50,21 @@ bootPathCache = (opts) ->
 	return chain
 
 init = (callback) ->
-	fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) ->
+	fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) =>
 		callback err if err
-		cache.index = data
+		cache.index = data.toString().replace /\{\{config\.([a-zA-Z0-9]+)\}\}/g, (m,prop) => @config[prop]
 		callback()
 
 exports.setup = (callback) ->
-	init (e) =>
+	init.call @, (e) =>
 		console.error 'error', e if e
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
-			data = data.toString().replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.toString().replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
 			res.end data
 			next()
 

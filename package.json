@@ -39,6 +39,7 @@
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-nodeunit": "~0.1.2",
     "grunt": "~0.4.1",
-    "restify-oauth2-oauthd": "~2.1.0"
+    "restify-oauth2-oauthd": "~2.1.0",
+    "paymill-node": "0.0.4"
   }
 }

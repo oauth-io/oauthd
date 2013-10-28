@@ -1,5 +1,5 @@
-IndexCtrl = ($scope, $location, UserService, MenuService)->
-	$location.ga_skip = true;
+#IndexCtrl = ($scope, $location, UserService, MenuService)->
+	#$location.ga_skip = true;
 	# if $location.path() == '/'
 		# if UserService.isLogin()
 		# 	$location.path('/key-manager').replace()
@@ -15,7 +15,7 @@ LogoutCtrl = ($location, UserService, MenuService) ->
 ###########################
 # Landing page Controller #
 ###########################
-LandingCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
+IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 	MenuService.changed()
 	# if UserService.isLogin()
 	# 	$location.path '/key-manager'
@@ -38,7 +38,7 @@ LandingCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) -
 
 
 	$scope.demoFbConnect = () ->
-		OAuth.initialize 'ZjsbIbKdkuw5fmEkBHDZfUqEadY'
+		OAuth.initialize window.demoKey
 		OAuth.popup 'facebook', (err, res) ->
 			if err
 				alert JSON.stringify err
@@ -1096,6 +1096,9 @@ AboutCtrl = (UserService, MenuService) ->
 HelpCtrl = (UserService, MenuService) ->
 	MenuService.changed()
 
+PricingCtrl = (UserService, MenuService) ->
+	MenuService.changed()
+
 NotFoundCtrl = ($scope, $routeParams, UserService, MenuService) ->
 	MenuService.changed()
 	$scope.errorGif = '/img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'
@@ -1130,7 +1133,6 @@ InspectorCtrl = (UserService, ProviderService, AppService, KeysetService, OAuthI
 		"keyset.remove"
 		"contact"
 	]
-
 
 	window.provider =
 		list: ->
@@ -1274,7 +1276,6 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 			console.log error
 
 PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, PaymentService, PricingService, MenuService, CartService) ->
-
 	MenuService.changed()
 
 	if not UserService.isLogin()
@@ -1838,4 +1839,3 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 			cardholder: $('.card-holdername').val()
 
 		return params
-

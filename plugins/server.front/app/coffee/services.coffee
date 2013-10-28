@@ -97,7 +97,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 			$cookieStore.remove 'accessToken'
 			if (success)
 				success()
-
 	}
 
 

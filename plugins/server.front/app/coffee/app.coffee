@@ -49,15 +49,15 @@ app.config([
 			controller: 'PricingCtrl'
 
 		$routeProvider.when '/payment/customer',
-			templateUrl: 'templates/payment.html'
+			templateUrl: '/templates/payment.html'
 			controller: 'PaymentCtrl'
 
 		$routeProvider.when '/payment/confirm',
-			templateUrl: 'templates/payment-confirm.html'
+			templateUrl: '/templates/payment-confirm.html'
 			controller: 'PaymentCtrl'
 
 		$routeProvider.when '/payment/:name/success',
-			templateUrl: 'templates/successpayment.html'
+			templateUrl: '/templates/successpayment.html'
 			controller: 'PaymentCtrl'
 
 		$routeProvider.when '/editor',
@@ -89,7 +89,7 @@ app.config([
 			controller: 'UserFormCtrl'
 
 		$routeProvider.when '/profile',
-			templateUrl: 'templates/user-profile.html'
+			templateUrl: '/templates/user-profile.html'
 			controller: 'UserProfileCtrl'
 
 		$routeProvider.when '/logout',

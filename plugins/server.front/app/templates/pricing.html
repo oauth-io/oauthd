@@ -30,7 +30,7 @@
 			<div class="col col-lg-3">
 				<div class="panel">
 					<div class="panel-heading">
-						<img src="img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="!current_plan && UserService.isLogin()"/>
+						<img src="/img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="!current_plan && UserService.isLogin()"/>
 						<h3 style="font-weight: bold; text-align: center">Free</h3>
 						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">0$</h1>
 						<p class="text-muted" style="text-align: center">per month</p>
@@ -50,7 +50,7 @@
 			<div class="col col-lg-3" ng-repeat="plan in plans | orderBy:'+amount'">
 				<div class="panel">
 					<div class="panel-heading">
-						<img src="img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="plan.name == current_plan"/>
+						<img src="/img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="plan.name == current_plan"/>
 						<h3 style="font-weight: bold; text-align: center">{{plan.name|capitalize}}</h3>
 						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">{{plan.amount/100}}$</h1>
 						<p class="text-muted" style="text-align: center">per {{plan.interval}}</p>
