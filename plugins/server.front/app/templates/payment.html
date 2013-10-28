@@ -1,0 +1,259 @@
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.no-responsive.no-icons.min.css" />
+
+<style>
+.field *
+{
+  font-size: 1.2em;
+}
+
+.field
+{
+  float: left;
+  margin-right: 5px;
+}
+
+.break
+{
+  clear:both;
+}
+
+</style>
+
+
+<div class="container" >
+  <div style="background-color:#ffffff;padding:40px;text-align:center;">
+
+  </div>
+  <div style="background-color: #cbe7f9;padding:30px 0px 30px 0px;">
+    <div class="container" style="text-align:center;">
+      <p style="font-size:2.1em">You chose the <b style="font-size:1.2em">{{cart.plan_name}} pack</b> for <span style="font-size:1.2em">${{cart.unit_price}} / month</p>
+      <div class="row">
+        <p class="offset4" style="position:relative;font-size:1.2em;top:0px;left:7px;">(plus VAT if applicable)</p>
+      </div>
+    </div>
+  </div>
+  <div style="background-color:#ffffff;padding:20px;">
+
+    <div style="width:600px; margin: 0 auto;">
+
+      <p style="font-size:2em;color:#0074a2;border-bottom: 1px solid #cbe7f9;padding-bottom:10px;">Information about
+        <span ng-show="profile.type == 'company'">your company</span>
+        <span ng-show="profile.type == 'individual'">you</span>
+      </p>
+
+      <font color="red" >* fields are required </font></br></br>
+
+      <p style="font-size:1.5em;margin-bottom: 20px;">
+        <input type="radio" name="profile_type" ng-model="profile.type" ng-change="updateType()"value="individual">Individual
+        <input type="radio" name="profile_type" ng-model="profile.type" ng-change="updateType()" value="company">Company
+      </p>
+
+      <!-- Company -->
+      <p class="field" ng-show="profile.type == 'company'">
+        <label for="profile_company">Company name <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.company" name="profile_company" id="profile_company" class="span4"  ng-required="true"/>
+      </p>
+
+      <!-- VAT -->
+      <div id="vatNumber">
+      <p class="field"  ng-show="profile.type == 'company'">
+        <label for="profile_vat">VAT number <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.vat_number" name="profile_vat_number" class="span4" id="profile_vat_number" />
+      </p>
+    </div>
+
+
+      <div class="break"></div>
+
+      <!-- Name -->
+      <p class="field">
+        <label for="profile_name">Last name and first name <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.name" name="profile_name" ng-required="true" id="profile_name"  class="span4" />
+      </p>
+
+      <!-- email -->
+      <p class="field">
+        <label for="profile_mail">Email <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.mail" name="profile_mail" ng-required="true" id="profile_mail"  class="span4" />
+      </p>
+
+      <!-- @ line 1 -->
+      <p class="field">
+        <label for="profile_addr_one">Address line 1 <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.addr_one" name="profile_addr_one" class="span4" ng-required="true" id="profile_addr_one"/>
+      </p>
+
+      <!-- @ line 2 -->
+      <p class="field">
+        <label for="profile_addr_second">Address line 2 (Optional)</label>
+        <input type="text" ng-model="profile.addr_second" name="profile_addr_second" class="span4" />
+      </p>
+
+      <div class="break"></div>
+
+      <!-- country -->
+      <p class="field">
+        <label for="profile_countryc_code">Country <font color="red" >*</font></label>
+        <select ng-model="profile.country_code" ng-options="c.code as c.name for c in countries" name="profile_country_code" ng-change="updateCountry()" ng-required="true" id="profile_country_code" />
+      </p>
+
+      <!-- zipcode -->
+      <p class="field">
+        <label for="profile_zipcode">Zipcode <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.zipcode" name="profile_zipcode" class="span2" ng-required="true" id="profile_zipcode"/>
+      </p>
+
+      <p>
+        <!-- city -->
+        <label for="profile_city">City <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.city" name="profile_city" ng-required="true" id="profile_city"/>
+
+      </p>
+
+      <div class="break"></div>
+
+      <!-- state -->
+      <div id="State">
+      <p class="field">
+        <label for="profile_state">State <font color="red" >*</font></label>
+        <input type="text" ng-model="profile.state" name="profile_state" class="span4" id="profile_state" ng-required="true"/>
+      </p>
+    </div>
+
+
+      <!-- phone number -->
+      <p class="field">
+        <label for="profile_phone">Phone number</label>
+        <input type="text" ng-model="profile.phone" name="profile_phone" class="span4" />
+      </p>
+
+      <div class="break"></div>
+
+      <br />
+
+<!--
+
+  Billing information
+
+-->
+
+<p style="font-size:2em;color:#0074a2;border-bottom: 1px solid #cbe7f9;padding-bottom:10px;">Billing address - <span style="font-size:0.8em;"> ( <input type="checkbox" /ng-model="profile.use_profile_for_billing" ng-click="handleBillingAddress()"> Use my {{profile.type}} address )</span></p>
+
+<div ng-show="!profile.use_profile_for_billing">
+
+  <p style="font-size:1.5em;margin-bottom: 20px;">
+    <input type="radio" name="billing_type" ng-model="billing.type" ng-change="updateBillingType()" value="individual">Individual
+    <input type="radio" name="billing_type" ng-model="billing.type" ng-change="updateBillingType()" value="company">Company
+  </p>
+
+  <p class="field" ng-show="billing.type == 'company'">
+    <label for="billing_company">Company name <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.company" name="billing_company" id="billing_company" class="span4" ng-required="true" />
+  </p>
+
+  <!-- VAT -->
+  <div id="BillingvatNumber">
+  <p class="field" ng-show="billing.type == 'company'">
+    <label for="billing_vat">VAT number <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.vat_number" name="billing_vat_number" class="span4" id="billing_vat_number" ng-required="true"/>
+  </p>
+</div>
+
+  <div class="break"></div>
+
+  <!-- Name -->
+  <p class="field">
+    <label for="billing_name">Lastname and Firstname <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.name" name="billing_name" class="span4" id="billing_name" ng-required="true" />
+  </p>
+
+  <!-- email -->
+  <p class="field">
+    <label for="billing_mail">Email <font color="red" >*</font> </label>
+    <input type="text" ng-model="billing.mail" name="billing_mail" id="billing_mail" class="span4" ng-required="true" />
+  </p>
+
+  <div class="break"></div>
+
+  <!-- @ line 1 -->
+  <p class="field">
+    <label for="billing_addr_one">Address line 1 <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.addr_one" name="billing_addr_one" class="span4" id="billing_addr_one" ng-required="true" />
+  </p>
+
+  <!-- @ line 2 -->
+  <p class="field">
+    <label for="billing_addr_second">Address line 2 (Optional)</label>
+    <input type="text" ng-model="billing.addr_second" name="billing_addr_second" class="span4" />
+  </p>
+
+  <div class="break"></div>
+
+  <!-- country -->
+  <p class="field">
+    <label for="billing_country_code">Country <font color="red" >*</font></label>
+    <select ng-model="billing.country_code" ng-options="c.code as c.name for c in countries" name="billing_country_code" ng-change="billingUpdateCountry()" id="billing_country_code" ng-required="true"/>
+  </p>
+
+  <!-- zipcode -->
+  <p class="field">
+    <label for="billing_zipcode">Zipcode <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.zipcode" name="billing_zipcode" class="span2" id="billing_zipcode" ng-required="true"/>
+  </p>
+
+  <p>
+    <!-- city -->
+    <label for="billing_city">City <font color="red" >*</font></label>
+    <input type="text" ng-model="billing.city" name="billing_city" id="billing_city" ng-required="true" />
+
+  </p>
+
+  <div class="break"></div>
+
+  <!-- state -->
+  <div id="BillingState">
+  <p class="field">
+    <label for="billing_state">State </label>
+    <input type="text" ng-model="billing.state" name="billing_state" class="span4" id="billing_state" ng-required="true" />
+  </p>
+</div>
+
+
+  <!-- phone number -->
+  <p class="field">
+    <label for="billing_phone">Phone number </label>
+    <input type="text" ng-model="billing.phone" name="billing_phone" class="span4" />
+  </p>
+
+  <div class="break"></div>
+</div>
+
+<br />
+
+
+<div class="alert alert-danger" ng-show="error.state">
+  {{error.message}}
+</div>
+
+</div>
+
+</div>
+
+<div style="background-color: #0074a2;padding:50px;">
+  <div class="container" style="text-align:center;">
+
+    <div class="row">
+      <p style="font-size:3em;color:#ffffff;">Subscribe me to the {{cart.plan_name}} pack
+        <a ng-click="process_billing()" id="bt-payment" style="border: 2px solid #ffffff;border-radius:4px;background-color:#cbe7f9; width:300px;padding:10px;margin:10px;color:black;text-decoration:none;font-size:0.8em;cursor:pointer;">Continue</a>
+        <img src="/img/ajax-loader-payment.gif" id="waiting-payment" style="display:none;" />
+      </p>
+    </div>
+
+</div>
+</div>
+
+<div style="background-color:#ffffff;padding:20px;text-align:center;">
+  <img src="img/paymill-logo.png" width="96"/>
+</div>
+
+</div>

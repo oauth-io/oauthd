@@ -1,0 +1,22 @@
+<div class="container">
+	<div class="row">
+		<div class="input-group col col-lg-12">
+			<span class="input-group-addon">
+				<i class="glyphicon glyphicon-search"></i>
+			</span>
+			<input type="text" class="search-provider" ng-model="query" ng-change="queryChange(query)" >
+		</div>
+	</div>
+	<div class="row">
+		<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
+			<li ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers">
+				<a style="padding: 10px 20px">
+					<img style="margin-left: 10px" class="pull-right" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em"><span style="position: relative; top: 2px">{{provider|capitalize}}</span></span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="row">
+		<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
+	</div>
+</div>

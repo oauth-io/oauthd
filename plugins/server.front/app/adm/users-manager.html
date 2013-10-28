@@ -1,0 +1,544 @@
+<script type="text/javascript">
+$('#navTab a').click(function (e) {
+  e.preventDefault();
+  $(this).tab('show');
+})
+
+</script>
+
+<div class="container" ng-init="tabShow = 'home'">
+
+	<div class="row">
+		<ul class="nav nav-tabs" id="navTab">
+			<li ng-class="{active: tabShow == 'home'}"><a ng-click="tabShow = 'home'">Home</a></li>
+			<li ng-class="{active: tabShow == 'users'}"><a ng-click="tabShow = 'users'">Users</a></li>
+			<li ng-class="{active: tabShow == 'apps'}"><a ng-click="tabShow = 'apps'">Apps</a></li>
+			<li ng-class="{active: tabShow == 'providers'}"><a ng-click="tabShow = 'providers'">Providers</a></li>
+			<li ng-class="{active: tabShow == 'stats'}"><a ng-click="tabShow = 'stats'">Stats</a></li>
+			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
+			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
+			<li ng-class="{active: tabShow == 'payment'}"><a ng-click="tabShow = 'payment'">Payment</a></li>
+		</ul>
+	</div>
+
+	<div class="tab-content" style="padding-top:20px;">
+
+		<!-- home -->
+		<div ng-show="tabShow == 'home'">
+			<div class="col col-lg-4">
+				<h3>Force updates:</h3>
+				<form ng-submit="mailjetUpdate()">
+					<button class="col" type="submit">Force mailjet contacts update</button>
+				</form>
+				<form ng-submit="rankingsUpdate()">
+					<button class="col" type="submit">Force rankings update</button>
+				</form>
+				<form ng-submit="resetSecrets()">
+					<button class="col" type="submit">Reset all secret keys</button>
+				</form>
+			</div>
+		</div>
+
+		<!-- users -->
+		<div ng-show="tabShow == 'users'">
+			<div class="col col-lg-12">
+				<div class="row">
+					<div class="input-group col col-lg-12">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="query.email" ng-change="queryChange()" >
+					</div>
+					<div class="col col-lg-12">
+						<div class="alert alert-error" ng-show="info.status == 'error'">{{info.message}}</div>
+					</div>
+				</div>
+
+				<div class="row" style="margin-top: 10px;">
+					<table class="table table-striped">
+						<tr>
+							<th>#</th>
+							<th>Email</th>
+							<th>Created at</th>
+							<th colspan="3" style="text-align:center;">Action</th>
+						</tr>
+						<tr ng-repeat="user in filtered | startFrom:(pagination.current-1)* pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="users">
+							<td>{{user.id}}</td>
+							<td>{{user.email}}</td>
+							<td style="min-width:250px;width:250px;">{{user.date_inscr|date:'MMMM d, yyyy'}}</td>
+							<td>
+								<button ng-show="user.validated == '0'" class="btn btn-small btn-success" ng-click="sendRequest(user)">Invite</button>
+								<button ng-show="user.validated == '2'" class="btn btn-small btn-warning" ng-click="sendRequest(user)">Reinvite</button>
+							</td>
+							<td>
+								<a href="#myModal" role="button" class="btn btn-small btn-primary" data-toggle="modal" ng-click="getUserDetails(user)">Details</a>
+							</td>
+							<td>
+								<button ng-click="removeUser(user)" class="btn btn-danger btn-small">remove</button>
+							</td>
+						</tr>
+					</table>
+
+					<div class="row">
+						<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
+					</div>
+					<button ng-hide="nbUnvalidatedUser == 0" ng-click="inviteAllUsers()" class="btn btn-success">Invite 20 next users</button><span style="position: relative; left: 20px">unvalidated: {{nbUnvalidatedUser}}</span><hr />
+				</div>
+			</div>
+		</div>
+
+		<!-- stats -->
+		<div ng-show="tabShow == 'stats'">
+
+			<div class="col col-lg-12">
+				<form ng-submit="chartSubmit()">
+					<div class="row">
+						<input class="col" type="text" ng-model="chart.stat" value="users"/>
+						<select class="col" ng-model="chart.stat" ng-change="chartSubmit()">
+							<option value="users">users</option>
+							<option value="u:login">users sign in</option>
+							<option value="apps">apps</option>
+							<option value="keysets">keysets</option>
+							<option value="co">connections</option>
+							<option value="co:success">connections success</option>
+							<option value="co:error">connections fails</option>
+							<option value="co:p:facebook">facebook connections</option>
+							<option value="co:p:facebook:success">facebook connections success</option>
+							<option value="co:p:facebook:error">facebook connections fails</option>
+							<option value="p:facebook:keysets">facebook keysets</option>
+							<option value="co:a:AN APP KEY">an app connections</option>
+							<option value="co:a:AN APP KEY:success">an app connections success</option>
+							<option value="co:a:AN APP KEY:error">an app connections fails</option>
+							<option value="a:AN APP KEY:keysets">an app keysets</option>
+							<option value="co:a:AN APP KEY:p:facebook">an app facebook connections</option>
+							<option value="co:a:AN APP KEY:p:facebook:success">an app facebook connections success</option>
+							<option value="co:a:AN APP KEY:p:facebook:error">an app facbeook connections fails</option>
+						</select>
+						<select ng-model="chart.day" ng-change="chartSubmit()">
+							<option value="1">1 day</option>
+							<option value="3">3 days</option>
+							<option value="15">15 days</option>
+							<option value="31">1 month</option>
+							<option value="92">3 month</option>
+							<option value="183">6 month</option>
+						</select>
+						<button class="col" type="submit">Search</button>
+					</div>
+				</form>
+				<h4><strong>Total:</strong> {{chart.total}}</h4>
+				<div class="row" style="margin-top: 10px;">
+					<canvas id="chartCanevas" width="1000" height="400"></canvas>
+				</div>
+			</div>
+		</div>
+
+		<!-- wishlist -->
+		<div ng-show="tabShow == 'wishlist'">
+
+			<div class="col col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col col-lg-12">
+
+				<div class="row">
+					<div class="input-group col col-lg-12">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="query.name" ng-change="wishListQueryChange(query)" >
+					</div>
+				</div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Name</th>
+						<th>Status</th>
+						<th>Count</th>
+						<th colspan="5">Actions</th>
+					</tr>
+					<tr ng-repeat="provider in wishListFiltered | orderBy:['-count','+name'] | startFrom:(wishListPagination.current-1)*wishListPagination.nbPerPage | limitTo:wishListPagination.nbPerPage" ng-model="providers">
+						<td><img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{provider.name}}/logo">{{provider.name|capitalize}}</td>
+						<td>{{provider.status}}</td>
+						<td>{{provider.count}}</td>
+						<td>
+							<button ng-show="provider.status != 'asked'" class="btn btn-small btn-success" ng-click="setProviderStatus(provider, 'asked')">Asked</button>
+						</td>
+						<td>
+							<button ng-show="provider.status != 'spam'" class="btn btn-danger btn-small" ng-click="setProviderStatus(provider, 'spam')">Spam</button>
+						</td>
+						<td>
+							<button ng-show="provider.status != 'non-oauth'" class="btn btn-danger btn-small" ng-click="setProviderStatus(provider, 'non-oauth')">Non-oauth</button>
+						</td>
+						<td>
+							<button ng-show="provider.status != 'dev'" class="btn btn-small btn-warning" ng-click="setProviderStatus(provider, 'dev')">Dev</button>
+						</td>
+						<td>
+							<button ng-show="provider.status != 'release'" class="btn btn-small btn-primary" ng-click="setProviderStatus(provider, 'release')">Release</button>
+						</td>
+						<td>
+							<button ng-click="removeProvider(provider)" class="btn btn-danger btn-small">remove</button>
+						</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="wishListPagination.nbPages" current-page="wishListPagination.current" max-size="wishListPagination.max"></pagination>
+				</div>
+			</div>
+
+		</div>
+
+		<!-- payment -->
+		<div ng-show="tabShow == 'payment'">
+
+			<div class="navbar">
+				<ul class="nav nav-tabs" id="payment-navTab">
+					<li ng-class="{active: pay_tabShow == 'plans'}">
+						<a ng-click="pay_tabShow = 'plans'">Plans</a>
+					</li>
+					<li ng-class="{active: pay_tabShow == 'subscriptions'}">
+						<a ng-click="pay_tabShow = 'subscriptions'">Subscriptions</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tab-content">
+				<div ng-show="pay_tabShow == 'plans'">
+					<div class="col col-lg-12">
+						<div class="alert alert-error" id="errors" ng-show="info.status">{{error}}</div>
+					</div>
+
+					<table class="table table-striped">
+						<tr>
+							<th>Name</th>
+							<th>Amount</th>
+							<th>Interval</th>
+							<th>Status</th>
+							<th>Connection's number</th>
+							<th colspan="2"></th>
+						</tr>
+						<tr ng-repeat="offer in offersList | orderBy:'+name'" ng-model="offers">
+							<td ng-show="!offer.parent">{{offer.name}}</td>
+							<td ng-show="offer.parent">|__<span style="padding-left: 15px;">{{offer.name}}</span></td>
+							<td>{{offer.amount / 100}}</td>
+							<td>{{offer.interval}}</td>
+							<td>{{offer.status}}</td>
+							<td>{{offer.nbConnection}}</td>
+							<td>
+								<button ng-show="offer.status != 'public' && !offer.parent" class="btn btn-small btn-success" ng-click="changeStatus(offer)">Change to public</button>
+								<button ng-show="offer.status != 'private' && !offer.parent" class="btn btn-small btn-warning" ng-click="changeStatus(offer)">Change to private</button>
+							</td>
+							<td>
+								<button ng-click="removeOffer(offer)" class="btn btn-danger btn-small" ng-show="!offer.parent">remove</button>
+							</td>
+						</tr>
+					</table>
+
+					<div id="createFormButton">
+						<button class="btn btn-small btn-primary" ng-click="showCreateForm()">Create a new Offer</button>
+					</div>
+
+					<div id="create-offer-form" style="width:500px;">
+
+						<div class="controls controls-row">
+							<div class="span2">
+								<label class="name-label">Name</label>
+								<input class="name span2" type="text" size="10" value="Offer"/>
+							</div>
+
+							<div class="controls controls-row">
+								<div class="span2">
+									<label class="amount-label">Amount</label>
+								  <!--
+								   <input class="amount span2" type="number" size="10" value="4200"/> -->
+								<input class="amount span2" type="number" name="price" pattern="[0-9]+([\.|,][0-9]+)?" step="0.01" title="This should be a number with up to 2 decimal places." size="10" value="42.00">
+
+								</div>
+							</div>
+
+							<div class="controls controls-row">
+								<div class="span3">
+									<label class="currency-label">Currency ( <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> formatted currency code  )</label>
+									<input class="currency span3" type="text" size="4" value="EUR"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="interval-label">Interval (Defining how often the client should be charged. Format: number DAY|WEEK|MONTH|YEAR Example: 2 DAY) </label>
+							   <!--  <input class="interval span1" type="text" size="10" value="1 MONTH"/> -->
+								<select class="interval span1" name="interval" ng-model="interval" ng-selected="interval" ng-options="interval for interval in intervals">
+								</select>
+
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="nbConnection-label">Connection number (up to how many connection for the offer) </label>
+								<input class="nbConnection span1" type="text" size="10" value="1000"/>
+							</div>
+						</div>
+
+						<input class="status span4" type="checkbox" name="Private" value="private" checked> private<br>
+
+						<div id="CreateForm">
+							<div class="controls controls-row">
+								<div class="span4">
+									<button class="btn btn-small btn-primary" ng-click="createOffer(intervals)">Create</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div ng-show="pay_tabShow == 'subscriptions'">
+					sub
+				</div>
+
+			</div>
+		</div>
+
+		<!-- rankings -->
+		<div ng-show="tabShow == 'rankings'">
+			<div class="col col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col col-lg-12">
+				<div class="navbar">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">
+								Selection<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a ng-click='setRankingTarget("a:k")'>Apps -> keys</a></li>
+								<li><a ng-click='setRankingTarget("a:co")'>Apps -> auth</a></li>
+								<li><a ng-click='setRankingTarget("a:co:success")'>Apps -> auth success</a></li>
+								<li><a ng-click='setRankingTarget("a:co:error")'>Apps -> auth errors</a></li>
+								<li class="divider"></li>
+								<li><a ng-click='setRankingTarget("p:k")'>Providers -> keys</a></li>
+								<li><a ng-click='setRankingTarget("p:co")'>Providers -> auth</a></li>
+								<li><a ng-click='setRankingTarget("p:co:success")'>Providers -> auth success</a></li>
+								<li><a ng-click='setRankingTarget("p:co:error")'>Providers -> auth errors</a></li>
+							</ul>
+						</li>
+						<li>
+							<ul class="nav nav-tabs">
+								<li><a data-toggle="tab" ng-click='setRankingUnit("d")'>Day</a></li>
+								<li><a data-toggle="tab" ng-click='setRankingUnit("w")'>Week</a></li>
+								<li><a data-toggle="tab" ng-click='setRankingUnit("m")'>Month</a></li>
+								<li class="active"><a data-toggle="tab" ng-click='setRankingUnit("")'>All</a></li>
+							</ul>
+						</li>
+					</ul>
+
+				</div>
+
+				<div class="col col-lg-8"><h3>{{ranking.target_names[ranking.target]}} ({{ranking.unit_names[ranking.unit]}})</h3></div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Infos</th>
+						<th>Count</th>
+					</tr>
+						<tr ng-repeat="rank in ranksFiltered | orderBy:['-score','+name'] | startFrom:(ranksPagination.current-1)*ranksPagination.nbPerPage | limitTo:ranksPagination.nbPerPage">
+						<td>
+							<ng-switch on="ranking.type">
+								<span ng-switch-when="provider">
+									<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{rank.name}}/logo">{{rank.name|capitalize}}
+								</span>
+								<span ng-switch-default>
+									{{rank.name|capitalize}}
+								</span>
+							</ng-switch>
+						</td>
+						<td>{{rank.score}}</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="ranksPagination.nbPages" current-page="ranksPagination.current" max-size="ranksPagination.max"></pagination>
+				</div>
+
+			</div>
+		</div>
+
+
+		<!-- providers -->
+		<div ng-show="tabShow == 'providers'">
+			<div class="col col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col col-lg-12">
+				<div class="row">
+					<div class="col col-lg-1">Provider</div>
+					<div class="input-group col col-lg-11">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="providerQuery.name" ng-change="providerQueryChange()" typeahead="provider for provider in providers | filter:providerQuery.name" >
+					</div>
+				</div>
+				<div class="navbar">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">
+								Selection<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a ng-click='setProviderRankingTarget("p:auth_array:[provider]")'>Scopes auth</a></li>
+								<li><a ng-click='setProviderRankingTarget("p:auth_array:[provider]:success")'>Scopes auth success</a></li>
+								<li><a ng-click='setProviderRankingTarget("p:auth_array:[provider]:error")'>Scopes auth errors</a></li>
+							</ul>
+						</li>
+						<li>
+							<ul class="nav nav-tabs">
+								<li><a data-toggle="tab" ng-click='setProviderRankingUnit("d")'>Day</a></li>
+								<li><a data-toggle="tab" ng-click='setProviderRankingUnit("w")'>Week</a></li>
+								<li><a data-toggle="tab" ng-click='setProviderRankingUnit("m")'>Month</a></li>
+								<li class="active"><a data-toggle="tab" ng-click='setProviderRankingUnit("")'>All</a></li>
+							</ul>
+						</li>
+					</ul>
+
+				</div>
+
+				<div class="col col-lg-8"><h3>
+					<span>
+						<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{provider_ranking.name}}/logo">{{provider_ranking.name|capitalize}}
+					</span> - {{provider_ranking.target_names[provider_ranking.target]}} ({{ranking.unit_names[provider_ranking.unit]}})
+				</h3></div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Infos</th>
+						<th>Count</th>
+					</tr>
+						<tr ng-repeat="rank in providerFiltered | orderBy:['-score','+name'] | startFrom:(providerPagination.current-1)*providerPagination.nbPerPage | limitTo:providerPagination.nbPerPage">
+						<td>{{rank.name}}</td>
+						<td>{{rank.score}}</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="providerPagination.nbPages" current-page="providerPagination.current" max-size="providerPagination.max"></pagination>
+				</div>
+
+			</div>
+		</div>
+
+
+		<!-- apps -->
+		<div ng-show="tabShow == 'apps'">
+			<div class="col col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col col-lg-12">
+				<div class="row">
+					<div class="col col-lg-1">App's key</div>
+					<div class="input-group col col-lg-11">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="appQuery.key" ng-change="appQueryChange()">
+					</div>
+				</div>
+				<div class="row">
+					<div class="col col-lg-1">Provider</div>
+					<div class="input-group col col-lg-11">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="providerAppQuery.name" ng-change="providerAppQueryChange()" typeahead="provider for provider in providers | filter:providerAppQuery.name" >
+					</div>
+				</div>
+				<div class="navbar">
+					<ul class="nav navbar-nav">
+						<li class="dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown">
+								Selection<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a ng-click='setAppRankingTarget("a:auth_array:[app]:p:[provider]")'>Scopes auth</a></li>
+								<li><a ng-click='setAppRankingTarget("a:auth_array:[app]:p:[provider]:success")'>Scopes auth success</a></li>
+								<li><a ng-click='setAppRankingTarget("a:auth_array:[app]:p:[provider]:error")'>Scopes auth errors</a></li>
+							</ul>
+						</li>
+						<li>
+							<ul class="nav nav-tabs">
+								<li><a data-toggle="tab" ng-click='setAppRankingUnit("d")'>Day</a></li>
+								<li><a data-toggle="tab" ng-click='setAppRankingUnit("w")'>Week</a></li>
+								<li><a data-toggle="tab" ng-click='setAppRankingUnit("m")'>Month</a></li>
+								<li class="active"><a data-toggle="tab" ng-click='setAppRankingUnit("")'>All</a></li>
+							</ul>
+						</li>
+					</ul>
+
+				</div>
+
+				<div class="col col-lg-8"><h3>
+					<span>
+						<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{app_ranking.name}}/logo">{{app_ranking.name|capitalize}}
+					</span> - {{app_ranking.target_names[app_ranking.target]}} ({{ranking.unit_names[app_ranking.unit]}})
+				</h3></div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Infos</th>
+						<th>Count</th>
+					</tr>
+						<tr ng-repeat="rank in appFiltered | orderBy:['-score','+name'] | startFrom:(appPagination.current-1)*appPagination.nbPerPage | limitTo:appPagination.nbPerPage">
+						<td>{{rank.name}}</td>
+						<td>{{rank.score}}</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="appPagination.nbPages" current-page="appPagination.current" max-size="appPagination.max"></pagination>
+				</div>
+
+			</div>
+		</div>
+
+	</div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="myModal">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Details about {{user.email}}</h4>
+			</div>
+			<pre>{{user|json}}</pre>
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group" ng-repeat="app in user.apps">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_{{app.id}}">{{app.name}} <small>( {{app.domains.length}} domain(s), {{app.providers.length}} provider(s))</small></a>
+					</div>
+					<div id="collapse_{{app.id}}" class="accordion-body collapse out">
+						<div class="accordion-inner">
+							<div class="row" style="word-wrap: break-word;">
+								<label>Domains:</label>&nbsp;<span ng-repeat="domain in app.domains">{{domain}}&nbsp;</span>
+							</div>
+
+							<div class="row" style="word-wrap: break-word;">
+								<label>Providers:&nbsp;</label>&nbsp;<span ng-repeat="provider in app.providers">{{provider}}&nbsp;</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dalog -->
+</div><!-- /.modal -->

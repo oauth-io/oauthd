@@ -1,0 +1,39 @@
+<div class="container">
+	<form name="mailForm" class="form-horizontal"> 		
+		<div class="row">
+			<h1 class="col col-offset-4" style="position:realtive;">Contact Us</h1>
+		</div>
+		<div class="row">
+			<div class="alert alert-danger col col-lg-5 col-offset-4" ng-show="error.state && error.type == 'SEND_MAIL'">
+				{{error.message}}
+			</div>		
+			<div class="alert alert-success col col-lg-5 col-offset-4" ng-show="sent">
+				Thank you {{name}} for contacting us, your email has been sent.<br />
+				We'll get back to you as soon as possible.
+			</div>
+		</div>
+		<div class="row">		
+			<label class="control-label col col-lg-4" for="name">Your name</label>
+			<div class="col col-lg-5">
+				<input type="text" placeholder="Name" ng-model="name" id="sendmail-name" name="name" required>
+			</div>
+		</div>
+		<div class="row">
+			<label class="control-label col col-lg-4" for="email">Your email</label>
+			<div class="col col-lg-5">
+				<input type="email" placeholder="Email" ng-model="email" id="sendmail-email" name="mail" required>
+			</div>
+		</div>	
+		<div class="row">
+			<label class="control-label col col-lg-4" for="message">Your message</label>
+			<div class="col col-lg-5">
+				<textarea name="message" ng-model="message" id="sendmail-message" rows="8" placeholder="Message" required></textarea>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col col-lg-2 col-offset-4">			
+		  		<button type="button" class="btn btn-primary" ng-click="sendMail()">Send</button>	
+			</div>
+		</div>
+	</form>
+</div>

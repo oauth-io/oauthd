@@ -1,0 +1,206 @@
+<style>
+.twitter-tweet {
+	display: inline!important;
+}
+#landing-why h1, #landing-see h1, #likeus h1 {
+	font-size: 4.0em;
+}
+#landing-why h4, #landing-see h4, #likeus h4 {
+	font-size: 40px;
+}
+#landing-why p, #landing-see p, #likeus p {
+	font-size: 30px;
+}
+</style>
+<div>
+	<div>
+		<div class="container">
+			<div class="row">
+				<div class="col col-lg-12">
+					<div style="text-align: center; font-size: 50px">
+						<h1 style="font-size: 100px">OAuth that just works</h1>
+						<p>Integrate <a href="/providers">80+ OAuth providers</a> in minutes.</p>
+						<p style="margin-top: -20px">Already 1370+ applications running.</p>
+						<p style="margin-top: 40px; margin-bottom: 60px">
+							<a href="/docs" style="padding: 5px 90px;  font-size: 40px; font-weight: bold" class="btn btn-default btn-large">Learn more</a>
+							<a href="/signup" style="padding: 5px 90px; font-size: 40px; font-weight: bold" class="btn btn-large btn-primary">Try it now</a>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-lg-12">
+		            <div stubborn></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div style="background-color: #5fb3e5; text-shadow: 0 -1px 1px rgba(0,0,0,0.2); color: white;" id="landing-why">
+		<div class="container">
+
+			<div class="row" style="margin: 30px 0 50px">
+				<div class="col-lg-12">
+					<h1 style="text-align: center">OAuth has never been this easy</h1>
+				</div>
+			</div>
+			<div class="row" style="margin: 60px auto 0; max-width: 900px">
+				<div class="col col-lg-4">
+					<div style="text-align: center;">
+						<p><img style="max-width: 40%" src="/img/oneapiwhite.png"></p>
+						<h4 style="font-size: 35px">One simple API</h4>
+						<p style="font-size: 25px">Whether you use OAuth 1.0, OAuth 2.0 and all the specs</p>
+					</div>
+				</div>
+				<div class="col col-lg-4">
+					<div style="text-align: center;">
+						<p><img style="max-width: 40%" src="/img/fastprocess.png"></p>
+						<h4 style="font-size: 35px">A fast process</h4>
+						<p style="font-size: 25px">Put only 3 lines of codes and you are done in less than 90 seconds!</p>
+					</div>
+				</div>
+				<div class="col col-lg-4">
+					<div style="text-align: center;">
+						<p><img style="max-width: 40%" src="/img/security.png"></p>
+						<h4 style="font-size: 35px">Highly secure</h4>
+						<p style="font-size: 25px">SSL encryption, no storage of any access_token... <a style="color: white" href="/faq">read more</a></p>
+					</div>
+				</div>
+			</div>
+			<div style="text-align: center; margin: 60px auto 0; max-width: 526px;">
+				<p style="font-size: 30px"><a target="_blank" href="http://apievangelist.com/2013/08/13/simplifying-oauth-with-oauthio/" style="color: white; text-decoration: underline">" Now developers don't have to stress out over OAuth. "</a></p>
+				<p style="text-align: right; font-size: 26px"><small><cite>Kin Lane - apievangelist.com</cite></small></p>
+			</div>
+			<p style="position: relative; top: 50px; margin-bottom: 80px; text-align: center"><a href="/signup" style="padding: 5px 60px; font-size: 40px; font-weight: bold" class="btn btn-large btn-primary">Try it</a></p>
+		</div>
+	</div>
+	<div id="landing-see" style="text-shadow: 0 -1px 1px rgba(0,0,0,0.2); background-color: #0074a2;-moz-box-shadow: 0px -2px 5px 0px #656565;
+-webkit-box-shadow: 0px -2px 5px 0px #656565;
+-o-box-shadow: 0px -2px 5px 0px #656565;
+box-shadow: 0px -2px 5px 0px #656565;
+filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=90, Strength=5);">
+		<div class="container" style="padding-bottom: 30px">
+
+			<div class="row" style="margin: 30px 0 50px">
+				<div class="col-lg-12">
+					<h1 style="text-align: center; color: white">Integration in only 90 seconds</h1>
+				</div>
+			</div>
+
+			<div class="row" style="margin: 20px auto 0; max-width: 900px;">
+				<div class="col col-lg-7">
+					<div class="panel" style="border: 0px">
+					  	<div class="panel-heading" style="background-color: #5fb3e5; padding: 10px 20px;">
+					    	<h3 class="panel-title" style="margin: 0; color: white;">In your HTML</h3>
+					  	</div>
+					  	<div class="panel-body">
+							<pre style=" font-size: 1.02em;">&lt;img src="/img/facebook-connect.png" <strong>id="fb-connect"</strong>&gt;</pre>
+		     			</div>
+		     		</div>
+		     		<div class="panel" style="border: 0px">
+					  	<div class="panel-heading" style="background-color: #5fb3e5; padding: 10px 20px;">
+					    	<h3 class="panel-title" style="margin: 0; color: white;">In your Javascript</h3>
+					  	</div>
+		     			<div class="panel-body">
+							<pre style="font-size: 1.0em;">$('#fb-connect').click(function() {
+    OAuth.initialize('<strong>YOUR_PUBLIC_KEY</strong>');
+    OAuth.popup('<strong>facebook</strong>', function(<strong>err</strong>, <strong>res</strong>) {
+        if (<strong>err</strong>) {
+            // do something with error
+            alert(JSON.stringify(<strong>err</strong>));
+            return;
+        }
+        $('#token').html(<strong>res.access_token</strong>)
+                   .parent().show();
+    });
+});</pre>
+						</div>
+					</div>
+				</div>
+				<div class="col col-lg-5" style="text-align: center">
+					<div id="token" style="display: none; color: white; font-size: 24px; word-break:break-all; text-align: left;"></div>
+					<div id="get-token">
+						<h3 style="margin-top: 0px;color: white; font-weight: bold; font-size: 3.5em;">Click here<br/>to get your token</h3>
+						<embed src="img/arrowdown.svg" type="image/svg+xml" />
+						<div style="margin: 0px auto 0;">
+							<p style=""><button style="font-weight: bold; font-size: 30px;" class="btn btn-large btn-block btn-default" ng-click="demoFbConnect()"><img style="position: relative; top: -5px; left: -20px" src="img/fbwhite.png">Connect with facebook</button></p>
+						</div>
+					</div>
+					<div>
+						<div style="margin: 0px auto 0;">
+							<p style="margin-top: 77px"><a href="http://oauth-io.github.io/oauth-js" style="font-size: 30px; font-weight: bold" class="btn btn-large btn-block btn-success">See the demo</a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container" id="likeus">
+		<div class="row" style="margin: 30px 0 0px">
+			<div class="col-lg-12">
+				<h1 style="text-align: center"><img src="/img/loveus.png" style="position: relative; top: -20px">&nbsp;&nbsp;They talk about us</h1>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col col-lg-6" style="text-align: center">
+				<h3 style="font-size: 45px">Articles</h3>
+				<hr />
+				<div class="row">
+					<div class="col col-lg-4"><img src="img/tommcfarlin.png" style="width: 140px; position: relative; left: 45px"></div>
+					<div class="col col-lg-8">
+						<blockquote style="position: relative; text-align: left; margin-left: 50px">
+							<p style="font-size: 22px"><a href="http://tommcfarlin.com/oauth-io/" style="color: #383838;" target="_blank">So is OAuth Worth It? With my experience this far, Yes – absolutely. I highly recommend getting in on the service and tinkering around with it.</a></p>
+							<small><cite title="Tom McFarlin">Tom McFarlin</cite></small>
+						</blockquote>
+					</div>
+				</div>
+				<div class="row" style="margin-top: 50px">
+					<div class="col col-lg-8">
+						<blockquote style="text-align: left; margin-left: 50px; position:">
+							<p style="font-size: 22px"><a href="http://oauth-io.github.io/blog/#/articles/guest-blogpost-foursquare-david-hu-21-08-13" style="color: #383838;" target="_blank">After migrating to OAuth.io though, I was able to entirely cut out the server-side component, greatly reducing complexity.</a></p>
+							<small><cite title="David Hu">David Hu - Foursquare evangelist</cite></small>
+						</blockquote>
+					</div>
+					<div class="col col-lg-4"><img src="img/davidhu.png"style="width: 140px; position: relative; right: 45px"></div>
+				</div>
+			</div>
+			<div class="col col-lg-6" style="text-align: center">
+				<h3 style="font-size: 45px">Twitter</h3>
+				<hr />
+				<blockquote class="twitter-tweet"><p>WOW. <a href="http://t.co/BO9N0aw6Dj">http://t.co/BO9N0aw6Dj</a> is my new best friend. Loving the simple OAuth integration. Two thumbs up!</p>&mdash; Ted Neward (@tedneward) <a href="https://twitter.com/tedneward/statuses/358852147506446337">July 21, 2013</a></blockquote>
+
+				<blockquote class="twitter-tweet"><p><a href="https://t.co/oBqHZ2RXuX">https://t.co/oBqHZ2RXuX</a> - god send OAuth sollution</p>&mdash; Bartek Piech (@bartekpiech) <a href="https://twitter.com/bartekpiech/statuses/358866236538503168">July 21, 2013</a></blockquote>
+			</div>
+		</div>
+		<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	</div>
+	<p style="text-align: center;"><img style="width: 80px; position: relative; top: 35px;" src="img/contribute.png"></p>
+	<div style="background-color: #D8D8D8;-moz-box-shadow: 0px -2px 5px 0px #656565;
+-webkit-box-shadow: 0px -2px 5px 0px #656565;
+-o-box-shadow: 0px -2px 5px 0px #656565;
+box-shadow: 0px -2px 5px 0px #656565;
+filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=90, Strength=5);">
+		<div class="container" id="likeus">
+			<div class="row" style="margin: 30px 0 0px">
+				<div class="col col-lg-6 col-offset-3">
+					<h1 style="text-align: center">Contribute to oauthd</h1>
+
+					<hr style="background-color: #656565"/>
+				</div>
+			</div>
+			<div class="row">
+				<p style="text-align: center">
+					Contribute to the opensource OAuth Daemon to solve OAuth fragmentation on the web.
+				</p>
+			</div>
+
+			<div class="row">
+				<ul style="width: 500px; margin: 50px auto">
+					<li style="margin-bottom: 50px;"><span><a href="https://github.com/oauth-io/oauthd"><img style="width: 100px; float: left" src="img/githubcat.png" alt="github cat"></a><span style="display: block; font-size: 32px; margin-left: 130px;">Check out our <a href="https://github.com/oauth-io/oauthd">Github repository</a><br>Pull requests, open issues...</span></span></li>
+					<li style="margin-bottom: 50px;"><span><a href="/wishlist"><img style="width: 100px; float:left;" src="img/wishlist.png" alt=""></a><span style="display: block; font-size: 32px; margin-left: 130px;">Ask for the provider you want on the <a href="/wishlist">wishlist</a>. We'll implement them.</span></span></li>
+					<li><span><a href="/contact-us"><img style="width: 100px; float:left;" src="img/contactuss.png" alt=""></a><span style="display: block; margin-left: 130px; font-size: 32px">Contact us for any issue, feature you want: <a href="/contact-us">team@oauth.io</a></span></span></li>
+				</ul>
+			</div>
+			<p style="text-align: center; margin: 50px 0"><a href="https://github.com/oauth-io/oauthd" style="padding: 5px 90px; font-size: 40px; font-weight: bold" class="btn btn-large btn-primary">Contribute</a></p>
+		</div>
+	</div>
+</div>

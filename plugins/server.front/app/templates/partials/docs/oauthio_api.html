@@ -1,0 +1,823 @@
+<style>
+	#oauthio_api-reference p { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important }
+</style>
+<div id="oauthio_api-reference">
+	<div class="jumbotron">
+		<h1>OAuth.io API Reference</h1>
+		<p>The website REST API</p>
+	</div>
+	<div class="alert alert-warning">
+		<p>This API is not a required part of the authentication or authorization feature: You cannot use this API to auth to a provider or any related feature about their access tokens. To do so, use the <a href="https://oauth.io/docs/api">Javascript API</a></p>
+		<p>The REST API is only used to manage your actions on OAuth.io: you can manage your apps, domains, keysets, receive the providers' configuration or your account informations.</p>
+	</div>
+	<h3><code>OAuth</code> endpoints</h3>
+	<div class="alert alert-grey">
+		<p><em>Some common notes about the methods below:</em></p>
+		<p>Each described endpoints below are relative to <a href="https://oauth.io">https://oauth.io</a>. Every endpoints beginning with <code>/api</code> always reply a response structure according to <a href="http://labs.omniti.com/labs/jsend">JSend</a>: The field <code>status</code> can have the values <code>success</code>, <code>fail</code>, <code>error</code>, depending on the error type. Beside the <code>status</code> field, you can find the field <code>message</code> when an error is present, and <code>data</code> in case of success or when a parameter is invalid.</p>
+		<p>Every POST request should send JSON in its body with the HTTP header <code>Content-Type</code> set to <code>application/json</code>. Some endpoints can accept <code>application/x-www-form-urlencoded</code>, but we recommand to always use JSON.</p>
+		<p>Finally, every request shoud be authorized with a bearer token (if not, you will receive a 401 Unauthorized response): You can receive it by using the <code>/token</code> endpoint, and authorize your request by setting the http header <code>Authorize: Bearer <em>YOUR_TOKEN</em></code>
+	</div>
+	<div class="panel-group" id="apiaccordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseAuth">
+          Authentication
+        </a>
+      </h4>
+    </div>
+    <div id="collapseAuth" class="panel-collapse collapse in">
+      <div class="panel-body">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /token
+		</div>
+		<p>Authenticate to oauth.io with <a href="http://tools.ietf.org/html/rfc6749#section-4.3">OAuth 2 client credentials.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> grant_type </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> Must be "client_credentials" </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> Authorization header </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> An HTTP Basic authentication, thus base64(login + ":" + password) with your login and password of your OAuth.io account. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"access_token": "KZMx0AExV6scnfR3EqcFb8ck6jY",
+	"token_type": "Bearer",
+	"expires_in": 18000
+}</pre>
+	</div>
+	</div></div>
+	</div>
+
+	<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseUser">
+          User
+        </a>
+      </h4>
+    </div>
+    <div id="collapseUser" class="panel-collapse collapse">
+      <div class="panel-body">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/me
+		</div>
+		<p>Get informations about the authenticated user.</a></p>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": {
+		"id": "3492",
+		"mail": "example@mail.com",
+		"date_inscr": "1372624696712",
+		"name": "Firstname Lastname",
+		"location": "San Francisco",
+		"company": "MyCompany",
+		"website": "mycompany.com",
+		"apps": [
+			"_aR5on_YHZk7HH86EJRgzkA9sW0",
+			"E2OJiy2g9kaCCuhMa0dg8AWe9lI"
+		]
+	}
+}</pre>
+	</div>
+	</div></div>
+	</div>
+
+	<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseApps">
+          Apps
+        </a>
+      </h4>
+    </div>
+    <div id="collapseApps" class="panel-collapse collapse">
+      <div class="panel-body">
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps
+		</div>
+		<p>Create an application.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> name </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The new name of the application, 3 to 50 chars. </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> domains </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>array of strings</strong>
+						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": {
+		"name": "My test app",
+		"key": "171oqMx5yYMDMS2HR7JQJMoBHfI"
+	}
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}
+		</div>
+		<p>Get an app's details.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": {
+		"name": "My renamed app",
+		"key": "2-E1sctnaiCRjFlwOI8C3ptu2bU",
+		"secret": "2ENMOzoIX69VIdMxnNDIDUEY1wg",
+		"domains": [
+			"https://example2.com:42/callback",
+			"oauthio://example3.com",
+			"example.com"
+		],
+		"keysets": [
+			"facebook"
+		]
+	}
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}
+		</div>
+		<p>Update an app's details.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> name </strong>
+						<p class="text-success" >Optional</p>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The new name of the application, 3 to 50 chars. </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> domains </strong>
+						<p class="text-success" >Optional</p>
+					</td>
+					<td>
+						<strong>array of strings</strong>
+						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}
+		</div>
+		<p>Delete an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/reset
+		</div>
+		<p>Reset an app's public and secret keys.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": {
+		"key": "2-E1sctnaiCRjFlwOI8C3ptu2bU"
+	}
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/domains
+		</div>
+		<p>List valid domains for an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": [
+		"https://example2.com:42/callback",
+		"oauthio://example3.com",
+		"example.com"
+	]
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains
+		</div>
+		<p>Update valid domains list for an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> domains </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>array of strings</strong>
+						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains/{domain}
+		</div>
+		<p>Add a valid domain for an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> domain (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The url encoded domain name to add </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/domains/{domain}
+		</div>
+		<p>Remove a valid domain for an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> domain (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The url encoded domain name to delete </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets
+		</div>
+		<p>List keysets for an app.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": [
+		"facebook"
+	]
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets/{provider}
+		</div>
+		<p>Get a keyset for an app and a provider. Returns null if the keyset does not exists.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> provider (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The provider's name </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": {
+		"parameters": {
+			"client_id": "987987987987987",
+			"client_secret": "123c123b123e123f123c123bd123e123",
+			"scope": [
+				"email",
+				"read_stream",
+				"read_friendlists"
+			]
+		},
+		"response_type": "code"
+	}
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/keysets/{provider}
+		</div>
+		<p>Add or update a keyset for an app and a provider. If the keyset already exists, it will be replaced.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> provider (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The provider's name </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> response_type </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The response type can be "token" (client-side), "code" (server-side), or "both" </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> parameters </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>object</strong>
+						<p> The parameters of the keyset, according to the provider's configuration. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/keysets/{provider}
+		</div>
+		<p>Remove a keyset from an app by provider's name.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> provider (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The provider's name of the keyset to delete </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+	"status": "success",
+	"data": null
+}</pre>
+	</div>
+	</div></div>
+	</div>
+
+	<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseProviders">
+          Providers
+        </a>
+      </h4>
+    </div>
+    <div id="collapseProviders" class="panel-collapse collapse">
+      <div class="panel-body">
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers
+		</div>
+		<p>Get providers list.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> key (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The app's public key </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre>{
+    "status": "success",
+    "data": [
+        {
+            "provider": "google_mail",
+            "name": "Google Mail"
+        },
+        {
+            "provider": "dailymile",
+            "name": "DailyMile"
+        },
+        {
+            "provider": "youtube",
+            "name": "YouTube"
+        },
+        ...
+
+    ]
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}
+		</div>
+		<p>Get a provider's configuration.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> provider (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The provider's name </p>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<strong> extend </strong>
+						<p class="text-danger" >Required</p>
+					</td>
+					<td>
+						<strong>boolean</strong>
+						<p> Set to "true" to extend the configuration with default parameters. "false" by default. </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<pre ng-non-bindable>{
+    "status": "success",
+    "data": {
+        "url": "https://api.twitter.com/oauth",
+        "oauth1": {
+            "request_token": "/request_token",
+            "authorize": "/authenticate",
+            "access_token": "/access_token",
+            "parameters": {
+                "client_secret": "string",
+                "client_id": "string"
+            }
+        },
+        "href": {
+            "keys": "https://dev.twitter.com/apps/new",
+            "docs": "https://dev.twitter.com/docs",
+            "apps": "https://dev.twitter.com/apps",
+            "provider": "https://www.twitter.com/"
+        },
+        "name": "Twitter",
+        "provider": "twitter"
+    }
+}</pre>
+		<p>Response example (extended):</p>
+		<pre ng-non-bindable>{
+    "status": "success",
+    "data": {
+        "url": "https://api.twitter.com/oauth",
+        "oauth1": {
+            "request_token": {
+                "url": "https://api.twitter.com/oauth/request_token",
+                "query": {
+                    "oauth_consumer_key": "{client_id}",
+                    "oauth_callback": "{{callback}}?state={{state}}"
+                }
+            },
+            "authorize": {
+                "url": "https://api.twitter.com/oauth/authenticate",
+                "query": {}
+            },
+            "access_token": {
+                "url": "https://api.twitter.com/oauth/access_token",
+                "query": {
+                    "oauth_consumer_key": "{client_id}"
+                }
+            },
+            "parameters": {
+                "client_secret": {
+                    "type": "string"
+                },
+                "client_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "href": {
+            "keys": "https://dev.twitter.com/apps/new",
+            "docs": "https://dev.twitter.com/docs",
+            "apps": "https://dev.twitter.com/apps",
+            "provider": "https://www.twitter.com/"
+        },
+        "name": "Twitter",
+        "provider": "twitter"
+    }
+}</pre>
+	</div>
+
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}/logo
+		</div>
+		<p>Get a provider's logo. It returns a png image with MIME type image/png.</a></p>
+		<table class="table">
+			<thead>
+				<th style="width:20%"></th>
+				<th style="width:80%"></th>
+			</thead>
+			<tbody class="table-hover">
+				<tr>
+					<td>
+						<strong> provider (url) </strong>
+					</td>
+					<td>
+						<strong>string</strong>
+						<p> The provider's name </p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<p>Response example:</p>
+		<img src="https://oauth.io/api/providers/facebook/logo" />
+	</div>
+	</div></div>
+
+	</div>
+</div>

@@ -1,0 +1,225 @@
+
+<script type="text/javascript">
+
+$(function()
+{
+
+	var about =
+	{
+		"team" : [
+			{
+				"name": "Thibaud ARNAULT",
+				"role": "Co-Founder / CEO",
+				"comment": "Passionate by new technologies, I love to make new things that help people everyday. "
+			},
+			{
+				"name": "Mehdi MEDJAOUI",
+				"role": "Co-Founder / COO",
+				"comment" : "Organizer of the APIdays.io conferences. I organize event, hackathon and meetup arround APIs and javascript"
+			},
+			{
+				"name" : "Arnaud RICHARD",
+				"role": "Co-Founder / CTO",
+				"comment": "Programming guru. I have a great knowledge and pratice in recent web techs. Anyway, i love coffee IRL & script."
+			},
+			{
+				"name" : "Nicolas DODEMEANT",
+				"role": "Developer",
+				"comment": "Passionate and motivate to learn and discover lots of new technologies. In charge of finding, testing and adding apis."
+			},
+			{
+				"name" : "Maxime MOURET",
+				"role": "Communication manager",
+				"comment" : "Idea builder, maker of dreams, tech passionnate having to communicate with developers every day"
+			},
+			{
+				"name" : "Walid TERMELLIL",
+				"role": "Developer",
+				"comment" : "I'm passionate about new technologies, I spends my days mixing RoR, CoffeeScript and NodeJS. I like travelling and skydiving!"
+			}
+		]
+	};
+
+	var n_el = about.team.length
+
+	for (i = 0; i < n_el; i++)
+	{
+		var el = $('#popover_' + i);
+		var gear = el.find('.gear');
+		var pos;
+
+		if (el)
+		{
+			if (i % 2 == 0)
+			{
+				pos = 'left';
+				el.css('top', '7px')
+				gear.attr('id', 'rotate_gear_right');
+			}
+			else
+			{
+				pos = 'right';
+				gear.attr('id', 'rotate_gear_left');
+			}
+
+			el.popover({ placement : pos, title : about.team[i].name + ' - ' + about.team[i].role, content : about.team[i].comment });
+			el.popover('show')
+		}
+	}
+});
+</script>
+
+<style>
+	@-webkit-keyframes right_dir {
+	    0% {
+	        -moz-transform: rotate(20deg);
+	        -webkit-transform: rotate(20deg);
+	    }
+	  	100% {
+	        -moz-transform: rotate(380deg);
+	        -webkit-transform: rotate(380deg);
+	    }
+	}
+	@-moz-keyframes right_dir {
+	    0% {
+	        -moz-transform: rotate(20deg);
+	        -webkit-transform: rotate(20deg);
+	    }
+	    100% {
+	        -moz-transform: rotate(380deg);
+	        -webkit-transform: rotate(380deg);
+	    }
+	}
+	@-webkit-keyframes left_dir {
+	    0% {
+	        -moz-transform: rotate(380deg);
+	        -webkit-transform: rotate(380deg);
+	    }
+	    100% {
+	        -moz-transform: rotate(20deg);
+	        -webkit-transform: rotate(20deg);
+	    }
+	}
+	@-moz-keyframes left_dir {
+	    0% {
+	        -moz-transform: rotate(380deg);
+	        -webkit-transform: rotate(380deg);
+	    }
+	    100% {
+	        -moz-transform: rotate(20deg);
+	        -webkit-transform: rotate(20deg);
+	    }
+	}
+
+	.popover{
+		max-width: 300px;
+		width: 300px;
+	}
+	.about_container
+	{
+		position: relative;
+		width: 900px;
+		margin: 100px auto;
+	}
+	.gear
+	{
+		position: relative;
+		background: url('img/gear.png') no-repeat 0 0;
+    	height: 124px;
+		width: 124px;
+		margin:0;
+	    z-index: 1000;
+
+	    -moz-animation-timing-function: linear;
+	    -moz-animation-iteration-count: infinite;
+	    -moz-animation-direction: normal;
+	    -moz-animation-delay: 0;
+	    -moz-animation-play-state: running;
+	    -moz-animation-fill-mode: none;
+
+	    -webkit-animation-timing-function: linear;
+	    -webkit-animation-iteration-count: infinite;
+	    -webkit-animation-direction: normal;
+	    -webkit-animation-delay: 0;
+	    -webkit-animation-play-state: running;
+	    -webkit-animation-fill-mode: none;
+	}
+
+	.gear_container
+	{
+		position: relative;
+		width: 124px;
+		height: 124px;
+		margin: 0 auto;
+	}
+
+
+	.gear_container img
+	{
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		left: 12px;
+		top: 10px;
+		border-radius: 90px;
+		z-index: 0;
+		margin: 0 auto;
+	}
+
+	#rotate_gear_right
+	{
+	    -moz-animation-name: right_dir;
+	    -moz-animation-duration: 60s;
+	    -webkit-animation-name: right_dir;
+	    -webkit-animation-duration: 60s;
+	}
+
+	#rotate_gear_left
+	{
+	   	-moz-animation-name: left_dir;
+	    -moz-animation-duration: 60s;
+	    -webkit-animation-name: left_dir;
+	    -webkit-animation-duration: 60s;
+
+	}
+
+</style>
+
+<div class="container">
+	<div class="about_container" >
+		<div class="gear_container" id="popover_0" rel="popover">
+			<img src="/img/team/thyb.jpg" alt=""  />
+	  		<div class="gear"></div>
+		</div>
+
+		<div class="gear_container" id="popover_1" rel="popover">
+			<img src="/img/team/mehdi.jpg" alt=""  />
+	  		<div class="gear"></div>
+		</div>
+
+		<div style="margin-top: -13px" class="gear_container" id="popover_2" rel="popover">
+			<img src="/img/team/bump.jpg" alt=""  />
+	  		<div class="gear"></div>
+		</div>
+
+		<div class="gear_container" id="popover_3" rel="popover">
+			<img src="/img/team/nico.jpg" alt=""  />
+		  	<div class="gear"></div>
+		</div>
+
+		<div style="margin-top: -13px" class="gear_container" id="popover_4" rel="popover">
+			<img src="/img/team/maxime.jpg" alt=""  />
+		  	<div class="gear"></div>
+		</div>
+
+		<div class="gear_container" id="popover_5" rel="popover">
+			<img src="/img/team/walid.jpg" alt=""  />
+		  	<div class="gear"></div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-lg-6 col-offset-3">
+			<div class="alert alert-info">A special thanks to Tibor Vass, for his time, helps and feedbacks.</div>
+		</div>
+	</div>
+</div>

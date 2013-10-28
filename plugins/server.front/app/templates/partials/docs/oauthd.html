@@ -1,0 +1,66 @@
+<style>
+	#getting-started p, #getting-started li { color: #454545 !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important;}
+</style>
+<div id="getting-started">
+
+<h1 id="oauthdaemon">OAuth daemon</h1>
+
+<p class="poauth" style="'Helvetica Neue', Helvetica, Arial, sans-serif!important;">oauthd is the open source version of the <a href="https://oauth.io">OAuth.io</a> core. This is a background api server that runs on your own server that allow your clients to authenticate to any available provider.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>A working redis database >= v2.4, check <a href="http://redis.io/topics/quickstart">Redis quickstart</a> for a properly installation</li>
+<li>nodejs >= v0.8.2</li>
+<li>npm >= v1.1</li>
+</ul>
+
+<h2 id="installingglobaldependencies">Installing global dependencies</h2>
+
+<p><code>(sudo) npm install -g coffee-script grunt grunt-cli forever</code></p>
+
+<h2 id="installingoauthdaemon">Installing OAuth daemon</h2>
+
+<p><code>npm install oauthd</code></p>
+
+<h2 id="usingoauthdaemon">Using OAuth daemon</h2>
+
+<p>You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.</p>
+
+<p>Run the redis server if it's not running yet.</p>
+
+<p>To start, stop or restart oauthd, just use
+<code>npm [start|stop|restart]</code> in oauthd folder.</p>
+
+<p>Then the admin interface is available to your url / port set into config.js, at /admin.</p>
+
+<p>By default, you can access it by <a href="http://localhost:6284/admin">http://localhost:6284/admin</a>.</p>
+
+<p>The first you connect, the given login &amp; pass will be registered as the admin user, so don't forget it !</p>
+
+<p>Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
+<code>&lt;script src="http://localhost:6284/download/latest/oauth.js"&gt;&lt;/script&gt;</code></p>
+
+<h2 id="contributing">Contributing</h2>
+
+<p>If you want to contribute to this project, you can directly make pull requests to our Github repository that we regulary check.</p>
+
+<h2 id="license">License</h2>
+
+<p>Copyright (C) 2013 Webshell SAS</p>
+
+<p>This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>.</p>
+
+<p>⇨ <a href="http://www.tldrlegal.com/license/gnu-affero-general-public-license-v3-%28agpl-3.0%29">More infos about AGPL</a></p>
+</div>

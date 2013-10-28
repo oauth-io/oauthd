@@ -1,0 +1,101 @@
+<style>
+	#security-topic p, #security-topic li { color: #454545 !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important;}
+</style>
+<div class="jumbotron">
+  <h1>Security topic</h1>
+  <p>And advanced methods</p>
+</div>
+
+<div id="security-topic">
+
+<h3>Understanding the oauth.io client-side flow</h3>
+
+<p>The user calls OAuth.popup or OAuth.redirect in javascript. It does a request to oauth.io with the provider to connect, in a popup or the same tab.</p>
+<p>OAuth.io sends a redirect to the provider's authorization form.</p>
+<p>Once the user authorize the app, the provider redirect him to oauth.io which will request the token and send back to the js callback in OAuth.popup / OAuth.callback<p>
+
+<p>We added an implicit state to check the flow integrity:</p>
+<ul>
+<li>1. this state is generated in js when requesting auth with OAuth.popup / redirect, and stored client side (simple var for popup, cookie for redirect)</li>
+<li>2. the state is sent back and checked against the local one just before calling the callback of OAuth.popup / OAuth.callback</li>
+</ul>
+
+<img src="/img/client-side-flow.png" /><br/>
+
+<h3>Understanding the oauth.io server-side flow</h3>
+
+<p>The server-side flow is basically the same but you get a code instead of the token: the code is exchanged by requesting oauth.io with the endpoint <a href="/docs/api">/auth/access_token</a> from your server (with the secret key) to get the final token.</p>
+<p>This permit to do not store any token on the browser so that it cannot be exploited with a XSS / CSRF vulnerability</p>
+<p>Moreover the state is no longer optional when calling OAuth.popup or OAuth.redirect: it must be generated from your server, and checked once the code is exchanged. This step is required to avoid any CSRF exploit.</p>
+
+<img src="/img/server-side-flow.png" /><br/>
+
+<h3>Getting an access token server-side</h3>
+<p>You can configure your application to receive the access token on server side. This avoid to expose the token on client side when it is not required, and directly use the api calls on your server.</p>
+<p>To do so, first configure your providers to enable the server side option.</p>
+
+<img src="/img/server-side-options.png" /><br/>
+
+<p>You still can edit the provider's configuration if you already created it.</p>
+<br/>
+<p>The first step is to generate a state on your server, to bind it to the session of the user, and pass it to OAuth.io when calling it. Here is an example with node.js with a session plugin (expressjs, restify + client-sessions...). Of course you still can use it for your own language or tweak it as wished:</p>
+<pre>var csrf_token = generateUid(); // generate any random string
+req.session.csrf_tokens = req.session.csrf_tokens || [];
+req.session.csrf_tokens.push(csrf_token);
+if (req.session.csrf_tokens.length > 4)
+    req.session.csrf_tokens.shift(); // keep 4 tokens max
+// ...
+res.render('login_page', { oauthio_state: csrf_token });</pre>
+
+<p>On client-side you can include the layout and pass your generated state. In the callback, you can send the received code to your server (by example with a redirection or ajax):</p>
+
+<pre>OAuth.initialize(....);
+OAuth.popup('facebook', {state:#{oauthio_state}}, function(err, res) {
+    $.ajax("/mycallback", {type:"post", data:{code:res.code}, success:function(data) {
+        console.log ("result", data);
+        // ...
+    }});
+});</pre>
+
+<p>Back on server-side, you must exchange this code with the final token, and check the state validity between the one from your session and the state received with the call to <a href="/docs/api">/auth/access_token</a>. e.g. using <a href="https://github.com/mikeal/request">request</a> for node.js, in /mycallback:</p>
+
+<pre>request.post({
+        url: 'https://oauth.io/auth/access_token',
+        form: {
+            code: req.body.code,
+            key: "...",            // The public key from oauth.io
+            secret: "..."         // The secret key from oauth.io
+    }}, function (e,r,body) {
+        var data = JSON.parse(body);
+        req.session.csrf_tokens = req.session.csrf_tokens || [];
+        if ( ! data.state) {
+            res.send("Got error:" + body);
+            return next();
+		}
+		if (req.session.csrf_tokens.indexOf(data.state) == -1) {
+            res.send("Oups, state does not match !");
+            return next();
+        }
+        // ... do whatever with data.access_token, data.expires_in, etc.
+    });
+});</pre>
+
+<h3>Security concerns related to OAuth and our implementations</h3>
+
+<ul>
+<li>- Every calls to oauth.io is SSL encrypted (https)</li>
+<li>- The received codes are single use and with a short expiration time, so that a third person cannot reuse a code</li>
+<li>- The valid domains/url depend on the detail level. The user can restrict to a single url scheme/domain/port/path: more detailed the url is, smaller is the surface attack.</li>
+<li>- The "state" parameter is now mandatory when doing server-side auth, to avoid CSRF exploit.</li>
+<li>- The client-side/server-side (token/code) is decided in the app configuration, and not in the request.</li>
+<li>- We do not store any access_token.</li>
+</ul><br/>
+
+Even if none website is invulnerable:
+<ul>
+<li>- We have avoided url fragment leak (to get an access_token from a referer)</li>
+<li>- We checked lots of CSRF/XSS potential security exploits and what we have done with Angular.js passed with success all tests</li>
+<li>- and globally, the website is API based/driven, so its security is easier to manage.</li>
+</ul>
+
+</div>

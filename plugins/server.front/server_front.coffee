@@ -1,0 +1,92 @@
+# oauth
+# http://oauth.io/
+#
+# Copyright (c) 2013 Webshell
+# Licensed under the MIT license.
+
+'use strict'
+
+restify = require 'restify'
+fs = require 'fs'
+Url = require 'url'
+
+{db} = shared = require '../shared'
+
+cache = {}
+
+addExtension = (req, res, next) ->
+	ext = '.json'
+	ext = '.html' if req.headers.accept?.substr(0,9) == 'text/html'
+	req.url += ext
+	req._url = Url.parse req.url
+	req._path = req._url._path
+	next()
+
+checkLogged = (req, res, next) ->
+	token = req.headers.cookie?.match /accessToken=%22(.*)%22/
+	req.token = token?[1]
+	next()
+
+checkAdmin = (req, res, next) -> checkLogged req, res, ->
+	return next() if not req.token
+	db.redis.hget 'session:' + req.token, 'mail', (err, res) ->
+		if not err and res and res.match /^.*@oauth.io$/
+			req.admin = true
+		next()
+
+needAdmin = (req, res, next) -> checkAdmin req, res, ->
+	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not req.admin
+	next()
+
+bootTime = new Date
+bootPathCache = (opts) ->
+	opts ?= {}
+	chain = restify.conditionalRequest()
+	chain.unshift (req, res, next) ->
+		hashdata = req.path() + ':' + bootTime
+		hashdata = req.admin + ':' + req.logged + ':' + hashdata if opts.logged || opts.admin
+		res.set 'ETag', db.generateHash hashdata
+		next()
+	return chain
+
+init = (callback) ->
+	fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) ->
+		callback err if err
+		cache.index = data
+		callback()
+
+exports.setup = (callback) ->
+	init (e) =>
+		console.error 'error', e if e
+
+		@server.get '/', checkAdmin, bootPathCache(logged:true), (req, res, next) ->
+			res.setHeader 'Content-Type', 'text/html'
+			res.set 'Last-Modified', bootTime
+			data = cache.index
+			data = data.toString().replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			data = data.toString().replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+			res.end data
+			next()
+
+		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
+			directory: __dirname + '/app'
+			maxAge: 1
+
+		@server.get /^\/adm\/.*/, needAdmin, bootPathCache(admin:true), restify.serveStatic
+			directory: __dirname + '/app'
+			maxAge: 1
+
+		@server.get /^\/[0-9]{3,3}/, addExtension, bootPathCache(), restify.serveStatic
+			directory: __dirname + '/errors'
+			maxAge: 1 # no cache on errors !
+
+		@server.get /.*/, checkAdmin, bootPathCache(logged:true), (req, res, next) ->
+			res.setHeader 'Content-Type', 'text/html'
+			res.set 'Last-Modified', bootTime
+			data = cache.index
+			data = data.toString().replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			data = data.toString().replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+			res.end data
+			next()
+
+		callback()

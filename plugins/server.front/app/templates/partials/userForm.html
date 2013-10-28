@@ -1,0 +1,75 @@
+<div style="background-color: white;">
+  <div style="background-color: #cbe7f9; height: 20px"></div>
+  <div style="padding: 25px 50px">
+    <div class="row">
+      <div class="col col-lg-7">
+        <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
+            <h4 style="font-size: 1.1em">{{userForm.mode}}</h4><br />
+            <h6>And worry about OAuth again...</h6>
+        </div>
+        <div ng-show="userForm.mode == 'Lost password'">
+            <h4 style="text-align: center">Forgot my password</h4>
+            <br />
+        </div>
+        <form name="signup" class="form-vertical">
+          <div class="alert alert-danger" ng-show="info.status == 'error'">
+            {{info.message}}
+          </div>
+          <div class="alert alert-info" ng-show="info.status == 'info'">
+            {{info.message}}
+          </div>
+          <div>
+            <label for="mail">Your email</label>
+            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required>
+          </div>
+          <div ng-hide="userForm.mode == 'Lost password' || userForm.pass.hide" style="margin-top: 15px">
+            <label for="pass">Your password</label>
+            <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6">
+            <small style="color:red" ng-show="signup.pass.$error.minlength">Please, 6 characters minimum</small>
+          </div>
+          <div class="row">
+            <div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
+              <button ng-click="userForm.submit()" class="btn btn-primary">
+                <span ng-show="userForm.mode == 'Lost password'">
+                  Reset my password
+                </span>
+                <span ng-hide="userForm.mode == 'Lost password'">{{userForm.mode}}</span>
+              </button>
+            </div>
+
+            <div style="clear: both; position: relative; top: 15px;">
+              <p style="font-size: 1.2em; font-weight: bold;"><a style=" margin-left: 20px; cursor: pointer" ng-click="switchButton()">{{ userForm.switchButtonText }}</a></p>
+              <p style="font-size: 1.2em; font-weight: bold;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a></p>
+              <a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; margin-left: 15px">cancel</a>
+            </div>
+          </div>
+        </form>
+        <div class="alert alert-danger" ng-show="signup.status == 'error'">
+          <strong>Oups!</strong> {{signup.message}}
+        </div>
+        <div ng-show="userForm.mode == 'Sign up'">
+          <div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+            <strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+          </div>
+          <div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
+            <strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="col col-lg-5">
+        <h4 style="text-align: center">Or using social connect</h4>
+
+        <div ng-show="userForm.mode == 'Sign in' || userForm.mode == 'Sign up'">
+          <p style="text-align: center;"><img ng-click="oauth('github')" style="margin-top: 10px; cursor: pointer; width: 48px; height: 48px" src="/api/providers/github/logo"></p>
+          <p style="text-align: center;"><img ng-click="oauth('facebook')" style="margin-top: 10px; cursor: pointer; width: 48px; height: 48px" src="/api/providers/facebook/logo"></p>
+          <p style="text-align: center;"><img ng-click="oauth('twitter')" style="margin-top: 10px; cursor: pointer; width: 48px; height: 48px" src="/api/providers/twitter/logo"></p>
+          <p style="text-align: center;"><img ng-click="oauth('google_plus')" style="margin-top: 10px; cursor: pointer; width: 48px; height: 48px" src="/api/providers/google_plus/logo"></p>
+          <p style="text-align: center;"><img ng-click="oauth('linkedin')" style="margin-top: 10px; cursor: pointer; width: 48px; height: 48px" src="/api/providers/linkedin/logo"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background-color: #cbe7f9; height: 20px"></div>
+
+</div>
