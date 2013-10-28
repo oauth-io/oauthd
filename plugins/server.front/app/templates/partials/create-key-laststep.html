@@ -1,0 +1,54 @@
+<form class="form-vertical">
+	<div style="font-weight: bold">
+		Enter your API keys
+	</div>
+	<div>
+		<div data-ng-switch on="field.cardinality" ng-repeat="(name,field) in createKeyConf" style="margin: 10px 0px">
+			<div data-ng-switch-when="*" class="row">
+				<label style="text-align: right" class="col col-lg-4 control-label">{{ name }}</label>
+				<div class="col col-lg-8 controls" style="position: relative; top: -10px">
+					<select multiple ui-select2="scopeSelect" data-ng-model="field.value">
+						<option ng-repeat="(k,v) in field.values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+					</select>
+				</div>
+			</div>
+
+			<div data-ng-switch-when="1" class="row">
+				<label style="text-align: right" class="col col-lg-4 control-label">{{ name }}</label>
+				<div class="col col-lg-8 controls" style="position: relative; top: -10px">
+					<select ui-select2="scopeSelect" data-ng-model="field.value">
+						<option ng-repeat="(k,v) in field.values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+					</select>
+				</div>
+			</div>
+
+			<div data-ng-switch-default class="row">
+				<label style="text-align: right" class="col col-lg-4 control-label">{{ name }}</label>
+				<div class="col col-lg-8 controls" style="position: relative; top: -10px">
+					<input type="text" data-ng-model="field.value" />
+				</div>
+			</div>
+		</div>
+		<div>
+			<div>
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion-keys" ng-click="moreOptionShow = true">
+					Security options
+				</a>
+			</div>
+			<div ng-show="moreOptionShow == true">
+				<div><br />
+					<input type="radio" value="token" ng-click="modifyType('token')" ng-model="createKeyType" />Client-side (token)
+					<input type="radio" value="code" ng-model="createKeyType" ng-click="modifyType('code')" />Server-side (code)
+					<input type="radio" value="both" ng-click="modifyType('both')" ng-model="createKeyType" />Both
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+<div ng-show="createKeyKeysImg">
+	<p>It looks like that on {{createKeyProvider|capitalize}}:</p>
+	<img ng-src="/img/providers/{{createKeyProvider}}-keys.png"><br /><br />
+</div>
+<hr />
+<h5 ng-show="createKeyHref.docs">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>
+<h5 ng-show="createKeyHref.keys">{{createKeyProvider|capitalize}} apps keys page: <a href="{{createKeyHref.keys}}" target="_blank">{{createKeyHref.keys|trunc:35}}</a></h5>

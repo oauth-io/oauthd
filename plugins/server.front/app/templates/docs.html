@@ -1,0 +1,44 @@
+<style>
+.list-group-item h4 {
+	font-size: 1.8em;
+	font-family: 'YanoneKLight', Monaco, Menlo !important;
+	font-weight: bold;
+}
+.list-group-item p {
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important;;
+}
+</style>
+<div class="container">
+	<div class="row">
+		<div class="col col-lg-3">
+			<div class="list-group">
+				<a ng-class="{active: page == 'getting-started', 'list-group-item': true}" href="/docs/getting-started">
+					<h4 class="list-group-item-heading">Getting started</h4>
+					<p class="list-group-item-text">From setting up your keys to authenticating your users.</p>
+				</a><!--
+				<a ng-class="{active: page == 'tutorial', 'list-group-item': true}"  href="/docs/tutorial">
+					<h4 class="list-group-item-heading">Tutorial</h4>
+					<p class="list-group-item-text">A concrete case: Make a Facebook and Google connect.</p>
+				</a> -->
+				<a ng-class="{active: page == 'api', 'list-group-item': true}"  href="/docs/api">
+					<h4 class="list-group-item-heading">Javascript Reference</h4>
+					<p class="list-group-item-text">All methods and parameters</p>
+				</a>
+				<a ng-class="{active: page == 'security', 'list-group-item': true}"  href="/docs/security">
+					<h4 class="list-group-item-heading">Security topic</h4>
+					<p class="list-group-item-text">And advanced methods</p>
+				</a>
+				<a ng-class="{active: page == 'oauthio_api', 'list-group-item': true}"  href="/docs/oauthio_api">
+					<h4 class="list-group-item-heading">REST API Reference</h4>
+					<p class="list-group-item-text">OAuth.io website features only!</p>
+				</a>
+				<a ng-class="{active: page == 'oauthd', 'list-group-item': true}"  href="/docs/oauthd">
+					<h4 class="list-group-item-heading">OAuthd</h4>
+					<p class="list-group-item-text">The OpenSource version</p>
+				</a>
+			</div>
+		</div>
+		<div class="col col-lg-9" ng-include src="docTemplate">
+		</div>
+	</div>
+</div>

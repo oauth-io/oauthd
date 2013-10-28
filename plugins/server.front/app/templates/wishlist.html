@@ -1,0 +1,66 @@
+<div class="container" style="width:600px;">
+
+	<div class="row">
+		<div class="alert alert-danger" ng-show="error.state">
+        	{{error.message}}
+      	</div>
+      	<div class="alert alert-info" ng-show="info.state">
+        	{{info.message}}
+      	</div>
+	</div>
+
+	<div class="alert alert-info" ng-show="!UserService.isLogin()">
+    	You must sign in to add a provider
+  	</div>
+	<div class="row" ng-show="UserService.isLogin()">
+		<div class="input-group span7">
+			<input type="text" class="search-provider" ng-model="query.name" ng-change="queryChange(query)" />
+			<span class="input-group-btn">
+				<button class="btn btn-success" ng-click="add(query)">Add</button>
+			</span>
+		</div>
+	</div>
+	<div class="row">
+		<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
+			<li data-ng-repeat="provider in filtered | orderBy:['-count', '+name'] | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers" ng-mousemove="hoverItem = true" ng-mouseleave="hoverItem = false">
+				<a style="padding: 10px 20px">
+					<span style="font-size: 1.2em"><span style="position: relative; top: 2px">{{provider.name|capitalize}}</span></span>
+
+					<span class="pull-right" style="position:relative;" ng-show="provider.status != 'non-oauth'">
+					 	<span class="label label-success">
+					 		<ng-pluralize count="provider.count"
+	 										when="{'one' : '1 request',
+					 						'other' : '{} requests'}">
+					 		</ng-pluralize>
+					 	</span>
+					 </span>
+
+					 <ng-switch on="provider.status">
+						<span ng-switch-when="release" class="pull-right" style="position:relative;width:40px;">
+				 			<span class="label label-info">{{provider.status|capitalize}}</span>
+						</span>
+
+						<span ng-switch-when="dev" class="pull-right" style="position:relative;width:40px;">
+				 			<span class="label label-warning">{{provider.status|capitalize}}</span>
+						</span>
+
+						<span ng-switch-when="non-oauth" class="pull-right" style="position:relative;width:66px;">
+				 			<span class="label label-danger">{{provider.status|capitalize}}</span>
+						</span>
+
+						<span ng-switch-default class="pull-right" style="position:relative;width:40px;">
+				 			<span class="label" style="background-color:transparent;"></span>
+						</span>
+					</ng-switch>
+
+				 	<span class="pull-right" style="position: relative;top:-3px;right:10px;" ng-show="hoverItem && provider.status != 'release' && UserService.isLogin()">
+				 		<button class="btn btn-small btn-success pull-right" ng-show="provider.status != 'non-oauth'" ng-click="add(provider)">+1</button>
+				 	</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div class="row">
+		<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
+	</div>
+</div>

@@ -1,0 +1,60 @@
+<div class="container">
+	<div class="row" style="margin-top: 30px">
+		<div class="col col-lg-10 col-offset-1">
+			<div style="background-color: white; font-family: 'YanoneKRegular', Monaco, Menlo !important;">
+			  <div style="background-color: #cbe7f9; height: 20px"></div>
+			  <div style="padding: 25px 50px">
+			    <div class="row">
+			      <div class="col col-lg-4">
+					<object data="/img/logo.svg" style="position: relative; left: 25px; top: 30px" type="image/svg+xml">
+					  <img src="/img/logo.png" />
+					</object>
+			      </div>
+			      <div class="col col-lg-6">
+			        <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
+			            <h4 style="font-size: 1.1em;">Sign up</h4>
+           				<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal">And never worry about OAuth again...</h6>
+			        </div><br /><br />
+			        <form name="signup" class="form-vertical">
+			          <div class="alert alert-danger" ng-show="info.status == 'error'">
+			            {{info.message}}
+			          </div>
+			          <div class="alert alert-info" ng-show="info.status == 'info'">
+			            {{info.message}}
+			          </div>
+			          <div>
+			            <label for="mail" style="font-size: 1.3em">Email</label>
+			            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required placeholder="Your email here...">
+			          </div>
+			          <div class="row">
+			            <button ng-click="userForm.submit()" style="position: relative; top: 15px; right: 15px" class="pull-right btn btn-primary">
+			              <span style="font-size: 18px;">Sign up</span>
+			            </button>
+			          </div>
+			        </form>
+			        <div class="alert alert-danger" ng-show="signup.status == 'error'">
+			          <strong>Oups!</strong> {{signup.message}}
+			        </div>
+			        <div ng-show="userForm.mode == 'Sign up'" style="margin-top: 30px">
+			          <div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+			            <strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+			          </div>
+			          <div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
+			            <strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			  <div style="background-color: #cbe7f9; height: 20px"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col col-offset-1">
+			<p style="font-size: 1.2em;"><a style="cursor: pointer;" href="#/signin">Already have an account? <span style="text-decoration: underline">Log in</span></a></p>
+		</div>
+	</div>
+</div>

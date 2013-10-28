@@ -1,0 +1,216 @@
+<div class="container">
+	<div class="row">
+		<div class="col col-lg-7">
+      <!-- NAME -->
+			<div class="row">
+				<h5>Name</h5>
+				<input type="text" ng-model="conf.name" placeholder="Name of your OAuth provider">
+			</div>
+      <div class="row">
+        <h5>Provider</h5>
+        <input type="text" ng-model="conf.provider" placeholder="Name of your OAuth provider for developers">
+      </div>
+      <!-- URL -->
+			<div class="row" style="margin-top: 0px;">
+				<h5>URL</h5>
+				<input type="text" ng-model="conf.url" placeholder="http://">
+			</div>
+      <!-- TYPE -->
+			<div class="row" style="margin-top: 0x;">
+				<h5>Type</h5>
+				<select ng-change="oauthType()" ng-model="type">
+					<option value="oauth2">OAuth2</option>
+					<option value="oauth1">OAuth1</option>
+				</select>
+			</div>
+      <div class="row" style="margin-top: 30px;">
+        <!-- REQUEST TOKEN -->
+        <div class="col col-lg-12" ng-hide="type == 'oauth2'">
+          <h5 style="text-align: center">Request token</h5>
+          <p>URL <span tooltip-placement="bottom" tooltip="Set the request_token URL. This URL should be in the provider's documentation"><i class="glyphicon glyphicon-info-sign"></i></span></p>
+          <input type="text" ng-model="conf[type].request_token.url" placeholder="e.g. /request_token">
+          <p style="margin-top: 20px">Format</p>
+          <select ng-model="conf[type].request_token.format">
+            <option value="url">URL (default)</option>
+            <option value="json">JSON</option>
+          </select>
+          <p style="margin-top: 20px">Method</p>
+          <select ng-model="conf[type].request_token.method">
+            <option value="get">GET (default)</option>
+            <option value="post">POST</option>
+          </select>
+          <p style="margin-top: 20px">Query<button class="pull-right btn btn-small btn-success" ng-click="addRequestTokenQuery = true" ng-hide="addRequestTokenQuery"><i class="glyphicon glyphicon-plus"></i></button></p>
+          <table class="table" style="width: 100%; margin-top: 20px;">
+            <tbody>
+              <tr ng-repeat="(key, val) in conf[type].request_token.query">
+                <td style="max-width: 40%">"{{key}}"</td>
+                <td>"{{val}}"</span><i ng-click="removeQuery(key,'request_token')" style="position: relative; top: 1px;" class="pull-right glyphicon glyphicon-remove"></i></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div ng-show="addRequestTokenQuery">
+            <input type="text" ng-model="key1" placeholder="key">
+            <input type="text" ng-model="val1" placeholder="value">
+            <button class="btn btn-small btn-success" ng-click="addQuery('request_token');addRequestTokenQuery=false">Add</button>
+            <button class="btn btn-small" ng-click="addRequestTokenQuery=false">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <!-- AUTHORIZE -->
+        <div class="col col-lg-6" style="background-color:#EFEFEF">
+          <h5 style="text-align: center">Authorize</h5>
+          <p>URL</p>
+          <input type="text" ng-model="conf[type].authorize.url" placeholder="e.g. /authorize">
+          <p style="margin-top: 20px">Format</p>
+          <select ng-model="conf[type].authorize.format">
+            <option value="url">URL (default)</option>
+            <option value="json">JSON</option>
+          </select>
+          <p style="margin-top: 20px">Method</p>
+          <select ng-model="conf[type].authorize.method">
+            <option value="get">GET (default)</option>
+            <option value="post">POST</option>
+          </select>
+          <p style="margin-top: 20px">Query <button class="pull-right btn btn-small btn-success" ng-click="addAuthorizeQuery = true" ng-hide="addAuthorizeQuery"><i class="glyphicon glyphicon-plus"></i></button></p>
+          <table class="table" style="margin-top: 20px;">
+            <tbody>
+              <tr ng-repeat="(key, val) in conf[type].authorize.query">
+                <td style="max-width: 40%">"{{key}}"</td>
+                <td>"{{val}}"</span><i ng-click="removeQuery(key,'authorize')" style="position: relative; top: 1px;" class="pull-right glyphicon glyphicon-remove"></i></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div ng-show="addAuthorizeQuery">
+            <input type="text" ng-model="key2" placeholder="key">
+            <input type="text" ng-model="val2" placeholder="value">
+            <button class="btn btn-small btn-success" ng-click="addQuery('authorize');addAuthorizeQuery=false">Add</button>
+            <button class="btn btn-small" ng-click="addAuthorizeQuery=false">Cancel</button>
+          </div>
+          <br>
+        </div>
+        <!-- ACCESS TOKEN -->
+        <div class="col col-lg-6">
+          <h5 style="text-align: center">Access token</h5>
+          <p>URL</p>
+          <input type="text" ng-model="conf[type].access_token.url" placeholder="e.g. /access_token">
+          <p style="margin-top: 20px">Format</p>
+          <select ng-model="conf[type].authorize.format">
+            <option value="url">URL (default)</option>
+            <option value="json">JSON</option>
+          </select>
+          <p style="margin-top: 20px">Method</p>
+          <select ng-model="conf[type].authorize.method">
+            <option value="get">GET (default)</option>
+            <option value="post">POST</option>
+          </select>
+          <p style="margin-top: 20px">Query <button class="pull-right btn btn-small btn-success" ng-click="addAccessTokenQuery = true" ng-hide="addAccessTokenQuery"><i class="glyphicon glyphicon-plus"></i></button></p>
+          <table class="table" style="margin-top: 20px;">
+            <tbody>
+              <tr ng-repeat="(key, val) in conf[type].access_token.query">
+                <td style="max-width: 40%">"{{key}}"</td>
+                <td>"{{val}}"</span><i ng-click="removeQuery(key,'access_token')" style="position: relative; top: 1px;" class="pull-right glyphicon glyphicon-remove"></i></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div ng-show="addAccessTokenQuery">
+            <input type="text" ng-model="key3" placeholder="key">
+            <input type="text" ng-model="val3" placeholder="value">
+            <button class="btn btn-small btn-success" ng-click="addQuery('access_token');addAccessTokenQuery=false">Add</button>
+            <button class="btn btn-small" ng-click="addAccessTokenQuery=false">Cancel</button>
+          </div>
+          <br>
+        </div>
+        <div style="clear: both"></div>
+      </div><hr />
+      <!-- PARAMETERS -->
+      <div class="row">
+        <h5>Parameters <button ng-hide="paramForm" ng-click="paramForm = true" style="position: relative; left: 25px;" class="btn btn-success btn-small"><i class="pull-right glyphicon glyphicon-plus"></i></button></h5>
+
+        <table class="table">
+          <thead>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Values</th>
+            <th>Cardinality</th>
+            <th>Separator</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="(key,val) in conf[type].parameters">
+              <td>{{key}}</td>
+              <td>{{getParamType(key)}}</td>
+              <td><span ng-hide="getParamType(key) == 'string'">{{val.values}}</span></td>
+              <td><strong ng-hide="getParamType(key) == 'string'">{{val.cardinality}}</strong></td>
+              <td><strong ng-hide="getParamType(key) == 'string'">{{val.separator}}</strong><i ng-click="removeParameter(key)" class="pull-right glyphicon glyphicon-remove"></i></td>
+            </tr>
+          </tbody>
+        </table>
+        <div ng-show="paramForm">
+          <p>Name</p>
+          <input type="text" ng-model="param.name">
+          <p style="margin-top: 20px">Type</p>
+          <select ng-model="param.type">
+            <option value="string">String</option>
+            <option value="object">Object</option>
+          </select>
+          <div ng-show="param.type == 'object'" style="margin: 20px 0 0">
+            <p>Values <i style="position:relative; left: 25px" class="glyphicon glyphicon-plus" ng-click="addValueForm = true"></i></p>
+
+            <table class="table" style="width: 100%; margin-top: 20px;">
+              <tbody>
+                <tr ng-repeat="(key, val) in param.values">
+                  <td style="max-width: 40%">"{{key}}"</td>
+                  <td>"{{val}}"</span><i ng-click="removeValue(key)" style="position: relative; top: 1px;" class="pull-right glyphicon glyphicon-remove"></i></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div ng-show="addValueForm">
+              <input type="text" ng-model="value.key" placeholder="key">
+              <input type="text" ng-model="value.val" placeholder="value">
+              <button class="btn btn-small btn-success" ng-click="addValue(value.key, value.val);addValueForm=false">Add</button>
+              <button class="btn btn-small" ng-click="addValueForm=false">Cancel</button>
+            </div>
+
+            <p style="margin-top: 20px">Cardinality</p>
+            <select ng-model="param.cardinality">
+              <option value="*">*</option>
+              <option value="1">1</option>
+            </select>
+            <p style="margin-top: 20px">Separator</p>
+            <input type="text" ng-model="param.separator">
+          </div>
+          <button style="margin-top: 20px" class="btn btn-success" ng-click="addParameter()">Add</button><button ng-click="paramForm=false" style="margin-top: 20px" class="btn">Cancel</button>
+        </div>
+      </div>
+      <hr >
+      <div class="row">
+        <h5 style="margin-top: 20px">Urls <button class="pull-right btn btn-small btn-success" ng-click="addUrls = true" ng-hide="addUrls"><i class="glyphicon glyphicon-plus"></i></button></h5>
+        <table class="table" style="width: 100%; margin-top: 20px;">
+          <tbody>
+            <tr ng-repeat="(key, val) in conf.href">
+              <td style="max-width: 40%">"{{key}}"</td>
+              <td>"{{val}}"</span><i ng-click="removeHref(key)" style="position: relative; top: 1px;" class="pull-right glyphicon glyphicon-remove"></i></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div ng-show="addUrls">
+          <input type="text" ng-model="hrefkey" placeholder="key">
+          <input type="text" ng-model="hrefurl" placeholder="URL">
+          <button class="btn btn-small btn-success" ng-click="addHref(hrefkey, hrefurl);addUrls=false">Add</button>
+          <button class="btn btn-small" ng-click="addUrls=false">Cancel</button>
+        </div>
+
+      </div>
+		</div>
+    <div class="col col-lg-5">
+      <pre>{{conf|json}}</pre>
+      <p style="line-height: 30px;">Load the configuration file of <span ng-repeat="p in providersDemo"> <button ng-click="loadConf(p)" class="btn btn-small"> {{p}} </button></span></p>
+    </div>
+	</div>
+</div>
+

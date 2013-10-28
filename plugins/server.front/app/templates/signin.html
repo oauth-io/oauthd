@@ -1,0 +1,77 @@
+<div class="container">
+	<div class="row" style="margin-top: 30px">
+		<div class="col col-lg-10 col-offset-1">
+			<div style="background-color: white; font-family: 'YanoneKRegular', Monaco, Menlo !important">
+			  <div style="background-color: #cbe7f9; height: 20px"></div>
+			  <div style="padding: 25px 50px">
+			    <div class="row">
+			      <div class="col col-lg-4">
+					<object data="/img/logo.svg" style="position: relative; left: 25px; top: 50px" type="image/svg+xml">
+					  <img src="/img/logo.png" />
+					</object>
+			      </div>
+			      <div class="col col-lg-6">
+			        <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
+			            <h4 style="font-size: 1.1em; ">Log in</h4><br />
+			        </div>
+			        <div ng-show="userForm.mode == 'Lost password'">
+			            <h4 style="text-align: center">Forgot my password</h4>
+			            <br />
+			        </div>
+			        <form name="signup" class="form-vertical">
+			          <div class="alert alert-danger" ng-show="info.status == 'error'">
+			            {{info.message}}
+			          </div>
+			          <div class="alert alert-info" ng-show="info.status == 'info'">
+			            {{info.message}}
+			          </div>
+			          <div>
+			            <label for="mail" style="font-size: 1.3em">Email</label>
+			            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required>
+			          </div>
+			          <div ng-hide="userForm.mode == 'Lost password' || userForm.pass.hide" style="margin-top: 15px">
+			            <label for="pass" style="font-size: 1.3em">Password</label>
+			            <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6">
+			          </div>
+			          <div class="row">
+			            <div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
+			              <button ng-click="userForm.submit()" class="btn btn-primary">
+			                <span ng-show="userForm.mode == 'Lost password'">
+			                  Reset my password
+			                </span>
+			                <span  style="font-size: 18px; " ng-hide="userForm.mode == 'Lost password'">Log in</span>
+			              </button>
+			            </div>
+
+			            <div style="clear: both; position: relative; top: 15px;">
+			              <p style="font-size: 1.2em; ;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a></p>
+			              <a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; margin-left: 15px">cancel</a>
+			            </div>
+			          </div>
+			        </form>
+			        <div class="alert alert-danger" ng-show="signup.status == 'error'">
+			          <strong>Oups!</strong> {{signup.message}}
+			        </div>
+			        <div ng-show="userForm.mode == 'Sign up'">
+			          <div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+			            <strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+			          </div>
+			          <div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
+			            <strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+			  <div style="background-color: #cbe7f9; height: 20px"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col col-offset-1">
+			<p style="font-size: 1.2em; "><a style="cursor: pointer;" href="#/signup">I don't have an account yet? <span style="text-decoration: underline">Register</span></a></p>
+		</div>
+	</div>
+</div>

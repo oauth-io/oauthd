@@ -1,0 +1,78 @@
+<style>
+	#getting-started p { color: #454545 !important; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif!important;}
+</style>
+<div id="getting-started">
+	<div class="jumbotron">
+	  <h1>Getting started</h1>
+	  <p style="color: #666">From setting up your keys to authenticating your users</p>
+	  <p>
+	  	<div class="btn-group">
+		  	<a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" class="btn btn-large btn-success">Download OAuth.js (2.2kb)</a>
+		  	<button type="button" class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown">
+			    <span class="caret"></span>
+			</button>
+	  		<ul class="dropdown-menu">
+				<li><a target="_blank" href="https://oauth.io//auth/download/latest/oauth.min.js"><small><small>Download OAuth.js - minified (1.4k)</small></small></a></li>
+			</ul>
+		</div>
+		<a href="https://github.com/oauth-io/oauth-js" style="margin-left: 15px"><img src="/api/providers/github/logo"></a>
+	  </p>
+	</div>
+	<h3>I - Setup your keys in OAuth.io</h3><br />
+	<p>Once logged in with your first app created, you should have a screen which looks like this</p>
+	<p>
+		<a class="thumbnail" ng-click="showLightbox('/img/keymanager-empty.png', 'The key manager empty once logged in')" style="cursor: pointer; width: 250px"><img width="250" src="/img/keymanager-empty.png"></a>
+	</p><br />
+	<p>To add keys to your app, search your favorite OAuth provider and drag & drop it in your application and follow instructions inside the form.</p>
+	<p>Configure your callback on your OAuth provider:</p>
+	<p><a ng-click="showLightbox('/img/facebook-conf.png', 'Configure OAuth callback on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-conf.png"></a></p><br />
+	<p>Note that the domain callback is <code>oauth.io</code> and the URL callback is <code>https://oauth.io/auth</code>.</p>
+	<p>Find your API keys on your OAuth provider:</p>
+	<p>
+		<a ng-click="showLightbox('/img/facebook-apikey.png', 'Get your API Keys on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-apikey.png"></a>
+	</p><br />
+	<p>Copy paste your keys in OAuth.io</p>
+	<p>
+		<a ng-click="showLightbox('/img/keys-add.png', 'Copy paste your keys on OAuth.io')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/keys-add.png"></a>
+	</p><br />
+	<p><br />Then, you can repeat this step to get an app like this and you can expend provider's keys clicking on their name to get sample code and to modify easily the scope and or APIKeys (useful !)</p>
+	<p>Moreover, you can try your API keys directly on OAuth.io clicking on <button class="btn btn-primary btn-small" style="font-size: 1.0em; font-weight: bold">Try auth</button> and debug the response as needed.</p>
+	<p>
+		<a ng-click="showLightbox('/img/key-detail.png', 'And try your keys directly in OAuth.io before integrate')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/key-detail.png"></a>
+	</p>
+	<hr />
+	<h3>II - Install OAuth.js</h3>
+	<p>In the <code>&lt;head&gt;</code> of your HTML, include OAuth.js</p>
+	<pre>&lt;script src="<strong>/path/to/OAuth.js</strong>"&gt;&lt;/script&gt;</pre>
+
+	<p>In your Javascript, add this line to initialize OAuth.js</p>
+	<pre>OAuth.initialize('<span class="text-success"><strong>Public key</strong></span>');</pre>
+	<hr />
+	<h3>III - Play ;)</h3>
+	<p>To connect your user using facebook, 2 methods :</p>
+	<div class="row">
+		<div class="col col-lg-6">
+			<h4>Mode popup</h4>
+
+<pre><span class="text-muted">//Using popup (option 1)</span>
+OAuth.popup('<span class="api-text">facebook</span>', function(<span class="err">err</span>, <strong>result</strong>) {
+  <span class="text-muted">//handle error with <span class="err">err</span></span>
+  <span class="text-muted">//use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
+});</pre>
+		</div>
+		<div class="col col-lg-6">
+			<h4>Mode redirection</h4>
+<pre><span class="text-muted">//Using redirection (option 2)</span>
+OAuth.redirect('<span class="api-text">facebook</span>', "<strong>callback/url</strong>");</pre>
+	<p>In callback url :</p>
+<pre>OAuth.callback('<span class="api-text">facebook</span>', function(<span class="err">err</span>, <strong>result</strong>) {
+  <span class="text-muted">//handle error with <span class="err">err</span></span>
+  <span class="text-muted">//use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
+});</pre>
+		</div>
+	</div>
+
+	<p><a href="http://oauth-io.github.io/oauth-js/">See a sample app on GitHub</a></p>
+	<a href="http://oauth-io.github.io/oauth-js/"><img src="/img/demo-github.png" width="512" alt="Demo GitHub" /></a>
+	<div lightbox></div>
+</div>

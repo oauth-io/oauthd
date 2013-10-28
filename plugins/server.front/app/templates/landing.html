@@ -1,0 +1,57 @@
+<div class="container">
+    <div class="row">
+        <div class="col col-lg-7">
+            <div style="font-size: 1.8em; margin-bottom: 60px;">
+                <a href="#/"><img class="pull-left" src="/img/logo_v1.png" style="position: relative; z-index:5" width="110"></a>
+                <div style="position: relative; left: 20px; top: 10px; ">
+                    <h1 style="font-family: 'YanoneKLight', sans-serif; color: #6d6c6c">OAuth.io</h1>
+                    <p>OAuth that just works.</p>
+                </div>
+            </div>
+            <p>We support 70+ OAuth providers.</p>
+            <ul>
+                <li ng-click="providerClick(provider)" style="float: left; margin-right: 5px" ng-repeat="provider in providers">
+                    <img ng-src="/api/providers/{{ provider }}/logo" tooltip="{{ provider }}" width="32" height="32" style="width: 32px; height: 32px; cursor: pointer" />
+                </li>
+                <li style="float: left; position: relative; top: 5px;">
+                    and more.
+                </li>
+            <ul>
+            <br style="clear: left"><br /><br />
+            <ul>
+                <li>
+                    <p>
+                        <span class="label label-info">1</span> Setup your <span class="api-text">{{selectedProvider|capitalize}}</span> API Keys in OAuth.io
+                    </p>
+                    <p>We give you a sandbox and a production <span class="public-key-text">Public key</span>.</p>
+                </li>
+                <li style="margin-top: 30px">
+                    <p>
+                        <span class="label label-info">2</span> Setup OAuth.js in your HTML
+                    </p>
+                    <pre class="prettyprint">&lt;script src="<strong>path/to/OAuth.js</strong>"&gt;&lt;/script&gt;</pre>
+                </li>
+                <li style="margin-top: 30px">
+                    <p>
+                        <span class="label label-info">3</span> Request user authorization for <span class="api-text" ucfirst>{{selectedProvider|capitalize}}</span>
+                    </p>
+                    <pre class="prettyprint">OAuth.initialize('<span class="public-key-text">Public key</span>');
+
+<span class="comment">//Using popup (option 1)</span>
+OAuth.popup('<span class="api-text">{{ selectedProvider }}</span>', function(<span class="err">error</span>, <strong>result</strong></a>) {
+<span class="comment">//handle error with <span class="err">error</span></span>
+<span class="comment">//use <strong style="color: #333">result.</strong><span class="access-token">accessToken</span> in your API request</span>
+});
+
+<span class="comment">//Using redirection (option 2)</span>
+OAuth.redirect('<span class="api-text">{{ selectedProvider }}</span>', "<strong>callback/url</strong>");</pre>
+                </li>
+
+            </ul>
+        </div>
+        <div class="col col-lg-5">
+            <div stubborn></div>
+            <div ng-controller="UserFormCtrl" ng-include src="userFormTemplate"></div>
+        </div>
+    </div>
+</div>
