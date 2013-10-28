@@ -22,6 +22,9 @@ module.exports = {
 		// options: {...other options...}
 	},
 
+	cacheTime: 1,
+	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
+
 	smtp: {},
 
 	plugins: [
