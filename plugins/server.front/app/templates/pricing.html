@@ -1,55 +1,81 @@
-<div class="container">
+<style>
+	.list-group-item .col-sm-2 { text-align: center; }
+	#pricing .col { padding-left: 0; padding-right: 0; margin-right: -1px;}
+</style>
+<div class="container" id="pricing">
 	<div style="background-color: white; padding: 30px 15px">
-		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing options</h1>
-		<div class="row">
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
-						<h3 style="font-weight: bold; text-align: center">Free</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">0$</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
-					</div>
-					<div style="text-align: center;">up to 1000 calls/month</div>
-				</div>
-			</div>
-
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
-						<h3 style="font-weight: bold; text-align: center">Startup</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">29$</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
-					</div>
-					<div style="text-align: center;">
-						up to 10 000 calls/month
+		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing</h1>
+		<div style="padding: 10px 30px 10px 15px; margin-bottom: -1px;">
+			<div class="row">
+				<div class="col col-sm-4"></div>
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd; border-top-left-radius: 5px">
+						<h3>Bootstrap</h3>
+						<h1>0$</h1>
+						<p style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
 					</div>
 				</div>
-			</div>
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
-						<h3 style="font-weight: bold; text-align: center">Business</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">99$</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
-					</div>
-					<div style="text-align: center;">
-						up to 1 000 000 calls/month
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd;">
+						<h3>Startup</h3>
+						<h1>19$</h1>
+						<p style="margin: 0 10px 15px"><button disabled="disabled" class="btn btn-primary btn-block">Purchase</button></p>
 					</div>
 				</div>
-			</div>
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
-						<h3 style="font-weight: bold; text-align: center">You need</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">More users</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd;">
+						<h3>Growth</h3>
+						<h1>199$</h1>
+						<p style="margin: 0 10px 15px"><button disabled="disabled" class="btn btn-primary btn-block">Purchase</button></p>
 					</div>
-					<div style="text-align: center;">
-						<a href="/contact-us">contact us</a>
+				</div>
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd; border-top-right-radius: 5px">
+						<h3>Scalability</h3>
+						<h1>-</h1>
+						<p style="margin: 0 10px 15px"><a href="/contact-us" class="btn btn-default btn-block">Contact us</a></p>
 					</div>
 				</div>
 			</div>
 		</div>
+		<ul class="list-group" style="margin-top: -11px">
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-4">Monthly connexion</div>
+					<div class="col col-sm-2">1 000</div>
+					<div class="col col-sm-2">50 000</div>
+					<div class="col col-sm-2">500 000</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-4">Application</div>
+					<div class="col col-sm-2">1</div>
+					<div class="col col-sm-2">5</div>
+					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-4">OAuth provider</div>
+					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-4">Support response delay</div>
+					<div class="col col-sm-2">none guaranted</div>
+					<div class="col col-sm-2">48 hours</div>
+					<div class="col col-sm-2">12 hours</div>
+					<div class="col col-sm-2">-</div>
+				</div>
+		  	</li>
+		</ul>
 		<div class="row"><br/>
 			<div class="col col12">
 				<div>
@@ -64,42 +90,16 @@
 	<div class="row">
 		<div class="col col12">
 			<div class="container">
-<!--				<div class="row" style="background-color: #cbe7f9">
-					<p style="text-align: center;"><img src="/img/anyquestions.png" style="position: relative; top: -55px"></p>
-					<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">The answer you need</h1>
-					<div class="container" style="margin-bottom: 80px">
-						<div class="row">
-							<div class="col col-lg-5 col-offset-1">
-								<h3>How to decide which offer to take?</h3>
-								<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, labore, accusantium, molestiae, eaque autem odit possimus quia id sequi laudantium nulla reiciendis sunt quo optio qui modi quisquam voluptatibus nostrum.</p>
-							</div>
-							<div class="col col-lg-5">
-								<h3>What if I go over my users limit?</h3>
-								<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, laudantium, hic, itaque, aliquid maxime impedit numquam eos debitis natus totam esse dolores commodi delectus tempore sapiente fugiat dolor quaerat quod.</p>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col col-lg-5 col-offset-1">
-								<h3>What does justify these prices?</h3>
-								<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, quas, aliquid vitae omnis dicta fuga molestiae veritatis laborum ea nesciunt deserunt eius. Nulla, cum, illo nisi numquam culpa eos esse.</p>
-							</div>
-							<div class="col col-lg-5">
-								<h3>Am I assured that everything will go well?</h3>
-								<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, praesentium itaque voluptatum placeat mollitia illo optio architecto veniam ducimus rem pariatur quam dolores sed temporibus qui voluptatibus ipsam deleniti perspiciatis.</p>
-							</div>
-						</div>
-					</div>
-				</div>-->
 				<div class="row" style="background-color: #0074a2; color: white">
 					<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px"></p>
 					<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">Any question? Contact us</h1>
 					<div class="container" style="margin-top: 55px; margin-bottom: 40px">
 						<div class="row">
-							<div class="col col-lg-5" style="text-align: right">
+							<div class="col col-sm-5" style="text-align: right">
 								<img src="/img/team.png" style="height: 250px">
 							</div>
 
-							<div class="col col-lg-6 col-offset-1">
+							<div class="col col-sm-6 col-offset-1">
 								<p style="font-size: 2.0em">Still have some question?</p>
 								<p style="font-size: 2.0em">Our team is always up to answer you.</p>
 								<br />
@@ -111,5 +111,5 @@
 				</div>
 			</div>
 		</div>
-	</div>	
+	</div>
 </div>
