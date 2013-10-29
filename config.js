@@ -3,6 +3,7 @@ module.exports = {
 	base: "/auth",							// add a base url path. e.g: "/auth"
 	base_api: "/api",						// api base path
 	port: 6284,
+	http_port: 6285,
 
 	debug: true,							// add stack trace & infos in errors
 
