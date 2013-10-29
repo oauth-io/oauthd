@@ -28,7 +28,6 @@ exports.setup = (callback) ->
 		console.log "Warning: oauth_io plugin is not configured"
 
 	redir = (req, res, next) =>
-		console.log req
 		res.setHeader 'Location', @config.host_url + req.url
 		res.send 301
 		next false
