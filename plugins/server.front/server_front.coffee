@@ -41,12 +41,16 @@ needAdmin = (req, res, next) -> checkAdmin req, res, ->
 bootTime = new Date
 bootPathCache = (opts) ->
 	opts ?= {}
+	opts.path ?= '/app'
 	chain = restify.conditionalRequest()
 	chain.unshift (req, res, next) ->
-		hashdata = req.path() + ':' + bootTime
-		hashdata = req.admin + ':' + req.logged + ':' + hashdata if opts.logged || opts.admin
-		res.set 'ETag', db.generateHash hashdata
-		next()
+		fs.stat __dirname + opts.path + req.url, (err, stat) ->
+			timeinfo = stat?.mtime || bootTime
+			res.setHeader 'Last-Modified', timeinfo
+			hashdata = req.path() + ':' + timeinfo
+			hashdata = req.admin + ':' + req.logged + ':' + hashdata if opts.logged || opts.admin
+			res.set 'ETag', db.generateHash hashdata
+			next()
 	return chain
 
 init = (callback) ->
@@ -76,7 +80,7 @@ exports.setup = (callback) ->
 			directory: __dirname + '/app'
 			maxAge: 1
 
-		@server.get /^\/[0-9]{3,3}/, addExtension, bootPathCache(), restify.serveStatic
+		@server.get /^\/[0-9]{3,3}/, addExtension, bootPathCache(path:'/errors'), restify.serveStatic
 			directory: __dirname + '/errors'
 			maxAge: 1 # no cache on errors !
 
@@ -84,8 +88,8 @@ exports.setup = (callback) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
-			data = data.toString().replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.toString().replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
 			res.end data
 			next()
 

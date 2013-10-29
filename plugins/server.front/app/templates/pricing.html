@@ -1,16 +1,7 @@
 <style>
-
-.panel
-{
-  background-color:#0074a2;
-  height:230px;
-}
-
-.panel-heading
-{
-	height:180px;
-	background-color:#cbe7f9;
-}
+	.list-group-item {font-size: 1.3em;}
+	.list-group-item .col-sm-2 { text-align: center; }
+	#pricing .col { padding-left: 0; padding-right: 0; margin-right: -1px;}
 
 .action, .action:hover, .action:hover:visited
 {
@@ -23,65 +14,73 @@
 
 </style>
 
-<div class="container">
+<div class="container" id="pricing">
 	<div style="background-color: white; padding: 30px 15px">
-		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing options</h1>
-		<div class="row">
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
+		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing</h1>
+		<div style="padding: 10px 30px 10px 15px; margin-bottom: -1px;">
+			<div class="row">
+				<div class="col col-sm-{{12-plans.length*2-4}}"></div>
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd; border-top-left-radius: 5px">
 						<img src="/img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="!current_plan && UserService.isLogin()"/>
-						<h3 style="font-weight: bold; text-align: center">Free</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">0$</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
-						<h6>
-							<div style="text-align: center;">up to 100 unique users/month</div>
-						</h6>
+						<h3>Bootstrap</h3>
+						<h1>0$</h1>
+						<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
 					</div>
-
-					<div style="text-align: center;">
-						<p ng-show="!UserService.isLogin()">
-							<span class="action">SIGNUP</span>
-						</p>
-					</div>
-
 				</div>
-			</div>
-			<div class="col col-lg-3" ng-repeat="plan in plans | orderBy:'+amount'">
-				<div class="panel">
-					<div class="panel-heading">
-						<img src="/img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="plan.name == current_plan"/>
-						<h3 style="font-weight: bold; text-align: center">{{plan.name|capitalize}}</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">{{plan.amount/100}}$</h1>
-						<p class="text-muted" style="text-align: center">per {{plan.interval}}</p>
-						<h6>
-							<div style="text-align: center;">up to {{plan.nbConnection}} unique
-							users per {{plan.interval}}</div>
-						</h6>
-					</div>
-					<div style="text-align: center;">
-						<p>
-							<span class="action"  ng-show="plan.name != current_plan" ng-click="subscribe(plan)">PURCHASE</span>
-							<span class="action"  ng-show="plan.name == current_plan" ng-click="unsubscribe()">UNSUBSCRIBE</span>
+				<div class="col col-sm-2" style="text-align: center" ng-repeat="plan in plans | orderBy:'+amount'">
+					<div style="border: 1px solid #dddddd;">
+						<h3>{{plan.name|capitalize}}</h3>
+						<h1>{{plan.amount/100}}$</h1>
+						<p style="margin: 0 10px 15px">
+							<button ng-show="plan.name != current_plan" ng-click="subscribe(plan)" class="btn btn-primary btn-block">Purchase</button>
+							<button ng-show="plan.name == current_plan" ng-click="unsubscribe()" class="btn btn-primary btn-block">Unsubscribe</button>
 						</p>
 					</div>
 				</div>
-			</div>
-			<div class="col col-lg-3">
-				<div class="panel">
-					<div class="panel-heading">
-						<h3 style="font-weight: bold; text-align: center">You need</h3>
-						<h1 style="font-weight: bold; text-align: center; margin-top: -3px">More users</h1>
-						<p class="text-muted" style="text-align: center">per month</p>
-					</div>
-					<div style="text-align: center;">
-						<p>
-							<a href="/contact-us" class="action">CONTACT US</a>
-						</p>
+				<div class="col col-sm-2" style="text-align: center">
+					<div style="border: 1px solid #dddddd; border-top-right-radius: 5px">
+						<h3>Scalability</h3>
+						<h1>-</h1>
+						<p style="margin: 0 10px 15px"><a href="/contact-us" class="btn btn-default btn-block">Contact us</a></p>
 					</div>
 				</div>
 			</div>
 		</div>
+		<ul class="list-group" style="margin-top: -11px">
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-{{12-plans.length*2-4}}">Monthly connexion</div>
+					<div class="col col-sm-2">1 000</div>
+					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection}}</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-{{12-plans.length*2-4}}">Application</div>
+					<div class="col col-sm-2">1</div>
+					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">xx</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-{{12-plans.length*2-4}}">OAuth provider</div>
+					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">unlimited</div>
+					<div class="col col-sm-2">unlimited</div>
+				</div>
+		  	</li>
+			<li class="list-group-item">
+				<div class="row">
+					<div class="col col-sm-{{12-plans.length*2-4}}">Support response delay</div>
+					<div class="col col-sm-2">none guaranted</div>
+					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">xx hours</div>
+					<div class="col col-sm-2">-</div>
+				</div>
+		  	</li>
+		</ul>
 		<div class="row"><br/>
 			<div class="col col12">
 				<div>
@@ -122,16 +121,17 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="row" style="background-color: #0074a2; color: white">
 					<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px"></p>
 					<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">Any question? Contact us</h1>
 					<div class="container" style="margin-top: 55px; margin-bottom: 40px">
 						<div class="row">
-							<div class="col col-lg-5" style="text-align: right">
+							<div class="col col-sm-5" style="text-align: right">
 								<img src="/img/team.png" style="height: 250px">
 							</div>
 
-							<div class="col col-lg-6 col-offset-1">
+							<div class="col col-sm-6 col-offset-1">
 								<p style="font-size: 2.0em">Still have some question?</p>
 								<p style="font-size: 2.0em">Our team is always up to answer you.</p>
 								<br />
