@@ -125,7 +125,7 @@ ValidateCtrl = ($scope, $routeParams, MenuService, UserService, $location) ->
 					mail: data.data.mail
 					pass: user.pass
 				}, (data) ->
-					$location.path('/app-create')
+					$location.path('/key-manager')
 
 			), (error) ->
 				$scope.error =
