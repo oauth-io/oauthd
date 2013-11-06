@@ -57,7 +57,7 @@ hooks.config = ->
 					provider: name
 					status: status
 
-			createPaymentOffer: (amount, name, currency, interval, nbConnection, status, success, error) ->
+			createPaymentOffer: (amount, name, currency, interval, nbConnection, status, nbApp, nbProvider, responseDelay, success, error) ->
 				api "adm/plan/create", success, error,
 				method:'post'
 				data:
@@ -67,6 +67,9 @@ hooks.config = ->
 					interval: interval
 					nbConnection: nbConnection
 					status: status
+					nbApp: nbApp
+					nbProvider: nbProvider
+					responseDelay: responseDelay
 
 			getOffersList: (success, error) ->
 				api 'adm/plan', success, error
@@ -472,7 +475,7 @@ hooks.config = ->
 			status = "public"
 			if ($('.status').is(':checked'))
 				status = "private";
-			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbConnection").val(), status, (success) ->
+			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbConnection").val(), status, $(".nbApp").val(), $(".nbProvider").val(), $(".responseDelay").val(), (success) ->
 
 				for plan in success.data
 					$scope.offersList.push(plan)

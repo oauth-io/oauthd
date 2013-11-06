@@ -38,6 +38,9 @@ exports.createOffer = (data, callback) ->
 					offer.data.name = name;
 					offer.data.status = status;
 					offer.data.nbConnection = data.nbConnection
+					offer.data.nbApp = data.nbApp
+					offer.data.nbProvider = data.nbProvider
+					offer.data.responseDelay = data.responseDelay
 
 					db.redis.multi([
 
@@ -53,7 +56,10 @@ exports.createOffer = (data, callback) ->
 								"#{prefix}:#{name}:updated_at", offer.data.updated_at,
 								"#{prefix}:#{name}:amount", offer.data.amount,
 								"#{prefix}:#{name}:status", status,
-								"#{prefix}:#{name}:nbConnection", data.nbConnection],
+								"#{prefix}:#{name}:nbConnection", data.nbConnection,
+								"#{prefix}:#{name}:nbApp", offer.data.nbApp,
+								"#{prefix}:#{name}:nbProvider", offer.data.nbProvider,
+								"#{prefix}:#{name}:responseDelay", offer.data.responseDelay],
 
 						[ "hset", "#{prefix}:offers_id", offer.data.id, name ]
 
@@ -82,6 +88,9 @@ exports.createOffer = (data, callback) ->
 					offer.data.name = name;
 					offer.data.status = status;
 					offer.data.nbConnection = data.nbConnection
+					offer.data.nbApp = data.nbApp
+					offer.data.nbProvider = data.nbProvider
+					offer.data.responseDelay = data.responseDelay
 					offer.data.parent = parent
 
 					db.redis.multi([
@@ -99,6 +108,9 @@ exports.createOffer = (data, callback) ->
 								"#{prefix}:#{name}:amount", offer.data.amount,
 								"#{prefix}:#{name}:status", status,
 								"#{prefix}:#{name}:nbConnection", data.nbConnection,
+								"#{prefix}:#{name}:nbApp", offer.data.nbApp,
+								"#{prefix}:#{name}:nbProvider", offer.data.nbProvider,
+								"#{prefix}:#{name}:responseDelay", offer.data.responseDelay,
 								"#{prefix}:#{name}:parent", parent ],
 
 						[ "hset", "#{prefix}:offers_id", offer.data.id, name ]
@@ -135,7 +147,7 @@ exports.removeOffer = (name, callback) ->
 						return callback err if err
 
 						db.redis.multi([
-							[ 'del', prefix+':id', prefix+':currency', prefix+':nbConnection', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix+':name', prefix+'parent', prefix]
+							[ 'del', prefix+':id', prefix+':currency', prefix+':nbConnection', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix+':name', prefix+':nbApp', prefix+':nbProvider', prefix+':responseDelay',prefix+':parent', prefix]
 							[ 'srem', "pm:offers", name],
 							[ 'srem', "pm:offers:#{status}", name],
 							[ "hdel", "pm:offers:offers_id", id_offer ]
@@ -153,7 +165,7 @@ exports.removeOffer = (name, callback) ->
 						return callback err if err
 
 						db.redis.multi([
-							[ 'del', prefix_ttc+':id', prefix_ttc+':currency', prefix_ttc+':nbConnection', prefix_ttc+':interval',prefix_ttc+':created_at',prefix_ttc+':updated_at',prefix_ttc+':amount', prefix_ttc+':subscription_count:active',prefix_ttc+':subscription_count:inactive',prefix_ttc+':status', prefix_ttc+':name', prefix_ttc+':parent', prefix_ttc]
+							[ 'del', prefix_ttc+':id', prefix_ttc+':currency', prefix_ttc+':nbConnection', prefix_ttc+':interval',prefix_ttc+':created_at',prefix_ttc+':updated_at',prefix_ttc+':amount', prefix_ttc+':subscription_count:active',prefix_ttc+':subscription_count:inactive',prefix_ttc+':status', prefix_ttc+':name', prefix_ttc+':nbApp', prefix_ttc+':nbProvider', prefix_ttc+':responseDelay', prefix_ttc+':parent', prefix_ttc]
 							[ 'srem', "pm:offers", name_ttc],
 							[ 'srem', "pm:offers:#{status}", name_ttc],
 							[ "hdel", "pm:offers:offers_id", id_offer ]
@@ -185,12 +197,15 @@ exports.getOffersList = (callback) ->
 			cmds.push [ "get", "#{prefix}:#{p}:status"]
 			cmds.push [ "get", "#{prefix}:#{p}:nbConnection"]
 			cmds.push [ "get", "#{prefix}:#{p}:parent"]
+			cmds.push [ "get", "#{prefix}:#{p}:nbApp"]
+			cmds.push [ "get", "#{prefix}:#{p}:nbProvider"]
+			cmds.push [ "get", "#{prefix}:#{p}:responseDelay"]
 
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 10], name:res[i * 10 + 1], currency:res[i * 10 + 2], interval:res[i * 10 + 3], created_at:res[i * 9 + 4], updated_at:res[i * 10 + 5], amount:res[i * 10 + 6], status:res[i * 10 + 7], nbConnection:res[i * 10 + 8], parent: res[i * 10 + 9]
+				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11], responseDelay: res[i * 13 + 12]
 
 			return callback null, offers
 
@@ -230,12 +245,15 @@ exports.getPublicOffers = (callback) ->
 			cmds.push [ "get", "#{prefix}:#{offer_name}:interval"]
 			cmds.push [ "get", "#{prefix}:#{offer_name}:amount"]
 			cmds.push [ "get", "#{prefix}:#{offer_name}:nbConnection"]
+			cmds.push [ "get", "#{prefix}:#{offer_name}:nbApp"]
+			cmds.push [ "get", "#{prefix}:#{offer_name}:nbProvider"]
+			cmds.push [ "get", "#{prefix}:#{offer_name}:responseDelay"]
 
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 6], name:res[i * 6 + 1], currency:res[i * 6 + 2], interval:res[i * 6 + 3].toLowerCase() , amount:res[i * 6 + 4], nbConnection:res[i * 6 + 5]
+				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:res[i * 9 + 5], nbApp:res[i * 9 + 6], nbProvider:res[i * 9 + 7], responseDelay:res[i * 9 + 8]
 
 			return callback null, offers
 
@@ -245,7 +263,7 @@ exports.getOfferByName = (name, callback) ->
 
 	prefix = "pm:offers:#{name}"
 
-	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection", "#{prefix}:status" ], (err, res) ->
+	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:status" ], (err, res) ->
 		return callback err if err
 		return callback new check.Error "This plan does not exists" if not res?
 		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3], status:res[4]

@@ -435,7 +435,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 		db.redis.hget ["pm:offers:offers_id", offer_id], (err, offer) ->
 			return callback err if err
 			prefix = "pm:offers:#{offer}"
-			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection", "#{prefix}:parent"], (err, replies) ->
+			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:parent"], (err, replies) ->
 				return callback err if err
 				return callback null, replies
 

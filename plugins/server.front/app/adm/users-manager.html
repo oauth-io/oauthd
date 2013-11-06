@@ -240,13 +240,13 @@ $('#navTab a').click(function (e) {
 
 						<div class="controls controls-row">
 							<div class="span2">
-								<label class="name-label">Name</label>
+								<label class="label">Name</label>
 								<input class="name span2" type="text" size="10" value="Offer"/>
 							</div>
 
 							<div class="controls controls-row">
 								<div class="span2">
-									<label class="amount-label">Amount</label>
+									<label class="label">Amount</label>
 								  <!--
 								   <input class="amount span2" type="number" size="10" value="4200"/> -->
 								<input class="amount span2" type="number" name="price" pattern="[0-9]+([\.|,][0-9]+)?" step="0.01" title="This should be a number with up to 2 decimal places." size="10" value="42.00">
@@ -256,7 +256,7 @@ $('#navTab a').click(function (e) {
 
 							<div class="controls controls-row">
 								<div class="span3">
-									<label class="currency-label">Currency ( <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> formatted currency code  )</label>
+									<label class="label">Currency ( <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> formatted currency code  )</label>
 									<input class="currency span3" type="text" size="4" value="EUR"/>
 								</div>
 							</div>
@@ -264,7 +264,7 @@ $('#navTab a').click(function (e) {
 
 						<div class="controls controls-row">
 							<div class="span3">
-								<label class="interval-label">Interval (Defining how often the client should be charged. Format: number DAY|WEEK|MONTH|YEAR Example: 2 DAY) </label>
+								<label class="label">Interval (Defining how often the client should be charged. Format: number DAY|WEEK|MONTH|YEAR Example: 2 DAY) </label>
 							   <!--  <input class="interval span1" type="text" size="10" value="1 MONTH"/> -->
 								<select class="interval span1" name="interval" ng-model="interval" ng-selected="interval" ng-options="interval for interval in intervals">
 								</select>
@@ -274,8 +274,29 @@ $('#navTab a').click(function (e) {
 
 						<div class="controls controls-row">
 							<div class="span3">
-								<label class="nbConnection-label">Connection number (up to how many connection for the offer) </label>
+								<label class="label">Connection number (up to how many connection for the offer) </label>
 								<input class="nbConnection span1" type="text" size="10" value="1000"/>
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Number of application</label>
+								<input class="nbApp span1" type="text" size="10" value="1" name="nbApp" />
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Number of provider</label>
+								<input class="nbProvider span1" type="text" size="10" value="3" name="nbProvider" />
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Support response delay</label>
+								<input class="responseDelay span1" type="text" size="10" value="1000" name="responseDelay"/>
 							</div>
 						</div>
 
@@ -290,11 +311,11 @@ $('#navTab a').click(function (e) {
 						</div>
 					</div>
 				</div>
-
+<!--
 				<div ng-show="pay_tabShow == 'subscriptions'">
-					sub
-				</div>
 
+				</div>
+ -->
 			</div>
 		</div>
 
