@@ -19,30 +19,25 @@
 		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing</h1>
 		<div style="padding: 10px 30px 10px 15px; margin-bottom: -1px;">
 			<div class="row">
-				<div class="col col-sm-{{12-plans.length*2-4}}"></div>
+				<div class="col col-sm-{{12-plans.length*2-2}}"></div>
 				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd; border-top-left-radius: 5px">
-						<img src="/img/your_plan.png" style="position:absolute; left:16px; top:0px;" ng-show="!current_plan && UserService.isLogin()"/>
+					<div style="border: 1px solid #dddddd; border-top-left-radius: 5px; height: 172px">
+						<img src="/img/your_plan.png" style="position:absolute; left:0px; top:0px;" ng-show="!current_plan && UserService.isLogin()"/>
 						<h3>Bootstrap</h3>
 						<h1>0$</h1>
 						<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
+						<p ng-show="UserService.isLogin() && current_plan" style="margin: 0 10px 15px"><button ng-click="unsubscribe()" class="btn btn-primary btn-block">Purchase</button></p>
 					</div>
 				</div>
 				<div class="col col-sm-2" style="text-align: center" ng-repeat="plan in plans | orderBy:'+amount'">
 					<div style="border: 1px solid #dddddd;">
+						<img src="/img/your_plan.png" style="position:absolute; left:0px; top:0px;" ng-show="UserService.isLogin() && current_plan == plan.name"/>
 						<h3>{{plan.name|capitalize}}</h3>
 						<h1>{{plan.amount/100}}$</h1>
 						<p style="margin: 0 10px 15px">
 							<button ng-show="plan.name != current_plan" ng-click="subscribe(plan)" class="btn btn-primary btn-block">Purchase</button>
-							<button ng-show="plan.name == current_plan" ng-click="unsubscribe()" class="btn btn-primary btn-block">Unsubscribe</button>
+							<button ng-show="plan.name == current_plan" ng-click="unsubscribe()" class="btn btn-warning btn-block">Unsubscribe</button>
 						</p>
-					</div>
-				</div>
-				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd; border-top-right-radius: 5px">
-						<h3>Scalability</h3>
-						<h1>-</h1>
-						<p style="margin: 0 10px 15px"><a href="/contact-us" class="btn btn-default btn-block">Contact us</a></p>
 					</div>
 				</div>
 			</div>
@@ -50,34 +45,30 @@
 		<ul class="list-group" style="margin-top: -11px">
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col col-sm-{{12-plans.length*2-4}}">Monthly connexion</div>
-					<div class="col col-sm-2">1 000</div>
-					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection}}</div>
-					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-{{12-plans.length*2-2}}">Monthly connexion</div>
+					<div class="col col-sm-2">5 000</div>
+					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection|readableNumber}}</div>
 				</div>
 		  	</li>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col col-sm-{{12-plans.length*2-4}}">Application</div>
-					<div class="col col-sm-2">1</div>
+					<div class="col col-sm-{{12-plans.length*2-2}}">Application</div>
+					<div class="col col-sm-2">2</div>
 					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">xx</div>
-					<div class="col col-sm-2">unlimited</div>
 				</div>
 		  	</li>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col col-sm-{{12-plans.length*2-4}}">OAuth provider</div>
-					<div class="col col-sm-2">unlimited</div>
+					<div class="col col-sm-{{12-plans.length*2-2}}">OAuth provider</div>
+					<div class="col col-sm-2">5</div>
 					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">unlimited</div>
-					<div class="col col-sm-2">unlimited</div>
 				</div>
 		  	</li>
 			<li class="list-group-item">
 				<div class="row">
-					<div class="col col-sm-{{12-plans.length*2-4}}">Support response delay</div>
-					<div class="col col-sm-2">none guaranted</div>
+					<div class="col col-sm-{{12-plans.length*2-2}}">Support response delay</div>
+					<div class="col col-sm-2">1 week</div>
 					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">xx hours</div>
-					<div class="col col-sm-2">-</div>
 				</div>
 		  	</li>
 		</ul>

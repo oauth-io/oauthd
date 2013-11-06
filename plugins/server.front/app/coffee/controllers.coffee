@@ -1251,12 +1251,14 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	$scope.current_plan = null
 	if UserService.isLogin()
 		UserService.me (success) ->
-			$scope.current_plan = success.data.plan[2] if success.data.plan[2]?
-			$scope.current_plan = success.data.plan[0] if not success.data.plan[2]?
+			if success.data.plan?
+				$scope.current_plan = success.data.plan[2] if success.data.plan[2]?
+				$scope.current_plan = success.data.plan[0] if not success.data.plan[2]?
 		, (error) ->
 			console.log "error", error
 
 	PricingService.list (success) ->
+		console.log success.data
 		$scope.plans = success.data
 	, (error) ->
 		console.log error

@@ -39,6 +39,7 @@ module.exports = {
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
 
+
 	plugins: [
 		/* --- only for oauth.io --- */
 		'server.auth',
