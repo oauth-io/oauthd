@@ -274,7 +274,10 @@ exports.getOfferByName = (name, callback) ->
 	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:status" ], (err, res) ->
 		return callback err if err
 		return callback new check.Error "This plan does not exists" if not res?
-		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3], status:res[4]
+		nbConnection = if res[3] is "*" then "unlimited" else res[3]
+		nbApp = if res[4] is "*" then "unlimited" else res[4]
+		nbProvider = if res[5] is "*" then "unlimited" else res[5]
+		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, status:res[4]
 
 exports.unsubscribe = (client, callback) ->
 	return callback new restify.NotAuthorizedError if not client?
