@@ -1096,9 +1096,6 @@ AboutCtrl = (UserService, MenuService) ->
 HelpCtrl = (UserService, MenuService) ->
 	MenuService.changed()
 
-PricingCtrl = (UserService, MenuService) ->
-	MenuService.changed()
-
 NotFoundCtrl = ($scope, $routeParams, UserService, MenuService) ->
 	MenuService.changed()
 	$scope.errorGif = '/img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'
@@ -1258,7 +1255,6 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 			console.log "error", error
 
 	PricingService.list (success) ->
-		console.log success.data
 		$scope.plans = success.data
 	, (error) ->
 		console.log error

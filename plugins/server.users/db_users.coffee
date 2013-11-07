@@ -437,6 +437,10 @@ exports.getPlan = check 'int', (iduser, callback) ->
 			prefix = "pm:offers:#{offer}"
 			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:parent"], (err, replies) ->
 				return callback err if err
+
+				replies[2] = if replies[2] == "*" then "unlimited" else replies[2]
+				replies[3] = if replies[3] == "*" then "unlimited" else replies[3]
+
 				return callback null, replies
 
 
