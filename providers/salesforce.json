@@ -30,7 +30,7 @@
         "values": {
           "api": "Allows access to the current, logged-in user’s account over the APIs, such as the REST API or Bulk API. This also includes the chatter_api, allowing access to Chatter API resources.",
           "chatter_api": "Allows access to only the Chatter API resources.",
-          "full_api": "Allows access to all data accessible by the logged-in user. full does not return a refresh token. You must explicitly request the refresh_token scope to get a refresh token.",
+          "full": "Allows access to all data accessible by the logged-in user. full does not return a refresh token. You must explicitly request the refresh_token scope to get a refresh token.",
           "id":"Allows access only to the identity URL service.",
           "refresh_token":"Allows a refresh token to be returned if you are eligible to receive one.",
           "visual_force":"Allows access to Visualforce pages.",
