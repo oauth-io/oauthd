@@ -1,7 +1,13 @@
 {
   "oauth1": {
     "request_token": "https://api.tripit.com/oauth/request_token", 
-    "authorize": "https://www.tripit.com/oauth/authorize", 
+    "authorize": {
+      "url": "https://www.tripit.com/oauth/authorize",
+      "ignore_verifier": true,
+      "query": {
+        "oauth_callback": "{{callback}}"
+      }
+    },
     "access_token": "https://api.tripit.com/oauth/access_token", 
     "parameters": {
       "client_secret": "string", 
