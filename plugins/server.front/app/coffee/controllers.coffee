@@ -653,7 +653,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 					result: res
 
 	$scope.addDomain = ->
-		if $scope.createAppForm.input != "" and not $scope.createAppForm.domains.find $scope.createAppForm.input
+		if $scope.createAppForm.input != "" and $scope.createAppForm.domains.indexOf($scope.createAppForm.input) == -1
 			$scope.createAppForm.domains.push $scope.createAppForm.input
 			$scope.createAppForm.input = ""
 
