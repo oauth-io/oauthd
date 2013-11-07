@@ -68,18 +68,22 @@ ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) 
 			status: ''
 			message: ""
 
-		if not $scope.user?.pass or not $scope.user?.pass2
+		user =
+			pass: $('#pass').val()
+			pass2: $('#pass2').val()
+
+		if not user.pass or not user.pass2
 			return false
 
-		if $scope.user.pass == $scope.user.pass2
+		if user.pass == user.pass2
 
-			UserService.resetPassword $routeParams.id, $routeParams.key, $scope.user.pass, ((data) ->
+			UserService.resetPassword $routeParams.id, $routeParams.key, user.pass, ((data) ->
 
 				UserService.login {
 					mail: data.data.email
-					pass: $scope.user.pass
+					pass: user.pass
 				}, (data) ->
-					$location.path '/'
+					$location.path '/key-manager'
 
 			), (error) ->
 				$scope.error =
@@ -114,7 +118,11 @@ ValidateCtrl = ($scope, $routeParams, MenuService, UserService, $location) ->
 			status: ''
 			message: ""
 
-		user = $scope.user
+		user =
+			id: $scope.user.id
+			key: $scope.user.key
+			pass: $('#pass').val()
+			pass2: $('#pass2').val()
 
 		if not user?.pass or not user?.pass2
 			return false
@@ -171,7 +179,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			if $scope.userForm.mode == "Sign in"
 
 				#signin
-				UserService.login $scope.user, ((path)->
+				UserService.login {mail:$('#mail').val(), pass:$('#pass').val()}, ((path)->
 					$(window).off()
 					$(document).off()
 					$location.ga_skip = true;
@@ -184,7 +192,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 
 			else if $scope.userForm.mode == "Sign up"
 				#signup
-				UserService.register $scope.user.mail, ((data) ->
+				UserService.register $('#mail').val(), ((data) ->
 					$scope.signupInfo =
 						status: 'success'
 				), (error) ->
@@ -193,7 +201,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 						message: error.message
 			else
 				#lost password
-				UserService.lostPassword $scope.user.mail, ((data) ->
+				UserService.lostPassword $('#mail').val(), ((data) ->
 					$scope.info =
 						status: 'info'
 						message: 'We have sent password reset instructions to your email address'

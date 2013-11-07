@@ -75,7 +75,7 @@ exports.updateAccount = (req, callback) ->
 							email: 'team@oauth.io'
 						subject: 'OAuth.io - You email address has been updated'
 						body: "Hello,\n\n
-In order to validate your new email address, please click the following link: https://" + config.url.host + "/#/validate/" + user_id + "/" + validation_key + ".\n
+In order to validate your new email address, please click the following link: https://" + config.url.host + "/validate/" + user_id + "/" + validation_key + ".\n
 
 --\n
 OAuth.io Team"
@@ -166,7 +166,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 Did you forget your password ?\n
 To change it, please use the follow link to reset your password.\n\n
 
-https://oauth.io/#/resetpassword/#{iduser}/#{key}\n\n
+#{config.host_url}/resetpassword/#{iduser}/#{key}\n\n
 
 --\n
 OAuth.io Team"

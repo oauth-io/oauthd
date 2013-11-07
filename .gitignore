@@ -9,3 +9,4 @@
 .nodemonignore
 nohup.out
 config.local.js
+*.sublime-*

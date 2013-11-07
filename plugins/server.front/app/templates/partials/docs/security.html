@@ -24,7 +24,7 @@
 
 <h3>Understanding the oauth.io server-side flow</h3>
 
-<p>The server-side flow is basically the same but you get a code instead of the token: the code is exchanged by requesting oauth.io with the endpoint <a href="/#/docs/api">/auth/access_token</a> from your server (with the secret key) to get the final token.</p>
+<p>The server-side flow is basically the same but you get a code instead of the token: the code is exchanged by requesting oauth.io with the endpoint <a href="/docs/api">/auth/access_token</a> from your server (with the secret key) to get the final token.</p>
 <p>This permit to do not store any token on the browser so that it cannot be exploited with a XSS / CSRF vulnerability</p>
 <p>Moreover the state is no longer optional when calling OAuth.popup or OAuth.redirect: it must be generated from your server, and checked once the code is exchanged. This step is required to avoid any CSRF exploit.</p>
 
@@ -57,7 +57,7 @@ OAuth.popup('facebook', {state:#{oauthio_state}}, function(err, res) {
     }});
 });</pre>
 
-<p>Back on server-side, you must exchange this code with the final token, and check the state validity between the one from your session and the state received with the call to <a href="/#/docs/api">/auth/access_token</a>. e.g. using <a href="https://github.com/mikeal/request">request</a> for node.js, in /mycallback:</p>
+<p>Back on server-side, you must exchange this code with the final token, and check the state validity between the one from your session and the state received with the call to <a href="/docs/api">/auth/access_token</a>. e.g. using <a href="https://github.com/mikeal/request">request</a> for node.js, in /mycallback:</p>
 
 <pre>request.post({
         url: 'https://oauth.io/auth/access_token',
