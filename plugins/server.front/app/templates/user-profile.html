@@ -25,64 +25,73 @@
 
       <p>{{email}}</p>
       <p><a href="https://oauth.io" target="_blank">{{website}}</a></p>
-      <hr>
-      <div class="list-group">
-        <a href="/profile" class="list-group-item active">
-          General
-        </a>
-        <a href="/profile" class="list-group-item">
-          Payment
-        </a>
-        <a href="/profile" class="list-group-item">
-          Settings
-        </a>
-      </div>
     </div>
     <div class="col col-lg-9">
+      <div style="float: right; position: relative; top: 15px">
+        <i class="glyphicon glyphicon-star" style="position: relative; top: 2px"></i>
+        <span ng-hide="plan.name">Bootstrap Plan</span>
+        <span ng-show="plan.name">{{plan.name|capitalize}} Plan</span>
+      </div>
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#">General</a></li>
+        <li><a href="#">Payment</a></li>
+        <li><a href="#">Settings</a></li>
+      </ul>
+      <br />
       <div class="row">
-        <div class="col col-lg-8">
-          <div class="panel panel-info" ng-repeat="app in apps">
+        <div class="col col-lg-6">
+          <div class="panel">
             <div class="panel-heading">
-              <h3 style="margin: 0">{{app.name|capitalize}}</h3>
-              <span style="float:right;">
-                <ng-pluralize count="app.totalConnections"
-                      when="{'one' : '1 connection',
-                      'other' : '{} connections'}">
-                </ng-pluralize>
-              </span>
+              <span class="label label-info pull-right" style="position: relative; top: 3px">{{apps.length}}</span>
+              <h3 style="margin: 0">Application</h3>
             </div>
-            <div class="panel-body">
+            <!-- <div class="panel-body">
+
               <div ng-repeat="provider in app.keysets">
                   <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
                 </div>
+            </div> -->
+            <table class="table" style="margin:0; padding:0">
+              <thead>
+                <th style="width: 80%">Name</th>
+                <th style="text-align: center">Connection</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="app in apps">
+                  <td>{{app.name|capitalize}}</td>
+                  <td style="text-align: center">
+                    {{app.totalConnections}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-heading">
+              <span class="label label-info pull-right" style="position: relative; top: 3px">{{keysets.length}}</span>
+              <h3 style="margin: 0">Provider used</h3>
             </div>
+            <!-- <div class="panel-body">
+
+              <div ng-repeat="provider in app.keysets">
+                  <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
+                </div>
+            </div> -->
+            <table class="table" style="margin:0; padding:0">
+              <thead>
+                <th style="width: 80%">Name</th>
+              </thead>
+              <tbody>
+                <tr ng-repeat="provider in keysets">
+                  <td><img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/><span style="position: relative; top: 1px">{{provider|capitalize}}</span></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-        <div class="col col-lg-4">
-          <h4>Your plan</h3>
-          <h3 ng-hide="plan.name">Bootstrap</h3>
-          <h3 ng-show="plan.name">{{plan.name|capitalize}}</h3>
+        <div class="col col-lg-6">
+          
         </div>
-<!--        <div class="accordion" id="accordion_{{app.key}}">
-          <div class="accordion-group" style="border: 1px solid #0074a2;border-radius:0">
-            <div class="accordion-heading">
-              <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse_{{app.key}}" style="background-color:#0074a2;color:white;">
-              {{app.name|capitalize}}
-              <span style="float:right;">
-                <ng-pluralize count="app.totalConnections"
-                      when="{'one' : '1 connection',
-                      'other' : '{} connections'}">
-                </ng-pluralize>
-              </span>
-              </a>
-            </div>
-            <div id="collapse_{{app.key}}" class="accordion-body collapse in">
-              <div class="accordion-inner" ng-repeat="provider in app.keysets">
-                <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
-              </div>
-            </div>
-          </div>
-        </div>-->
       </div>
     </div>
   </div>

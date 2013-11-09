@@ -101,21 +101,11 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 	UserService.isValidable $routeParams.id, $routeParams.key, ((data) ->
 		$location.path '/404' if not data.data.is_validable
 
-		if data.data.is_updated?
-
-			$rootScope.info =
-				status : 'info'
-				message : 'Your account is updated !'
-
-			$location.path '/signin'
-
-		else if not data.data.is_updated?
-
-		else
-			$scope.user =
-				id: $routeParams.id
-				key: $routeParams.key
-				mail: data.data.mail
+		
+		$scope.user =
+			id: $routeParams.id
+			key: $routeParams.key
+			mail: data.data.mail
 
 	), (error) ->
 		$location.path '/404'
@@ -279,13 +269,16 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.location = success.data.profile.location
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
+		plan = success.data.plan[0]
+		plan = plan.substr 0, plan.length - 2  if plan.substr(plan.length - 2, 2) is 'fr'
 		$scope.plan =
-			name : success.data.plan[0]
+			name : plan
 			nb_connection : success.data.plan[1]
 
 
 		$scope.apps = []
 		$scope.totalConnections = 0;
+		$scope.keysets = []
 
 		for i of success.data.apps
 
@@ -297,7 +290,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				, (error) ->
 					console.log error
 
-				$scope.apps.push(app.data)
+				$scope.apps.push app.data
+				$scope.keysets.add app.data.keysets if app.data.keysets != []
 
 			), (error) ->
 				console.log error
@@ -1096,9 +1090,6 @@ AboutCtrl = (UserService, MenuService) ->
 HelpCtrl = (UserService, MenuService) ->
 	MenuService.changed()
 
-PricingCtrl = (UserService, MenuService) ->
-	MenuService.changed()
-
 NotFoundCtrl = ($scope, $routeParams, UserService, MenuService) ->
 	MenuService.changed()
 	$scope.errorGif = '/img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'
@@ -1251,9 +1242,11 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	$scope.current_plan = null
 	if UserService.isLogin()
 		UserService.me (success) ->
-			if success.data.plan?
-				$scope.current_plan = success.data.plan[2] if success.data.plan[2]?
-				$scope.current_plan = success.data.plan[0] if not success.data.plan[2]?
+			if success.data.plan? #what's this ?! ca devrai pas être dans le callback de PricingService.list() ?
+				plan = success.data.plan[2] if success.data.plan[2]?
+				plan = success.data.plan[0] if not success.data.plan[2]?
+				plan = plan.substr(0, plan.length - 2) if plan.substr(plan.length - 2, 2) is 'fr'
+				$scope.current_plan = plan
 		, (error) ->
 			console.log "error", error
 
@@ -1497,46 +1490,12 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	PaymentService.getCurrentSubscription (success) ->
 		$scope.subscription = success.data
 
+	cc = ["AT","AD","AM","AZ","BA","BE","BG","DE","CY","HR","CZ","DK","EE","FI","FR","GR","HU","IS","IR","IT","KZ","LV","LI","LT","LU","MT","NL","NO","PL","PT","RO","SI","ES","TR","SE","GB"]
+
 	$scope.updateCountry = ->
 		$("#vatNumber").hide()
 		$("#State").hide()
-		if $scope.profile.country_code is "AT" or
-		$scope.profile.country_code is "AD" or
-		$scope.profile.country_code is "AL" or
-		$scope.profile.country_code is "AM" or
-		$scope.profile.country_code is "AZ" or
-		$scope.profile.country_code is "BA" or
-		$scope.profile.country_code is "BE" or
-		$scope.profile.country_code is "BG" or
-		$scope.profile.country_code is "DE" or
-		$scope.profile.country_code is "CY" or
-		$scope.profile.country_code is "HR" or
-		$scope.profile.country_code is "CZ" or
-		$scope.profile.country_code is "DK" or
-		$scope.profile.country_code is "EE" or
-		$scope.profile.country_code is "FI" or
-		$scope.profile.country_code is "FR" or
-		$scope.profile.country_code is "GR" or
-		$scope.profile.country_code is "HU" or
-		$scope.profile.country_code is "IS" or
-		$scope.profile.country_code is "IR" or
-		$scope.profile.country_code is "IT" or
-		$scope.profile.country_code is "KZ" or
-		$scope.profile.country_code is "LV" or
-		$scope.profile.country_code is "LI" or
-		$scope.profile.country_code is "LT" or
-		$scope.profile.country_code is "LU" or
-		$scope.profile.country_code is "MT" or
-		$scope.profile.country_code is "NL" or
-		$scope.profile.country_code is "NO" or
-		$scope.profile.country_code is "PL" or
-		$scope.profile.country_code is "PT" or
-		$scope.profile.country_code is "RO" or
-		$scope.profile.country_code is "SI" or
-		$scope.profile.country_code is "ES" or
-		$scope.profile.country_code is "TR" or
-		$scope.profile.country_code is "SE" or
-		$scope.profile.country_code is "GB"
+		if cc.findIndex($scope.profile.country_code) isnt -1
 			$("#vatNumber").show()
 
 		if $scope.profile.country_code is "US"
@@ -1545,43 +1504,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	$scope.billingUpdateCountry = ->
 		$("#BillingvatNumber").hide()
 		$("#BillingState").hide()
-		if $scope.billing.country_code is "AT" or
-		$scope.billing.country_code is "AD" or
-		$scope.billing.country_code is "AL" or
-		$scope.billing.country_code is "AM" or
-		$scope.billing.country_code is "AZ" or
-		$scope.billing.country_code is "BA" or
-		$scope.billing.country_code is "BE" or
-		$scope.billing.country_code is "BG" or
-		$scope.billing.country_code is "DE" or
-		$scope.billing.country_code is "CY" or
-		$scope.billing.country_code is "HR" or
-		$scope.billing.country_code is "CZ" or
-		$scope.billing.country_code is "DK" or
-		$scope.billing.country_code is "EE" or
-		$scope.billing.country_code is "FI" or
-		$scope.billing.country_code is "FR" or
-		$scope.billing.country_code is "GR" or
-		$scope.billing.country_code is "HU" or
-		$scope.billing.country_code is "IS" or
-		$scope.billing.country_code is "IR" or
-		$scope.billing.country_code is "IT" or
-		$scope.billing.country_code is "KZ" or
-		$scope.billing.country_code is "LV" or
-		$scope.billing.country_code is "LI" or
-		$scope.billing.country_code is "LT" or
-		$scope.billing.country_code is "LU" or
-		$scope.billing.country_code is "MT" or
-		$scope.billing.country_code is "NL" or
-		$scope.billing.country_code is "NO" or
-		$scope.billing.country_code is "PL" or
-		$scope.billing.country_code is "PT" or
-		$scope.billing.country_code is "RO" or
-		$scope.billing.country_code is "SI" or
-		$scope.billing.country_code is "ES" or
-		$scope.billing.country_code is "TR" or
-		$scope.billing.country_code is "SE" or
-		$scope.billing.country_code is "GB"
+		if cc.findIndex($scope.profile.country_code) isnt -1
 			$("#BillingvatNumber").show()
 
 		if $scope.billing.country_code is "US"
@@ -1597,130 +1520,33 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 			$scope.billing.use_profile_for_billing = true
 
 	$scope.process_billing = ->
-
-		if $('#profile_company').is(":visible") and $('#profile_company').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error name of the company missing"
-			return null
-		if $('#profile_vat_number').is(":visible") and $('#profile_vat_number').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error VAT number missing"
-			return null
-		if $('#profile_name').is(":visible") and $('#profile_name').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error first name and last name missing"
-			return null
-		if $('#profile_mail').is(":visible") and $('#profile_mail').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error mail missing"
-			return null
-		if $('#profile_addr_one').is(":visible") and $('#profile_addr_one').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error address missing"
-			return null
-		if $scope.profile.country_code is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error country missing"
-			return null
-		if $('#profile_zipcode').is(":visible") and $('#profile_zipcode').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error country missing"
-			return null
-		if $('#profile_city').is(":visible") and $('#profile_city').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error city missing"
-			return null
-		if $('#profile_state').is(":visible") and $('#profile_state').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error state missing"
-			return null
-		if $('#profile_addr_one').is(":visible") and $('#profile_addr_one').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error address missing"
-			return null
+		fields =
+			"#profile_company": "error name of the company missing"
+			"#profile_vat_number": "error VAT number missing"
+			"#profile_name": "error first name and last name missing"
+			"#profile_mail": "error mail missing"
+			"#profile_addr_one": "error address missing"
+			"#profile_country_code": "error country missing"
+			"#profile_zipcode": "error zipcode missing"
+			"#profile_city": "error city missing"
+			"#profile_state": "error state missing"
+			"#billing_company": "error name of the company missing"
+			"#billing_vat_number": "error VAT number missing"
+			"#billing_name": "error first name and last name missing"
+			"#billing_addr_one": "error address missing"
+			"#billing_country_code": "error country missing"
+			"#billing_zipcode": "error zipcode missing"
+			"#billing_city": "error city missing"
+			"#billing_state": "error state missing"
 
 
-
-		if $('#billing_company').is(":visible") and $('#billing_company').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error name of the company missing"
-			return null
-		if $('#billing_vat_number').is(":visible") and $('#billing_vat_number').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error VAT number missing"
-			return null
-		if $('#billing_name').is(":visible") and $('#billing_name').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error first name and last name missing"
-			return null
-		if $('#billing_mail').is(":visible") and $('#billing_mail').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error mail missing"
-			return null
-		if $('#billing_addr_one').is(":visible") and $('#billing_addr_one').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error address missing"
-			return null
-		if $scope.billing.country_code is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error country missing"
-			return null
-		if $('#billing_zipcode').is(":visible") and $('#billing_zipcode').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error country missing"
-			return null
-		if $('#billing_city').is(":visible") and $('#billing_city').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error city missing"
-			return null
-		if $('#billing_state').is(":visible") and $('#billing_state').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error state missing"
-			return null
-		if $('#billing_addr_one').is(":visible") and $('#billing_addr_one').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error address missing"
-			return null
+		for i of fields
+			if $(i).is(":visible") and $(i).val() is ""
+				console.log "error"
+				$scope.error =
+					state: true
+					message: fields[i]
+				return null
 
 		$('#bt-payment').hide 0, ->
 			$('#waiting-payment').fadeIn(1000)
@@ -1744,32 +1570,45 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 				$('#bt-payment').show().css('display', 'inline');
 
 	$scope.process_order = ->
+		fields = {
+			"#card-number": "error card number missing"
+			"#card-expiry-month": "error expiration date missing (month)"
+			"#card-expiry-year": "error expiration date missing (year)"
+			"#card-cvc": "error card cvc missing"
+		}
 
+		for i of fields
+			if $(i).val() is ""
+				console.log 'Error'
+				$scope.error =
+					state: true
+					message: fields[i]
+				return null
 
-		if $('#card-number').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error card number missing"
-			return null
-		if $('#card-expiry-month').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error expiration date missing (month)"
-			return null
-		if $('#card-expiry-year').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error expiration date missing (year)"
-			return null
-		if $('#card-cvc').val() is ""
-			console.log "error"
-			$scope.error =
-				state : true
-				message : "error card cvc missing"
-			return null
+		# if $('#card-number').val() is ""
+		# 	console.log "error"
+		# 	$scope.error =
+		# 		state : true
+		# 		message : "error card number missing"
+		# 	return null
+		# if $('#card-expiry-month').val() is ""
+		# 	console.log "error"
+		# 	$scope.error =
+		# 		state : true
+		# 		message : "error expiration date missing (month)"
+		# 	return null
+		# if $('#card-expiry-year').val() is ""
+		# 	console.log "error"
+		# 	$scope.error =
+		# 		state : true
+		# 		message : "error expiration date missing (year)"
+		# 	return null
+		# if $('#card-cvc').val() is ""
+		# 	console.log "error"
+		# 	$scope.error =
+		# 		state : true
+		# 		message : "error card cvc missing"
+		# 	return null
 
 		$('#bt-payment').hide 0, ->
 			$('#waiting-payment').fadeIn(1000)
