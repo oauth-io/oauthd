@@ -279,10 +279,9 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.location = success.data.profile.location
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
-		$scope.plan =
-			name : success.data.plan[0]
-			nb_connection : success.data.plan[1]
+		$scope.plan = success.data.plan
 
+		console.log $scope.plan
 
 		$scope.apps = []
 		$scope.totalConnections = 0;
@@ -1248,9 +1247,9 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	$scope.current_plan = null
 	if UserService.isLogin()
 		UserService.me (success) ->
-			if success.data.plan?
-				$scope.current_plan = success.data.plan[2] if success.data.plan[2]?
-				$scope.current_plan = success.data.plan[0] if not success.data.plan[2]?
+			plan = success.data.plan
+			if plan
+				$scope.current_plan = if plan.parent then plan.parent else plan.name
 		, (error) ->
 			console.log "error", error
 
