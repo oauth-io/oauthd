@@ -199,13 +199,13 @@ server.get config.base + '/:provider', (req, res, next) ->
 	async.waterfall [
 		(cb) -> db.apps.checkDomain key, ref, cb
 		(valid, cb) ->
-			return cb new check.Error 'Domain name does not match any registered domain on ' + config.url.host if not valid
+			return cb new check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + config.url.host if not valid
 			if req.params.redirect_uri
 				db.apps.checkDomain key, req.params.redirect_uri, cb
 			else
 				cb null, true
 		(valid, cb) ->
-			return cb new check.Error 'Redirect domain name does not match any registered domain on ' + config.url.host if not valid
+			return cb new check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + config.url.host if not valid
 
 			db.providers.getExtended req.params.provider, cb
 		(provider, cb) ->
