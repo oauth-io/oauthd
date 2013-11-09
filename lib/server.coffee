@@ -37,6 +37,7 @@ server_options =
 if config.ssl
 	server_options.key = fs.readFileSync Path.resolve(config.rootdir, config.ssl.key)
 	server_options.certificate = fs.readFileSync Path.resolve(config.rootdir, config.ssl.certificate)
+	server_options.ca = fs.readFileSync Path.resolve(config.rootdir, config.ssl.ca) if config.ssl.ca
 	console.log 'SSL is enabled !'
 
 server_options.formatters = formatters.formatters
@@ -184,12 +185,11 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 	domain = null
 	origin = null
-	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri)
-	if ref
-		urlinfos = Url.parse ref
-		if not urlinfos.hostname
-			return next new restify.InvalidHeaderError 'Missing origin or referer.'
-		origin = urlinfos.protocol + '//' + urlinfos.host
+	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
+	urlinfos = Url.parse ref
+	if not urlinfos.hostname
+		return next new restify.InvalidHeaderError 'Missing origin or referer.'
+	origin = urlinfos.protocol + '//' + urlinfos.host
 
 	oauthv = req.params.oauthv && {
 		"2":"oauth2"
