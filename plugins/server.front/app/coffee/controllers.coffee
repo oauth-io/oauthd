@@ -252,6 +252,13 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	if not UserService.isLogin()
 	 	$location.path '/'
 
+	$scope.accountView = '/templates/partials/account/general.html'
+	$scope.tab = 'general'
+
+	$scope.changeTab = (tab) ->
+		$scope.accountView = '/templates/partials/account/' + tab + '.html'
+		$scope.tab = tab
+
 	UserService.me (success) ->
 		# for modal
 		$scope.user =

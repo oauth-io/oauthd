@@ -33,67 +33,12 @@
         <span ng-show="plan.name">{{plan.name|capitalize}} Plan</span>
       </div>
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#">General</a></li>
-        <li><a href="#">Payment</a></li>
-        <li><a href="#">Settings</a></li>
+        <li ng-click="changeTab('general')" ng-class="{active:tab == 'general'}"><a href="#">General</a></li>
+        <li ng-click="changeTab('payment')" ng-class="{active:tab == 'payment'}"><a href="#">Payment</a></li>
+        <li ng-click="changeTab('settings')" ng-class="{active:tab == 'settings'}"><a href="#">Settings</a></li>
       </ul>
       <br />
-      <div class="row">
-        <div class="col col-lg-6">
-          <div class="panel">
-            <div class="panel-heading">
-              <span class="label label-info pull-right" style="position: relative; top: 3px">{{apps.length}}</span>
-              <h3 style="margin: 0">Application</h3>
-            </div>
-            <!-- <div class="panel-body">
-
-              <div ng-repeat="provider in app.keysets">
-                  <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
-                </div>
-            </div> -->
-            <table class="table" style="margin:0; padding:0">
-              <thead>
-                <th style="width: 80%">Name</th>
-                <th style="text-align: center">Connection</th>
-              </thead>
-              <tbody>
-                <tr ng-repeat="app in apps">
-                  <td>{{app.name|capitalize}}</td>
-                  <td style="text-align: center">
-                    {{app.totalConnections}}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="panel">
-            <div class="panel-heading">
-              <span class="label label-info pull-right" style="position: relative; top: 3px">{{keysets.length}}</span>
-              <h3 style="margin: 0">Provider used</h3>
-            </div>
-
-            <!-- <div class="panel-body">
-
-              <div ng-repeat="provider in app.keysets">
-                  <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
-                </div>
-            </div> -->
-            <table class="table" style="margin:0; padding:0">
-              <thead>
-                <th style="width: 80%">Name</th>
-              </thead>
-              <tbody>
-                <tr ng-repeat="provider in keysets">
-                  <td><img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/><span style="position: relative; top: 1px">{{provider|capitalize}}</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="col col-lg-6">
-          
-        </div>
-      </div>
+      <div ng-include src="accountView"></div>
     </div>
   </div>
 </div>
