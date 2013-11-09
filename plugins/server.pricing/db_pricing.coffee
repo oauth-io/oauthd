@@ -204,8 +204,12 @@ exports.getOffersList = (callback) ->
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
+			res[i * 9 + 8] = if res[i * 9 + 8] = "*" then "unlimited" else res[i * 9 + 8]
+			res[i * 9 + 10] = if res[i * 9 + 10] = "*" then "unlimited" else res[i * 9 + 10]
+			res[i * 9 + 11] = if res[i * 9 + 11] = "*" then "unlimited" else res[i * 9 + 11]
+
 			for i of offers
-				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11], responseDelay: res[i * 13 + 12]
+				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11] + "222", responseDelay: res[i * 13 + 12]
 
 			return callback null, offers
 
@@ -253,7 +257,11 @@ exports.getPublicOffers = (callback) ->
 			return callback err if err
 
 			for i of offers
-				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:res[i * 9 + 5], nbApp:res[i * 9 + 6], nbProvider:res[i * 9 + 7], responseDelay:res[i * 9 + 8]
+				nbConnection = if res[i * 9 + 5] is "*" then "unlimited" else res[i * 9 + 5]
+				nbApp = if res[i * 9 + 6] is "*" then "unlimited" else res[i * 9 + 6]
+				nbProvider = if res[i * 9 + 7] is "*" then "unlimited" else res[i * 9 + 7]
+
+				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
 
 			return callback null, offers
 
@@ -266,7 +274,10 @@ exports.getOfferByName = (name, callback) ->
 	db.redis.mget [ "#{prefix}:id", "#{prefix}:name", "#{prefix}:amount", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:status" ], (err, res) ->
 		return callback err if err
 		return callback new check.Error "This plan does not exists" if not res?
-		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:res[3], status:res[4]
+		nbConnection = if res[3] is "*" then "unlimited" else res[3]
+		nbApp = if res[4] is "*" then "unlimited" else res[4]
+		nbProvider = if res[5] is "*" then "unlimited" else res[5]
+		return callback null, offer: res[0], name:res[1], amount:parseInt(res[2]) / 100, nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, status:res[4]
 
 exports.unsubscribe = (client, callback) ->
 	return callback new restify.NotAuthorizedError if not client?

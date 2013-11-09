@@ -262,6 +262,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			company : success.data.profile.company
 			website : success.data.profile.website
 
+		console.log success
 		# for label
 		$scope.id = success.data.profile.id
 		$scope.name = success.data.profile.name
@@ -269,12 +270,10 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.location = success.data.profile.location
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
-		plan = success.data.plan[0]
-		plan = plan.substr 0, plan.length - 2  if plan.substr(plan.length - 2, 2) is 'fr'
-		$scope.plan =
-			name : plan
-			nb_connection : success.data.plan[1]
+		$scope.plan = success.data.plan
+		$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
+		console.log $scope.plan
 
 		$scope.apps = []
 		$scope.totalConnections = 0;
@@ -1242,16 +1241,14 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	$scope.current_plan = null
 	if UserService.isLogin()
 		UserService.me (success) ->
-			if success.data.plan? #what's this ?! ca devrai pas être dans le callback de PricingService.list() ?
-				plan = success.data.plan[2] if success.data.plan[2]?
-				plan = success.data.plan[0] if not success.data.plan[2]?
-				plan = plan.substr(0, plan.length - 2) if plan.substr(plan.length - 2, 2) is 'fr'
-				$scope.current_plan = plan
+			plan = success.data.plan
+			if plan
+				$scope.current_plan = if plan.parent then plan.parent else plan.name
+				$scope.current_plan = $scope.current_plan.substr(0, plan.length - 2) if $scope.current_plan.substr(plan.length - 2, 2) is 'fr'
 		, (error) ->
 			console.log "error", error
 
 	PricingService.list (success) ->
-		console.log success.data
 		$scope.plans = success.data
 	, (error) ->
 		console.log error
