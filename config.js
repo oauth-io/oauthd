@@ -36,12 +36,15 @@ module.exports = {
 		'server.oauth_io',
 		'server.mailjet',
 		'server.wishlist',
-		'server.front',
 		/* ------------------------- */
 
 		//'server.tests',
 		'server.statistics',
-		'server.request'
+		'server.request',
+
+		/* --- only for oauth.io --- */
+		'server.front'
+		/* ------------------------- */
 	]
 }
 if (require('fs').existsSync(__dirname + '/config.local.js')) {
