@@ -12,6 +12,18 @@
 .accordion-body {
   background-color: #ffffff;
 }
+
+
+.btn.btn-mini {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+.glyphicon-star.black { color: black }
+.glyphicon-star.bronze { color: #A67D3D }
+.glyphicon-star.silver { color: #E6E8FA }
+.glyphicon-star.gold { color: #D9D919 }
+
+
 #profile p { font-size: 1.3em;}
 </style>
 
@@ -27,10 +39,11 @@
       <p><a href="https://oauth.io" target="_blank">{{website}}</a></p>
     </div>
     <div class="col col-lg-9">
-      <div style="float: right; position: relative; top: 15px">
-        <i class="glyphicon glyphicon-star" style="position: relative; top: 2px"></i>
+      <div style="float: right; position: relative; top: 13px">
+        <i ng-class="{'glyphicon':true,'glyphicon-star':true,'black':plan.name=='bootstrap','bronze':plan.name=='startup','silver':plan.name=='growth', 'gold':plan.name=='scalability'}" style="position: relative; top: 2px"></i>
         <span ng-hide="plan.name">Bootstrap Plan</span>
         <span ng-show="plan.name">{{plan.name|capitalize}} Plan</span>
+        <a href="/pricing" class="btn btn-success btn-mini" ng-show="plan.name != 'scalability'">Upgrade</a>
       </div>
       <ul class="nav nav-tabs">
         <li ng-click="changeTab('general')" ng-class="{active:tab == 'general'}"><a href="#">General</a></li>
@@ -218,3 +231,4 @@
   </div>
 
 </div>-->
+<script></script>
