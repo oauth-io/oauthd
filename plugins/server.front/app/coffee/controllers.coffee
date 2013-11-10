@@ -101,7 +101,7 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 	UserService.isValidable $routeParams.id, $routeParams.key, ((data) ->
 		$location.path '/404' if not data.data.is_validable
 
-		
+
 		$scope.user =
 			id: $routeParams.id
 			key: $routeParams.key
@@ -247,17 +247,67 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.info.status = ''
 		$scope.signup.status = ''
 
+generalAccountCtrl = ($scope, $timeout) ->
+	console.log "BEGIN DRAW CHART"
+
+	connectionCtx = document.getElementById('connectionChart').getContext '2d'
+	appsCtx = document.getElementById('appsChart').getContext '2d'
+	providersCtx = document.getElementById('providersChart').getContext '2d'
+
+	drawChart = ->
+		connectionData = [
+			value: $scope.totalConnections
+			color: '#F7464A'
+		,
+			value: $scope.plan.nbConnection - $scope.totalConnections
+			color: '#EEEEEE'
+		]
+		connectionData[1].value = 0  if connectionData[1].value < 0
+		connectionChart = new Chart(connectionCtx).Doughnut(connectionData)
+
+		console.log "Draw connection Chart", connectionData
+
+		appsData = [
+			value: $scope.apps.length
+			color: '#F7464A'
+		,
+			value: $scope.plan.nbApp - $scope.apps.length
+			color: '#EEEEEE'
+		]
+		appsData[1].value = 0  if appsData[1].value < 0
+		appsChart = new Chart(appsCtx).Doughnut(appsData)
+
+		console.log "Draw apps Chart", appsData
+
+		providersData = [
+			value: $scope.keysets.length
+			color: '#F7464A'
+		,
+			value: $scope.plan.nbProvider - $scope.keysets.length
+			color: '#EEEEEE'
+		]
+		providersData[1].value = 0  if providersData[1].value < 0
+		providersChart = new Chart(providersCtx).Doughnut(providersData)
+
+		console.log "Draw providers Chart", providersData
+
+	$scope.$watch 'loading', (newVal, oldVal) ->
+		if newVal == false and oldVal == true
+			drawChart()
+
+	drawChart() if $scope.loading == false
+
 UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuService, UserService, AppService) ->
 	MenuService.changed()
 	if not UserService.isLogin()
 	 	$location.path '/'
 
-	$scope.accountView = '/templates/partials/account/general.html'
-	$scope.tab = 'general'
-
 	$scope.changeTab = (tab) ->
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
 		$scope.tab = tab
+
+	$scope.changeTab 'general'
+	$scope.loading = true
 
 	UserService.me (success) ->
 		# for modal
@@ -283,21 +333,23 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		console.log $scope.plan
 
 		$scope.apps = []
-		$scope.totalConnections = 0;
+		$scope.totalConnections = 0
 		$scope.keysets = []
 
 		for i of success.data.apps
-
 			AppService.get success.data.apps[i], ((app) ->
 
-				AppService.getTotal app.data.key, (success) ->
-					app.data.totalConnections = parseInt(success.data) || 0
-					$scope.totalConnections += parseInt(success.data) || 0
+				AppService.getTotal app.data.key, (success2) ->
+					app.data.totalConnections = parseInt(success2.data) || 0
+					$scope.totalConnections += parseInt(success2.data) || 0
+					if parseInt(i) + 1 == parseInt(success.data.apps.length)
+						$scope.loading = false
 				, (error) ->
 					console.log error
 
 				$scope.apps.push app.data
 				$scope.keysets.add app.data.keysets if app.data.keysets != []
+				console.log app.data
 
 			), (error) ->
 				console.log error
