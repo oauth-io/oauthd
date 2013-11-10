@@ -3,20 +3,25 @@
     width: 100% !important;
     max-width: 500px;
     height: auto !important;
+    position: relative;
+    top: -20px;
   }
 </style>
 <div ng-controller="generalAccountCtrl">
   <div class="row">
     <div class="col col-lg-4">
       <p class="text-center"><strong>Connections</strong></p>
+      <p style="position: relative; top: 125px; text-align: center; font-size: 1.2em; font-weight: bold">{{totalConnections}} / {{plan.nbConnection}}</p>
       <canvas id="connectionChart" width="400" height="400" class="chart"></canvas>
     </div>
     <div class="col col-lg-4">
-      <p class="text-center"><strong>Apps used</strong></p>
+      <p class="text-center"><strong>Apps</strong></p>
+      <p style="position: relative; top: 125px; text-align: center; font-size: 1.2em; font-weight: bold">{{apps.length}} / {{plan.nbApp}}</p>
       <canvas id="appsChart" width="400" height="400" class="chart"></canvas>
     </div>
     <div class="col col-lg-4">
-      <p class="text-center"><strong>Providers used</strong></p>
+      <p class="text-center"><strong>Providers</strong></p>
+      <p style="position: relative; top: 125px; text-align: center; font-size: 1.2em; font-weight: bold">{{keysets.length}} / {{plan.nbProvider}}</p>
       <canvas id="providersChart" width="400" height="400" class="chart"></canvas>
     </div>
   </div>

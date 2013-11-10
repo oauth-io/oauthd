@@ -248,8 +248,6 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.signup.status = ''
 
 generalAccountCtrl = ($scope, $timeout) ->
-	console.log "BEGIN DRAW CHART"
-
 	connectionCtx = document.getElementById('connectionChart').getContext '2d'
 	appsCtx = document.getElementById('appsChart').getContext '2d'
 	providersCtx = document.getElementById('providersChart').getContext '2d'
@@ -264,9 +262,17 @@ generalAccountCtrl = ($scope, $timeout) ->
 				nbProvider: 5
 				responseDelay: 48
 
+		getColor = (ratio)->
+			if ratio > 0.66
+				return '#F7464A'
+			else if ratio > 0.33
+				return '#ffb554'
+			else
+				return '#3ebebd'
+
 		connectionData = [
 			value: $scope.totalConnections
-			color: '#F7464A'
+			color: getColor $scope.totalConnections / $scope.plan.nbConnection
 		,
 			value: $scope.plan.nbConnection - $scope.totalConnections
 			color: '#EEEEEE'
@@ -274,11 +280,9 @@ generalAccountCtrl = ($scope, $timeout) ->
 		connectionData[1].value = 0  if connectionData[1].value < 0
 		connectionChart = new Chart(connectionCtx).Doughnut(connectionData)
 
-		console.log "Draw connection Chart", connectionData
-
 		appsData = [
 			value: $scope.apps.length
-			color: '#F7464A'
+			color: getColor $scope.apps.length / $scope.plan.nbApp
 		,
 			value: $scope.plan.nbApp - $scope.apps.length
 			color: '#EEEEEE'
@@ -286,19 +290,15 @@ generalAccountCtrl = ($scope, $timeout) ->
 		appsData[1].value = 0  if appsData[1].value < 0
 		appsChart = new Chart(appsCtx).Doughnut(appsData)
 
-		console.log "Draw apps Chart", appsData
-
 		providersData = [
 			value: $scope.keysets.length
-			color: '#F7464A'
+			color: getColor $scope.keysets.length / $scope.plan.nbProvider
 		,
 			value: $scope.plan.nbProvider - $scope.keysets.length
 			color: '#EEEEEE'
 		]
 		providersData[1].value = 0  if providersData[1].value < 0
 		providersChart = new Chart(providersCtx).Doughnut(providersData)
-
-		console.log "Draw providers Chart", providersData
 
 	$scope.$watch 'loading', (newVal, oldVal) ->
 		if newVal == false and oldVal == true
@@ -328,7 +328,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			company : success.data.profile.company
 			website : success.data.profile.website
 
-		console.log success
 		# for label
 		$scope.id = success.data.profile.id
 		$scope.name = success.data.profile.name
@@ -347,8 +346,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 		$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
-		console.log $scope.plan
-
 		$scope.apps = []
 		$scope.totalConnections = 0
 		$scope.keysets = []
@@ -366,8 +363,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 				$scope.apps.push app.data
 				$scope.keysets.add app.data.keysets if app.data.keysets != []
-				console.log app.data
-
+				$scope.keysets = $scope.keysets.unique()
 			), (error) ->
 				console.log error
 
