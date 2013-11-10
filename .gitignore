@@ -11,3 +11,4 @@ nohup.out
 config.local.js
 plugins/server.front/npm-debug.log
 plugins/server.front/app/templates/pricing.bak.html
+oauthd.sublime-workspace
