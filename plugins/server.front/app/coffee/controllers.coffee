@@ -255,6 +255,15 @@ generalAccountCtrl = ($scope, $timeout) ->
 	providersCtx = document.getElementById('providersChart').getContext '2d'
 
 	drawChart = ->
+		console.log "plan", $scope.plan
+		if ! $scope.plan
+			$scope.plan =
+				name: "Bootstrap"
+				nbConnection: 5000
+				nbApp: 2
+				nbProvider: 5
+				responseDelay: 48
+
 		connectionData = [
 			value: $scope.totalConnections
 			color: '#F7464A'
@@ -328,6 +337,14 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
 		$scope.plan = success.data.plan
+		if not $scope.plan
+			$scope.plan =
+				name: "Bootstrap"
+				nbConnection: 5000
+				nbApp: 2
+				nbProvider: 5
+				responseDelay: 48
+
 		$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
 		console.log $scope.plan
