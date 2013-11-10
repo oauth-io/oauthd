@@ -37,6 +37,7 @@ server_options =
 if config.ssl
 	server_options.key = fs.readFileSync Path.resolve(config.rootdir, config.ssl.key)
 	server_options.certificate = fs.readFileSync Path.resolve(config.rootdir, config.ssl.certificate)
+	server_options.ca = fs.readFileSync Path.resolve(config.rootdir, config.ssl.ca) if config.ssl.ca
 	console.log 'SSL is enabled !'
 
 server_options.formatters = formatters.formatters
@@ -67,6 +68,8 @@ bootPathCache = ->
 		res.set 'ETag', db.generateHash req.path() + ':' + config.bootTime
 		next()
 	return chain
+
+fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
 # generated js sdk
 server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
@@ -160,7 +163,7 @@ server.get config.base + '/', (req, res, next) ->
 			view += '\t"use strict";\n'
 			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
-				redirect_infos = Url.parse state.redirect_uri, true
+				redirect_infos = Url.parse fixUrl(state.redirect_uri), true
 				if redirect_infos.hostname == config.url.hostname
 					return next new check.Error 'OAuth.redirect url must NOT be "' + config.url.host + '"'
 				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
@@ -182,12 +185,11 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 	domain = null
 	origin = null
-	ref = req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri
-	if ref
-		urlinfos = Url.parse(ref)
-		if not urlinfos.hostname
-			return next new restify.InvalidHeaderError 'Missing origin or referer.'
-		origin = urlinfos.protocol + '//' + urlinfos.host
+	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
+	urlinfos = Url.parse ref
+	if not urlinfos.hostname
+		return next new restify.InvalidHeaderError 'Missing origin or referer.'
+	origin = urlinfos.protocol + '//' + urlinfos.host
 
 	oauthv = req.params.oauthv && {
 		"2":"oauth2"
@@ -197,13 +199,13 @@ server.get config.base + '/:provider', (req, res, next) ->
 	async.waterfall [
 		(cb) -> db.apps.checkDomain key, ref, cb
 		(valid, cb) ->
-			return cb new check.Error 'Domain name does not match any registered domain on ' + config.url.host if not valid
+			return cb new check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + config.url.host if not valid
 			if req.params.redirect_uri
 				db.apps.checkDomain key, req.params.redirect_uri, cb
 			else
 				cb null, true
 		(valid, cb) ->
-			return cb new check.Error 'Redirect domain name does not match any registered domain on ' + config.url.host if not valid
+			return cb new check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + config.url.host if not valid
 
 			db.providers.getExtended req.params.provider, cb
 		(provider, cb) ->

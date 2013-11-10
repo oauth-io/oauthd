@@ -15,7 +15,7 @@
 			            <h4 style="font-size: 1.1em;">Sign up</h4>
            				<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal">And never worry about OAuth again...</h6>
 			        </div><br /><br />
-			        <form name="signup" class="form-vertical">
+			        <form name="signup" class="form-vertical" ng-submit="userForm.submit()" method="POST">
 			          <div class="alert alert-danger" ng-show="info.status == 'error'">
 			            {{info.message}}
 			          </div>
@@ -27,7 +27,7 @@
 			            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required placeholder="Your email here...">
 			          </div>
 			          <div class="row">
-			            <button ng-click="userForm.submit()" style="position: relative; top: 15px; right: 15px" class="pull-right btn btn-primary">
+			            <button type="submit" style="position: relative; top: 15px; right: 15px" class="pull-right btn btn-primary">
 			              <span style="font-size: 18px;">Sign up</span>
 			            </button>
 			          </div>

@@ -27,6 +27,7 @@
 						<h1>0$</h1>
 						<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
 						<p ng-show="UserService.isLogin() && current_plan" style="margin: 0 10px 15px"><button ng-click="unsubscribe()" class="btn btn-warning btn-block">Downgrade</button></p>
+
 					</div>
 				</div>
 				<div class="col col-sm-2" style="text-align: center" ng-repeat="plan in plans | orderBy:'+amount'">
@@ -48,6 +49,7 @@
 					<div class="col col-sm-{{12-plans.length*2-2}}">Monthly connexion</div>
 					<div class="col col-sm-2">5 000</div>
 					<div class="col col-sm-2" ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection|readableNumber}}</div>
+
 				</div>
 		  	</li>
 			<li class="list-group-item">
@@ -74,6 +76,14 @@
 		</ul>
 		<div class="row"><br/>
 			<div class="col col12">
+				<div class="row" style="position: relative; top: -25px">
+					<div class="col col-sm-4"></div>
+					<div class="col col-sm-8">
+						<div style="text-align: center">
+							<strong>If you need MORE, <a href="/contact-us">contact us</a></strong>
+						</div>
+					</div>
+				</div><br />
 				<div>
 					During the <strong>beta</strong>, OAuth.io won't charge any uses. Read the <a href="/faq">FAQ</a> for more information.
 				</div><br />

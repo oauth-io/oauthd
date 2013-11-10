@@ -18,7 +18,7 @@
 			            <h4 style="text-align: center">Forgot my password</h4>
 			            <br />
 			        </div>
-			        <form name="signup" class="form-vertical">
+			        <form class="form-vertical" ng-submit="userForm.submit()" method="POST">
 			          <div class="alert alert-danger" ng-show="info.status == 'error'">
 			            {{info.message}}
 			          </div>
@@ -35,7 +35,7 @@
 			          </div>
 			          <div class="row">
 			            <div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
-			              <button ng-click="userForm.submit()" class="btn btn-primary">
+			              <button type="submit" class="btn btn-primary">
 			                <span ng-show="userForm.mode == 'Lost password'">
 			                  Reset my password
 			                </span>
