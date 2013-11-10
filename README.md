@@ -1,3 +1,5 @@
+<a href="http://travis-ci.org/oauth-io/oauthd"><img src="https://secure.travis-ci.org/oauth-io/oauthd.png" alt="Build Status" style="max-width:100%;"></a>
+
 # OAuth daemon
 
 The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) core. This is a background api server that runs on your own server that allow your clients to authenticate to any 70+ available OAuth provider.
