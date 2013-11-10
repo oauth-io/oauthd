@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+ - "0.10"
+ - "0.8"
+services:
+ - redis
+before_install:
+ - "npm install -g grunt-cli coffee-script"
+install:
+ - "npm install"
+script:
+ - "grunt test"
+branches:
+  only:
+    - "master"
