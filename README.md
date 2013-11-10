@@ -16,7 +16,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 
 ## Install global dependencies
 
-    (sudo) npm install -g coffee-script grunt grunt-cli forever
+    (sudo) npm install -g coffee-script grunt-cli forever
 
 ## Install OAuth dependencies
 
