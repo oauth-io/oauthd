@@ -314,6 +314,8 @@ generalAccountCtrl = ($scope, $timeout) ->
 
 	drawChart() if $scope.loading == false
 
+SettingsCtrl = ($scope, UserService) ->
+
 UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuService, UserService, AppService) ->
 	MenuService.changed()
 	if not UserService.isLogin()
@@ -378,25 +380,36 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	, (error) ->
 		console.log error
 
-	$scope.update = ->
+	$scope.changeEmailState = false
+	$scope.emailSent = false
+	$scope.updateDone = false
+	$scope.changeEmail = ->
+		$scope.changeEmailState = true
+		$('#email-input').removeAttr('disabled')
 
+	$scope.update = ->
+		$scope.updateDone = false
 		UserService.update $scope.user, (success) ->
 			$scope.id = success.data.id
 			$scope.name = success.data.name
+			if $scope.email != success.data.mail
+				$('#email-input').attr('disabled', 'disabled')
+				$scope.changeEmailState = false
+				$scope.emailSent = true
 			$scope.email = success.data.mail
 			$scope.location = success.data.location
 			$scope.company = success.data.company
 			$scope.website = success.data.website
-			$('#modal_edit_infos').modal('hide');
+			$scope.updateDone = true
 		, (error) ->
 			$scope.error =
 				state : true
 				message : error.message
 
 	$scope.onDismiss = ->
-
 		$scope.error =
 			state : false
+
 
 ProviderCtrl = ($filter, $scope, $rootScope, ProviderService, $timeout) ->
 	ProviderService.list (json) ->
@@ -1556,6 +1569,13 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	UserService.me (success) ->
 		$scope.profile = success.data.profile
 		$scope.billing = success.data.billing
+		$scope.profile.addr_one = $scope.profile.addr_one || ""
+		$scope.profile.addr_second = $scope.profile.addr_second || ""
+		$scope.profile.zipcode = $scope.profile.zipcode || ""
+		$scope.profile.state = $scope.profile.state || ""
+		$scope.profile.city = $scope.profile.city || ""
+		$scope.profile.phone = $scope.profile.phone || ""
+		console.log $scope.profile, $scope.billing
 	, (error) ->
 		console.log error
 
@@ -1661,31 +1681,6 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 					state: true
 					message: fields[i]
 				return null
-
-		# if $('#card-number').val() is ""
-		# 	console.log "error"
-		# 	$scope.error =
-		# 		state : true
-		# 		message : "error card number missing"
-		# 	return null
-		# if $('#card-expiry-month').val() is ""
-		# 	console.log "error"
-		# 	$scope.error =
-		# 		state : true
-		# 		message : "error expiration date missing (month)"
-		# 	return null
-		# if $('#card-expiry-year').val() is ""
-		# 	console.log "error"
-		# 	$scope.error =
-		# 		state : true
-		# 		message : "error expiration date missing (year)"
-		# 	return null
-		# if $('#card-cvc').val() is ""
-		# 	console.log "error"
-		# 	$scope.error =
-		# 		state : true
-		# 		message : "error card cvc missing"
-		# 	return null
 
 		$('#bt-payment').hide 0, ->
 			$('#waiting-payment').fadeIn(1000)
