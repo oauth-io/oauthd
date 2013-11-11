@@ -261,7 +261,6 @@ generalAccountCtrl = ($scope, $timeout) ->
 	providersCtx = document.getElementById('providersChart').getContext '2d'
 
 	drawChart = ->
-		console.log "plan", $scope.plan
 		if ! $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
@@ -327,6 +326,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	$scope.loading = true
 
 	UserService.me (success) ->
+
 		# for modal
 		$scope.user =
 			id : success.data.profile.id
@@ -344,6 +344,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
 		$scope.plan = success.data.plan
+		$scope.subscriptions = success.data.subscriptions
 		if not $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
@@ -352,7 +353,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				nbProvider: 5
 				responseDelay: 48
 
-		$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
+		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
 		$scope.apps = []
 		$scope.totalConnections = 0
@@ -1323,8 +1324,7 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 		UserService.me (success) ->
 			plan = success.data.plan
 			if plan
-				$scope.current_plan = if plan.parent then plan.parent else plan.name
-				$scope.current_plan = $scope.current_plan.substr(0, plan.length - 2) if $scope.current_plan.substr(plan.length - 2, 2) is 'fr'
+				$scope.current_plan = plan.name
 		, (error) ->
 			console.log "error", error
 

@@ -1,0 +1,16 @@
+<table class="table">
+	<tr>
+		<th>Plan</th>
+		<th>Amount</th>
+		<th>Created at</th>
+		<th>Card Type</th>
+		<th>Last 4 card number</th>
+	</tr>
+	<tr ng-repeat="subscription in subscriptions">
+		<td>{{subscription.name}}</td>
+		<td>${{subscription.amount}}</td>
+		<td>{{subscription.created_at|date:'MMMM d, yyyy HH:mm:ss'}}</td>
+		<td>{{subscription.card_type}}</td>
+		<td>{{subscription.last4}}</td>
+	</tr>
+</table>

@@ -20,14 +20,13 @@ class PaymillClient
 	# Boolean
 	@isNew
 
-	constructor : (@id) ->
-
+	constructor: (@id) ->
 		if @id?
 			PaymillBase.paymill.clients.details @id, (err, client) =>
 				return null if err
 				return @populate client.data
 
-	save : (callback) ->
+	save: (callback) ->
 
 		@isNew = false if @id?
 		@isNew = true if not @id?
@@ -45,11 +44,18 @@ class PaymillClient
 					return callback err if err
 					return callback null, @
 
-	getById : (@id) ->
+	getSubscriptions: (callback) ->
+		if not @id
+			db.redis.hget "#{PaymillBase.subscriptions_root_prefix}", @user_id, (err, res) ->
+				PaymillBase.paymill.clients.details res, (err, client) ->
+					return null if err
+					return callback null, client.data.subscription
+		else
+			PaymillBase.paymill.clients.details @id, (err, client) ->
+				return null if err
+				return callback null, client.data.subscription
 
-
-
-	getCurrentSubscription : (callback) ->
+	getCurrentSubscription: (callback) ->
 
 		# exists on Redis
 		db.redis.hget ["#{PaymillBase.subscriptions_root_prefix}:#{@user_id}", "current_subscription"], (err, res) ->
@@ -59,11 +65,15 @@ class PaymillClient
 			return callback null, subscription
 
 
+	fillObject: (data) ->
+		@email = data.email
+		@description = data.description
+		@
 
-	populate : (data) ->
+	populate: (data) ->
 		return { id : data.id, email : data.email, description : data.description }
 
-	prepare : ->
+	prepare: ->
 		return { email : @email, description : @description }
 
 exports = module.exports = PaymillClient

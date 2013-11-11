@@ -204,11 +204,10 @@ exports.getOffersList = (callback) ->
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
-			res[i * 9 + 8] = if res[i * 9 + 8] = "*" then "unlimited" else res[i * 9 + 8]
-			res[i * 9 + 10] = if res[i * 9 + 10] = "*" then "unlimited" else res[i * 9 + 10]
-			res[i * 9 + 11] = if res[i * 9 + 11] = "*" then "unlimited" else res[i * 9 + 11]
-
 			for i of offers
+				res[i * 9 + 8] = if res[i * 9 + 8] = "*" then "unlimited" else res[i * 9 + 8]
+				res[i * 9 + 10] = if res[i * 9 + 10] = "*" then "unlimited" else res[i * 9 + 10]
+				res[i * 9 + 11] = if res[i * 9 + 11] = "*" then "unlimited" else res[i * 9 + 11]
 				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11] + "222", responseDelay: res[i * 13 + 12]
 
 			return callback null, offers
