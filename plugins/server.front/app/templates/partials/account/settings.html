@@ -1,48 +1,67 @@
-<form class="form-horizontal" role="form">
-  	<div class="row">
-		<label for="email-input" class="col col-sm-2 control-label">Email</label>
-		<div class="col col-sm-10">
-	  		<input type="email" id="email-input" placeholder="Email" ng-model="user.email">
-		</div>
-  	</div>
-	<div class="row">
-		<label class="control-label col col-sm-2" for="password-input">Password</label>
-		<div class="col col-sm-10">
-			<div class="input-group">
-				<input disabled="disabled" type="password" placeholder="******" id="password-input" class="ng-pristine ng-valid">
-				<span class="input-group-btn">
-					<button type="button" class="btn btn-danger"><i class="icon-plus icon-white"></i> Reset Password</button>
-				</span>
+<div ng-controller="SettingsCtrl">
+	<form class="form-horizontal" role="form">
+		<h3>Login information</h3>
+	  	<div class="row">
+			<label for="email-input" class="col col-sm-2 control-label">Email</label>
+			<div class="col col-sm-10">
+				<div class="input-group">
+			  		<input disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.email">
+			  		<span class="input-group-btn">
+						<button ng-hide="changeEmailState" ng-click="changeEmail()" type="button" class="btn btn-warning" style="border-radius:4px; border-top-left-radius:0; border-bottom-left-radius: 0"><i class="icon-plus icon-white"></i> Change your email</button>
+						<button ng-show="changeEmailState" ng-click="update()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Update your email</button>
+					</span>
+				</div>
+			</div>
+	  	</div>
+	  	<div class="row" ng-show="emailSent">
+	  		<div class="col col-sm-10 col-offset-2">
+	  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{email}}</strong> to validate your new email address</div>
+	  		</div>
+	  	</div>
+		<div class="row">
+			<label class="control-label col col-sm-2" for="password-input">Password</label>
+			<div class="col col-sm-10">
+				<div class="input-group">
+					<input disabled="disabled" type="password" placeholder="******" id="password-input" class="ng-pristine ng-valid">
+					<span class="input-group-btn">
+						<button type="button" class="btn btn-danger"><i class="icon-plus icon-white"></i> Reset your password</button>
+					</span>
+				</div>
 			</div>
 		</div>
-	</div>
-  	<div class="row">
-		<label for="name-input" class="col col-sm-2 control-label">Name</label>
-		<div class="col col-sm-10">
-	  		<input type="text" id="name-input" placeholder="Name" ng-model="user.name">
+		<hr/>
+		<h3>General information</h3>
+	  	<div class="row">
+			<label for="name-input" class="col col-sm-2 control-label">Name</label>
+			<div class="col col-sm-10">
+		  		<input type="text" id="name-input" placeholder="Name" ng-model="user.name">
+			</div>
+	  	</div>
+		<div class="row">
+			<label for="location-input" class="col col-sm-2 control-label">Location</label>
+			<div class="col col-sm-10">
+		  		<input type="text" id="location-input" placeholder="Location" ng-model="user.location">
+			</div>
+	  	</div>
+	  	<div class="row">
+			<label for="company-input" class="col col-sm-2 control-label">Company</label>
+			<div class="col col-sm-10">
+		  		<input type="text" id="company-input" placeholder="Company" ng-model="user.company">
+			</div>
+	  	</div>
+		<div class="row">
+			<label class="control-label col col-sm-2" for="website-input">Website</label>
+			<div class="col col-sm-10">
+				<input type="text" placeholder="Your website" ng-model="user.website" id="website-input" name="website-input" required="">
+			</div>
 		</div>
-  	</div>
-	<div class="row">
-		<label for="location-input" class="col col-sm-2 control-label">Location</label>
-		<div class="col col-sm-10">
-	  		<input type="text" id="location-input" placeholder="Location" ng-model="user.location">
-		</div>
-  	</div>
-  	<div class="row">
-		<label for="company-input" class="col col-sm-2 control-label">Company</label>
-		<div class="col col-sm-10">
-	  		<input type="text" id="company-input" placeholder="Company" ng-model="user.company">
-		</div>
-  	</div>
-	<div class="row">
-		<label class="control-label col col-sm-2" for="website-input">Website</label>
-		<div class="col col-sm-10">
-			<input type="text" placeholder="Your website" ng-model="user.website" id="website-input" name="website-input" required="">
-		</div>
-	</div>
-  	<div class="row">
-		<div class="col col-offset-2  col-sm-10">
-	  		<button ng-click="update()" type="submit" class="btn btn-primary">Save</button>
-		</div>
-  	</div>
-</form>
+	  	<div class="row">
+			<div class="col col-offset-2  col-sm-2" style="padding-right: 5px">
+		  		<button ng-click="update()" type="submit" class="btn btn-block btn-primary">Save</button>
+			</div>
+	  		<div class="col col-sm-8" ng-show="updateDone" style="padding-left: 5px">
+	  			<div class="alert alert-info"><strong>Information updated!</strong></div>
+	  		</div>
+	  	</div>
+	</form>
+</div>

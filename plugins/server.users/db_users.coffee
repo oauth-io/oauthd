@@ -33,7 +33,6 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 				return callback null, user
 
 exports.updateBilling = (req, callback) ->
-
 	profile = req.body.profile
 	billing = req.body.billing
 	user_id = req.user.id

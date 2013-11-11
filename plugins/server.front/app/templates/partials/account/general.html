@@ -24,7 +24,7 @@
       <p style="position: relative; top: 125px; text-align: center; font-size: 1.2em; font-weight: bold">{{keysets.length}} / {{plan.nbProvider}}</p>
       <canvas id="providersChart" width="400" height="400" class="chart"></canvas>
     </div>
-    <div class="col col-lg-4" ng-hide="plan.nbProvider == 'unlimited'">
+    <div class="col col-lg-4" ng-show="plan.nbProvider == 'unlimited'">
       <canvas id="connectionLineChart" width="400" height="400" class="chart"></canvas>
     </div>
   </div>
