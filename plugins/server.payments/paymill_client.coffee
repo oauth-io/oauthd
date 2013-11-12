@@ -45,15 +45,14 @@ class PaymillClient
 					return callback null, @
 
 	getSubscriptions: (callback) ->
-		if not @id
-			db.redis.hget "#{PaymillBase.subscriptions_root_prefix}", @user_id, (err, res) ->
-				PaymillBase.paymill.clients.details res, (err, client) ->
-					return null if err
-					return callback null, client.data.subscription
-		else
-			PaymillBase.paymill.clients.details @id, (err, client) ->
+		db.redis.hget "#{PaymillBase.subscriptions_root_prefix}", @user_id, (err, res) ->
+			return callback err if err
+			return callback null, [] if not res?
+
+			PaymillBase.paymill.clients.details res, (err, client) ->
 				return null if err
 				return callback null, client.data.subscription
+
 
 	getCurrentSubscription: (callback) ->
 
