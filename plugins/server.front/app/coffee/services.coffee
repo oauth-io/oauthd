@@ -66,6 +66,20 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				data:
 					profile: profile
 
+		updateEmail: (email, success, error) ->
+			api 'me/mail', success, error,
+				method: "PUT",
+				data:
+					email: email
+
+		updatePassword: (pass, new_pass, success, error) ->
+			api 'me/password', success, error,
+				method: "PUT",
+				data:
+					pass: pass,
+					new_pass: new_pass
+
+
 		createBilling: (profile, billing, success, error) ->
 			api 'me/billing', success, error,
 				method: "POST",

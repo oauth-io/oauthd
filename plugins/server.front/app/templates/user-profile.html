@@ -39,6 +39,9 @@
       <p><a href="https://oauth.io" target="_blank">{{website}}</a></p>
     </div>
     <div class="col col-lg-9">
+      <div class="alert alert-info" ng-show="email_changed">
+        An email has been sent to <strong>{{email_changed}}</strong> to verify it. <button style="position: relative; right: -25px; top: -2px" class="pull-right btn btn-warning btn-mini" ng-click="cancelEmailUpdate()">Cancel</button>
+      </div>
       <div style="float: right; position: relative; top: 13px">
         <i ng-class="{'glyphicon':true,'glyphicon-star':true,'black':plan.name=='bootstrap','bronze':plan.name=='startup','silver':plan.name=='growth', 'gold':plan.name=='scalability'}" style="position: relative; top: 2px"></i>
         <span ng-hide="plan.name">Bootstrap Plan</span>

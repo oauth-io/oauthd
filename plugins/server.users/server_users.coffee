@@ -85,7 +85,13 @@ exports.setup = (callback) ->
 				res.send user
 				next()
 
-	# update mail or password
+	@server.put @config.base_api + '/me/password', @auth.needed, (req, res, next) =>
+		@db.users.updatePassword req, @server.send(res, next)
+
+	@server.put @config.base_api + '/me/mail', @auth.needed, (req, res, next) =>
+		@db.users.updateEmail req, @server.send(res, next)
+
+	# update information (name, location, company, website)
 	@server.put @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		@db.users.updateAccount req, @server.send(res, next)
 

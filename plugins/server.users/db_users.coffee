@@ -96,10 +96,10 @@ exports.updateBilling = (req, callback) ->
 				return callback err if err
 				return callback null
 
-# update user infos
-exports.updateAccount = (req, callback) ->
 
-	data = req.body.profile
+
+exports.updateEmail = (req, callback) ->
+	email = req.body.email
 	user_id = req.user.id
 	prefix = "u:#{user_id}:"
 	old_email = null
@@ -107,85 +107,85 @@ exports.updateAccount = (req, callback) ->
 	db.redis.mget [ prefix + 'mail'], (err, res) =>
 		old_email = res[0]
 
-	db.redis.hget 'u:mails', data.email, (err, id) ->
-
-		is_new_email = (old_email != data.email)
-		validation_key = db.generateUid()
-
-		if is_new_email
+		db.redis.hget 'u:mails', email, (err, id) ->
 			return callback err if err
-			return callback new check.Error "#{data.email} already exists" if id
+			return callback new check.Error "Your email has not changed" if old_email == email
+			return callback new check.Error "#{email} already exists" if id
 
-			db.redis.multi([
-
-				[ 'hdel', 'u:mails', old_email ],
-				[ 'hset', 'u:mails', data.email, user_id ],
-
-				[ 'mset', prefix + 'mail', data.email,
-					prefix + 'name', data.name,
-					prefix + 'location', data.location,
-					prefix + 'company', data.company,
-					prefix + 'website', data.website,
-					prefix + 'validated', 0,
-					prefix + 'key', validation_key]
-
-			]).exec (err, res) ->
+			validation_key = db.generateUid()
+			console.log "key", validation_key
+			db.redis.mset [
+				prefix + 'mail_changed', email,
+				prefix + 'key', validation_key
+			], (err) ->
 				return callback err if err
 
 				#send mail with key
 				options =
-						to:
-							email: data.email
-						from:
-							name: 'OAuth.io'
-							email: 'team@oauth.io'
-						subject: 'OAuth.io - You email address has been updated'
-						body: "Hello,\n\n
-In order to validate your new email address, please click the following link: https://" + config.url.host + "/validate/" + user_id + "/" + validation_key + ".\n
+					to:
+						email: email
+					from:
+						name: 'OAuth.io'
+						email: 'team@oauth.io'
+					subject: 'OAuth.io - You email address has been updated'
+					body: "Hello,\n\n
+In order to validate your new email address, please click the following link: https://" + config.url.host + "/validate/" + user_id + "/" + validation_key + "\n
 
 --\n
 OAuth.io Team"
 				mailer = new Mailer options
 				mailer.send (err, result) ->
 					return callback err if err
-					user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
+					user = id:user_id, mail:email
 					return callback null, user
-		else
-			db.redis.mset [
-				prefix + 'mail', data.email,
-				prefix + 'name', data.name,
-				prefix + 'location', data.location,
-				prefix + 'company', data.company,
-				prefix + 'website', data.website,
-				prefix + 'addr_one', data.addr_one,
-				prefix + 'addr_second', data.addr_second,
-				prefix + 'city', data.city,
-				prefix + 'zipcode', data.zipcode,
-				prefix + 'country', data.country,
-				prefix + 'country_code', data.country_code,
-				prefix + 'state', data.state,
-				prefix + 'phone', data.phone
 
-			], (err) ->
-				return callback err if err
-				user = id:user_id, mail:data.email, name:data.name, company:data.company, website:data.website, location:data.location
-				return callback null, user
+# update user infos
+exports.updateAccount = (req, callback) ->
+	data = req.body.profile
+	user_id = req.user.id
+	prefix = "u:#{user_id}:"
+
+	db.redis.mset [
+		prefix + 'name', data.name,
+		prefix + 'location', data.location,
+		prefix + 'company', data.company,
+		prefix + 'website', data.website,
+		# prefix + 'addr_one', data.addr_one,
+		# prefix + 'addr_second', data.addr_second,
+		# prefix + 'city', data.city,
+		# prefix + 'zipcode', data.zipcode,
+		# prefix + 'country', data.country,
+		# prefix + 'country_code', data.country_code,
+		# prefix + 'state', data.state,
+		# prefix + 'phone', data.phone
+	], (err) ->
+		return callback err if err
+		user = id:user_id, name:data.name, company:data.company, website:data.website, location:data.location
+		return callback null, user
 
 
 exports.isValidable = (data, callback) ->
 	key = data.key
 	iduser = data.id
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated', prefix+'pass'], (err, replies) ->
+	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated', prefix+'pass', prefix+'mail_changed'], (err, replies) ->
 		return callback err if err
+		return callback null, is_validable: false if replies[3]? and not replies[4]? or not replies[3] and replies[4]?
+		return callback null, is_validable: false if replies[1] != key
 
-		if replies[3]? # pass ok, validate new email address
-			db.redis.mset [prefix+'validated', 1], (err) ->
-				return callback err if err
-				return callback null, is_updated: true, mail: replies[0], id: iduser
-		else
-			if replies[2] == '1' || replies[1] != key
-				return callback null, is_validable: false
+		if replies[3]? and replies[4]? # change email
+			db.redis.multi([
+				[ 'hdel', 'u:mails', replies[0] ],
+				[ 'hset', 'u:mails', replies[4], iduser ],
+				[ 'mset', prefix+'validated', 1,
+					prefix+'mail', replies[4],
+					prefix+'mail_changed', '',
+					prefix+'key', '' ]
+			]).exec (err, res) ->
+				return callback err  if err
+				return callback null, is_updated: true, mail: replies[4], id: iduser
+		else # validable but no password
+			return callback null, is_validable: false if replies[2] == '1'
 			return callback null, is_validable: true, mail: replies[0], id: iduser
 
 # validate user mail
@@ -225,7 +225,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 
 				# set new key
 				db.redis.mset [
-					prefix + 'key', key
+					prefix + 'key_pass', key
 				], (err, res) ->
 					return err if err
 
@@ -254,7 +254,7 @@ exports.isValidKey = (data, callback) ->
 	key = data.key
 	iduser = data.id
 	prefix = 'u:' + iduser + ':'
-	db.redis.mget [prefix + 'mail', prefix + 'key'], (err, replies) ->
+	db.redis.mget [prefix + 'mail', prefix + 'key_pass'], (err, replies) ->
 		return callback err if err
 
 		if replies[1].replace(/\=/g, '').replace(/\+/g, '') != key
@@ -262,10 +262,7 @@ exports.isValidKey = (data, callback) ->
 
 		return callback null, isValidKey: true, email: replies[0], id: iduser
 
-
-
 exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
-
 	exports.isValidKey {
 		id: data.id,
 		key: data.key
@@ -280,16 +277,38 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 		db.redis.mset [
 			prefix + 'pass', pass,
 			prefix + 'salt', dynsalt,
-			prefix + 'key', '' # clear
+			prefix + 'key_pass', '', # clear
 			prefix + 'validated', 1
 		], (err) ->
 			return callback err if err
 			return callback null, email:res.email, id:res.id
 
 # change password
-exports.changePassword = check mail:check.format.mail, (data, callback) ->
-	return callback new check.Error "Not implemented yet"
+exports.updatePassword = check mail:check.format.mail, (req, callback) ->
+	data = req.body
+	iduser = req.user.id
+	new_pass = data.new_pass
+	pass = data.pass
+	prefix = 'u:' + iduser + ':'
+	db.redis.mget [
+		prefix+'pass',
+		prefix+'salt',
+		prefix+'mail',
+		prefix+'date_inscr',
+		prefix+'validated'], (err, replies) ->
+			return callback err if err
+			calcpass = db.generateHash pass + replies[1]
+			return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 
+			#set new_pass to prefix_pass / refresh salt
+			dynsalt = Math.floor(Math.random() * 9999999)
+			pass = db.generateHash new_pass + dynsalt
+			db.redis.mset [
+				prefix+'pass', pass,
+				prefix+'salt', dyndalt
+			], (err) ->
+				return callback err  if err
+				return callback null, updated: true
 
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
@@ -313,7 +332,8 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'vat_number',
 		prefix + 'use_profile_for_billing',
 		prefix + 'state',
-		prefix + 'country' ]
+		prefix + 'country',
+		prefix + 'mail_changed' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -337,7 +357,8 @@ exports.get = check 'int', (iduser, callback) ->
 			vat_number: replies[15],
 			use_profile_for_billing: replies[16] == "true" ? true : false
 			state : replies[17],
-			country : replies[18]
+			country : replies[18],
+			mail_changed: replies[19]
 		}
 		exports.getPlan iduser, (err, plan) ->
 			return callback err if err
@@ -380,8 +401,8 @@ exports.getBilling = check 'int', (iduser, callback) ->
 		prefix_billing + 'type',
 		prefix_billing + 'website',
 		prefix_billing + 'zipcode',
-	 	prefix_billing + 'vat',
-	 	prefix_billing + 'country' ]
+		prefix_billing + 'vat',
+		prefix_billing + 'country' ]
 	, (err, replies) ->
 		return callback err if err
 		billing =

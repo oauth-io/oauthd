@@ -53,11 +53,6 @@ IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, Me
 # Reset password 				#
 #################################
 ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) ->
-
-	MenuService.changed()
-	if UserService.isLogin()
-		$location.path '/key-manager'
-
 	UserService.isValidKey $routeParams.id, $routeParams.key, ((data) ->
 		$location.path '/404' if not data.data.isValidKey
 	), (error) ->
@@ -98,19 +93,24 @@ ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) 
 # Validate account email + pass #
 #################################
 ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $location) ->
-	MenuService.changed()
-	if UserService.isLogin()
-		$location.path '/key-manager'
-
+	#MenuService.changed()
+	#if UserService.isLogin()
+	#	$location.path '/key-manager'
+	console.log "start isValidable"
 	UserService.isValidable $routeParams.id, $routeParams.key, ((data) ->
-		$location.path '/404' if not data.data.is_validable
+		console.log "check if validable", data
+		$location.path '/404' if not data.data.is_validable or not data.data.is_updated
 
-
-		$scope.user =
-			id: $routeParams.id
-			key: $routeParams.key
-			mail: data.data.mail
-
+		if UserService.isLogin() and data.data.is_updated
+			$location.path '/profile'
+		else if !UserService.isLogin() and data.data.is_validable
+			# $location.path '/signin'
+			$scope.user =
+				id: $routeParams.id
+				key: $routeParams.key
+				mail: data.data.mail
+		else
+			$location.path '/signin'
 	), (error) ->
 		$location.path '/404'
 
@@ -345,6 +345,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.location = success.data.profile.location
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
+		$scope.email_changed = success.data.profile.mail_changed
+
 		$scope.plan = success.data.plan
 		$scope.subscriptions = success.data.subscriptions
 		if not $scope.plan
@@ -388,20 +390,38 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.changeEmailState = true
 		$('#email-input').removeAttr('disabled')
 
+	$scope.cancelEmailUpdate = ->
+		UserService.cancelUpdateEmail ((success) ->
+			$scope.email_changed = null
+		), (error) ->
+
+	$scope.changePasswordButton = ->
+		$scope.accountView = '/templates/partials/account/update_password.html'
+
+	$scope.cancelChangePasswordButton = ->
+		$scope.accountView = '/templates/partials/account/settings.html'
+
+	$scope.updateEmail = ->
+		UserService.updateEmail $scope.user.email, ((success) ->
+			$('#email-input').attr('disabled', 'disabled')
+			$scope.changeEmailState = false
+			$scope.email_changed = $scope.user.email
+			$scope.user.email = $scope.email
+		), (error) ->
+			if error.message is "Your email has not changed"
+				$('#email-input').attr('disabled', 'disabled')
+				$scope.changeEmailState = false
+
+
 	$scope.update = ->
 		$scope.updateDone = false
 		UserService.update $scope.user, (success) ->
 			$scope.id = success.data.id
 			$scope.name = success.data.name
-			if $scope.email != success.data.mail
-				$('#email-input').attr('disabled', 'disabled')
-				$scope.changeEmailState = false
-				$scope.emailSent = true
-			$scope.email = success.data.mail
+			$scope.updateDone = true
 			$scope.location = success.data.location
 			$scope.company = success.data.company
 			$scope.website = success.data.website
-			$scope.updateDone = true
 		, (error) ->
 			$scope.error =
 				state : true
@@ -1329,7 +1349,6 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 
 
 PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, CartService) ->
-
 	MenuService.changed()
 
 	$scope.current_plan = null
