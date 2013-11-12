@@ -349,6 +349,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 		$scope.plan = success.data.plan
 		$scope.subscriptions = success.data.subscriptions
+		$scope.payments = success.data.payments
+
 		if not $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
@@ -1352,16 +1354,10 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	MenuService.changed()
 
 	$scope.current_plan = null
-	if UserService.isLogin()
-		UserService.me (success) ->
-			plan = success.data.plan
-			if plan
-				$scope.current_plan = plan.name
-		, (error) ->
-			console.log "error", error
 
 	PricingService.list (success) ->
-		$scope.plans = success.data
+		$scope.current_plan = success.data.current_plan
+		$scope.plans = success.data.offers
 	, (error) ->
 		console.log error
 
@@ -1584,7 +1580,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	$("#BillingvatNumber").hide()
 	$("#BillingState").hide()
 
-
+	# trop long
 	UserService.me (success) ->
 		$scope.profile = success.data.profile
 		$scope.billing = success.data.billing
@@ -1594,7 +1590,6 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 		$scope.profile.state = $scope.profile.state || ""
 		$scope.profile.city = $scope.profile.city || ""
 		$scope.profile.phone = $scope.profile.phone || ""
-		console.log $scope.profile, $scope.billing
 	, (error) ->
 		console.log error
 
