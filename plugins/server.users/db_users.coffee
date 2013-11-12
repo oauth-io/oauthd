@@ -294,6 +294,9 @@ exports.changePassword = check mail:check.format.mail, (data, callback) ->
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
 
+	client = new Clients()
+	client.user_id = iduser
+
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [ prefix + 'mail',
 		prefix + 'date_inscr',
@@ -343,26 +346,9 @@ exports.get = check 'int', (iduser, callback) ->
 			return callback err if err
 			exports.getBilling iduser, (err, billing) ->
 				return callback err if err
-				exports.getAllSubscriptions iduser, (err, subscriptions) ->
+				client.getSubscriptions (err, subscriptions) ->
 					return callback err if err
 					return callback null, profile: profile, plan: plan, billing: billing, subscriptions:subscriptions
-
-exports.getAllSubscriptions = check 'int', (iduser, callback) ->
-
-	client = new Clients()
-	client.user_id = iduser
-	client.getSubscriptions (err, subscriptions) ->
-		return callback err if err
-
-		ret = []
-		i = 0
-		for sub in subscriptions
-			if sub.offer.name?
-				sub.offer.name = sub.offer.name.substr 0, sub.offer.name.length - 2  if sub.offer.name.substr(sub.offer.name.length - 2, 2) is 'fr'
-				ret[i] = name: sub.offer.name, amount: (sub.offer.amount / 100), created_at: sub.payment.created_at*1000, last4: sub.payment.last4, card_type: sub.payment.card_type
-				i++
-
-		return callback null, ret
 
 # get user billing
 exports.getBilling = check 'int', (iduser, callback) ->
