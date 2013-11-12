@@ -125,7 +125,6 @@ exports.createOffer = (data, callback) ->
 
 # delete an Offer
 exports.removeOffer = (name, callback) ->
-
 	prefix = 'pm:offers:' + name
 	prefix_ttc = "pm:offers:#{name}fr"
 	name = name.toLowerCase()
@@ -205,9 +204,9 @@ exports.getOffersList = (callback) ->
 			return callback err if err
 
 			for i of offers
-				res[i * 9 + 8] = if res[i * 9 + 8] = "*" then "unlimited" else res[i * 9 + 8]
-				res[i * 9 + 10] = if res[i * 9 + 10] = "*" then "unlimited" else res[i * 9 + 10]
-				res[i * 9 + 11] = if res[i * 9 + 11] = "*" then "unlimited" else res[i * 9 + 11]
+				res[i * 13 + 8] = if res[i * 13 + 8] is "*" then "unlimited" else res[i * 13 + 8]
+				res[i * 13 + 10] = if res[i * 13 + 10] is "*" then "unlimited" else res[i * 13 + 10]
+				res[i * 13 + 11] = if res[i * 13 + 11] is "*" then "unlimited" else res[i * 13 + 11]
 				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11] + "222", responseDelay: res[i * 13 + 12]
 
 			return callback null, offers
@@ -255,12 +254,13 @@ exports.getPublicOffers = (callback) ->
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
+			console.log offers, res
 			for i of offers
 				nbConnection = if res[i * 9 + 5] is "*" then "unlimited" else res[i * 9 + 5]
 				nbApp = if res[i * 9 + 6] is "*" then "unlimited" else res[i * 9 + 6]
 				nbProvider = if res[i * 9 + 7] is "*" then "unlimited" else res[i * 9 + 7]
-
-				offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
+				if res[i * 9 + 1]?
+					offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
 
 			return callback null, offers
 
