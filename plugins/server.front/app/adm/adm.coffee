@@ -463,7 +463,7 @@ hooks.config = ->
 
 		$scope.offersList = null
 		AdmService.getOffersList (success) ->
-			$scope.offersList = success.data
+			$scope.offersList = success.data.offers
 
 		$scope.showCreateForm = ()->
 			$("#create-offer-form").show();
@@ -475,6 +475,7 @@ hooks.config = ->
 			status = "public"
 			if ($('.status').is(':checked'))
 				status = "private";
+
 			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbConnection").val(), status, $(".nbApp").val(), $(".nbProvider").val(), $(".responseDelay").val(), (success) ->
 
 				for plan in success.data
