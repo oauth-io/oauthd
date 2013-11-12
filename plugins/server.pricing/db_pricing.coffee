@@ -11,6 +11,7 @@ restify = require 'restify'
 { db, check, config } = shared = require '../shared'
 paymill = require('paymill-node')(config.paymill.secret_key)
 PaymillBase = require '../server.payments/paymill_base'
+Clients = require '../server.payments/paymill_client'
 
 # create an Offer
 exports.createOffer = (data, callback) ->
@@ -26,13 +27,15 @@ exports.createOffer = (data, callback) ->
 		async.series [
 
 			(cb) => # HT
-
+				console.log "create offer '#{name}' HT..."
+				console.log data.amount
 				paymill.offers.create
 					amount: data.amount
 					currency: data.currency
 					interval: data.interval
 					name: name
 				,(err, offer) ->
+					console.log err if err
 					return callback err if err
 
 					offer.data.name = name;
@@ -69,6 +72,7 @@ exports.createOffer = (data, callback) ->
 
 			(cb) => # TTC (19.6%)
 
+				console.log "create offer '#{name}' TTC..."
 				total_ht = data.amount / 100
 				tva = 0.196
 				total_tva = Math.floor((total_ht * tva) * 100) / 100
@@ -177,7 +181,6 @@ exports.removeOffer = (name, callback) ->
 
 # getList of Offer
 exports.getOffersList = (callback) ->
-
 	prefix = "pm:offers"
 
 	db.redis.smembers "#{prefix}", (err, offers) ->
@@ -207,13 +210,11 @@ exports.getOffersList = (callback) ->
 				res[i * 13 + 8] = if res[i * 13 + 8] is "*" then "unlimited" else res[i * 13 + 8]
 				res[i * 13 + 10] = if res[i * 13 + 10] is "*" then "unlimited" else res[i * 13 + 10]
 				res[i * 13 + 11] = if res[i * 13 + 11] is "*" then "unlimited" else res[i * 13 + 11]
-				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11] + "222", responseDelay: res[i * 13 + 12]
-
-			return callback null, offers
+				offers[i] = id:res[i * 13], name:res[i * 13 + 1], currency:res[i * 13 + 2], interval:res[i * 13 + 3], created_at:res[i * 13 + 4], updated_at:res[i * 13 + 5], amount:res[i * 13 + 6], status:res[i * 13 + 7], nbConnection:res[i * 13 + 8], parent: res[i * 13 + 9], nbApp: res[i * 13 + 10], nbProvider: res[i * 13 + 11], responseDelay: res[i * 13 + 12]
+			return callback null, offers: offers
 
 # update Status of an Offer
 exports.updateStatus = (name, currentStatus, callback) ->
-
 	newStatus = "private"
 	if currentStatus == "private"
 		newStatus = "public"
@@ -231,8 +232,7 @@ exports.updateStatus = (name, currentStatus, callback) ->
 		return callback null, name
 
 
-exports.getPublicOffers = (callback) ->
-
+exports.getPublicOffers = (clientId, callback) ->
 	prefix = "pm:offers"
 
 	db.redis.smembers "#{prefix}:public", (err, offers) ->
@@ -262,10 +262,13 @@ exports.getPublicOffers = (callback) ->
 				if res[i * 9 + 1]?
 					offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
 
-			return callback null, offers
+			client = new Clients()
+			client.user_id = clientId.id
+			client.getCurrentPlan (err, current_plan) =>
+				return callback err if err
+				return callback null, offers: offers, current_plan: current_plan
 
 exports.getOfferByName = (name, callback) ->
-
 	return callback new check.Error "This plan does not exists" if not name?
 
 	prefix = "pm:offers:#{name}"

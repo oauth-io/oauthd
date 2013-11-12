@@ -96,6 +96,7 @@ class PaymillClient
 				return callback err if err
 				db.redis.get "#{PaymillBase.offers_root_prefix}:#{offer_name}:name", (err, res) ->
 					return callback err if err
+					return callback null, null  if not res?
 					res = res.substr 0, res.length - 2  if res.substr(res.length - 2, 2) is 'fr'
 					return callback null, res
 

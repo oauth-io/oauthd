@@ -9,7 +9,7 @@ exports.setup = (callback) ->
 	@db.pricing = require './db_pricing'
 
 	@server.get @config.base_api + '/plans', (req, res, next) =>
-		@db.pricing.getPublicOffers @server.send(res, next)
+		@db.pricing.getPublicOffers req.clientId, @server.send(res, next)
 
 	@server.get @config.base_api + '/plans/:name', (req, res, next) =>
 		@db.pricing.getOfferByName req.params.name.toLowerCase(), @server.send(res, next)

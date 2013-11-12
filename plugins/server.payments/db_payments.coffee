@@ -377,4 +377,5 @@ exports.getSubscription = (client_id, callback) ->
 	pm_client.user_id = client_id
 	pm_client.getCurrentSubscription (err, res) =>
 		return callback err if err
+		return callback null, null  if not res?
 		return callback null, res.id
