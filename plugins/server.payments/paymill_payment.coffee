@@ -30,11 +30,12 @@ class PaymillPayment
 				@id = payment.data.id
 
 				payment_prefix = "#{PaymillBase.payments_root_prefix}:#{@client.user_id}:#{@id}"
-				console.log payment_prefix
 
 				db.redis.multi([
 
 					[ "hset", "#{PaymillBase.payments_root_prefix}:#{@client.user_id}", "current_payment", @id ],
+
+					[ "sadd", "#{PaymillBase.payments_root_prefix}:payments_id", @id ],
 
 					[ "mset", "#{payment_prefix}:client", payment.data.client,
 					"#{payment_prefix}:card_type", payment.data.card_type,
