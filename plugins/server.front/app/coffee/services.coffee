@@ -72,6 +72,9 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				data:
 					email: email
 
+		cancelUpdateEmail: (success, error) ->
+			api 'me/mail', success, error, method: "DELETE"
+
 		updatePassword: (pass, new_pass, success, error) ->
 			api 'me/password', success, error,
 				method: "PUT",

@@ -96,7 +96,12 @@ exports.updateBilling = (req, callback) ->
 				return callback err if err
 				return callback null
 
-
+exports.cancelUpdateEmail = (req, callback) ->
+	console.log req.user
+	user_id = req.user.id
+	prefix = "u:#{user_id}:"
+	db.redis.mset [ prefix + 'mail_changed', ''], (err, res) =>
+		return callback null, {cancelled: true}
 
 exports.updateEmail = (req, callback) ->
 	email = req.body.email
@@ -174,6 +179,7 @@ exports.isValidable = (data, callback) ->
 		return callback null, is_validable: false if replies[1] != key
 
 		if replies[3]? and replies[4]? # change email
+			return callback null, is_validable: false if replies[4].length == 0
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
 				[ 'hset', 'u:mails', replies[4], iduser ],

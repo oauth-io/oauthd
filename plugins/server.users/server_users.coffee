@@ -91,6 +91,9 @@ exports.setup = (callback) ->
 	@server.put @config.base_api + '/me/mail', @auth.needed, (req, res, next) =>
 		@db.users.updateEmail req, @server.send(res, next)
 
+	@server.del @config.base_api + '/me/mail', @auth.needed, (req, res, next) =>
+		@db.users.cancelUpdateEmail req, @server.send(res, next)
+
 	# update information (name, location, company, website)
 	@server.put @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		@db.users.updateAccount req, @server.send(res, next)
