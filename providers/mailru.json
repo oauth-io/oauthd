@@ -7,8 +7,7 @@
                         "query":{
                                 "client_id":"{client_id}",
                                 "response_type":"code",
-                                "redirect_uri":"{{callback}}",
-                                "scope":"{scope}"
+                                "redirect_uri":"{{callback}}"
                         }
                 },
                 "access_token":{
@@ -31,20 +30,7 @@
                 },
                 "parameters":{
                         "client_id":"string",
-                        "client_secret":"string",
-                        "scope":{
-                                "type":"string",
-                                "separator":" ",
-                                "cardinality":"*",
-                                "values":{
-                                        "":   "приложение может получать информацию о вашей анкете, списке друзей, фотографиях и музыке",
-                                        "events":    "приложение имеет доступ к событиям пользователя в Моем Мире",
-                                        "photos":    "приложение может загружать фотографии",
-                                        "guestbook": "приложение может добавлять записи в гостевые книги пользователей",
-                                        "stream":    "приложение может добавлять записи в ленту «Что нового» пользователя",
-                                        "messages":  "приложение имеет доступ к личным сообщениям пользователя"
-                                }
-                        }
+                        "client_secret":"string"
                 }
         },
         "provider":"mailru",
