@@ -76,8 +76,8 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 			api 'me/password', success, error,
 				method: "PUT",
 				data:
-					pass: pass,
-					new_pass: new_pass
+					current_password: pass,
+					new_password: new_pass
 
 
 		createBilling: (profile, billing, success, error) ->

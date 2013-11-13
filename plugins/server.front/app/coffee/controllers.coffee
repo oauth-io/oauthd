@@ -327,6 +327,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	$scope.changeTab 'general'
 	$scope.loading = true
 
+
 	UserService.me (success) ->
 
 		# for modal
@@ -350,6 +351,9 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.plan = success.data.plan
 		$scope.subscriptions = success.data.subscriptions
 		$scope.payments = success.data.payments
+
+		$scope.showPaymentTab = ->
+			return $scope.subscriptions? and $scope.subscriptions.length is not 0
 
 		if not $scope.plan
 			$scope.plan =
@@ -402,6 +406,16 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 	$scope.cancelChangePasswordButton = ->
 		$scope.accountView = '/templates/partials/account/settings.html'
+
+	$scope.updatePassword = (currentPassword, newPassword, newPassword2) ->
+		if newPassword is newPassword2
+			UserService.updatePassword currentPassword, newPassword, ((success) ->
+				$scope.cancelChangePasswordButton()
+			), (error) ->
+				$scope.errorPassword = error
+		else
+			$scope.errorPassword =
+				status: "fail"
 
 	$scope.updateEmail = ->
 		UserService.updateEmail $scope.user.email, ((success) ->

@@ -284,11 +284,13 @@ exports.resetPassword = check pass:/^.{6,}$/, (data, callback) ->
 			return callback null, email:res.email, id:res.id
 
 # change password
-exports.updatePassword = check mail:check.format.mail, (req, callback) ->
+exports.updatePassword = (req, callback) ->
 	data = req.body
 	iduser = req.user.id
-	new_pass = data.new_pass
-	pass = data.pass
+	new_pass = data.new_password
+	pass = data.current_password
+	return callback new check.Error 'Your password must have a least 6 characters' if pass? and pass.length < 6
+
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [
 		prefix+'pass',
@@ -305,7 +307,7 @@ exports.updatePassword = check mail:check.format.mail, (req, callback) ->
 			pass = db.generateHash new_pass + dynsalt
 			db.redis.mset [
 				prefix+'pass', pass,
-				prefix+'salt', dyndalt
+				prefix+'salt', dynsalt
 			], (err) ->
 				return callback err  if err
 				return callback null, updated: true
@@ -340,7 +342,6 @@ exports.get = check 'int', (iduser, callback) ->
 	, (err, replies) ->
 		return callback err if err
 		profile =
-		{
 			id:iduser,
 			mail:replies[0],
 			date_inscr:replies[1],
@@ -362,7 +363,10 @@ exports.get = check 'int', (iduser, callback) ->
 			state : replies[17],
 			country : replies[18],
 			mail_changed: replies[19]
-		}
+
+		for field of profile
+			profile[field] = '' if profile[field] == 'undefined'
+
 		exports.getPlan iduser, (err, plan) ->
 			return callback err if err
 			exports.getBilling iduser, (err, billing) ->

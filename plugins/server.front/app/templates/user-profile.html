@@ -29,16 +29,17 @@
 
 <div class="container" id="profile">
   <div class="row">
-    <div class="col col-lg-3 text-center">
-      <img class="img-thumbnail" src="http://www.gravatar.com/avatar/4bda4cba273a73659a518e5ab26fc1bb?s=160&d=false">
-      <h3>{{name}}</h3>
-      <p>{{location}}</p>
-      <p>{{company}}</p>
+    <div class="col col-lg-12">
+<!--     <div class="col col-lg-3 text-center">
+  <img class="img-thumbnail" src="http://www.gravatar.com/avatar/4bda4cba273a73659a518e5ab26fc1bb?s=160&d=false">
+  <h3>{{name}}</h3>
+  <p>{{location}}</p>
+  <p>{{company}}</p>
 
-      <p>{{email}}</p>
-      <p><a href="https://oauth.io" target="_blank">{{website}}</a></p>
-    </div>
-    <div class="col col-lg-9">
+  <p>{{email}}</p>
+  <p><a href="https://oauth.io" target="_blank">{{website}}</a></p>
+</div>
+<div class="col col-lg-9"> -->
       <div class="alert alert-info" ng-show="email_changed">
         An email has been sent to <strong>{{email_changed}}</strong> to verify it. <button style="position: relative; right: -25px; top: -2px" class="pull-right btn btn-warning btn-mini" ng-click="cancelEmailUpdate()">Cancel</button>
       </div>
@@ -50,7 +51,7 @@
       </div>
       <ul class="nav nav-tabs">
         <li ng-click="changeTab('general')" ng-class="{active:tab == 'general'}"><a href="#">General</a></li>
-        <li ng-click="changeTab('payment')" ng-class="{active:tab == 'payment'}"><a href="#">Payment</a></li>
+        <li ng-click="changeTab('payment')" ng-show="showPaymentTab()" ng-class="{active:tab == 'payment'}"><a href="#">Payment</a></li>
         <li ng-click="changeTab('settings')" ng-class="{active:tab == 'settings'}"><a href="#">Settings</a></li>
       </ul>
       <br />
