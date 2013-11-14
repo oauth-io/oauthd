@@ -4,6 +4,8 @@ PaymillSubscription = require './paymill_subscription'
 PaymillPayment = require './paymill_payment'
 { db, check, config } = shared = require '../shared'
 
+subscription = new PaymillSubscription()
+
 class PaymillClient
 
 	# String
@@ -87,15 +89,19 @@ class PaymillClient
 	getCurrentSubscription: (callback) ->
 		db.redis.hget ["#{PaymillBase.subscriptions_root_prefix}:#{@user_id}", "current_subscription"], (err, res) ->
 			return callback err if err
-			return callback null, res
+			subscription = new PaymillSubscription res
+			return callback null, subscription
 
 	getCurrentPlan: (callback) ->
 		db.redis.hget ["#{PaymillBase.subscriptions_root_prefix}:#{@user_id}", "current_offer"], (err, offer) ->
 			return callback err if err
+			console.log offer
 			db.redis.hget "#{PaymillBase.offers_root_prefix}:offers_id", offer, (err, offer_name) ->
 				return callback err if err
+				console.log offer_name
 				db.redis.get "#{PaymillBase.offers_root_prefix}:#{offer_name}:name", (err, res) ->
 					return callback err if err
+					console.log res
 					return callback null, null  if not res?
 					res = res.substr 0, res.length - 2  if res.substr(res.length - 2, 2) is 'fr'
 					return callback null, res

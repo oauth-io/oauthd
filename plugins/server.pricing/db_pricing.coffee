@@ -11,7 +11,6 @@ restify = require 'restify'
 { db, check, config } = shared = require '../shared'
 paymill = require('paymill-node')(config.paymill.secret_key)
 PaymillBase = require '../server.payments/paymill_base'
-Clients = require '../server.payments/paymill_client'
 
 # create an Offer
 exports.createOffer = (data, callback) ->
@@ -27,8 +26,7 @@ exports.createOffer = (data, callback) ->
 		async.series [
 
 			(cb) => # HT
-				console.log "create offer '#{name}' HT..."
-				console.log data.amount
+
 				paymill.offers.create
 					amount: data.amount
 					currency: data.currency
@@ -72,7 +70,6 @@ exports.createOffer = (data, callback) ->
 
 			(cb) => # TTC (19.6%)
 
-				console.log "create offer '#{name}' TTC..."
 				total_ht = data.amount / 100
 				tva = 0.196
 				total_tva = Math.floor((total_ht * tva) * 100) / 100
@@ -254,7 +251,6 @@ exports.getPublicOffers = (clientId, callback) ->
 		db.redis.multi(cmds).exec (err, res) ->
 			return callback err if err
 
-			console.log offers, res
 			for i of offers
 				nbConnection = if res[i * 9 + 5] is "*" then "unlimited" else res[i * 9 + 5]
 				nbApp = if res[i * 9 + 6] is "*" then "unlimited" else res[i * 9 + 6]
@@ -262,10 +258,12 @@ exports.getPublicOffers = (clientId, callback) ->
 				if res[i * 9 + 1]?
 					offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
 
-			client = new Clients()
+			PaymillClient = require '../server.payments/paymill_client'
+			client = new PaymillClient()
 			client.user_id = clientId.id
-			client.getCurrentPlan (err, current_plan) =>
+			client.getCurrentPlan (err, current_plan) ->
 				return callback err if err
+				console.log current_plan
 				return callback null, offers: offers, current_plan: current_plan
 
 exports.getOfferByName = (name, callback) ->

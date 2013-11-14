@@ -54,7 +54,6 @@ class PaymillSubscription
 			return callback null, populate(subscription_details)
 
 	save : (callback) ->
-
 		if not @id? # create subscription
 
 			Payment.getCart @client.user_id, (err, success) =>
@@ -96,38 +95,56 @@ class PaymillSubscription
 				return callback new check.Error "An error occured, please contact support@oauth.io" if not res?
 				return callback new check.Error "You can not subscribe to the same plan" if res[1] == @offer.id
 
-				PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
+				# recup ancienne données de la souscription
+				#db.redis.hget "#{PaymillBase.offers_root_prefix}:offers_id", res[0], (err, offer_name) ->
+				console.log "get old subscription details...#{res[0]}"
+				PaymillBase.paymill.subscriptions.details res[0], (err, old_subscription_details) =>
 
-					Payment.getCart @client.user_id, (err, success) =>
+					#PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
 
-						cart = success
-						hasTVA = parseFloat(cart.VAT_percent) != 0
+					sub_update_params =
+						cancel_at_period_end: true # cancel when we have the money !!!
+						offer: res[1] # old subscription
 
-						subscription_obj = @prepare()
+					console.log "update old subscription...#{res[0]} with " + sub_update_params
+					PaymillBase.paymill.subscriptions.update res[0], sub_update_params, (err, subscription_updated) =>
 
-						if hasTVA # true => FR
-							plan_fr = (cart.plan_name + "FR").toLowerCase()
-							Offer.getOfferByName plan_fr, (err, offer) =>
+						console.log subscription_updated
 
-								# assign FR plan
-								@offer = { id: offer.offer }
-								subscription_obj = @prepare()
+						Payment.getCart @client.user_id, (err, success) =>
 
+							cart = success
+							hasTVA = parseFloat(cart.VAT_percent) != 0
+
+							subscription_obj = @prepare()
+							subscription_obj.start_at = old_subscription_details.data.next_capture_at
+
+							if hasTVA # true => FR
+								plan_fr = (cart.plan_name + "FR").toLowerCase()
+								Offer.getOfferByName plan_fr, (err, offer) =>
+
+									# assign FR plan
+									@offer = { id: offer.offer }
+									subscription_obj = @prepare()
+									subscription_obj.start_at = old_subscription_details.data.next_capture_at
+
+									# affect new subsription (VAT included)
+									@create subscription_obj, (err, res) ->
+										return callback err if err
+										console.log "created fr"
+										return callback null, res
+							else
+
+								#payment_obj = @prepare()
+								# affect new subscription (without VAT)
 								@create subscription_obj, (err, res) ->
 									return callback err if err
-									console.log "created fr"
+									console.log "created non fr"
 									return callback null, res
-						else
 
-							payment_obj = @prepare()
-							@create subscription_obj, (err, res) ->
-								return callback err if err
-								console.log "created non fr"
-								return callback null, res
+	create : (sub_obj, callback) ->
 
-	create : (payment_obj, callback) ->
-
-		PaymillBase.paymill.subscriptions.create payment_obj, (err, subscription) =>
+		PaymillBase.paymill.subscriptions.create sub_obj, (err, subscription) =>
 			return callback new check.Error err.response.error if err
 			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
 
