@@ -1,6 +1,6 @@
 {
 	"name": "VK",
-	"url": "https://api.vkontakte.ru/oauth",
+	"url": "https://oauth.vk.com/",
 	"oauth2": {
 		"authorize": {
 			"url": "/authorize",
@@ -8,7 +8,8 @@
 				"client_id": "{client_id}",
 				"response_type": "code",
 				"redirect_uri": "{{callback}}",
-				"scope": "{scope}"
+				"scope": "{scope}",
+				"v": "{api_version}"
 			}
 		},
 		"access_token": {
@@ -23,6 +24,7 @@
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
+			"api_version": "string",
 			"scope": {
 				"type": "string",
 				"separator": ",",
@@ -33,15 +35,27 @@
 					"photos": "Access to photos.",
 					"audio": "Access to audio files.",
 					"video": "Access to videos.",
+					"docs": "Access to documents",
 					"notes": "Access to the user's notes.",
 					"pages": "Access to wiki pages.",
+					"status": "Access to user status",
 					"offers": "Access to proposals (outdated methods).",
 					"questions": "Access to questions (outdated methods).",
 					"wall": "Access to standard and advanced methods for working with the wall.",
+					"groups": "Access to user groups",
+					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
 					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
-					"offline": "Access to API at any time from an external server."
+					"offline": "Access to API at any time from an external server.",
+					"ads": "Access to advanced methods for Ads API."
 				}
 			}
 		}
+	},
+	"provider": "vk",
+	"href": {
+	  "keys": "https://vk.com/editapp?act=create",
+	  "docs": "https://vk.com/dev/main",
+	  "apps": "https://vk.com/apps?act=settings",
+	  "provider": "https://vk.com/"
 	}
 }

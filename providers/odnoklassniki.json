@@ -1,0 +1,48 @@
+{
+	"name": "Odnoklassniki",
+	"oauth2": {
+		"authorize": {
+			"url": "http://www.odnoklassniki.ru/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "http://api.odnoklassniki.ru/oauth/token.do",
+			"method": "post"
+		},
+		"refresh": {
+			"url": "http://api.odnoklassniki.ru/oauth/token.do",
+			"query": {
+				"grant_type": "refresh_token",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"VALUABLE ACCESS": "Access to all methods of API, except users.getLoggedInUser and users.getCurrentUser.",
+					"SET STATUS": "Set user status",
+					"PHOTO CONTENT": "Get photo content"
+				},
+				"cardinality": "*",
+				"separator": ";",
+				"type": "string"
+			}
+		}
+	},
+	"provider": "odnoklassniki",
+	"href": {
+		"keys": "http://www.odnoklassniki.ru/devaccess",
+		"docs": "http://apiok.ru/wiki/display/TS/Home",
+		"apps": "http://www.odnoklassniki.ru/dk?st.cmd=appsInfoMyDevList",
+		"provider": "http://www.odnoklassniki.ru/"
+	}
+}
