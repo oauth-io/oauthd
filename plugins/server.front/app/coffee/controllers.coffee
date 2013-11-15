@@ -102,7 +102,7 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 		$location.path '/404' if not data.data.is_validable or not data.data.is_updated
 
 		if UserService.isLogin() and data.data.is_updated
-			$location.path '/profile'
+			$location.path '/account'
 		else if !UserService.isLogin() and data.data.is_validable
 			# $location.path '/signin'
 			$scope.user =
@@ -255,7 +255,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.info.status = ''
 		$scope.signup.status = ''
 
-generalAccountCtrl = ($scope, $timeout) ->
+generalAccountCtrl = ($scope, $timeout, UserService) ->
 	connectionCtx = document.getElementById('connectionChart').getContext '2d'
 	appsCtx = document.getElementById('appsChart').getContext '2d'
 	providersCtx = document.getElementById('providersChart').getContext '2d'
@@ -287,25 +287,27 @@ generalAccountCtrl = ($scope, $timeout) ->
 		connectionData[1].value = 0  if connectionData[1].value < 0
 		connectionChart = new Chart(connectionCtx).Doughnut(connectionData)
 
-		appsData = [
-			value: $scope.apps.length
-			color: getColor $scope.apps.length / $scope.plan.nbApp
-		,
-			value: $scope.plan.nbApp - $scope.apps.length
-			color: '#EEEEEE'
-		]
-		appsData[1].value = 0  if appsData[1].value < 0
-		appsChart = new Chart(appsCtx).Doughnut(appsData)
+		if $scope.plan.nbApp != 'unlimited'
+			appsData = [
+				value: $scope.apps.length
+				color: getColor $scope.apps.length / $scope.plan.nbApp
+			,
+				value: $scope.plan.nbApp - $scope.apps.length
+				color: '#EEEEEE'
+			]
+			appsData[1].value = 0  if appsData[1].value < 0
+			appsChart = new Chart(appsCtx).Doughnut(appsData)
 
-		providersData = [
-			value: $scope.keysets.length
-			color: getColor $scope.keysets.length / $scope.plan.nbProvider
-		,
-			value: $scope.plan.nbProvider - $scope.keysets.length
-			color: '#EEEEEE'
-		]
-		providersData[1].value = 0  if providersData[1].value < 0
-		providersChart = new Chart(providersCtx).Doughnut(providersData)
+		if $scope.plan.nbProvider != 'unlimited'
+			providersData = [
+				value: $scope.keysets.length
+				color: getColor $scope.keysets.length / $scope.plan.nbProvider
+			,
+				value: $scope.plan.nbProvider - $scope.keysets.length
+				color: '#EEEEEE'
+			]
+			providersData[1].value = 0  if providersData[1].value < 0
+			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
 	$scope.$watch 'loading', (newVal, oldVal) ->
 		if newVal == false and oldVal == true
