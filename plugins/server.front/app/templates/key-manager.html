@@ -6,8 +6,8 @@
 				<div ng-hide="editMode == app.key" class="">
 					<h4 class="name panel-heading">
 						<small class="pull-right" style="">
-							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 0.8em">Edit</a>
-							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 0.8em; margin-left: 15px">Remove</a>
+							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 0.9em">Edit</a>
+							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 0.9em; margin-left: 15px">Remove</a>
 						</small>
 						<span>{{app.name}}</span>
 					</h4>
@@ -24,7 +24,7 @@
 						<div class="row" style="margin-top: 20px">
 							<div class="col col-offset-4">
 								<button class="btn btn-primary" ng-click="editAppSubmit(app.key)">Save</button>
-								<!--<button class="btn" ng-click="editAppCancel()">Cancel </button> -->
+								<button class="btn" ng-click="editAppCancel()">Cancel </button>
 							</div>
 						</div>
 					</div>

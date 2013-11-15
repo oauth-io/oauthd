@@ -727,8 +727,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 		$scope.editMode = false
 
 	$scope.editAppSubmit = (key)->
-
 		nb_domain = $scope.createAppForm.domains.length
+
+		$scope.addDomain()
 
 		if nb_domain == 0
 			$rootScope.error.state = true
