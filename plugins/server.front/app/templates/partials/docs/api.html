@@ -242,6 +242,25 @@
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
+      <span class="label label-info">Javascript</span> <em>[OAuth result]</em>.get|post|put|patch|del(<em>[$.ajax parameters]</em>)
+    </div>
+    <p>You can do an authorized http call to the provider's API from the result of <code>OAuth.popup</code> or <code>OAuth.redirect</code>. This results contains the informations to inject the tokens in you API's requests. These methods take the same parameters and result the same than the <a href="http://jquery.com/.....">jQuery's $.ajax method</a>. Moreover, the url can be absolute or relative to the default provider's API base url. The method's verb is set according the method's name.</p>
+    <p>If the authorization method of the provider is OAuth 1, the request will be proxified by oauth.io to inject the tokens without exposing your secret key. If it is OAuth 2, and the provider support CORS requests, the request is sent directly, using the API request description received beside the token.</p>
+    <hr>
+    <p><strong>Sample</strong></p>
+    <pre>OAuth.popup('facebook', function(error, result) {
+  if (err) {
+    console.log(err); // do something with error
+    return;
+  }
+
+  result.get("/me").done(function(res) {
+    console.log("Hello, ", res.name); // e.g. facebook account owner's name
+  });
+});</pre>
+  </div>
+  <div class="panel panel-primary">
+    <div class="panel-heading">
       <span class="label label-info">HTTP POST</span> /auth/access_token
     </div>
     <p>When doing a server-side authentication, this http request will exchange an authentication code for the final token(s). You will also receive the state passed in OAuth.popup or OAuth.redirect</p>
@@ -259,7 +278,7 @@
           </td>
           <td>
             <strong>string</strong>
-            <p> Represents the code received in OAuth.popup or OAuth.callback </p>
+            <p> Represents the code received in OAuth.popup or OAuth.callback. This code works only for oauth.io and cannot be used directly with any provider. </p>
           </td>
         </tr>
         <tr>

@@ -54,20 +54,32 @@
 		<div class="col col-lg-6">
 			<h4>Mode popup</h4>
 
-<pre><span class="text-muted">//Using popup (option 1)</span>
+<pre><span class="text-muted">// Using popup (option 1)</span>
 OAuth.popup('<span class="api-text">facebook</span>', function(<span class="err">err</span>, <strong>result</strong>) {
-  <span class="text-muted">//handle error with <span class="err">err</span></span>
-  <span class="text-muted">//use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
 });</pre>
 		</div>
 		<div class="col col-lg-6">
 			<h4>Mode redirection</h4>
-<pre><span class="text-muted">//Using redirection (option 2)</span>
+<pre><span class="text-muted">// Using redirection (option 2)</span>
 OAuth.redirect('<span class="api-text">facebook</span>', "<strong>callback/url</strong>");</pre>
 	<p>In callback url :</p>
 <pre>OAuth.callback('<span class="api-text">facebook</span>', function(<span class="err">err</span>, <strong>result</strong>) {
-  <span class="text-muted">//handle error with <span class="err">err</span></span>
-  <span class="text-muted">//use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// use <strong style="color: black">result.</strong><span class="access-token">access_token</span> in your API request</span>
+});</pre>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col col-lg-12">
+			<h4>Call an API</h4>
+<pre>OAuth.popup('<span class="api-text">facebook</span>', function(<span class="err">err</span>, <strong>result</strong>) { <span class="text-muted">// or OAuth.callback</span>
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// call the API with the jQuery's <strong>$.ajax</strong> style:</span>
+  <strong style="color: black">result.</strong><span class="access_token">get</span>('<span class="api-text">/me</span>').done(function(<span class="access-token">data</span>) {
+    <span class="text-muted">// <span class="access-token">data</span> is the API call's response. e.g. <span class="access-token">data</span><strong>.name</strong> for your facebook's fullname.</span>
+  });
 });</pre>
 		</div>
 	</div>
