@@ -16,9 +16,6 @@ class PaymillSubscription
 	# Timestamp
 	@canceled_at = null
 
-	# Boolean
-	@canceled_at = null
-
 	# Object
 	@offer = null
 
@@ -56,6 +53,8 @@ class PaymillSubscription
 	save : (callback) ->
 		if not @id? # create subscription
 
+			@isNew = true
+
 			Payment.getCart @client.user_id, (err, success) =>
 
 				cart = success
@@ -78,6 +77,7 @@ class PaymillSubscription
 
 					payment_obj = @prepare()
 					@create payment_obj, (err, res) ->
+						console.log err if err
 						return callback err if err
 						console.log "created non fr"
 						return callback null, res
@@ -85,6 +85,7 @@ class PaymillSubscription
 		else # update (upgrade or downgrade)
 
 			console.log "update subscription..."
+			@isNew = false
 			db.redis.multi([
 
 				[ "hget", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription"],
@@ -95,62 +96,54 @@ class PaymillSubscription
 				return callback new check.Error "An error occured, please contact support@oauth.io" if not res?
 				return callback new check.Error "You can not subscribe to the same plan" if res[1] == @offer.id
 
-				# recup ancienne données de la souscription
-				#db.redis.hget "#{PaymillBase.offers_root_prefix}:offers_id", res[0], (err, offer_name) ->
-				console.log "get old subscription details...#{res[0]}"
-				PaymillBase.paymill.subscriptions.details res[0], (err, old_subscription_details) =>
+				db.redis.get "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{res[0]}:created_at", (err, created_at) =>
 
-					#PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
+					console.log "get info from #{@client.id}..."
+					PaymillBase.paymill.clients.details @client.id, (err, client) =>
 
-					sub_update_params =
-						cancel_at_period_end: true # cancel when we have the money !!!
-						offer: res[1] # old subscription
+						@old_subscription = client.data.subscription[client.data.subscription.length - 1]
 
-					console.log "update old subscription...#{res[0]} with " + sub_update_params
-					PaymillBase.paymill.subscriptions.update res[0], sub_update_params, (err, subscription_updated) =>
+						PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
 
-						console.log subscription_updated
+							Payment.getCart @client.user_id, (err, success) =>
 
-						Payment.getCart @client.user_id, (err, success) =>
+								cart = success
+								hasTVA = parseFloat(cart.VAT_percent) != 0
 
-							cart = success
-							hasTVA = parseFloat(cart.VAT_percent) != 0
+								subscription_obj = @prepare()
 
-							subscription_obj = @prepare()
-							subscription_obj.start_at = old_subscription_details.data.next_capture_at
+								if hasTVA # true => FR
+									plan_fr = (cart.plan_name + "FR").toLowerCase()
+									Offer.getOfferByName plan_fr, (err, offer) =>
 
-							if hasTVA # true => FR
-								plan_fr = (cart.plan_name + "FR").toLowerCase()
-								Offer.getOfferByName plan_fr, (err, offer) =>
+										# assign FR plan
+										@offer = { id: offer.offer }
+										subscription_obj = @prepare()
 
-									# assign FR plan
-									@offer = { id: offer.offer }
-									subscription_obj = @prepare()
-									subscription_obj.start_at = old_subscription_details.data.next_capture_at
+										# affect new subsription (VAT included)
+										@create subscription_obj, (err, res) ->
+											return callback err if err
+											console.log "created fr"
+											return callback null, res
+								else
 
-									# affect new subsription (VAT included)
+									#payment_obj = @prepare()
+									# affect new subscription (without VAT)
 									@create subscription_obj, (err, res) ->
 										return callback err if err
-										console.log "created fr"
+										console.log "created non fr"
 										return callback null, res
-							else
-
-								#payment_obj = @prepare()
-								# affect new subscription (without VAT)
-								@create subscription_obj, (err, res) ->
-									return callback err if err
-									console.log "created non fr"
-									return callback null, res
 
 	create : (sub_obj, callback) ->
 
 		PaymillBase.paymill.subscriptions.create sub_obj, (err, subscription) =>
+			console.log err if err
 			return callback new check.Error err.response.error if err
-			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
 
+			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
 			db.redis.multi([
 
-				[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
+				#[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:history", subscription.data.offer.id, subscription.data.created_at ],
 
 				[ "hset", "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}", "current_subscription", subscription.data.id ],
 
@@ -172,9 +165,69 @@ class PaymillSubscription
 				Payment.addOrder @client.user_id, subscription, (err, res) =>
 					return callback err if err
 
-					Payment.delCart @client.user_id, (err, res) ->
-						return callback err if err
-						return callback null, subscription
+					Payment.delCart @client.user_id, (err, res) =>
+						#return callback err if err
+
+						if not @isNew
+							console.log "old subscription id #{@old_subscription.id}"
+							console.log "new subscription id #{subscription.data.id}"
+							PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
+
+								# oldSubDate1 = new Date(1371507758 * 1000) # 18/6/2013
+								# newSubDate1 = new Date(1371939758 * 1000) # 23/6/2013
+								# newSubDate1 = new Date(1374013358 * 1000) # 17/7/2013
+								# subscription.data.created_at = 1372803758
+								# transaction.data[transaction.data.length - 1].created_at = 1371507758
+								# @old_subscription.next_capture_at = 1374099758
+
+								oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
+								oldSubDate2 = new Date(@old_subscription.next_capture_at * 1000)
+								newSubDate = new Date(subscription.data.created_at * 1000)
+								nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
+
+								# oldNextCapture = new Date(1371507758 * 1000) # 18/6/2013
+								# oldLastCapture = new Date(1374099758 * 1000) # 18/7/2013
+								oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
+								oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
+								console.log "Last capture of last plan : #{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()}"
+								console.log "Next capture of last plan : #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()}"
+
+								nbDays = ((oldNextCapture - oldLastCapture) / (1000 * 60 * 60 * 24))
+
+								console.log "=========================================================================================="
+								console.log "Nb Days Diff = #{nbDaysDiff} day(s) (#{oldSubDate1.getDate()}/#{oldSubDate1.getMonth() + 1}/#{oldSubDate1.getFullYear()} to #{newSubDate.getDate()}/#{newSubDate.getMonth() + 1}/#{newSubDate.getFullYear()})"
+								console.log "Nb Days Total = #{nbDays} day(s) (#{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()} to #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()})"
+
+								last_price = @old_subscription.offer.amount / 100
+								console.log "Last price: $#{last_price}"
+								refunded = Math.floor( ((nbDaysDiff / nbDays) * last_price) * 100) / 100
+								refund_total = Math.floor((last_price - refunded) * 100) / 100
+
+								console.log "(#{nbDaysDiff} / #{nbDays}) * #{last_price} = #{refunded} , $#{refund_total} refunded (You have used #{nbDaysDiff} days(s) at $#{last_price} of your last plan...)"
+								console.log "------------------------------------------------------------------------------------------"
+								console.log "You have paid for your new plan $#{subscription.data.offer.amount / 100}"
+								console.log "Refund total: $#{refund_total}"
+								console.log "------------------------------------------------------------------------------------------"
+								console.log "=========================================================================================="
+
+								PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
+									console.log err if err
+									return callback err if err
+
+									if refund_total > 0
+										transaction_id = transaction.data[0].id
+										refund_total = refund_total * 100
+										PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
+											console.log err if err
+											return callback err if err
+											console.log "refunded id #{refund.data.id}"
+											return callback null, subscription
+									else
+										console.log "no refund at $0 !"
+										return callback null, subscription
+						else
+							console.log "new sub no refund"
+							return callback null, subscription
 
 	populate : (data) ->
 		return
