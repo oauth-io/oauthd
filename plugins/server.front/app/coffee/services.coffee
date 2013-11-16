@@ -66,6 +66,9 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				data:
 					profile: profile
 
+		# stats: (success, error) ->
+		#	api 'me/stats', success, error
+
 		updateEmail: (email, success, error) ->
 			api 'me/mail', success, error,
 				method: "PUT",
@@ -187,6 +190,9 @@ app.factory 'AppService', ($http, $rootScope) ->
 
 		getTotal: (key, success, error) ->
 			api 'users/app/' + key, success, error
+
+		# stats: (key, provider, success, error) ->
+		# 	api 'apps/' + key + '/stats', success, error
 	}
 
 
@@ -203,6 +209,9 @@ app.factory 'KeysetService', ($rootScope, $http) ->
 
 		remove: (app, provider, success, error) ->
 			api 'apps/' + app + '/keysets/' + provider, success, error, method:'delete'
+
+		# stats: (app, provider, success, error) ->
+		# 	api 'apps/' + app + '/keysets/' + provider + '/stats', success, error
 	}
 
 app.factory 'PaymentService', ($rootScope, $http) ->

@@ -88,7 +88,7 @@ app.config([
 			templateUrl: '/templates/signup.html'
 			controller: 'UserFormCtrl'
 
-		$routeProvider.when '/profile',
+		$routeProvider.when '/account',
 			templateUrl: '/templates/user-profile.html'
 			controller: 'UserProfileCtrl'
 
