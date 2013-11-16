@@ -258,13 +258,16 @@ exports.getPublicOffers = (clientId, callback) ->
 				if res[i * 9 + 1]?
 					offers[i] = id:res[i * 9], name:res[i * 9 + 1], currency:res[i * 9 + 2], interval:res[i * 9 + 3], amount:res[i * 9 + 4], nbConnection:nbConnection, nbApp:nbApp, nbProvider:nbProvider, responseDelay:res[i * 9 + 8]
 
-			PaymillClient = require '../server.payments/paymill_client'
-			client = new PaymillClient()
-			client.user_id = clientId.id
-			client.getCurrentPlan (err, current_plan) ->
-				return callback err if err
-				console.log current_plan
-				return callback null, offers: offers, current_plan: current_plan
+			if clientId?
+				PaymillClient = require '../server.payments/paymill_client'
+				client = new PaymillClient()
+				client.user_id = clientId.id
+				client.getCurrentPlan (err, current_plan) ->
+					return callback err if err
+					console.log current_plan
+					return callback null, offers: offers, current_plan: current_plan
+			else
+				return callback null, offers: offers
 
 exports.getOfferByName = (name, callback) ->
 	return callback new check.Error "This plan does not exists" if not name?
