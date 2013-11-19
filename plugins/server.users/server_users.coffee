@@ -102,6 +102,10 @@ exports.setup = (callback) ->
 	@server.post @config.base_api + '/me/billing', @auth.needed, (req, res, next) =>
 		@db.users.updateBilling req, @server.send(res, next)
 
+	# get subscriptions
+	@server.get @config.base_api + '/me/subscriptions', @auth.needed, (req, res, next) =>
+		@db.users.getAllSubscriptions req.clientId.id, @server.send(res, next)
+
 	# delete my account
 	@server.del @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		@db.users.remove req.user.id, @server.send(res,next)

@@ -62,7 +62,7 @@ class PaymillClient
 				for sub in subscriptions
 					if sub.offer.name?
 						sub.offer.name = sub.offer.name.substr 0, sub.offer.name.length - 2  if sub.offer.name.substr(sub.offer.name.length - 2, 2) is 'fr'
-						ret[i] = name: sub.offer.name, amount: (sub.offer.amount / 100), created_at: sub.payment.created_at*1000, last4: sub.payment.last4, card_type: sub.payment.card_type
+						ret[i] = name: sub.offer.name, amount: (sub.offer.amount / 100), created_at: sub.payment.created_at * 1000, canceled_at: sub.canceled_at * 1000, last4: sub.payment.last4, card_type: sub.payment.card_type
 						i++
 
 				return callback null, ret

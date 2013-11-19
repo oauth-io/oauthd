@@ -11,6 +11,7 @@ restify = require 'restify'
 { db, check, config } = shared = require '../shared'
 paymill = require('paymill-node')(config.paymill.secret_key)
 PaymillBase = require '../server.payments/paymill_base'
+Payment = require '../server.payments/db_payments'
 
 # create an Offer
 exports.createOffer = (data, callback) ->
@@ -36,8 +37,8 @@ exports.createOffer = (data, callback) ->
 					console.log err if err
 					return callback err if err
 
-					offer.data.name = name;
-					offer.data.status = status;
+					offer.data.name = name
+					offer.data.status = status
 					offer.data.nbConnection = data.nbConnection
 					offer.data.nbApp = data.nbApp
 					offer.data.nbProvider = data.nbProvider
@@ -86,8 +87,8 @@ exports.createOffer = (data, callback) ->
 				,(err, offer) ->
 					return cb err if err
 
-					offer.data.name = name;
-					offer.data.status = status;
+					offer.data.name = name
+					offer.data.status = status
 					offer.data.nbConnection = data.nbConnection
 					offer.data.nbApp = data.nbApp
 					offer.data.nbProvider = data.nbProvider
@@ -290,29 +291,38 @@ exports.unsubscribe = (client, callback) ->
 		[ "hget", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_subscription"],
 		[ "hget", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_offer" ]
 
-	]).exec (err, res) =>
+	]).exec (err, res) ->
 		return callback err if err
 		return callback new check.Error "An error occured, please contact support@oauth.io" if not res?
 
-		PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) =>
+		PaymillSubscription = require '../server.payments/paymill_subscription'
+		subscription = new PaymillSubscription
+		subscription.id = res[0]
+		subscription.user_id = client.id
+		subscription.refund (error, result) ->
+			console.log error, result
+			PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) ->
 
-			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{client.id}:#{res[0]}"
+				subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{client.id}:#{res[0]}"
 
-			db.redis.multi([
+				db.redis.multi([
 
-					[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_subscription" ],
-					[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_offer"],
+						[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_subscription" ],
+						[ "hdel", "#{PaymillBase.subscriptions_root_prefix}:#{client.id}", "current_offer"],
 
-					[ "del", "#{subscription_prefix}:id" ],
-					[ "del", "#{subscription_prefix}:offer" ],
-					[ "del", "#{subscription_prefix}:next_capture_at" ],
-					[ "del", "#{subscription_prefix}:created_at" ],
-					[ "del", "#{subscription_prefix}:updated_at" ],
-					[ "del", "#{subscription_prefix}:canceled_at" ],
-					[ "del", "#{subscription_prefix}:payment" ],
-					[ "del", "#{subscription_prefix}:client" ],
-					[ "del", "#{subscription_prefix}:notified" ]
+						[ "del", "#{subscription_prefix}:id" ],
+						[ "del", "#{subscription_prefix}:offer" ],
+						[ "del", "#{subscription_prefix}:next_capture_at" ],
+						[ "del", "#{subscription_prefix}:created_at" ],
+						[ "del", "#{subscription_prefix}:updated_at" ],
+						[ "del", "#{subscription_prefix}:canceled_at" ],
+						[ "del", "#{subscription_prefix}:payment" ],
+						[ "del", "#{subscription_prefix}:client" ],
+						[ "del", "#{subscription_prefix}:notified" ]
 
-				]).exec (err) =>
-					return callback err if err
-					return callback null, subscription_updated
+					]).exec (err) =>
+						return callback err if err
+
+						Payment.delCart client.id, (err, result) ->
+							return err if err
+							return callback null, subscription_updated

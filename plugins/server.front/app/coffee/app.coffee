@@ -48,6 +48,10 @@ app.config([
 			templateUrl: '/templates/pricing.html'
 			controller: 'PricingCtrl'
 
+		$routeProvider.when '/pricing/unsubscribe',
+			templateUrl: '/templates/unsubscribe-confirm.html'
+			controller: 'PricingCtrl'
+
 		$routeProvider.when '/payment/customer',
 			templateUrl: '/templates/payment.html'
 			controller: 'PaymentCtrl'

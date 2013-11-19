@@ -323,6 +323,19 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	 	$location.path '/'
 
 	$scope.changeTab = (tab) ->
+
+		if tab == 'payment'
+			$('#subscriptions_content').fadeOut(1000)
+			$scope.subscriptions = null
+			UserService.getSubscriptions (success) ->
+				$scope.subscriptions = success.data.subscriptions
+				$('#loader_subscriptions_list').hide 0, ->
+					$('#subscriptions_content').fadeIn(1000)
+			, (error) ->
+				$('#loader_subscriptions_list').hide 0, ->
+					$('#subscriptions_content').fadeIn(1000)
+				console.log error
+
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
 		$scope.tab = tab
 
@@ -349,13 +362,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.company = success.data.profile.company
 		$scope.website = success.data.profile.website
 		$scope.email_changed = success.data.profile.mail_changed
-
 		$scope.plan = success.data.plan
-		$scope.subscriptions = success.data.subscriptions
-		$scope.payments = success.data.payments
-
-		$scope.showPaymentTab = ->
-			return $scope.subscriptions? and $scope.subscriptions.length is not 0
 
 		if not $scope.plan
 			$scope.plan =
@@ -1367,6 +1374,7 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 
 
 PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, CartService) ->
+
 	MenuService.changed()
 
 	$scope.current_plan = null
@@ -1377,21 +1385,45 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	, (error) ->
 		console.log error
 
+	if $location.path() == '/pricing/unsubscribe'
+		CartService.get (success) ->
+			$scope.cart = success.data
+		, (error) ->
+			console.log error
+
+	$scope.unsubscribe_confirm = (plan) ->
+
+		$("#unsubscribe_#{plan.id}").hide()
+
+		$("#loader_#{plan.id}").fadeIn 1000, ->
+			CartService.add plan, (success) ->
+				$location.path "/pricing/unsubscribe" if success
+			, (error) ->
+				console.log error
 
 	$scope.unsubscribe = ->
+
+		$('#bt-unsubscribe').hide 0, ->
+			$('#waiting-unsubscribe').fadeIn(1000)
+
 		PricingService.unsubscribe (success) ->
 			$scope.current_plan = null
+			$location.path "/pricing" if success
 		, (error) ->
 			console.log error
 
 	$scope.subscribe = (plan) ->
 
-		CartService.add plan, (success) ->
-			$location.path "/payment/customer" if success
-		, (error) ->
-			console.log error
+		$("#purchase_#{plan.id}").hide()
 
-PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, PaymentService, PricingService, MenuService, CartService) ->
+		$("#loader_#{plan.id}").fadeIn 1000, ->
+
+			CartService.add plan, (success) ->
+				$location.path "/payment/customer" if success
+			, (error) ->
+				console.log error
+
+PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService, PaymentService, PricingService, MenuService, CartService) ->
 	MenuService.changed()
 
 	if not UserService.isLogin()
@@ -1596,6 +1628,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	$("#BillingvatNumber").hide()
 	$("#BillingState").hide()
 
+
 	# trop long
 	UserService.me (success) ->
 		$scope.profile = success.data.profile
@@ -1609,13 +1642,15 @@ PaymentCtrl = ($scope, $rootScope, $location, $routeParams, UserService, Payment
 	, (error) ->
 		console.log error
 
-	CartService.get (success) ->
-		$scope.cart = success.data
-	, (error) ->
-		console.log error
 
-	PaymentService.getCurrentSubscription (success) ->
-		$scope.subscription = success.data
+	if $location.path() == '/payment/customer' or $location.path() == '/payment/confirm'
+		CartService.get (success) ->
+			$scope.cart = success.data
+		, (error) ->
+			console.log error
+
+		PaymentService.getCurrentSubscription (success) ->
+			$scope.subscription = success.data
 
 	cc = ["AT","AD","AM","AZ","BA","BE","BG","DE","CY","HR","CZ","DK","EE","FI","FR","GR","HU","IS","IR","IT","KZ","LV","LI","LT","LU","MT","NL","NO","PL","PT","RO","SI","ES","TR","SE","GB"]
 

@@ -162,72 +162,120 @@ class PaymillSubscription
 			]).exec (err) =>
 				return callback err if err
 
+				if not @isNew
+
+					console.log "old subscription id #{@old_subscription.id}"
+					console.log "new subscription id #{subscription.data.id}"
+					PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
+
+						# subscription.data.created_at = 1372803758
+						# transaction.data[transaction.data.length - 1].created_at = 1371507758
+						# @old_subscription.next_capture_at = 1374099758
+
+						oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
+						oldSubDate2 = new Date(@old_subscription.next_capture_at * 1000)
+						newSubDate = new Date(subscription.data.created_at * 1000)
+						nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
+
+						console.log "NbDaysDiff before #{nbDaysDiff}"
+						nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
+						console.log "NbDaysDiff adjustement #{nbDaysDiff}"
+
+						oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
+						oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
+						# console.log "Last capture of last plan : #{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()}"
+						# console.log "Next capture of last plan : #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()}"
+
+						nbDays = ((oldNextCapture - oldLastCapture) / (1000 * 60 * 60 * 24))
+
+						# console.log "=========================================================================================="
+						# console.log "Nb Days Diff = #{nbDaysDiff} day(s) (#{oldSubDate1.getDate()}/#{oldSubDate1.getMonth() + 1}/#{oldSubDate1.getFullYear()} to #{newSubDate.getDate()}/#{newSubDate.getMonth() + 1}/#{newSubDate.getFullYear()})"
+						# console.log "Nb Days Total = #{nbDays} day(s) (#{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()} to #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()})"
+
+						last_price = @old_subscription.offer.amount / 100
+						# console.log "Last price: $#{last_price}"
+						refunded = Math.floor( ((nbDaysDiff / nbDays) * last_price) * 100) / 100
+						refund_total = Math.floor((last_price - refunded) * 100) / 100
+
+						# console.log "(#{nbDaysDiff} / #{nbDays}) * #{last_price} = #{refunded} , $#{refund_total} refunded (You have used #{nbDaysDiff} days(s) at $#{last_price} of your last plan...)"
+						# console.log "------------------------------------------------------------------------------------------"
+						# console.log "You have paid for your new plan $#{subscription.data.offer.amount / 100}"
+						# console.log "Refund total: $#{refund_total}"
+						# console.log "------------------------------------------------------------------------------------------"
+						# console.log "=========================================================================================="
+
+						if refund_total > 0
+							transaction_id = transaction.data[0].id
+							if transaction.data[0].refunds == null
+								refund_total = refund_total * 100
+								PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
+									console.log err if err
+									return callback err if err
+									console.log "#{refund_total} refunded..."
+									console.log "refunded id #{refund.data.id}"
+							else
+								console.log "old transaction #{transaction_id} already refunded !"
+						else
+							console.log "no refund at $0 !"
+				else
+					console.log "new sub no refund!"
+
 				Payment.addOrder @client.user_id, subscription, (err, res) =>
 					return callback err if err
 
 					Payment.delCart @client.user_id, (err, res) =>
 						#return callback err if err
+						return callback null, subscription
 
-						if not @isNew
-							console.log "old subscription id #{@old_subscription.id}"
-							console.log "new subscription id #{subscription.data.id}"
-							PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
+	# TEST
+	refund : (callback) ->
 
-								# oldSubDate1 = new Date(1371507758 * 1000) # 18/6/2013
-								# newSubDate1 = new Date(1371939758 * 1000) # 23/6/2013
-								# newSubDate1 = new Date(1374013358 * 1000) # 17/7/2013
-								# subscription.data.created_at = 1372803758
-								# transaction.data[transaction.data.length - 1].created_at = 1371507758
-								# @old_subscription.next_capture_at = 1374099758
+		db.redis.hget "#{PaymillBase.subscriptions_root_prefix}:#{@user_id}", "current_subscription", (err, current_subscription) =>
 
-								oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
-								oldSubDate2 = new Date(@old_subscription.next_capture_at * 1000)
-								newSubDate = new Date(subscription.data.created_at * 1000)
-								nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
+			if current_subscription?
 
-								# oldNextCapture = new Date(1371507758 * 1000) # 18/6/2013
-								# oldLastCapture = new Date(1374099758 * 1000) # 18/7/2013
-								oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
-								oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
-								console.log "Last capture of last plan : #{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()}"
-								console.log "Next capture of last plan : #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()}"
+				PaymillBase.paymill.subscriptions.details current_subscription, (err, subscription_details) =>
+					return callback err if err
 
-								nbDays = ((oldNextCapture - oldLastCapture) / (1000 * 60 * 60 * 24))
+					console.log "old subscription id #{subscription_details.data.id}"
+					PaymillBase.paymill.transactions.list description:subscription_details.data.id, (err, transaction) =>
 
-								console.log "=========================================================================================="
-								console.log "Nb Days Diff = #{nbDaysDiff} day(s) (#{oldSubDate1.getDate()}/#{oldSubDate1.getMonth() + 1}/#{oldSubDate1.getFullYear()} to #{newSubDate.getDate()}/#{newSubDate.getMonth() + 1}/#{newSubDate.getFullYear()})"
-								console.log "Nb Days Total = #{nbDays} day(s) (#{oldLastCapture.getDate()}/#{oldLastCapture.getMonth() + 1}/#{oldLastCapture.getFullYear()} to #{oldNextCapture.getDate()}/#{oldNextCapture.getMonth() + 1}/#{oldNextCapture.getFullYear()})"
+						oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
+						oldSubDate2 = new Date(subscription_details.data.next_capture_at * 1000)
+						newSubDate = new Date()
+						nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
 
-								last_price = @old_subscription.offer.amount / 100
-								console.log "Last price: $#{last_price}"
-								refunded = Math.floor( ((nbDaysDiff / nbDays) * last_price) * 100) / 100
-								refund_total = Math.floor((last_price - refunded) * 100) / 100
+						console.log nbDaysDiff
+						nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
+						console.log nbDaysDiff
 
-								console.log "(#{nbDaysDiff} / #{nbDays}) * #{last_price} = #{refunded} , $#{refund_total} refunded (You have used #{nbDaysDiff} days(s) at $#{last_price} of your last plan...)"
-								console.log "------------------------------------------------------------------------------------------"
-								console.log "You have paid for your new plan $#{subscription.data.offer.amount / 100}"
-								console.log "Refund total: $#{refund_total}"
-								console.log "------------------------------------------------------------------------------------------"
-								console.log "=========================================================================================="
+						oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
+						oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
 
-								PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
+						nbDays = ((oldNextCapture - oldLastCapture) / (1000 * 60 * 60 * 24))
+
+						last_price = subscription_details.data.offer.amount / 100
+						refunded = Math.floor( ((nbDaysDiff / nbDays) * last_price) * 100) / 100
+						refund_total = Math.floor((last_price - refunded) * 100) / 100
+
+						if refund_total > 0
+							transaction_id = transaction.data[0].id
+							if transaction.data[0].refunds == null
+								refund_total = refund_total * 100
+								PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
 									console.log err if err
 									return callback err if err
-
-									if refund_total > 0
-										transaction_id = transaction.data[0].id
-										refund_total = refund_total * 100
-										PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
-											console.log err if err
-											return callback err if err
-											console.log "refunded id #{refund.data.id}"
-											return callback null, subscription
-									else
-										console.log "no refund at $0 !"
-										return callback null, subscription
+									console.log "#{refund_total} refunded..."
+									console.log "refunded id #{refund.data.id}"
+									return callback null
+							else
+								console.log "old transaction #{transaction_id} already refunded !"
+								return callback new check.Error "Already refunded"
 						else
-							console.log "new sub no refund"
-							return callback null, subscription
+							console.log "no refund at $0 !"
+							return callback new check.Error "Can't refund at $0"
+			else
+				return callback new check.Error "No subscription"
 
 	populate : (data) ->
 		return

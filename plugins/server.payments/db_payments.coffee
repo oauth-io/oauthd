@@ -54,6 +54,7 @@ exports.addInvoice = (cart, num_order, subscription, callback) ->
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:VAT_percent", cart.VAT_percent,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:total", cart.total,
 				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:email", cart.email,
+				"#{PaymillBase.invoices_root_prefix}:#{cart.client_id}:#{num_invoice}:refund_total", cart.refund_total,
 
 				"#{PaymillBase.subscriptions_root_prefix}:#{cart.client_id}:#{subscription.data.id}:num_order", num_order,
 				"#{PaymillBase.subscriptions_root_prefix}:#{cart.client_id}:#{subscription.data.id}:num_invoice", num_invoice
@@ -76,7 +77,8 @@ exports.getInvoice = (client_id, subscription_id, callback) ->
 			prefix + 'VAT',
 			prefix + 'VAT_percent',
 			prefix + 'total',
-			prefix + 'email' ]
+			prefix + 'email',
+		 	prefix + 'refund_total']
 		, (err, replies) ->
 			return callback err if err
 			date = new Date(replies[2] * 1000)
@@ -93,7 +95,8 @@ exports.getInvoice = (client_id, subscription_id, callback) ->
 				VAT: replies[7],
 				VAT_percent: replies[8],
 				total: replies[9],
-				email: replies[10]
+				email: replies[10],
+				refund_total: replies[11]
 			}
 			return callback null, invoice
 
@@ -128,6 +131,7 @@ exports.addOrder = (client_id, subscription, callback) ->
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:quantity", cart.quantity,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT", cart.VAT,
 					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:VAT_percent", cart.VAT_percent,
+					"#{PaymillBase.orders_root_prefix}:#{cart.client_id}:#{num_order}:refund_total", cart.refund_total,
 				], (err) =>
 					return callback err if err
 
@@ -144,48 +148,71 @@ exports.addCart = (data, client, callback) ->
 	plan = data.plan
 	prefix_cart = "pm:carts:#{client_id}"
 
-	if plan?
-		prefix_plan = "pm:offers:#{plan.name}"
-		db.redis.get "#{prefix_plan}:amount", (err, amount) ->
-			return callback err if err
-			return callback new check.Error "This plan does not exist" if not amount?
-			return callback new check.Error "Oh !, Why are you doing this ? :(" if amount != plan.amount
+	prefix_plan = "pm:offers:#{plan.name}"
+	db.redis.get "#{prefix_plan}:amount", (err, amount) ->
+		return callback err if err
+		return callback new check.Error "This plan does not exist" if not amount?
+		return callback new check.Error "Oh !, Bad request !!! :(" if amount != plan.amount
 
-			db.redis.mset [
-				"#{prefix_cart}:plan_id", plan.id,
-				"#{prefix_cart}:plan_name", plan.name,
-				"#{prefix_cart}:unit_price", plan.amount,
-				"#{prefix_cart}:quantity", 1,
-				"#{prefix_cart}:VAT", "",
-				"#{prefix_cart}:VAT_percent", "",
-				"#{prefix_cart}:total", "",
-				"#{prefix_cart}:email", client_email,
-				"#{prefix_cart}:client_id", client_id,
-			], (err) ->
-				return callback err if err
-				return callback null
-	else
+		db.redis.hget "#{PaymillBase.subscriptions_root_prefix}:#{client_id}", "current_subscription", (err, current_subscription) ->
 
-		# get product price
-		db.redis.get "#{prefix_products}:amount", (err, amount) ->
-			return callback err if err
-			return callback new check.Error "This plan does not exist" if not amount?
-			return callback new check.Error "Oh !, Why are you doing this ? :(" if amount != plan.amount
+			if current_subscription?
 
-			db.redis.mset [
-				"#{prefix_cart}:plan_id", plan.id,
-				"#{prefix_cart}:plan_name", plan.name,
-				"#{prefix_cart}:unit_price", plan.amount,
-				"#{prefix_cart}:quantity", 1,
-				"#{prefix_cart}:VAT", "",
-				"#{prefix_cart}:VAT_percent", "",
-				"#{prefix_cart}:total", "",
-				"#{prefix_cart}:email", client_email,
-				"#{prefix_cart}:client_id", client_id,
-			], (err) ->
-				return callback err if err
-				return callback null
+				db.redis.hget "#{PaymillBase.subscriptions_root_prefix}", client_id, (err, paymill_client_id) ->
 
+					PaymillBase.paymill.clients.details paymill_client_id, (err, client) ->
+
+						old_subscription = client.data.subscription[client.data.subscription.length - 1]
+
+						PaymillBase.paymill.transactions.list description:old_subscription.id, (err, transaction) =>
+
+							oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
+							oldSubDate2 = new Date(old_subscription.next_capture_at * 1000)
+							newSubDate = new Date()
+							nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
+
+							console.log nbDaysDiff
+							nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
+							console.log nbDaysDiff
+
+							oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
+							oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
+
+							nbDays = ((oldNextCapture - oldLastCapture) / (1000 * 60 * 60 * 24))
+
+							last_price = old_subscription.offer.amount / 100
+							refunded = Math.floor( ((nbDaysDiff / nbDays) * last_price) * 100) / 100
+							refund_total = Math.floor((last_price - refunded) * 100) / 100
+
+							db.redis.mset [
+								"#{prefix_cart}:plan_id", plan.id,
+								"#{prefix_cart}:plan_name", plan.name,
+								"#{prefix_cart}:unit_price", plan.amount,
+								"#{prefix_cart}:quantity", 1,
+								"#{prefix_cart}:VAT", "",
+								"#{prefix_cart}:VAT_percent", "",
+								"#{prefix_cart}:total", "",
+								"#{prefix_cart}:email", client_email,
+								"#{prefix_cart}:client_id", client_id,
+								"#{prefix_cart}:refund_total", refund_total
+							], (err) ->
+								return callback err if err
+								return callback null
+			else
+				console.log "first sub"
+				db.redis.mset [
+					"#{prefix_cart}:plan_id", plan.id,
+					"#{prefix_cart}:plan_name", plan.name,
+					"#{prefix_cart}:unit_price", plan.amount,
+					"#{prefix_cart}:quantity", 1,
+					"#{prefix_cart}:VAT", "",
+					"#{prefix_cart}:VAT_percent", "",
+					"#{prefix_cart}:total", "",
+					"#{prefix_cart}:email", client_email,
+					"#{prefix_cart}:client_id", client_id,
+				], (err) ->
+					return callback err if err
+					return callback null
 
 
 exports.getCart = check 'int', (client_id, callback) ->
@@ -200,8 +227,9 @@ exports.getCart = check 'int', (client_id, callback) ->
 		"#{prefix_cart}:VAT_percent",
 		"#{prefix_cart}:total",
 		"#{prefix_cart}:email",
-		"#{prefix_cart}:client_id"]
-	, (err, replies) ->
+		"#{prefix_cart}:client_id",
+		"#{prefix_cart}:refund_total",
+	], (err, replies) ->
 		return callback err if err
 		cart =
 		{
@@ -213,7 +241,8 @@ exports.getCart = check 'int', (client_id, callback) ->
 			VAT_percent: replies[5],
 			total: replies[6],
 			email : replies[7],
-			client_id: replies[8]
+			client_id: replies[8],
+			refund_total: replies[9]
 		}
 		return callback null, cart
 
@@ -231,8 +260,9 @@ exports.delCart = check 'int', (client_id, callback) ->
 		"#{prefix_cart}:VAT_percent",
 		"#{prefix_cart}:total",
 		"#{prefix_cart}:email"
-		"#{prefix_cart}:client_id"]
-	, (err, replies) ->
+		"#{prefix_cart}:client_id",
+		"#{prefix_cart}:refund_total"
+	], (err, replies) ->
 		return callback err if err
 		return callback null
 

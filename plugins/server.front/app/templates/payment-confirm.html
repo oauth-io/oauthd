@@ -79,7 +79,9 @@ div.heading
   <div style="background-color:#ffffff;padding:20px;">
 
     <div style="width:600px; margin: 0 auto;">
-
+      <div class="alert alert-success" ng-show="cart.refund_total > 0">
+        We will refund <b>${{cart.refund_total}}</b> of your old plan !
+      </div>
       <div style="margin-bottom:30px;overflow:hidden">
         <div class="heading">
           <p class="field">Your subscription</p>
@@ -87,14 +89,19 @@ div.heading
         </div>
 
         <div class="break"></div>
-
+        <div ng-show="cart.refund_total > 0">
+          <p class="field" style="font-size:1.5em;" >Refund of your old plan</p>
+          <p class="field order-line">- ${{cart.refund_total}}</p>
+          <br /><hr style="border-style: dotted;" />
+          <div class="break"></div>
+        </div>
         <p class="field" style="font-size:1.5em;">{{cart.plan_name|capitalize}} pack</p>
         <p class="field order-line">${{cart.unit_price}}</p>
         <div class="break"></div>
         <p class="field order-line" ng-show="cart.VAT != 0">${{cart.VAT}}</p>
         <p class="field order-line" ng-show="cart.VAT_percent"><b id="vat">VAT ({{cart.VAT_percent}}%)</b></p>
         <div class="break"></div>
-        <p class="field order-line">${{cart.total}}</p>
+        <p class="field order-line" style="color:#0074a2;">${{cart.total}}</p>
       </div>
 
       <div class="break"></div>
