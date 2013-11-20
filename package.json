@@ -40,6 +40,7 @@
     "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
     "restify-oauth2-oauthd": "~2.1.0",
-    "paymill-node": "~0.0.4"
+    "paymill-node": "~0.0.4",
+    "jayschema": "~0.2.0"
   }
 }
