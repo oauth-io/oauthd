@@ -1,26 +1,27 @@
 {
-  "url": "https://api.assembla.com", 
+  "url": "https://api.assembla.com",
   "oauth2": {
-    "authorize": "/authorization", 
+    "authorize": "/authorization",
     "access_token": {
-      "url": "/token", 
+      "url": "/token",
       "method": "post"
-    }, 
+    },
     "request": {
-      "query": {
-        "oauth_token": "{{token}}"
+      "url": "https://api.assembla.com",
+      "headers": {
+        "Authorization": "Bearer {{token}}"
       }
-    }, 
+    },
     "parameters": {
-      "client_secret": "string", 
+      "client_secret": "string",
       "client_id": "string"
     }
-  }, 
-  "name": "Assembla", 
+  },
+  "name": "Assembla",
   "href": {
-    "keys": "https://www.assembla.com/user/edit/manage_clients", 
-    "docs": "http://api-doc.assembla.com/content/api_reference.html", 
-    "apps": "https://www.assembla.com/user/edit/manage_clients", 
+    "keys": "https://www.assembla.com/user/edit/manage_clients",
+    "docs": "http://api-doc.assembla.com/content/api_reference.html",
+    "apps": "https://www.assembla.com/user/edit/manage_clients",
     "provider": "https://www.assembla.com/"
   }
 }

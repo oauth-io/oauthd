@@ -15,12 +15,19 @@
     "access_token": {
       "url": "/oauth_token",
       "method": "post",
-      "query": {
+      "query":
+      {
         "client_id": "{client_id}",
         "client_secret": "{client_secret}",
         "code": "{{code}}",
         "grant_type": "authorization_code",
         "redirect_uri": "{{callback}}"
+      }
+    },
+    "request": {
+      "url": "https://app.asana.com",
+      "headers": {
+        "Authorization": "Bearer {{token}}"
       }
     },
     "parameters": {
