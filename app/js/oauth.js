@@ -37,7 +37,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			};
 			document.getElementsByTagName("head")[0].appendChild(e);
 
-			var methods = ["initialize", "popup", "redirect", "callback", "http"];
+			var methods = ["initialize", "setOAuthdURL", "popup", "redirect", "callback", "http"];
 			window.OAuth = {};
 			var push_method = function(method) {
 				window.OAuth[method] = function() {
@@ -162,6 +162,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		window.OAuth = {
 			initialize: function(public_key) {
 				config.key = public_key;
+			},
+			setOAuthdURL: function(url) {
+				config.oauthd_url = url;
+				config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
 			},
 			popup: function(provider, opts, callback) {
 				var wnd;
