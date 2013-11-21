@@ -111,7 +111,7 @@ exports.access_token = (state, req, callback) ->
 			query[name] = param if param
 		options =
 			url: access_token.url
-			method: access_token.method?.toUpperCase() || "GET"
+			method: access_token.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 
 		if options.method == "GET"
@@ -188,7 +188,7 @@ exports.refresh = (keyset, provider, token, callback) ->
 		query[name] = param if param
 	options =
 		url: refresh.url
-		method: refresh.method?.toUpperCase() || "GET"
+		method: refresh.method?.toUpperCase() || "POST"
 		followAllRedirects: true
 
 	if options.method == "GET"
