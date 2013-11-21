@@ -19,7 +19,7 @@
 			};
 			document.getElementsByTagName("head")[0].appendChild(e);
 
-			var methods = ["initialize", "popup", "redirect", "callback", "http"];
+			var methods = ["initialize", "setOAuthdURL", "popup", "redirect", "callback", "http"];
 			window.OAuth = {};
 			var push_method = function(method) {
 				window.OAuth[method] = function() {
@@ -136,6 +136,10 @@
 			initialize: function(public_key) {
 				config.key = public_key;
 			},
+			setOAuthdURL: function(url) {
+				config.oauthd_url = url;
+				config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+			},
 			popup: function(provider, opts, callback) {
 				var wnd;
 				if ( ! config.key)
@@ -150,7 +154,7 @@
 				}
 				client_states.push(opts.state);
 
-				var url = config.oauthd_base + '/auth/' + provider + "?k=" + config.key;
+				var url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
 				url += '&d=' + encodeURIComponent(getAbsUrl('/'));
 				if (opts)
 					url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
@@ -214,7 +218,7 @@
 				}
 				createCookie("oauthio_state", opts.state);
 				var redirect_uri = encodeURIComponent(getAbsUrl(url));
-				url = config.oauthd_base + '/auth/' + provider + "?k=" + config.key;
+				url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
 				url += "&redirect_uri=" + redirect_uri;
 				if (opts)
 					url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
@@ -236,7 +240,7 @@
 				if ( ! options.oauthio.request.cors) {
 					if (options.url && options.url[0] != '/' )
 						options.url = '/' + options.url;
-					options.url = config.oauthd_base + '/request/' + options.oauthio.provider + options.url;
+					options.url = config.oauthd_url + '/request/' + options.oauthio.provider + options.url;
 					options.headers = options.headers || {};
 					options.headers.oauthio = 'k=' + config.key;
 					if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret)
