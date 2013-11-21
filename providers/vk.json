@@ -26,9 +26,7 @@
 			"client_secret": "string",
 			"api_version": "string",
 			"scope": {
-				"type": "string",
 				"separator": ",",
-				"cardinality": "*",
 				"values": {
 					"notify": "The user allows receiving notifications.",
 					"friends": "Access to friends.",
@@ -51,11 +49,10 @@
 			}
 		}
 	},
-	"provider": "vk",
 	"href": {
-	  "keys": "https://vk.com/editapp?act=create",
-	  "docs": "https://vk.com/dev/main",
-	  "apps": "https://vk.com/apps?act=settings",
-	  "provider": "https://vk.com/"
+		"keys": "https://vk.com/editapp?act=create",
+		"docs": "https://vk.com/dev/main",
+		"apps": "https://vk.com/apps?act=settings",
+		"provider": "https://vk.com/"
 	}
 }

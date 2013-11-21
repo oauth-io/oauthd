@@ -5,26 +5,18 @@
 		"authorize": {
 			"url": "/authorize",
 			"query": {
-			"client_id": "{client_id}",
-			"response_type":"code",
-			"state": "{{state}}"
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"state": "{{state}}"
 			}
 		},
-		"access_token": {
-			"url": "/token",
-			"method": "post"
-		},
+		"access_token": "/token",
 		"request": {
 			"query": {
-			"access_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
-		}, 
-		"parameters": {
-			"client_id": "string",
-			"client_secret": "string"
 		}
 	},
-	"provider":"yandex",
 	"href": {
 		"keys": "https://oauth.yandex.ru/client/new",
 		"docs": "http://api.yandex.ru/oauth/doc",
