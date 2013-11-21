@@ -214,16 +214,20 @@ module.exports =
 			description: "Useful links related to the provider"
 			type: "object"
 			properties:
+				"provider":
+					description: "An url to the provider's site"
+					type: "string"
+					format: "uri"
 				"keys":
-					description: "A link to the app creation"
+					description: "An url to the app creation"
 					type: "string"
 					format: "uri"
 				"apps":
-					description: "A link to the existing apps list"
+					description: "An url to the existing apps list"
 					type: "string"
 					format: "uri"
 				"docs":
-					description: "A link to the authentication documentation"
+					description: "An url to the authentication documentation"
 					type: "string"
 					format: "uri"
 	definitions:

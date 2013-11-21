@@ -15,10 +15,9 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test && coffee test/providers_check.coffee"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "keywords": [],
   "directories": {
     "test": "test"
@@ -41,6 +40,7 @@
     "grunt": "~0.4.1",
     "restify-oauth2-oauthd": "~2.1.0",
     "paymill-node": "~0.0.4",
-    "jayschema": "~0.2.0"
+    "jayschema": "~0.2.0",
+    "jsonlint": "~1.6.0"
   }
 }

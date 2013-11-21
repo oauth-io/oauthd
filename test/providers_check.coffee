@@ -17,6 +17,10 @@ fs = require 'fs'
 Url = require 'url'
 async = require 'async'
 JaySchema = require 'jayschema'
+jsonlint = require 'jsonlint'
+
+jsonlint.parser.parseError = jsonlint.parser.lexer.parseError = (str, hash) ->
+	throw new Error "Parse error at #{hash.loc.first_line}:#{hash.loc.last_column}, found: '#{hash.token}' - expected: " + hash.expected.join(', ') + '.'
 
 jay = new JaySchema
 jay.register require './provider_schema'
@@ -63,6 +67,10 @@ checkOAuth1 = (provider, data, root, errors) ->
 	# oauth1.authorize checks
 	if typeof data.authorize == 'object'
 		a = data.authorize
+		if a.ignore_verifier == false
+			errors.push new ProviderWarning styles.ctx('#/oauth1/authorize/ignore_verifier') + ' can be removed (using default)', provider: provider
+		if a.ignore_verifier == true && a.query?.oauth_callback == '{{callback}}' && Object.keys(a.query).length == 1
+			errors.push new ProviderWarning styles.ctx('#/oauth1/authorize/query') + ' can be removed (using default) with ignore_verifier=true', provider:provider
 		if a.url && Object.keys(a).length == 1
 			errors.push new ProviderWarning styles.ctx('#/oauth1/authorize') + ' can be compacted as authorize.url', provider:provider
 
@@ -76,15 +84,29 @@ checkOAuth1 = (provider, data, root, errors) ->
 			errors.push new ProviderWarning styles.ctx('#/oauth1/access_token') + ' can be compacted as access_token.url', provider:provider
 
 	# oauth1.request checks
+	request_url = data.request
 	if typeof data.request == 'object'
 		a = data.request
-		if a.url && Object.keys(a).length == 1
+		request_url = a.url
+		if a.url
 			rooturl = Url.parse(root.url || '')
 			aurl = Url.parse(a.url)
-			if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host && rooturl.port == rooturl.port
-				errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be removed (using default)', provider:provider
-			else
-				errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be compacted as request.url', provider:provider
+			if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
+				if Object.keys(a).length == 1
+					errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be removed (using default)', provider:provider
+				else
+					errors.push new ProviderWarning styles.ctx('#/oauth1/request/url') + ' can be removed (using default)', provider:provider
+			else if Object.keys(a).length == 1
+					errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be compacted as request.url', provider:provider
+	else if request_url
+		aurl = Url.parse(request_url)
+		rooturl = Url.parse(root.url || '')
+		if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
+			errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be removed (using default)', provider:provider
+	if request_url
+		aurl = Url.parse(request_url)
+		if aurl.path != '/' || aurl.hash
+			errors.push new ProviderWarning styles.ctx('#/oauth1/request/url') + ' should not contain a path or hash', provider:provider
 
 checkOAuth2 = (provider, data, root, errors) ->
 	checkParameters provider, data.parameters, '#/oauth2/parameters', errors if data.parameters
@@ -93,8 +115,8 @@ checkOAuth2 = (provider, data, root, errors) ->
 	if typeof data.authorize == 'object'
 		a = data.authorize
 		if a.query && a.query.client_id == "{client_id}" && a.query.response_type == "code" &&
-			a.query.redirect_uri == "{{callback}}" && a.query.scope == "{scope}" &&
-			a.query.state == "{{state}}" && Object.keys(a.query).length == 5
+			a.query.redirect_uri == "{{callback}}" && a.query.state == "{{state}}" &&
+			(Object.keys(a.query).length == 4 || a.query.scope == "{scope}" && Object.keys(a.query).length == 5)
 				errors.push new ProviderWarning styles.ctx('#/oauth2/authorize/query') + ' can be removed (using default)', provider:provider
 				delete a.query
 		if a.url && Object.keys(a).length == 1
@@ -115,19 +137,33 @@ checkOAuth2 = (provider, data, root, errors) ->
 			errors.push new ProviderWarning styles.ctx('#/oauth2/access_token') + ' can be compacted as access_token.url', provider:provider
 
 	# oauth2.request checks
+	request_url = data.request
 	if typeof data.request == 'object'
 		a = data.request
+		request_url = a.url
 		if a.headers && a.headers.Authorization == "Bearer {{token}}" && Object.keys(a.headers).length == 1 &&
 			not (a.query && Object.keys(a.query).length)
 				errors.push new ProviderWarning styles.ctx('#/oauth2/request/headers') + ' can be removed (using default)', provider:provider
 				delete a.headers
-		if a.url && Object.keys(a).length == 1
+		if a.url
 			rooturl = Url.parse(root.url || '')
 			aurl = Url.parse(a.url)
-			if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host && rooturl.port == rooturl.port
-				errors.push new ProviderWarning styles.ctx('#/oauth2/request') + ' can be removed (using default)', provider:provider
-			else
+			if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
+				if Object.keys(a).length == 1
+					errors.push new ProviderWarning styles.ctx('#/oauth2/request') + ' can be removed (using default)', provider:provider
+				else
+					errors.push new ProviderWarning styles.ctx('#/oauth2/request/url') + ' can be removed (using default)', provider:provider
+			else if Object.keys(a).length == 1
 				errors.push new ProviderWarning styles.ctx('#/oauth2/request') + ' can be compacted as request.url', provider:provider
+	else if request_url
+		aurl = Url.parse(request_url)
+		rooturl = Url.parse(root.url || '')
+		if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
+			errors.push new ProviderWarning styles.ctx('#/oauth2/request') + ' can be removed (using default)', provider:provider
+	if request_url
+		aurl = Url.parse(request_url)
+		if aurl.path != '/' || aurl.hash
+			errors.push new ProviderWarning styles.ctx('#/oauth2/request/url') + ' should not contain a path or hash', provider:provider
 
 	# oauth2.refresh checks
 	if typeof data.refresh == 'object'
@@ -154,24 +190,34 @@ checkParameters = (provider, data, ref, errors) ->
 				errors.push new ProviderWarning styles.ctx(ref + '/' + name + '/type') + ' can be removed (using default)', provider:provider
 
 checkHref = (provider, data, errors) ->
+	errors.push new ProviderWarning styles.ctx('#/href/provider') + ' should be present', provider:provider if not data.provider
 	errors.push new ProviderWarning styles.ctx('#/href/keys') + ' should be present', provider:provider if not data.keys
 	errors.push new ProviderWarning styles.ctx('#/href/apps') + ' should be present', provider:provider if not data.apps
 	errors.push new ProviderWarning styles.ctx('#/href/docs') + ' should be present', provider:provider if not data.docs
 
 checkProvider = (provider, data, errors) ->
 	# json parsing
-	data = JSON.parse data
-	# return if provider != "yammer"
+	try
+		data = jsonlint.parse data.toString()
+	catch e
+		errors.push new ProviderError e.message, provider:provider
+		errors.push new ProviderError 'Stoping at check step 1/3', provider:provider
+		return
+
 	errs = jay.validate(data, "https://oauth.io/provider-schema#")
 
+	errors_count = 0
 	while errs.length
+		errors_count += errs.length
 		new_errs = []
 		for err in errs
 			if err.constraintName == "oneOf" && err.kind == "SubSchemaValidationError" && Object.keys(err.subSchemaValidationErrors).length == 1
 				err = err.subSchemaValidationErrors[Object.keys(err.subSchemaValidationErrors)[0]]
+				errors_count--
 				new_errs.push e for e in err
 			else if err.constraintName == "additionalProperties"
 				errors.push new ProviderWarning "Unknown field " + styles.ctx(err.instanceContext + '/' + err.testedValue), provider:provider
+				errors_count--
 			else if err.constraintName == "enum"
 				errors.push new ProviderError styles.ctx(err.instanceContext) + " must be " + styles.enum(err.constraintValue), provider:provider
 			else if err.constraintName == "required"
@@ -179,8 +225,12 @@ checkProvider = (provider, data, errors) ->
 			else if err.constraintName == "type"
 				errors.push new ProviderError styles.ctx(err.instanceContext) + " must be a " + err.constraintValue, provider:provider
 			else
-				console.log 'unknown error:', err
+				console.error 'unknown error:', err
 		errs = new_errs
+
+	if errors_count
+		errors.push new ProviderError 'Stoping at check step 2/3', provider:provider
+		return
 
 	if not data.href
 		errors.push new ProviderWarning "Should have field " + styles.ctx('#/href') + " in provider", provider:provider
@@ -190,6 +240,19 @@ checkProvider = (provider, data, errors) ->
 	checkOAuth1 provider, data.oauth1, data, errors if data.oauth1
 	checkOAuth2 provider, data.oauth2, data, errors if data.oauth2
 	checkParameters provider, data.parameters, '#/parameters', errors if data.parameters
+
+	isDefaultParameters = (params) ->
+		return params.client_id == 'string' && params.client_secret == 'string' &&
+			Object.keys(params).length == 2
+	if data.parameters
+		if not data.oauth1?.parameters && not data.oauth2?.parameters && isDefaultParameters(data.parameters)
+			errors.push new ProviderWarning styles.ctx('#/parameters') + ' can be removed (using default)', provider:provider
+	else
+		if data.oauth1?.parameters
+			if not data.oauth2?.parameters && isDefaultParameters(data.oauth1.parameters)
+				errors.push new ProviderWarning styles.ctx('#/oauth1/parameters') + ' can be removed (using default)', provider:provider
+		else if data.oauth2?.parameters && isDefaultParameters(data.oauth2.parameters)
+			errors.push new ProviderWarning styles.ctx('#/oauth2/parameters') + ' can be removed (using default)', provider:provider
 
 	return
 
@@ -226,16 +289,18 @@ checkAll = (callback) ->
 		return
 
 checkAll (err, infos) ->
-	console.log 'finish'
 	tags =
 		fatal: styles.wrap(['bold', 'redBG'], "[FATAL ERROR]") + "\t"
 		error: styles.wrap ['bold', 'red'], "[ERROR]" + "\t"
 		warning: styles.wrap ['bold', 'yellow'], "[WARNING]" + "\t"
 		info: styles.wrap ['bold', 'green'], "[INFO]" + "\t"
 		provider: (provider) -> styles.wrap ['bold', 'cyan'], "[" + provider + "]\t"
-	return console.log tags.fatal + err.message if err
+	if err
+		console.error tags.fatal + err.message
+		process.exit 1
 	providers = {}
 	gerrors = []
+	retcode = 0
 	for v in infos.errors
 		if v instanceof ProviderError
 			providers[v.provider] ?= errors:[], warnings:[]
@@ -254,3 +319,5 @@ checkAll (err, infos) ->
 			console.log tags.provider(name) + tags.warning + e.message
 		for e in provider.errors
 			console.error tags.provider(name) + tags.error + e.message
+			retcode = 1
+	process.exit retcode
