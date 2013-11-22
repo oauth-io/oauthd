@@ -889,7 +889,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			if error.status == "fail"
 				$rootScope.error.message = "You must specify a name and at least one domain for your application"
 			else
-				$rootScope.error.message = 'You must upgrade your plan to get more apps. <a href="/pricing">See the pricing</a>'
+				$rootScope.error.message = 'You must upgrade your plan to get more apps. <a href="/pricing">Check the pricing</a>'
 
 	setKeysField = (app, provider)->
 		if not app.keysField?[provider]?

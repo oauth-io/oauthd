@@ -27,7 +27,7 @@ exports.create = (req, callback) ->
 	db.users.getPlan req.user.id, (err, plan) ->
 		db.users.getApps req.user.id, (err, apps) ->
 			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
-			return callback new check.Error('upgrade_plan') if not plan and apps.length >= 2 or apps.length >= plan.nbApp
+			return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
 
 			key = db.generateUid()
 			secret = db.generateUid()

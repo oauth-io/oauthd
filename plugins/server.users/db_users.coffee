@@ -221,11 +221,11 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 		return callback err if err
 		return callback new check.Error "This email isn't registered" if not iduser
 		prefix = 'u:' + iduser + ':'
-		db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated'], (err, replies) ->
+		db.redis.mget [prefix+'mail', prefix+'key_pass', prefix+'validated'], (err, replies) ->
 			return callback new check.Error "This email is not validated yet. Patience... :)" if replies[2] == '0'
 			# ok email validated  (contain password)
 			key = replies[1]
-			if key.length == 0
+			if not key
 				dynsalt = Math.floor(Math.random() * 9999999)
 				key = db.generateHash(dynsalt).replace(/\=/g, '').replace(/\+/g, '').replace(/\//g, '')
 
