@@ -1,4 +1,5 @@
 {
+	"name": "Deezer",
 	"url": "https://connect.deezer.com/oauth",
 	"oauth2": {
 		"authorize": {
@@ -41,7 +42,6 @@
 			}
 		}
 	},
-	"name": "Deezer",
 	"href": {
 		"keys": "http://developers.deezer.com/myapps/create",
 		"docs": "http://developers.deezer.com",

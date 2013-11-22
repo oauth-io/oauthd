@@ -4,11 +4,8 @@
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/access",
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
+		"request": "https://api.meetup.com",
+		"refresh": "/access",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",

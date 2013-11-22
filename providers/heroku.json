@@ -4,10 +4,13 @@
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/token",
-		"request": {
-			"url": "https://api.github.com/",
-			"query": {
-				"access_token": "{{token}}"
+		"refresh": "/token",
+		"request": "https://api.heroku.com",
+		"revoke": {
+			"url": "https://api.heroku.com/authorizations/{client_id}",
+			"method": "delete",
+			"headers": {
+				"Authorization": "Bearer {{token}}"
 			}
 		},
 		"parameters": {

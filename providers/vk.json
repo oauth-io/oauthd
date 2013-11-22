@@ -14,11 +14,13 @@
 		},
 		"access_token": {
 			"url": "/access_token",
-			"method": "get"
+			"method": "get",
+			"extra": ["user_id"]
 		},
 		"request": {
+			"url": "https://api.vk.com",
 			"query": {
-				"oauth_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
 		},
 		"parameters": {
@@ -43,6 +45,8 @@
 					"groups": "Access to user groups",
 					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
 					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
+					"notifications": "Access to the notifications",
+					"stats": "Statistics access to the user's groups and applications",
 					"offline": "Access to API at any time from an external server.",
 					"ads": "Access to advanced methods for Ads API."
 				}

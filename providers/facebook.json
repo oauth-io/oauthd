@@ -1,15 +1,9 @@
 {
-	"url": "https://graph.facebook.com/oauth",
+	"name": "Facebook",
+	"url": "https://graph.facebook.com",
 	"oauth2": {
-		"authorize": {
-			"url": "/authorize",
-			"query": {
-				"scope": "{scope}",
-				"redirect_uri": "{{callback}}",
-				"client_id": "{client_id}"
-			}
-		},
-		"access_token": "/access_token",
+		"authorize": "https://www.facebook.com/dialog/oauth",
+		"access_token": "/oauth/access_token",
 		"request": {
 			"cors": true,
 			"query": {
@@ -17,7 +11,7 @@
 			}
 		},
 		"refresh": {
-			"url": "/access_token",
+			"url": "/oauth/access_token",
 			"query": {
 				"grant_type": "fb_exchange_token",
 				"client_id": "{client_id}",
@@ -26,7 +20,7 @@
 			}
 		},
 		"revoke": {
-			"url": "https://graph.facebook.com/me/permissions",
+			"url": "/me/permissions",
 			"method": "delete",
 			"query": {
 				"access_token": "{{token}}"
@@ -112,7 +106,6 @@
 			}
 		}
 	},
-	"name": "Facebook",
 	"href": {
 		"keys": "https://developers.facebook.com/apps",
 		"docs": "https://developers.facebook.com/docs/",

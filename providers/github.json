@@ -1,20 +1,12 @@
 {
-	"href": {
-		"keys": "https://github.com/settings/applications/new",
-		"docs": "http://developer.github.com/v3/",
-		"apps": "https://github.com/settings/applications",
-		"provider": "https://github.com/"
-	},
+	"name": "GitHub",
 	"url": "https://github.com/login/oauth",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/access_token",
 		"request": {
-			"url": "https://api.github.com/",
-			"cors": true,
-			"query": {
-				"access_token": "{{token}}"
-			}
+			"url": "https://api.github.com",
+			"cors": true
 		},
 		"refresh": "/token",
 		"parameters": {
@@ -35,5 +27,10 @@
 			}
 		}
 	},
-	"name": "github"
+	"href": {
+		"keys": "https://github.com/settings/applications/new",
+		"docs": "http://developer.github.com/v3/",
+		"apps": "https://github.com/settings/applications",
+		"provider": "https://github.com/"
+	}
 }

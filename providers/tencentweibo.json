@@ -2,12 +2,28 @@
 	"name": "SinaWeibo",
 	"url": "https://open.t.qq.com/cgi-bin/oauth2",
 	"oauth2": {
-		"authorize": "/authorize",
+		"authorize": {
+			"url": "/authorize",
+			"extra": [
+				"openid",
+				"openkey"
+			]
+		},
 		"access_token": "/access_token",
 		"request": {
 			"query": {
-				"access_token": "{{token}}"
+				"oauth_consumer_key": "{client_id}",
+				"access_token": "{{token}}",
+				"openid": "{{openid}}",
+				"oauth_version": "2.a"
 			}
+		},
+		"refresh": "/access_token",
+		"parameters": {
+			"client_id": {
+				"scope": "public"
+			},
+			"client_secret": "string"
 		}
 	},
 	"href": {

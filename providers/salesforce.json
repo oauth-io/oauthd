@@ -20,6 +20,7 @@
 				"token": "{{token}}"
 			}
 		},
+		"request": "{{instance_url}}",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",

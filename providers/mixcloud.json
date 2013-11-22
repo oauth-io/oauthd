@@ -17,6 +17,12 @@
 				"redirect_uri": "{{callback}}",
 				"code": "{{code}}"
 			}
+		},
+		"request": {
+			"url": "http://api.mixcloud.com",
+			"query": {
+				"access_token": "{{token}}"
+			}
 		}
 	},
 	"href": {

@@ -1,15 +1,17 @@
 {
+	"name": "Wordpress",
 	"url": "https://public-api.wordpress.com/oauth2",
 	"oauth2": {
-		"authorize": "/authorize",
-		"access_token": "/token",
-		"request": {
+		"authorize": {
+			"url": "/authorize",
 			"query": {
-				"oauth_token": "{{token}}"
+				"client_id": "{client_id}",
+				"redirect_uri": "{{callback}}",
+				"response_type": "code"
 			}
-		}
+		},
+		"access_token": "/token"
 	},
-	"name": "Wordpress",
 	"href": {
 		"keys": "https://developer.wordpress.com/apps/new/",
 		"docs": "http://developer.wordpress.com/docs/api/",

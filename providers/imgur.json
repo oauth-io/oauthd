@@ -4,11 +4,7 @@
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/token",
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		}
+		"refresh": "/token"
 	},
 	"href": {
 		"keys": "https://api.imgur.com/oauth2/addclient",
