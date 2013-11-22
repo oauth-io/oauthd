@@ -239,7 +239,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 # create an application
 server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
-	db.apps.create req.body, (e, r) ->
+	db.apps.create req, (e, r) ->
 		return next(e) if e
 		plugins.data.emit 'app.create', req, r
 		res.send name:r.name, key:r.key, domains:r.domains

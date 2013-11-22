@@ -1,7 +1,6 @@
-<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_APP'">
-	{{error.message}}
-</div>	
-<form ui-keypress="{13:'createAppSubmit($event)'}" name="create-app" class="form-horizontal"> 	
+<div class="alert alert-danger"  ng-bind-html-unsafe="error.message" ng-show="error.state && error.type == 'CREATE_APP'">
+</div>
+<form ui-keypress="{13:'createAppSubmit($event)'}" name="create-app" class="form-horizontal">
 	<div class="row">
 		<label class="control-label col col-lg-4" for="createapp-name">Application name</label>
 		<div class="col col-lg-8">

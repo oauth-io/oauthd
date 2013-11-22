@@ -689,7 +689,6 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 					$scope.createKeyType = "token"
 			), (error) ->
 
-
 	$scope.updateAppKey = (key) ->
 		$scope.createKeyAppKey = key
 
@@ -877,10 +876,13 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 		AppService.add $scope.createAppForm, (->
 			$location.path "/key-manager"
 		), (error)->
+			# console.log error
 			$rootScope.error.state = true
 			$rootScope.error.type = "CREATE_APP"
-			$rootScope.error.message = "You must specify a name and at least one domain for your application"
-
+			if error.status == "fail"
+				$rootScope.error.message = "You must specify a name and at least one domain for your application"
+			else
+				$rootScope.error.message = 'You must upgrade your plan to get more apps. <a href="/pricing">See the pricing</a>'
 
 	setKeysField = (app, provider)->
 		if not app.keysField?[provider]?

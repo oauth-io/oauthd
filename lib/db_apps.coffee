@@ -14,29 +14,43 @@ check = require './check'
 plugins = require './plugins'
 
 # create a new app
-exports.create = check name:/^.{3,50}$/,domains:['none','array'], (data, callback) ->
-	key = db.generateUid()
-	secret = db.generateUid()
+exports.create = (req, callback) ->
+
+	data = req.body
 	err = new check.Error
-	if data.domains
-		for domain in data.domains
-			err.check 'domains', domain, 'string'
+
+	# console.log req.body, req.user
+
+	err.check data, name:/^.{3,50}$/,domains:['none','array']
 	return callback err if err.failed()
-	db.redis.incr 'a:i', (err, idapp) ->
-		return callback err if err
-		prefix = 'a:' + idapp + ':'
-		cmds = [
-			[ 'mset', prefix+'name', data.name,
-				prefix+'key', key, prefix+'secret', secret ],
-			[ 'hset', 'a:keys', key, idapp ]
-		]
-		if data.domains
-			# todo: in redis >= 2.4, sadd accepts multiple members
-			for domain in data.domains
-				cmds.push [ 'sadd', prefix + 'domains', domain ]
-		db.redis.multi(cmds).exec (err, res) ->
-			return callback err if err
-			callback null, id:idapp, name:data.name, key:key
+
+	db.users.getPlan req.user.id, (err, plan) ->
+		db.users.getApps req.user.id, (err, apps) ->
+			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
+			return callback new check.Error('upgrade_plan') if not plan and apps.length >= 2 or plan?.nbApp == apps.length
+
+			key = db.generateUid()
+			secret = db.generateUid()
+			err = new check.Error
+			if data.domains
+				for domain in data.domains
+					err.check 'domains', domain, 'string'
+			return callback err if err.failed()
+			db.redis.incr 'a:i', (err, idapp) ->
+				return callback err if err
+				prefix = 'a:' + idapp + ':'
+				cmds = [
+					[ 'mset', prefix+'name', data.name,
+						prefix+'key', key, prefix+'secret', secret ],
+					[ 'hset', 'a:keys', key, idapp ]
+				]
+				if data.domains
+					# todo: in redis >= 2.4, sadd accepts multiple members
+					for domain in data.domains
+						cmds.push [ 'sadd', prefix + 'domains', domain ]
+				db.redis.multi(cmds).exec (err, res) ->
+					return callback err if err
+					callback null, id:idapp, name:data.name, key:key
 
 # get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->

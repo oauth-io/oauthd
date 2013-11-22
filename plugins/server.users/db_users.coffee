@@ -464,7 +464,6 @@ exports.getApps = check 'int', (iduser, callback) ->
 			return callback err if err
 			return callback null, appkeys
 
-# get apps ids owned by a user
 exports.getPlan = check 'int', (iduser, callback) ->
 	db.redis.hget ["pm:subscriptions:#{iduser}", "current_offer"], (err, offer_id) ->
 		return callback err if err
