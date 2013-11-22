@@ -377,9 +377,7 @@ exports.get = check 'int', (iduser, callback) ->
 			return callback err if err
 			exports.getBilling iduser, (err, billing) ->
 				return callback err if err
-				client.getSubscriptions (err, subscriptions) ->
-					return callback err if err
-					return callback null, profile: profile, plan: plan, billing: billing, subscriptions:subscriptions
+				return callback null, profile: profile, plan: plan, billing: billing
 
 # get user billing
 exports.getBilling = check 'int', (iduser, callback) ->
@@ -481,11 +479,12 @@ exports.getPlan = check 'int', (iduser, callback) ->
 
 				return callback null, name:replies[0], nbConnection:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
 
-exports.getSubscriptions = check 'int', (iduser, callback) ->
-	clients = new Clients()
-	details = clients.getSubscriptions()
-
-	return callback null, details
+exports.getAllSubscriptions = check 'int', (iduser, callback) ->
+	client = new Clients()
+	client.user_id = iduser
+	client.getSubscriptions (err, subscriptions) ->
+	 	return callback err if err
+	 	return callback null, subscriptions:subscriptions
 
 # is an app owned by a user
 exports.hasApp = check 'int', check.format.key, (iduser, key, callback) ->

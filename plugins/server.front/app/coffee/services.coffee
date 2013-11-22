@@ -60,6 +60,9 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		me: (success, error) ->
 			api 'me', success, error
 
+		getSubscriptions: (success, error) ->
+			api 'me/subscriptions', success, error
+
 		update: (profile, success, error) ->
 			api 'me', success, error,
 				method: "PUT",
