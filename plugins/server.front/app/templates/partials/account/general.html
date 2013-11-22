@@ -47,7 +47,8 @@
         <div class="panel-heading">
           <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{apps.length}}</span>Apps</h3>
         </div>
-        <table class="table" style="margin:0; padding:0">
+        <div ng-hide="apps.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't created any apps yet.</div>
+        <table ng-show="apps.length > 0" class="table" style="margin:0; padding:0">
           <thead>
             <th style="width: 80%">Name</th>
             <th style="text-align: center">Connection</th>
@@ -68,14 +69,8 @@
         <div class="panel-heading">
           <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{keysets.length}}</span>Providers</h3>
         </div>
-
-        <!-- <div class="panel-body">
-
-          <div ng-repeat="provider in app.keysets">
-              <img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/>{{provider|capitalize}}
-            </div>
-        </div> -->
-        <table class="table" style="margin:0; padding:0">
+        <div ng-hide="keysets.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't set any providers yet.</div>
+        <table ng-show="keysets.length > 0" class="table" style="margin:0; padding:0">
           <thead>
             <th style="width: 80%">Name</th>
           </thead>
