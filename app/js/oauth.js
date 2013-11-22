@@ -62,10 +62,15 @@
 		return url;
 	}
 
-	function replaceParam(param, rep) {
-		return param.replace(/\{\{(.*?)\}\}/g, function(m,v) {
+	function replaceParam(param, rep, rep2) {
+		param = param.replace(/\{\{(.*?)\}\}/g, function(m,v) {
 			return rep[v] || "";
 		});
+		if (rep2)
+			param = param.replace(/\{(.*?)\}/g, function(m,v) {
+				return rep2[v] || "";
+			});
+		return param;
 	}
 
 	function sendCallback(opts) {
@@ -100,7 +105,20 @@
 		if ( ! opts.provider)
 			data.data.provider = data.provider;
 
-		function make_res(provider, tokens, request, method) {
+		var res = data.data;
+		var request = res.request;
+		delete res.request;
+		var tokens;
+		if (res.access_token)
+			tokens = { token: res.access_token };
+		else if (res.oauth_token && res.oauth_token_secret)
+			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret};
+
+		if (request.required)
+			for (var i in request.required)
+				tokens[request.required[i]] = res[request.required[i]];
+
+		var make_res = function(request, method) {
 			return function(opts) {
 				var options = {};
 				if (typeof opts === 'string')
@@ -108,25 +126,16 @@
 				else if (typeof opts === 'object')
 					for (var i in opts) { options[i] = opts[i]; }
 				options.type = options.type || method;
-				options.oauthio = {provider:provider, tokens:tokens, request:request};
+				options.oauthio = {provider:data.provider, tokens:tokens, request:request};
 				return OAuth.http(options);
 			};
 		}
 
-		var res = data.data;
-		var request = res.request;
-		delete res.request;
-		var tokens;
-		if (res.access_token)
-			tokens = { access_token: res.access_token };
-		else if (res.oauth_token && res.oauth_token_secret)
-			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret};
-
-		res.get = make_res(data.provider, tokens, request, 'GET');
-		res.post = make_res(data.provider, tokens, request, 'POST');
-		res.put = make_res(data.provider, tokens, request, 'PUT');
-		res.patch = make_res(data.provider, tokens, request, 'PATCH');
-		res.del = make_res(data.provider, tokens, request, 'DELETE');
+		res.get = make_res(request, 'GET');
+		res.post = make_res(request, 'POST');
+		res.put = make_res(request, 'PUT');
+		res.patch = make_res(request, 'PATCH');
+		res.del = make_res(request, 'DELETE');
 
 		return opts.callback(null, res, request);
 	}
@@ -250,7 +259,7 @@
 					delete options.oauthio;
 					return $.ajax(options);
 				}
-				if (options.oauthio.tokens.access_token) {
+				if (options.oauthio.tokens.token) {
 
 					if ( ! options.url.match(/^[a-z]{2,16}:\/\//)) {
 						if (options.url[0] !== '/')
@@ -258,24 +267,30 @@
 						options.url = options.oauthio.request.url + options.url;
 					}
 
-					var qs = [];
-					for (i in (options.oauthio.request.query||{}))
-						qs.push(encodeURIComponent(i) + '=' + encodeURIComponent(
-							replaceParam(options.oauthio.request.query[i], {
-								token: options.oauthio.tokens.access_token
-							})
-						));
-					qs = qs.join('&');
+					if (options.oauthio.request.query) {
+						var qs = [];
+						for (i in options.oauthio.request.query)
+							qs.push(encodeURIComponent(i) + '=' + encodeURIComponent(
+								replaceParam(options.oauthio.request.query[i],
+											 options.oauthio.tokens,
+											 options.oauthio.request.parameters)
+							));
 
-					if (options.url.indexOf('?') !== -1)
-						options.url += '&' + qs;
-					else
-						options.url += '?' + qs;
+						qs = qs.join('&');
+						if (options.url.indexOf('?') !== -1)
+							options.url += '&' + qs;
+						else
+							options.url += '?' + qs;
+					}
 
-					for (i in (options.oauthio.request.headers||{}))
-						options.headers[i] = replaceParam(options.oauthio.request.headers[i], {
-							token: options.oauthio.tokens.access_token
-						});
+					if (options.oauthio.request.headers)
+					{
+						options.headers = options.headers || {}
+						for (i in options.oauthio.request.headers)
+							options.headers[i] = replaceParam(options.oauthio.request.headers[i],
+															  options.oauthio.tokens,
+															  options.oauthio.request.parameters);
+					}
 
 					delete options.oauthio;
 					return $.ajax(options);
