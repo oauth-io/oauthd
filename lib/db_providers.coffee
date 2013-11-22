@@ -132,7 +132,19 @@ exports.getExtended = (name, callback) ->
 					if typeof endpoint == 'string'
 						endpoint = res[oauthv][endpoint_name] = url:endpoint
 					endpoint.url = res.url + endpoint.url if res.url && endpoint.url?[0] == '/'
-					endpoint.url = base_url if not endpoint.url && endpoint_name == 'request'
+					if endpoint_name == 'request'
+						endpoint.url = base_url if not endpoint.url
+						fillRequired = (str) ->
+							hardparamRegexp = /\{\{(.+?)\}\}/g
+							while matches = hardparamRegexp.exec str
+								if matches[1] != 'token'
+									endpoint.required ?= []
+									endpoint.required.push matches[1]
+						fillRequired endpoint.url
+						if endpoint.query
+							fillRequired v for k, v of endpoint.query
+						if endpoint.headers
+							fillRequired v for k, v of endpoint.headers
 					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url and endpoint.url[endpoint.url.length-1] == '/'
 					if not endpoint.query && endpoint_name == 'authorize' && endpoint.ignore_verifier
 						endpoint.query = oauth_callback:'{{callback}}'

@@ -27,7 +27,6 @@ module.exports =
 		"url":
 			description: "The base absolute url to use in sub-parts"
 			type: "string"
-			format: "uri"
 		"oauth1":
 			description: "The OAuth 1.0/1.0a description"
 			type: "object"
@@ -45,7 +44,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"query":
 									type: "object"
 						}
@@ -61,7 +59,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"ignore_verifier":
 									description: "Set ignore_verifier to true if you are using the old OAuth 1.0"
 									type: "boolean"
@@ -80,7 +77,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"query":
 									type: "object"
 						}
@@ -96,7 +92,11 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
+								"required":
+									description: "used fields from authorization (appart oauth_*)"
+									type: "array"
+									items:
+										type: "string"
 								"query":
 									type: "object"
 								"headers":
@@ -123,7 +123,10 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
+								"extra":
+									type: "array"
+									items:
+										type: "string"
 								"query":
 									type: "object"
 						}
@@ -139,7 +142,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"method":
 									type: "string"
 									enum: ["get", "post"]
@@ -166,7 +168,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"method":
 									type: "string"
 									enum: ["get", "post"]
@@ -189,7 +190,6 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
 								"query":
 									type: "object"
 								"method":
@@ -210,7 +210,11 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
-									format: "uri"
+								"required":
+									description: "used fields from authorization (appart token)"
+									type: "array"
+									items:
+										type: "string"
 								"query":
 									type: "object"
 								"cors":
@@ -258,13 +262,16 @@ module.exports =
 					}, {
 						type: "object"
 						additionalProperties: false
-						required: ["values"]
 						properties:
 							"values":
 								type: "object"
 								patternProperties:
 									"^.*$":
 										type: "string"
+							"scope":
+								description: "if set to 'public', this parameter can be use in cors requests"
+								type: "string"
+								enum: ["public"]
 							"cardinality":
 								type: "string"
 								enum: ["*", "1"]

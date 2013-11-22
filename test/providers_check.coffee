@@ -107,8 +107,8 @@ checkOAuth1 = (provider, data, root, errors) ->
 		if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
 			errors.push new ProviderWarning styles.ctx('#/oauth1/request') + ' can be removed (using default)', provider:provider
 	if request_url
-		aurl = Url.parse(request_url)
-		if aurl.path != '/' || aurl.hash
+		aurl = Url.parse(request_url.replace /\{\{.+?\}\}/g, "")
+		if aurl.path != '/' && aurl.path || aurl.hash
 			errors.push new ProviderWarning styles.ctx('#/oauth1/request/url') + ' should not contain a path or hash', provider:provider
 
 checkOAuth2 = (provider, data, root, errors) ->
@@ -164,8 +164,8 @@ checkOAuth2 = (provider, data, root, errors) ->
 		if rooturl.protocol == aurl.protocol && rooturl.host == aurl.host
 			errors.push new ProviderWarning styles.ctx('#/oauth2/request') + ' can be removed (using default)', provider:provider
 	if request_url
-		aurl = Url.parse(request_url)
-		if aurl.path != '/' || aurl.hash
+		aurl = Url.parse(request_url.replace /\{\{.+?\}\}/g, "")
+		if aurl.path != '/' && aurl.path || aurl.hash
 			errors.push new ProviderWarning styles.ctx('#/oauth2/request/url') + ' should not contain a path or hash', provider:provider
 
 	# oauth2.refresh checks
@@ -227,6 +227,8 @@ checkProvider = (provider, data, errors) ->
 				errors.push new ProviderError "Missing field " + styles.ctx(err.instanceContext + '/' + err.desc.substr(9)), provider:provider
 			else if err.constraintName == "type"
 				errors.push new ProviderError styles.ctx(err.instanceContext) + " must be a " + err.constraintValue, provider:provider
+			else if err.constraintName == "format"
+				errors.push new ProviderError styles.ctx(err.instanceContext) + " is not a valid " + err.constraintValue, provider:provider
 			else
 				console.error 'unknown error:', err
 		errs = new_errs

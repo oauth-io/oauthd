@@ -140,7 +140,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 						return callback param
 					query[name] = param if param
 				query.oauth_token = body.oauth_token
-				url = authorize.url
+				url = replace_param authorize.url, params, {}, parameters
 				url += "?" + querystring.stringify query
 				callback null, url
 
@@ -183,7 +183,7 @@ exports.access_token = (state, req, callback) ->
 				return callback param
 			query[name] = param if param
 		options =
-			url: access_token.url
+			url: replace_param access_token.url, params, {}, parameters
 			method: 'POST'
 
 		query.oauth_nonce = db.generateUid()
@@ -248,11 +248,17 @@ exports.access_token = (state, req, callback) ->
 				expire = parseInt expire
 				now = (new Date).getTime()
 				expire -= now if expire > now
+			requestclone = {}
+			requestclone[k] = v for k, v of provider.oauth1.request
+			for k, v of params
+				if v.scope == 'public'
+					requestclone.parameters ?= {}
+					requestclone.parameters[k] = parameters[k]
 			callback null,
 				oauth_token: body.oauth_token
 				oauth_token_secret: body.oauth_token_secret
 				expires_in: expire
-				request: provider.oauth1.request
+				request: requestclone
 
 exports.request = (provider, parameters, req, callback) ->
 	params = {}
@@ -273,13 +279,13 @@ exports.request = (provider, parameters, req, callback) ->
 	if ! options.url.match(/^[a-z]{2,16}:\/\//)
 		if options.url[0] != '/'
 			options.url = '/' + options.url
-		options.url = oauthrequest.url + options.url
+		options.url = replace_param(oauthrequest.url, params, parameters.oauthio, parameters) + options.url
 
 	# build query
 	options.qs = {}
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
-		param = replace_param value, params, {}, parameters
+		param = replace_param value, params, parameters.oauthio, parameters
 		if typeof param != 'string'
 			return callback param
 		options.qs[name] = param if param
@@ -297,7 +303,7 @@ exports.request = (provider, parameters, req, callback) ->
 		'accept-language':req.headers['accept-language']
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
-		param = replace_param value, params, {}, parameters
+		param = replace_param value, params, parameters.oauthio, parameters
 		if typeof param != 'string'
 			return callback param
 		options.headers[name] = param if param
