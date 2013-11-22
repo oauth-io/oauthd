@@ -13,6 +13,11 @@
 		},
 		"access_token": "/token.do",
 		"refresh": "/token.do",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",

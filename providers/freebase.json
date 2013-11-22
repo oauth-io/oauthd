@@ -1,13 +1,11 @@
 {
+	"name": "Freebase",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",
 		"access_token": "/token",
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
+		"request": "https://www.googleapis.com",
+		"refresh": "/token",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",
@@ -15,11 +13,11 @@
 				"values": {
 					"https://www.googleapis.com/auth/freebase": "Sign in to Freebase with your account. Read/write access",
 					"https://www.googleapis.com/auth/freebase.readonly": "view your Freebase account"
-				}
+				},
+				"cardinality": "1"
 			}
 		}
 	},
-	"name": "Freebase",
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "http://code.google.com/more/",

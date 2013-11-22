@@ -1,13 +1,16 @@
 {
-	"url": "https://oauth.live.com",
+	"name": "Live Connect",
+	"url": "https://login.live.com",
 	"oauth2": {
-		"authorize": "/authorize",
-		"access_token": "/token",
+		"authorize": "/oauth20_authorize.srf",
+		"access_token": "/oauth20_authorize.srf",
 		"request": {
+			"url": "https://apis.live.net",
 			"query": {
-				"oauth_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
 		},
+		"refresh": "/oauth20_authorize.srf",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",
@@ -39,10 +42,9 @@
 			}
 		}
 	},
-	"name": "LiveConnect",
 	"href": {
 		"keys": "https://manage.dev.live.com/Applications/Create",
-		"docs": "http://msdn.microsoft.com/en-us/library/hh243648.aspx",
+		"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
 		"apps": "https://manage.dev.live.com/Applications",
 		"provider": "https://www.live.com/"
 	}

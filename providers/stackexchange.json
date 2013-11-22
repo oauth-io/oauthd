@@ -6,6 +6,7 @@
 		"access_token": "/oauth/access_token",
 		"request": {
 			"url": "https://api.stackexchange.com",
+			"cors": true,
 			"query": {
 				"access_token": "{{token}}",
 				"key": "{key}"
@@ -25,7 +26,9 @@
 		}
 	},
 	"parameters": {
-		"key": "string"
+		"key": {
+			"scope": "public"
+		}
 	},
 	"href": {
 		"keys": "http://stackapps.com/apps/oauth/register",

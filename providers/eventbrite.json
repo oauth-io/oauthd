@@ -10,12 +10,7 @@
 				"client_id": "{client_id}"
 			}
 		},
-		"access_token": "/token",
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		}
+		"access_token": "/token"
 	},
 	"href": {
 		"keys": "http://www.eventbrite.com/api/key/",

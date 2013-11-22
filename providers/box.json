@@ -1,15 +1,21 @@
 {
-	"url": "https://api.box.com/oauth2",
+	"name": "Box",
+	"url": "https://www.box.com/api/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/token",
-		"request": {
+		"request": "https://api.box.com",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
 			"query": {
-				"access_token": "{{token}}"
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"token": "{{token}}"
 			}
 		}
 	},
-	"name": "Box",
 	"href": {
 		"keys": "http://box.com/developers/services/edit/",
 		"docs": "http://developers.box.com/docs/",

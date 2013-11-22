@@ -5,8 +5,8 @@
 		"authorize": "/authorize",
 		"access_token": "/token",
 		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
+			"headers": {
+				"Authorization": "OAuth {{token}}"
 			}
 		}
 	},

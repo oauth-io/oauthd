@@ -5,12 +5,7 @@
 		"authorize": "/authenticate",
 		"access_token": "/token",
 		"refresh": "/token",
-		"request": {
-			"url": "https://api.traxo.com",
-			"query": {
-				"access_token": "{{token}}"
-			}
-		}
+		"request": "https://api.traxo.com"
 	},
 	"href": {
 		"keys": "https://developer.traxo.com",

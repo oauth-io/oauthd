@@ -1,4 +1,5 @@
 {
+	"name": "Disqus",
 	"url": "https://disqus.com/api/oauth/2.0",
 	"oauth2": {
 		"authorize": "/authorize",
@@ -8,6 +9,7 @@
 				"oauth_token": "{{token}}"
 			}
 		},
+		"refresh": "/access_token",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",
@@ -21,7 +23,6 @@
 			}
 		}
 	},
-	"name": "Disqus",
 	"href": {
 		"keys": "http://disqus.com/api/applications/register/",
 		"docs": "http://disqus.com/api/docs/",

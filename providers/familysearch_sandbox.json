@@ -11,11 +11,6 @@
 				"client_id": "{client_id}"
 			}
 		},
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
 		"parameters": {
 			"client_id": "string"
 		}

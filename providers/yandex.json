@@ -12,8 +12,8 @@
 		},
 		"access_token": "/token",
 		"request": {
-			"query": {
-				"access_token": "{{token}}"
+			"headers": {
+				"Authorization": "OAuth {{token}}"
 			}
 		}
 	},

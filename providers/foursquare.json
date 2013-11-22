@@ -1,10 +1,5 @@
 {
-	"href": {
-		"keys": "https://fr.foursquare.com/developers/register",
-		"docs": "https://developer.foursquare.com/overview/",
-		"apps": "https://foursquare.com/developers/apps",
-		"provider": "http://www.foursquare.com/"
-	},
+	"name": "Foursquare",
 	"url": "https://foursquare.com/oauth2",
 	"oauth2": {
 		"authorize": {
@@ -24,5 +19,10 @@
 			}
 		}
 	},
-	"name": "Foursquare"
+	"href": {
+		"keys": "https://fr.foursquare.com/developers/register",
+		"docs": "https://developer.foursquare.com/overview/",
+		"apps": "https://foursquare.com/developers/apps",
+		"provider": "http://www.foursquare.com/"
+	}
 }

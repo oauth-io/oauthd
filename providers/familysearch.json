@@ -11,12 +11,7 @@
 				"client_id": "{client_id}"
 			}
 		},
-		"request": {
-			"url": "https://familysearch.org",
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
+		"request": "https://familysearch.org",
 		"parameters": {
 			"client_id": "string"
 		}

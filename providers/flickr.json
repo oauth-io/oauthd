@@ -1,4 +1,5 @@
 {
+	"name": "Flickr",
 	"url": "http://www.flickr.com/services/oauth",
 	"oauth1": {
 		"request_token": "/request_token",
@@ -32,6 +33,5 @@
 		"docs": "http://www.flickr.com/services/api/",
 		"apps": "http://www.flickr.com/services/apps/",
 		"provider": "http://www.flickr.com/"
-	},
-	"name": "Flickr"
+	}
 }

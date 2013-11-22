@@ -8,6 +8,12 @@
 			"query": {
 				"access_token": "{{token}}"
 			}
+		},
+		"revoke": {
+			"url": "/revokeoauth2",
+			"query": {
+				"access_token": "{{token}}"
+			}
 		}
 	},
 	"href": {

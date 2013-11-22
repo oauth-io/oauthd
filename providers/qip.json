@@ -2,19 +2,11 @@
 	"name": "QIP.ru",
 	"url": "https://openapi.qip.ru/oauth",
 	"oauth2": {
-		"authorize": {
-			"url": "https://store.qip.ru/dialog/oauth",
-			"query": {
-				"client_id": "{client_id}",
-				"response_type": "code",
-				"redirect_uri": "{{callback}}",
-				"scope": "{scope}"
-			}
-		},
+		"authorize": "https://store.qip.ru/dialog/oauth",
 		"access_token": "/authorize",
 		"request": {
 			"query": {
-				"oauth_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
 		},
 		"parameters": {
