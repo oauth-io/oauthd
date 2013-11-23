@@ -3,5 +3,8 @@
 /out.log
 /err.log
 /forever.log
-oauthd-opensource.sublime-project
-oauthd-opensource.sublime-workspace
+/plugins/server.*/*.js
+!/plugins/server.*/gruntConfig.js
+/lib/*.js
+.nodemonignore
+nohup.out
