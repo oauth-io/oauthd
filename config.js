@@ -29,8 +29,8 @@ module.exports = {
 	plugins: [
 		'server.statistics',
 		'server.admin.auth',
-		'server.admin',
-		'server.request'
+		'server.request',
+		'server.admin'
 	]
 }
 if (require('fs').existsSync(__dirname + '/config.local.js')) {
