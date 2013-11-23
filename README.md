@@ -26,7 +26,11 @@ In the cloned project dir, issue:
 
     npm install
 
-`npm` will install dependencies listed in `package.json`.
+`npm` will install dependencies listed in `package.json` and compile coffee files.
+
+If you have a problem during `npm install` you may want to restart the compilation step by doing:
+
+	grunt
 
 ## Using OAuth daemon
 
@@ -34,6 +38,12 @@ Run the redis server if it's not running yet.
 
 To start, stop or restart oauthd, just use
 `npm [start|stop|restart]` in oauthd folder.
+
+If you want to start oauthd in debug mode, you can also use
+
+	`grunt server`
+
+This will launch nodemon and watch/recompile modified files.
 
 By default, you can access it by [http://localhost:6284/admin](http://localhost:6284/admin).
 

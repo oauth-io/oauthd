@@ -9,7 +9,8 @@ module.exports = {
 	/* uncomment to use ssl
 	ssl: {
 		key: '/path/to/key',
-		certificate: '/path/to/crt'
+		certificate: '/path/to/crt',
+		ca: '/path/to/ca'
 	},
 	*/
 

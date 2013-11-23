@@ -137,7 +137,10 @@ hooks.config.push ->
 					oauth = "oauth1"
 					if Object.has conf.data, "oauth2"
 						oauth = "oauth2"
-					app.keysField[provider] = conf.data[oauth].parameters
+					app.keysField[provider] = conf.data[oauth].parameters || {}
+					for k,v of conf.data.parameters
+						app.keysField[provider][k] = v
+					return
 				), (error) ->
 					console.log "error", error
 
@@ -204,12 +207,15 @@ hooks.config.push ->
 				$scope.createKeyStep = 2
 				if Object.has data.data, "oauth2"
 					$scope.oauthType = "OAuth 2"
-					$scope.createKeyConf = data.data.oauth2.parameters
+					$scope.createKeyConf = data.data.oauth2.parameters || {}
 					oauth = "oauth2"
 				else
 					$scope.oauthType = "OAuth 1.0a"
-					$scope.createKeyConf = data.data.oauth1.parameters
+					$scope.createKeyConf = data.data.oauth1.parameters || {}
 					oauth = "oauth1"
+
+				for k,v of data.data.parameters
+					$scope.createKeyConf[k] = v
 
 				$http(
 					method: "GET"
@@ -222,7 +228,9 @@ hooks.config.push ->
 
 				if not a.keysField?
 					a.keysField = {}
-				a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters
+				a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters || {}
+				for k,v of data.data.parameters
+					a.keysField[$scope.createKeyProvider][k] = v
 
 			), (error) ->
 
@@ -351,7 +359,9 @@ hooks.config.push ->
 					oauth = "oauth1"
 					if Object.has conf.data, "oauth2"
 						oauth = "oauth2"
-					app.keysField[provider] = conf.data[oauth].parameters
+					app.keysField[provider] = conf.data[oauth].parameters || {}
+					for k,v of conf.data.parameters
+						app.keysField[provider][k] = v
 
 		$scope.keyClick = (provider, app) ->
 			if app.showKeys != provider

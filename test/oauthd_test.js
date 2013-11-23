@@ -450,8 +450,11 @@ exports.admin_api_providers = {
         data.data.url && data.data.oauth2 && data.data.name && data.data.href && data.data.provider,
         "api replied an error (data)");
       gb.facebook_url = data.data && data.data.url;
-      gb.facebook_auth = data.data && data.data.oauth2 && data.data.oauth2.authorize && data.data.oauth2.authorize.url;
+      gb.facebook_auth = data.data && data.data.oauth2 && data.data.oauth2.authorize;
+      gb.facebook_auth = gb.facebook_auth && (typeof data.data.oauth2.authorize == 'object' && data.data.oauth2.authorize.url || typeof data.data.oauth2.authorize == 'string' && data.data.oauth2.authorize)
       t.ok(gb.facebook_auth, "malformed authorize");
+      if (gb.facebook_auth[0] == '/')
+        gb.facebook_auth = gb.facebook_url + gb_facebook_auth;
       t.done();
     });
   }),
@@ -468,7 +471,7 @@ exports.admin_api_providers = {
         "api replied an error (data)");
       var facebook_auth = data.data && data.data.oauth2 && data.data.oauth2.authorize && data.data.oauth2.authorize.url;
       t.ok(facebook_auth, "malformed authorize");
-      t.equal(gb.facebook_url + gb.facebook_auth, facebook_auth, "authorize url does not match");
+      t.equal(gb.facebook_auth, facebook_auth, "authorize url does not match");
       t.done();
     });
   }),
@@ -484,17 +487,19 @@ exports.oauth_popup = {
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 302, 'invalid statusCode');
-      var state = response.headers['location'] && response.headers['location'].match(/%3Fstate%3D(.+)&/);
+      var state = response.headers['location'] && response.headers['location'].match(/&state=([^&$]+)(?:&|$)/);
       state = state && state[1];
       t.ok(state, 'could not find state');
       var query = querystring.stringify({
         view: 'touch',
+        client_id:"AAAAA",
+        response_type:"code",
+        redirect_uri:config.host_url + config.relbase,
         scope: "YY,ZZ",
-        redirect_uri:config.host_url + config.base + '/?state=' + state,
-        client_id:"AAAAA"
+        state: state
       })
       t.equal(response.headers['location'],
-        'https://graph.facebook.com/oauth/authorize?' + query,
+        'https://www.facebook.com/dialog/oauth?' + query,
         'wrong redirection url');
       t.done();
     });
@@ -508,17 +513,19 @@ exports.oauth_popup = {
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 302, 'invalid statusCode');
-      var state = response.headers['location'] && response.headers['location'].match(/%3Fstate%3D(.+)&/);
+      var state = response.headers['location'] && response.headers['location'].match(/&state=([^&$]+)(?:&|$)/);
       state = state && state[1];
       t.ok(state, 'could not find state');
       var query = querystring.stringify({
         view: 'touch',
+        client_id:"AAAAA",
+        response_type:"code",
+        redirect_uri:config.host_url + config.relbase,
         scope: "YY,ZZ",
-        redirect_uri:config.host_url + config.base + '/?state=' + state,
-        client_id:"AAAAA"
+        state: state
       })
       t.equal(response.headers['location'],
-        'https://graph.facebook.com/oauth/authorize?' + query,
+        'https://www.facebook.com/dialog/oauth?' + query,
         'wrong redirection url');
       gb.state = state;
       t.done();
