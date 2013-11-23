@@ -37,7 +37,6 @@ exports.setup = (callback) ->
 					id:camp_id
 					contacts:mails.join(',')
 			}, (e,r,body) =>
-				console.log(body, r);
 				return next new @check.Error 'request error' if r.statusCode != 200 && r.statusCode != 304
 				res.send @check.nullv
 				next()

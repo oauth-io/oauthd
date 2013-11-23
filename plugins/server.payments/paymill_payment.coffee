@@ -53,7 +53,6 @@ class PaymillPayment
 	getById : (@id, callback) ->
 
 		payment_prefix = "#{PaymillBase.payments_root_prefix}:#{@client.id}:#{@id}"
-		console.log "get infos for #{payment_prefix}"
 		db.redis.mget ["#{payment_prefix}:client",
 					"#{payment_prefix}:card_type"
 					"#{payment_prefix}:country",

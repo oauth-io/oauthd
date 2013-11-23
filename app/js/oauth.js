@@ -13,7 +13,6 @@
 			e.type = "text/javascript";
 			e.onload = function() {
 				buildOAuth(jQuery);
-				console.log(_preloadcalls);
 				for (var i in _preloadcalls)
 					window.OAuth[_preloadcalls[i].method].apply(window.OAuth, _preloadcalls[i].args);
 			};

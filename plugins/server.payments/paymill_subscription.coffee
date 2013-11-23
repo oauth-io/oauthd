@@ -69,22 +69,19 @@ class PaymillSubscription
 
 						payment_obj = @prepare()
 						@create payment_obj, (err, res) ->
-							console.log err if err
+							console.error err if err
 							return callback err if err
-							console.log "created fr"
 							return callback null, res
 				else
 
 					payment_obj = @prepare()
 					@create payment_obj, (err, res) ->
-						console.log err if err
+						console.error err if err
 						return callback err if err
-						console.log "created non fr"
 						return callback null, res
 
 		else # update (upgrade or downgrade)
 
-			console.log "update subscription..."
 			@isNew = false
 			db.redis.multi([
 
@@ -98,7 +95,6 @@ class PaymillSubscription
 
 				db.redis.get "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{res[0]}:created_at", (err, created_at) =>
 
-					console.log "get info from #{@client.id}..."
 					PaymillBase.paymill.clients.details @client.id, (err, client) =>
 
 						@old_subscription = client.data.subscription[client.data.subscription.length - 1]
@@ -123,7 +119,6 @@ class PaymillSubscription
 										# affect new subsription (VAT included)
 										@create subscription_obj, (err, res) ->
 											return callback err if err
-											console.log "created fr"
 											return callback null, res
 								else
 
@@ -131,13 +126,12 @@ class PaymillSubscription
 									# affect new subscription (without VAT)
 									@create subscription_obj, (err, res) ->
 										return callback err if err
-										console.log "created non fr"
 										return callback null, res
 
 	create : (sub_obj, callback) ->
 
 		PaymillBase.paymill.subscriptions.create sub_obj, (err, subscription) =>
-			console.log err if err
+			console.error err if err
 			return callback new check.Error err.response.error if err
 
 			subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{@client.user_id}:#{subscription.data.id}"
@@ -163,9 +157,6 @@ class PaymillSubscription
 				return callback err if err
 
 				if not @isNew
-
-					console.log "old subscription id #{@old_subscription.id}"
-					console.log "new subscription id #{subscription.data.id}"
 					PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
 
 						# subscription.data.created_at = 1372803758
@@ -177,9 +168,7 @@ class PaymillSubscription
 						newSubDate = new Date(subscription.data.created_at * 1000)
 						nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
 
-						console.log "NbDaysDiff before #{nbDaysDiff}"
 						nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
-						console.log "NbDaysDiff adjustement #{nbDaysDiff}"
 
 						oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
 						oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
@@ -209,16 +198,8 @@ class PaymillSubscription
 							if transaction.data[0].refunds == null
 								refund_total = refund_total * 100
 								PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
-									console.log err if err
+									console.error err if err
 									return callback err if err
-									console.log "#{refund_total} refunded..."
-									console.log "refunded id #{refund.data.id}"
-							else
-								console.log "old transaction #{transaction_id} already refunded !"
-						else
-							console.log "no refund at $0 !"
-				else
-					console.log "new sub no refund!"
 
 				Payment.addOrder @client.user_id, subscription, (err, res) =>
 					return callback err if err
@@ -237,7 +218,6 @@ class PaymillSubscription
 				PaymillBase.paymill.subscriptions.details current_subscription, (err, subscription_details) =>
 					return callback err if err
 
-					console.log "old subscription id #{subscription_details.data.id}"
 					PaymillBase.paymill.transactions.list description:subscription_details.data.id, (err, transaction) =>
 
 						oldSubDate1 = new Date(transaction.data[transaction.data.length - 1].created_at * 1000)
@@ -245,9 +225,7 @@ class PaymillSubscription
 						newSubDate = new Date()
 						nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
 
-						console.log nbDaysDiff
 						nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
-						console.log nbDaysDiff
 
 						oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
 						oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
@@ -263,16 +241,12 @@ class PaymillSubscription
 							if transaction.data[0].refunds == null
 								refund_total = refund_total * 100
 								PaymillBase.paymill.refunds.refund transaction_id, refund_total, '', (err, refund) =>
-									console.log err if err
+									console.error err if err
 									return callback err if err
-									console.log "#{refund_total} refunded..."
-									console.log "refunded id #{refund.data.id}"
 									return callback null
 							else
-								console.log "old transaction #{transaction_id} already refunded !"
 								return callback new check.Error "Already refunded"
 						else
-							console.log "no refund at $0 !"
 							return callback new check.Error "Can't refund at $0"
 			else
 				return callback new check.Error "No subscription"

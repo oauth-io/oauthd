@@ -171,9 +171,7 @@ exports.addCart = (data, client, callback) ->
 							newSubDate = new Date()
 							nbDaysDiff = Math.floor( ((newSubDate - oldSubDate1) / (1000 * 60 * 60 * 24)) * 100) / 100
 
-							console.log nbDaysDiff
 							nbDaysDiff = 1 if nbDaysDiff >= 0.06 and nbDaysDiff <= 0.99
-							console.log nbDaysDiff
 
 							oldNextCapture = new Date(oldSubDate2.getYear(), oldSubDate2.getMonth(), oldSubDate2.getDate())
 							oldLastCapture = new Date(oldSubDate1.getYear(), oldSubDate1.getMonth(), oldSubDate1.getDate())
@@ -199,7 +197,6 @@ exports.addCart = (data, client, callback) ->
 								return callback err if err
 								return callback null
 			else
-				console.log "first sub"
 				db.redis.mset [
 					"#{prefix_cart}:plan_id", plan.id,
 					"#{prefix_cart}:plan_name", plan.name,
@@ -283,13 +280,10 @@ exports.process = (data, client, callback) ->
 		# create Paymill user
 		(cb) =>
 			db.redis.hget ["#{PaymillBase.subscriptions_root_prefix}", client_id], (err, current_id) =>
-				console.log err if err
+				console.error err if err
 				return cb err if err
 
 				if not current_id?
-
-					console.log "create user"
-
 					isNewSubscription = true
 					@pm_client = new PaymillClient
 					@pm_client.user_id = client_id
@@ -298,9 +292,6 @@ exports.process = (data, client, callback) ->
 						return cb err if err
 						cb()
 				else
-
-					console.log "client exists with id #{current_id}"
-
 					isNewSubscription = false
 					@pm_client = new PaymillClient current_id
 					@pm_client.user_id = client_id
@@ -312,8 +303,6 @@ exports.process = (data, client, callback) ->
 
 		# create payment
 		(cb) =>
-
-			console.log "create payment"
 			@pm_payment = new PaymillPayment
 			@pm_payment.token = data.token
 			@pm_payment.client = @pm_client
@@ -339,10 +328,6 @@ exports.process = (data, client, callback) ->
 
 		# create subscription
 		(cb) =>
-
-			console.log "subscription..."
-			console.log @pm_subscription
-
 			if data.offer # it's a subscription to an offer
 
 				@pm_subscription = new PaymillSubscription if not @pm_subscription?
@@ -395,8 +380,6 @@ exports.process = (data, client, callback) ->
 						mailer.send (err, result) ->
 							return callback err if err
 							cb()
-
-						console.log "mail..."
 
 	], (err, result) =>
 		return callback err if err

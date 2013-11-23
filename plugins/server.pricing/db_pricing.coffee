@@ -34,7 +34,7 @@ exports.createOffer = (data, callback) ->
 					interval: data.interval
 					name: name
 				,(err, offer) ->
-					console.log err if err
+					console.error err if err
 					return callback err if err
 
 					offer.data.name = name
@@ -265,7 +265,6 @@ exports.getPublicOffers = (clientId, callback) ->
 				client.user_id = clientId.id
 				client.getCurrentPlan (err, current_plan) ->
 					return callback err if err
-					console.log current_plan
 					return callback null, offers: offers, current_plan: current_plan
 			else
 				return callback null, offers: offers
@@ -300,7 +299,6 @@ exports.unsubscribe = (client, callback) ->
 		subscription.id = res[0]
 		subscription.user_id = client.id
 		subscription.refund (error, result) ->
-			console.log error, result
 			PaymillBase.paymill.subscriptions.remove res[0], (err, subscription_updated) ->
 
 				subscription_prefix = "#{PaymillBase.subscriptions_root_prefix}:#{client.id}:#{res[0]}"

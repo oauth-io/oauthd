@@ -97,7 +97,6 @@ exports.updateBilling = (req, callback) ->
 				return callback null
 
 exports.cancelUpdateEmail = (req, callback) ->
-	console.log req.user
 	user_id = req.user.id
 	prefix = "u:#{user_id}:"
 	db.redis.mset [ prefix + 'mail_changed', ''], (err, res) =>
@@ -118,7 +117,6 @@ exports.updateEmail = (req, callback) ->
 			return callback new check.Error "#{email} already exists" if id
 
 			validation_key = db.generateUid()
-			console.log "key", validation_key
 			db.redis.mset [
 				prefix + 'mail_changed', email,
 				prefix + 'key', validation_key
