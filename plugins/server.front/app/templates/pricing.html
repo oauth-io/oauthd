@@ -1,122 +1,125 @@
 <style>
-	.list-group-item {font-size: 1.3em;}
-	.list-group-item .col-sm-2 { text-align: center; }
-	#pricing .col { padding-left: 0; padding-right: 0; margin-right: -1px;}
+.action, .action:hover, .action:hover:visited
+{
+	font-size:2em;
+	line-height:0.5em;
+	color:#ffffff;
+	cursor: pointer;
+	text-decoration: none;
+}
+table.table thead th.plan { width: 16%; position: relative; border-left: 2px solid #EEE; border-top: 2px solid #EEE !important; text-align: center; }
+table.table thead th.plan.first {}
+table.table thead th.plan.last { border-right: 2px solid #EEE;}
+table.table tbody tr { border-left: 2px solid #EEE; border-right: 2px solid #EEE;}
+table.table tbody tr td {line-height: 2.428571; padding: 14px;}
+table.table tbody td:not(.plan-label) { text-align: center;}
+table.table tbody { border-bottom: 2px solid #EEE;}
+
 </style>
+
 <div class="container" id="pricing">
-	<div style="background-color: white; padding: 30px 15px">
+	<div class="row" style="background-color: white; padding: 30px 15px">
 		<h1 style="text-align: center; margin-bottom: 50px; font-size: 72px">Pricing</h1>
-		<div style="padding: 10px 30px 10px 15px; margin-bottom: -1px;">
+		<table class="table">
+			<thead>
+				<th></th>
+				<th class="plan first">
+					<img src="/img/your_plan.png" style="left:0px; top:0px;position:absolute;" ng-show="!current_plan && UserService.isLogin()"/>
+					<h3>Bootstrap</h3>
+					<h1>0$</h1>
+					<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
+					<div ng-show="UserService.isLogin()" style="height:43px;"></div>
+					</p>
+				</th>
+				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
+					<img src="/img/your_plan.png" style="left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.name"/>
+					<h3>{{plan.name|capitalize}}</h3>
+					<h1>{{plan.amount/100}}$</h1>
+					<p style="margin: 0 10px 15px">
+						<button ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
+						<button ng-show="plan.name == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
+						<img src="/img/ajax-loader-pricing.gif" id="loader_{{plan.id}}" style="display:none;"/>
+					</p>
+				</th>
+				<th class="plan last">
+					<h3>Need more?</h3>
+					<h1>-</h1>
+					<p style="margin: 0 10px 15px">
+						<a href="/contact-us" ng-click="subscribe(plan)" class="btn btn-success btn-block">Contact us</a>
+					</p>
+				</th>
+			</thead>
+			<tbody>
+				<tr>
+					<td class="plan-label">Montly connections</td>
+					<td>5 000</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection|readableNumber}}</td>
+					<td>-</td>
+				</tr>
+				<tr>
+					<td class="plan-label">Applications</td>
+					<td>2</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbApp}}</td>
+					<td>-</td>
+				</tr>
+				<tr>
+					<td class="plan-label">OAuth provider</td>
+					<td>5</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbProvider}}</td>
+					<td>-</td>
+				</tr>
+				<tr>
+					<td class="plan-label">Support response delay</td>
+					<td>1 week</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.responseDelay}}</td>
+					<td>-</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<p style="font-size: 1.5em; margin-bottom: 50px;">For a commercial licence of <a href="https://github.com/oauth-io/oauthd">oauthd</a>, the opensource daemon of OAuth.io under AGPL license (<a href="https://github.com/oauth-io/oauthd">github.com/oauth-io/oauthd</a>), contact us at <a href="mailto:team@oauth.io">team@oauth.io</a></p>
+	</div>
+	<div class="row" style="background-color: #cbe7f9">
+		<p style="text-align: center;"><img src="/img/anyquestions.png" style="position: relative; top: -55px"></p>
+		<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">The answer you need</h1>
+		<div class="container" style="margin-bottom: 80px">
 			<div class="row">
-				<div class="col col-sm-4"></div>
-				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd; border-top-left-radius: 5px">
-						<h3>Bootstrap</h3>
-						<h1>$0<span style="font-size: 0.5em">/month</span></h1>
-						<p style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
-					</div>
+				<div class="col col-lg-5 col-offset-1">
+					<h3>How to decide which offer to take?</h3>
+					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, labore, accusantium, molestiae, eaque autem odit possimus quia id sequi laudantium nulla reiciendis sunt quo optio qui modi quisquam voluptatibus nostrum.</p>
 				</div>
-				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd;">
-						<h3>Startup</h3>
-						<h1>$19<span style="font-size: 0.5em">/month</span></h1>
-						<p style="margin: 0 10px 15px"><button disabled="disabled" class="btn btn-primary btn-block">Purchase</button></p>
-					</div>
+				<div class="col col-lg-5">
+					<h3>What if I go over my users limit?</h3>
+					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, laudantium, hic, itaque, aliquid maxime impedit numquam eos debitis natus totam esse dolores commodi delectus tempore sapiente fugiat dolor quaerat quod.</p>
 				</div>
-				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd;">
-						<h3>Growth</h3>
-						<h1>$49<span style="font-size: 0.5em">/month</span></h1>
-						<p style="margin: 0 10px 15px"><button disabled="disabled" class="btn btn-primary btn-block">Purchase</button></p>
-					</div>
+			</div>
+			<div class="row">
+				<div class="col col-lg-5 col-offset-1">
+					<h3>What does justify these prices?</h3>
+					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, quas, aliquid vitae omnis dicta fuga molestiae veritatis laborum ea nesciunt deserunt eius. Nulla, cum, illo nisi numquam culpa eos esse.</p>
 				</div>
-				<div class="col col-sm-2" style="text-align: center">
-					<div style="border: 1px solid #dddddd; border-top-right-radius: 5px">
-						<h3>Scalability</h3>
-						<h1>$99</h1>
-						<p style="margin: 0 10px 15px"><button disabled="disabled" class="btn btn-primary btn-block">Purchase</button></p>
-					</div>
+				<div class="col col-lg-5">
+					<h3>Am I assured that everything will go well?</h3>
+					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, praesentium itaque voluptatum placeat mollitia illo optio architecto veniam ducimus rem pariatur quam dolores sed temporibus qui voluptatibus ipsam deleniti perspiciatis.</p>
 				</div>
 			</div>
 		</div>
-		<ul class="list-group" style="margin-top: -11px">
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col col-sm-4">Monthly connexion</div>
-					<div class="col col-sm-2">5 000</div>
-					<div class="col col-sm-2">50 000</div>
-					<div class="col col-sm-2">500 000</div>
-					<div class="col col-sm-2">5 000 000</div>
-				</div>
-		  	</li>
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col col-sm-4">Application</div>
-					<div class="col col-sm-2">2</div>
-					<div class="col col-sm-2">5</div>
-					<div class="col col-sm-2">unlimited</div>
-					<div class="col col-sm-2">unlimited</div>
-				</div>
-		  	</li>
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col col-sm-4">OAuth provider</div>
-					<div class="col col-sm-2">5</div>
-					<div class="col col-sm-2">10</div>
-					<div class="col col-sm-2">20</div>
-					<div class="col col-sm-2">unlimited</div>
-				</div>
-		  	</li>
-			<li class="list-group-item">
-				<div class="row">
-					<div class="col col-sm-4">Support response delay</div>
-					<div class="col col-sm-2">1 week</div>
-					<div class="col col-sm-2">48 hours</div>
-					<div class="col col-sm-2">24 hours</div>
-					<div class="col col-sm-2">24 hours</div>
-				</div>
-		  	</li>
-		</ul>
-		<div class="row"><br/>
-			<div class="col col12">
-				<div class="row" style="position: relative; top: -25px">
-					<div class="col col-sm-4"></div>
-					<div class="col col-sm-8">
-						<div style="text-align: center">
-							<strong>If you need MORE, <a href="/contact-us">contact us</a></strong>
-						</div>
-					</div>
-				</div><br />
-				<div>
-					During the <strong>beta</strong>, OAuth.io won't charge any uses. Read the <a href="#/faq">FAQ</a> for more information.
-				</div><br />
-				<div>
-					For a commercial licence of <a href="https://github.com/oauth-io/oauthd">oauthd</a>, the opensource daemon of OAuth.io under AGPL license (<a href="https://github.com/oauth-io/oauthd">github.com/oauth-io/oauthd</a>), contact us at <a href="mailto:team@oauth.io">team@oauth.io</a>
-				</div>
-			</div>
-		</div><br/><br /><br /><br /><br />
 	</div>
-	<div class="row">
-		<div class="col col12">
-			<div class="container">
-				<div class="row" style="background-color: #0074a2; color: white">
-					<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px"></p>
-					<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">Any question? Contact us</h1>
-					<div class="container" style="margin-top: 55px; margin-bottom: 40px">
-						<div class="row">
-							<div class="col col-sm-5" style="text-align: right">
-								<img src="/img/team.png" style="height: 250px">
-							</div>
+	<div class="row" style="background-color: #0074a2; color: white">
+		<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px"></p>
+		<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">Any question? Contact us</h1>
+		<div class="container" style="margin-top: 55px; margin-bottom: 40px">
+			<div class="row">
+				<div class="col col-sm-5" style="text-align: right">
+					<img src="/img/team.png" style="height: 250px">
+				</div>
 
-							<div class="col col-sm-6 col-offset-1">
-								<p style="font-size: 2.0em">Still have some question?</p>
-								<p style="font-size: 2.0em">Our team is always up to answer you.</p>
-								<br />
-								<p style="font-size: 2.0em"><strong>Help & support</strong></p>
-								<p style="font-size: 2.0em"><a href="mailto:support@oauth.io" style="color: white;">support@oauth.io</a></p>
-							</div>
-						</div>
-					</div>
+				<div class="col col-sm-6 col-offset-1">
+					<p style="font-size: 2.0em">Still have some question?</p>
+					<p style="font-size: 2.0em">Our team is always up to answer you.</p>
+					<br />
+					<p style="font-size: 2.0em"><strong>Help & support</strong></p>
+					<p style="font-size: 2.0em"><a href="mailto:support@oauth.io" style="color: white;">support@oauth.io</a></p>
 				</div>
 			</div>
 		</div>

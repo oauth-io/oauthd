@@ -51,11 +51,44 @@ hooks.config = ->
 				api "adm/wishlist/#{name}", success, error, method:'delete'
 
 			setProviderStatus: (name, status, success, error) ->
-				api "adm/wishlist/#{name}/status/#{status}", success, error, method:'post'
+				api "adm/wishlist/setStatus", success, error,
+				method:'post'
+				data:
+					provider: name
+					status: status
+
+			createPaymentOffer: (amount, name, currency, interval, nbConnection, status, nbApp, nbProvider, responseDelay, success, error) ->
+				api "adm/plan/create", success, error,
+				method:'post'
+				data:
+					name: name
+					amount: amount
+					currency: currency
+					interval: interval
+					nbConnection: nbConnection
+					status: status
+					nbApp: nbApp
+					nbProvider: nbProvider
+					responseDelay: responseDelay
+
+			getOffersList: (success, error) ->
+				api 'adm/plan', success, error
+
+			removeOffer: (name, success, error) ->
+				api "adm/plan/#{name}", success, error, method:'delete'
+
+			updatePaymentOffer: (amount, name, currency, interval, success, error) ->
+				api "adm/plan/update/#{amount}/#{name}/#{currency}/#{interval}", success, error, method:'post'
+
+			changeStatus: (name, currentStatus, success, error) ->
+				api "adm/plan/update", success, error,
+				method:'post'
+				data:
+					name: name
+					currentStatus: currentStatus
 
 			resetAllSecrets: (success, error) ->
 				api "adm/secrets/reset", success, error
-
 		}
 
 	#################################
@@ -404,3 +437,101 @@ hooks.config = ->
 					$scope.wishListProviders[i].status = provider.status
 
 
+		#
+		# Pricing
+		#
+
+		$scope.errors = ''
+		$(".create-offer-errors").hide();
+		$("#create-offer-form").hide();
+		$("#CreateForm").hide();
+		$("#UpdateForm").hide();
+
+		$scope.intervals = []
+		i = 1
+
+		while i <= 31
+			$scope.intervals.push(i + " DAY")
+			i++
+		i = 1
+		while i <= 12
+			$scope.intervals.push(i + " MONTH")
+			i++
+		$scope.intervals.push("1 YEAR")
+		$scope.interval =  $scope.intervals[31]
+
+
+		$scope.offersList = null
+		AdmService.getOffersList (success) ->
+			$scope.offersList = success.data.offers
+
+		$scope.showCreateForm = ()->
+			$("#create-offer-form").show();
+			$("#createFormButton").hide();
+			$("#CreateForm").show();
+
+		$scope.createOffer = (intervals)->
+			$("#CreateForm").hide();
+			status = "public"
+			if ($('.status').is(':checked'))
+				status = "private";
+
+			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbConnection").val(), status, $(".nbApp").val(), $(".nbProvider").val(), $(".responseDelay").val(), (success) ->
+
+				for plan in success.data
+					$scope.offersList.push(plan)
+
+				$("#create-offer-form").hide();
+				$("#createFormButton").show();
+				$("#CreateForm").hide();
+				$scope.errors = ""
+			, (error) ->
+				console.log(error);
+				$(".errors").show();
+				$scope.errors = error
+				$("#CreateForm").show();
+
+		$scope.updateOfferButton = (offer)->
+			$("#create-offer-form").show();
+			$("#createFormButton").hide();
+			$("#UpdateForm").show();
+			$(".amount").val(offer.amount);
+			$(".name").val(offer.name);
+			$(".currency").val(offer.currency);
+			$(".interval").val(offer.interval);
+
+		$scope.updateOffer = ()->
+			AdmService.updatePaymentOffer $(".amount").val(), $(".name").val(), $(".currency").val(), $(".interval").val(), (success) ->
+				console.log( "SUCCESS  : " + success.name)
+				$("#create-offer-form").hide();
+				$("#createFormButton").show();
+				$("#UpdateForm").hide();
+			, (error) ->
+				console.log(error);
+				$(".errors").show();
+				$scope.errors = error
+
+
+		$scope.removeOffer = (offer)->
+			AdmService.removeOffer offer.name, (success) ->
+				for offer of success
+					index = $scope.offersList.indexOf(offer)
+					$scope.offersList.splice(index, 1)
+
+			, (error) ->
+				console.log(error);
+				$(".errors").show();
+				$scope.errors = error
+
+		$scope.changeStatus = (offer)->
+			AdmService.changeStatus offer.name, offer.status, (success) ->
+				newStatus = "private"
+				if offer.status == "private"
+					newStatus = "public"
+				for i of $scope.offersList
+					if $scope.offersList[i].name == offer.name
+						$scope.offersList[i].status = newStatus
+			, (error) ->
+				console.log(error);
+				$(".errors").show();
+				$scope.errors = error

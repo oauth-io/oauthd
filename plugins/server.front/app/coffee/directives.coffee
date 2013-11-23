@@ -90,3 +90,21 @@ app.directive 'lightbox', ($timeout) ->
 					if $scope.lightbox.show
 						$(tElement).modal('hide').find('.modal').hide()
 						$('.modal-backdrop').remove()
+
+
+# app.directive 'paymentform', () ->
+# 	def =
+# 		restrict: 'E'
+# 		scope: true
+# 		transclude: true
+# 		templateUrl: '../templates/partials/payment-form.html'
+
+
+# app.directive 'addressform', () ->
+# 	def =
+# 		restrict: 'E'
+# 		scope: true
+# 		transclude: true
+# 		relace: true
+# 		templateUrl: '../templates/partials/address-form.html'
+# 		link: ($scope, tElement, tAttrs, Ctrl) ->

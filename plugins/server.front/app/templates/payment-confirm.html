@@ -1,0 +1,182 @@
+<script type="text/javascript">
+var PAYMILL_PUBLIC_KEY = '235807894705702ff1aac623959c55cb';
+</script>
+<script type="text/javascript" src="https://bridge.paymill.com/"></script>
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.no-responsive.no-icons.min.css" />
+
+<style>
+
+.field *
+{
+  font-size: 1.5em;
+}
+
+.field
+{
+  float: left;
+  margin-right: 5px;
+}
+
+.heading
+{
+  font-size:2em;
+  color:#0074a2;
+  border-bottom: 1px solid #cbe7f9;
+  margin-right: 10px;
+  padding-bottom: 10px;
+  overflow:hidden;
+  clear:both;
+}
+
+p.text
+{
+  font-size:1.5em;
+}
+
+div.heading
+{
+  margin-bottom: 10px;
+}
+
+.order-line
+{
+  position:relative;
+  float:right;
+  font-size:1.5em;
+  right:5px;
+}
+
+.order-line #vat
+{
+  position:relative;
+  float:right;
+  font-size:0.8em;
+  right:15px;
+}
+
+.break
+{
+  clear:both;
+}
+</style>
+
+
+<div class="container">
+
+  <div style="background-color:#ffffff;padding:40px;text-align:center;">
+
+  </div>
+
+  <div style="background-color: #cbe7f9;padding:20px 0px 30px 0px;">
+    <div class="container" style="text-align:center;">
+      <p style="font-size:2.1em">You chose the <b style="font-size:1.2em">{{cart.plan_name}} pack</b> for <span style="font-size:1.2em">${{cart.unit_price}} / month</p>
+      <div class="row">
+        <p class="offset4" style="position:relative;font-size:1.2em;top:0px;left:7px;">(plus VAT if applicable)</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="background-color:#ffffff;padding:20px;">
+
+    <div style="width:600px; margin: 0 auto;">
+      <div class="alert alert-success" ng-show="cart.refund_total > 0">
+        We will refund <b>${{cart.refund_total}}</b> of your old plan !
+      </div>
+      <div style="margin-bottom:30px;overflow:hidden">
+        <div class="heading">
+          <p class="field">Your subscription</p>
+          <p class="field" style="float:right;">Total</p>
+        </div>
+
+        <div class="break"></div>
+        <div ng-show="cart.refund_total > 0">
+          <p class="field" style="font-size:1.5em;" >Refund of your old plan</p>
+          <p class="field order-line">- ${{cart.refund_total}}</p>
+          <br /><hr style="border-style: dotted;" />
+          <div class="break"></div>
+        </div>
+        <p class="field" style="font-size:1.5em;">{{cart.plan_name|capitalize}} pack</p>
+        <p class="field order-line">${{cart.unit_price}}</p>
+        <div class="break"></div>
+        <p class="field order-line" ng-show="cart.VAT != 0">${{cart.VAT}}</p>
+        <p class="field order-line" ng-show="cart.VAT_percent"><b id="vat">VAT ({{cart.VAT_percent}}%)</b></p>
+        <div class="break"></div>
+        <p class="field order-line" style="color:#0074a2;">${{cart.total}}</p>
+      </div>
+
+      <div class="break"></div>
+
+      <div style="margin-bottom:30px;overflow:hidden">
+        <p class="heading">Billing information <a href="/payment/customer">(edit)</a></p>
+        <p class="text" ng-show="billing.type == 'company'">Company {{billing.company}}</p>
+        <p class="text">{{billing.name}}<p>
+        <p class="text">{{billing.addr_one}}<p>
+        <p class="text">{{billing.addr_second}}<p>
+        <p class="text">{{billing.zipcode}}, {{billing.city}}<p>
+        <p class="text">{{billing.country}}<p>
+      </div>
+
+
+      <div> <!-- <credit card info> -->
+        <div class="alert alert-danger" ng-show="error.state">
+          {{error.message}}
+        </div>
+
+
+       <font color="red" >* fields are required </font></br></br>
+        <p style="font-size:2em;color:#0074a2;border-bottom: 1px solid #cbe7f9;padding-bottom:10px;">Credit card information <span style="font-size:0.8em;">(We do not store any data about your credit card)</span></p>
+
+        <div style="margin-bottom: 20px;">
+          <img src="/img/mastercard.png" />
+          <img src="/img/visa.png" />
+          <img src="/img/american-express.png" />
+        </div>
+
+        <p class="payment-errors alert-error span3" style="display:none;"></p>
+
+        <div id="payment-form-cc">
+          <div class="controls controls-row">
+            <p class="card-number-label" style="font-size:1.5em;">Credit card number: <font color="red" >*</font></p>
+            <input class="card-number span4" type="text" size="20" value="4111111111111111" id="card-number" ng-required="true"/>
+          </div>
+
+          <div class="controls controls-row row">
+
+            <div class="span3">
+              <p clasd="card-expiry-label" style="font-size:1.5em;">Expiration date: <font color="red" >*</font></p>
+              <input class="card-expiry-month span1" type="text" size="2" value="12" id="card-expiry-month" ng-required="true"/>
+              <span style="float:left;position:relative;font-size:2em;top:10px;margin:0 5px 0 5px;">/</span>
+              <input class="card-expiry-year span1" type="text" size="4" value="2015" id="card-expiry-year" ng-required="true"/>
+            </div>
+
+            <div class="span1">
+              <p class="card-cvc-label" style="font-size:1.5em;">CVC: <font color="red" >*</font></p>
+              <input class="card-cvc span1" type="text" size="4" value="111" id="card-cvc" ng-required="true"/>
+            </div>
+
+          </div>
+        </div>
+      </div> <!-- </credit card info>  -->
+    </div>
+  </div>
+  <div style="background-color: #0074a2;padding:50px;">
+    <div class="container" style="text-align:center;">
+
+      <div class="row">
+        <p style="font-size:3em;color:#ffffff;">Subscribe me to the {{cart.plan_name}} pack
+          <a ng-click="process_order()" id="bt-payment" style="border: 2px solid #ffffff;border-radius:4px;background-color:#cbe7f9; width:300px;padding:10px;margin:10px;color:black;text-decoration:none;font-size:0.8em;cursor:pointer;">Subscribe</a>
+          <img src="/img/ajax-loader-payment.gif" id="waiting-payment" style="display:none;" />
+        </p>
+      </div>
+
+      <div class="row">
+        <p class="offset5" style="position:relative;font-size:2em;color:#ffffff;top:30px;left:7px;">${{cart.total}} / month</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div style="background-color:#ffffff;padding:20px;text-align:center;">
+    <img src="/img/paymill-logo.png" width="96"/>
+  </div>

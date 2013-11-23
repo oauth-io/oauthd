@@ -80,7 +80,7 @@ exports.setup = (callback) ->
 			directory: __dirname + '/app'
 			maxAge: 1
 
-		@server.get /^\/[0-9]{3,3}/, addExtension, bootPathCache(path:'/errors'), restify.serveStatic
+		@server.get /^\/50[2-3]/, addExtension, bootPathCache(path:'/errors'), restify.serveStatic
 			directory: __dirname + '/errors'
 			maxAge: 1 # no cache on errors !
 

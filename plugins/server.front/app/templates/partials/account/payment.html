@@ -1,0 +1,28 @@
+<div style="width:100%; text-align:center;">
+	<img src="/img/ajax-loader-pricing.gif" id="loader_subscriptions_list" style="margin-top:60px;"/>
+</div>
+
+<div id="subscriptions_content">
+	<p ng-show='subscriptions.length == 0'>
+		Not yet subscriptions !
+	</p>
+	<table class="table" ng-show='subscriptions.length > 0'>
+		<tr>
+			<th>Plan</th>
+			<th>Amount</th>
+			<th>Created at</th>
+			<th>Canceled at</th>
+			<th>Card Type</th>
+			<th>Last 4 card number</th>
+		</tr>
+		<tr ng-repeat="subscription in subscriptions | orderBy:'-created_at'">
+			<td>{{subscription.name|capitalize}}</td>
+			<td>${{subscription.amount}}</td>
+			<td>{{subscription.created_at|date:'MMMM d, yyyy HH:mm:ss'}}</td>
+			<td ng-show="subscription.canceled_at > 0">{{subscription.canceled_at|date:'MMMM d, yyyy HH:mm:ss'}}</td>
+			<td ng-show="subscription.canceled_at == 0"></td>
+			<td>{{subscription.card_type|capitalize}}</td>
+			<td>{{subscription.last4}}</td>
+		</tr>
+	</table>
+</div>

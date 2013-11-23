@@ -32,3 +32,7 @@ exports.generateHash = (data) ->
 	shasum = crypto.createHash 'sha1'
 	shasum.update config.staticsalt + data
 	return shasum.digest 'base64'
+
+exports.emptyStrIfNull = (val) ->
+	return new String("") if not val? or val.length == 0
+	return val

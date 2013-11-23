@@ -27,3 +27,9 @@ app.filter 'startFrom', ->
             start = +start
             return input.slice(start)
         return []
+
+app.filter 'readableNumber', ->
+	return (input, scope) ->
+		if input
+			return parseInt(input).format(0, ' ')
+		return "0"

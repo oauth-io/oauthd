@@ -48,6 +48,22 @@ app.config([
 			templateUrl: '/templates/pricing.html'
 			controller: 'PricingCtrl'
 
+		$routeProvider.when '/pricing/unsubscribe',
+			templateUrl: '/templates/unsubscribe-confirm.html'
+			controller: 'PricingCtrl'
+
+		$routeProvider.when '/payment/customer',
+			templateUrl: '/templates/payment.html'
+			controller: 'PaymentCtrl'
+
+		$routeProvider.when '/payment/confirm',
+			templateUrl: '/templates/payment-confirm.html'
+			controller: 'PaymentCtrl'
+
+		$routeProvider.when '/payment/:name/success',
+			templateUrl: '/templates/successpayment.html'
+			controller: 'PaymentCtrl'
+
 		$routeProvider.when '/editor',
 			templateUrl: '/templates/editor.html'
 			controller: 'EditorCtrl'
@@ -75,6 +91,10 @@ app.config([
 		$routeProvider.when '/signup',
 			templateUrl: '/templates/signup.html'
 			controller: 'UserFormCtrl'
+
+		$routeProvider.when '/account',
+			templateUrl: '/templates/user-profile.html'
+			controller: 'UserProfileCtrl'
 
 		$routeProvider.when '/logout',
 			templateUrl: '/templates/landing.html'

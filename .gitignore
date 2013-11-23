@@ -9,6 +9,6 @@
 .nodemonignore
 nohup.out
 config.local.js
-*.sublime-*
-plugins/server.front/app/templates/pricing.bak.html
 plugins/server.front/npm-debug.log
+plugins/server.front/app/templates/pricing.bak.html
+*.sublime-*

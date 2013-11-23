@@ -16,6 +16,7 @@ $('#navTab a').click(function (e) {
 			<li ng-class="{active: tabShow == 'stats'}"><a ng-click="tabShow = 'stats'">Stats</a></li>
 			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
 			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
+			<li ng-class="{active: tabShow == 'payment'}"><a ng-click="tabShow = 'payment'">Payment</a></li>
 		</ul>
 	</div>
 
@@ -185,6 +186,138 @@ $('#navTab a').click(function (e) {
 			</div>
 		</div>
 
+		<!-- payment -->
+		<div ng-show="tabShow == 'payment'">
+
+			<div class="navbar">
+				<ul class="nav nav-tabs" id="payment-navTab">
+					<li ng-class="{active: pay_tabShow == 'plans'}">
+						<a ng-click="pay_tabShow = 'plans'">Plans</a>
+					</li>
+					<li ng-class="{active: pay_tabShow == 'subscriptions'}">
+						<a ng-click="pay_tabShow = 'subscriptions'">Subscriptions</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="tab-content">
+				<div ng-show="pay_tabShow == 'plans'">
+					<div class="col col-lg-12">
+						<div class="alert alert-error" id="errors" ng-show="info.status">{{error}}</div>
+					</div>
+
+					<table class="table table-striped">
+						<tr>
+							<th>Name</th>
+							<th>Amount</th>
+							<th>Interval</th>
+							<th>Status</th>
+							<th>Connection's number</th>
+							<th colspan="2"></th>
+						</tr>
+						<tr ng-repeat="offer in offersList | orderBy:'+name'" ng-model="offers">
+							<td ng-show="!offer.parent">{{offer.name}}</td>
+							<td ng-show="offer.parent">|__<span style="padding-left: 15px;">{{offer.name}}</span></td>
+							<td>{{offer.amount / 100}}</td>
+							<td>{{offer.interval}}</td>
+							<td>{{offer.status}}</td>
+							<td>{{offer.nbConnection}}</td>
+							<td>
+								<button ng-show="offer.status != 'public' && !offer.parent" class="btn btn-small btn-success" ng-click="changeStatus(offer)">Change to public</button>
+								<button ng-show="offer.status != 'private' && !offer.parent" class="btn btn-small btn-warning" ng-click="changeStatus(offer)">Change to private</button>
+							</td>
+							<td>
+								<button ng-click="removeOffer(offer)" class="btn btn-danger btn-small" ng-show="!offer.parent">remove</button>
+							</td>
+						</tr>
+					</table>
+
+					<div id="createFormButton">
+						<button class="btn btn-small btn-primary" ng-click="showCreateForm()">Create a new Offer</button>
+					</div>
+
+					<div id="create-offer-form" style="width:500px;">
+
+						<div class="controls controls-row">
+							<div class="span2">
+								<label class="label">Name</label>
+								<input class="name span2" type="text" size="10" value="Offer"/>
+							</div>
+
+							<div class="controls controls-row">
+								<div class="span2">
+									<label class="label">Amount</label>
+								  <!--
+								   <input class="amount span2" type="number" size="10" value="4200"/> -->
+								<input class="amount span2" type="number" name="price" pattern="[0-9]+([\.|,][0-9]+)?" step="0.01" title="This should be a number with up to 2 decimal places." size="10" value="79.99">
+
+								</div>
+							</div>
+
+							<div class="controls controls-row">
+								<div class="span3">
+									<label class="label">Currency ( <a href="http://en.wikipedia.org/wiki/ISO_4217">ISO 4217</a> formatted currency code  )</label>
+									<input class="currency span3" type="text" size="4" value="EUR"/>
+								</div>
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Interval (Defining how often the client should be charged. Format: number DAY|WEEK|MONTH|YEAR Example: 2 DAY) </label>
+							   <!--  <input class="interval span1" type="text" size="10" value="1 MONTH"/> -->
+								<select class="interval span1" name="interval" ng-model="interval" ng-selected="interval" ng-options="interval for interval in intervals">
+								</select>
+
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Connection number ( * = unlimited ) </label>
+								<input class="nbConnection span1" type="text" size="10" value="1000"/>
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Number of application ( * = unlimited )</label>
+								<input class="nbApp span1" type="text" size="10" value="1" name="nbApp" />
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Number of provider ( * = unlimited )</label>
+								<input class="nbProvider span1" type="text" size="10" value="3" name="nbProvider" />
+							</div>
+						</div>
+
+						<div class="controls controls-row">
+							<div class="span3">
+								<label class="label">Support response delay</label>
+								<input class="responseDelay span1" type="text" size="10" value="24 hours" name="responseDelay"/>
+							</div>
+						</div>
+
+						<input class="status span4" type="checkbox" name="Private" value="private" checked> private<br>
+
+						<div id="CreateForm">
+							<div class="controls controls-row">
+								<div class="span4">
+									<button class="btn btn-small btn-primary" ng-click="createOffer(intervals)">Create</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+<!--
+				<div ng-show="pay_tabShow == 'subscriptions'">
+
+				</div>
+ -->
+			</div>
+		</div>
 
 		<!-- rankings -->
 		<div ng-show="tabShow == 'rankings'">
@@ -390,7 +523,6 @@ $('#navTab a').click(function (e) {
 
 	</div>
 </div>
-
 
 
 <div class="modal fade" id="myModal">

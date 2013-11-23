@@ -1,0 +1,90 @@
+<style>
+  canvas.chart {
+    width: 100% !important;
+    max-width: 500px;
+    height: auto !important;
+    /*position: relative;*/
+    top: 5px;
+  }
+  canvas.chart.timeline {
+    height: 260px !important;
+  }
+  p.chart-label {
+    position: absolute;
+    width:calc(100% - 30px);
+    top: 50%;
+    text-align: center;
+    font-size: 1.8em;
+    font-weight: bold
+    z-index: 1000;
+  }
+</style>
+<div ng-controller="generalAccountCtrl">
+  <div class="row">
+    <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth', 'col-lg-4': plan.name == 'scalability', 'col-offset-3': plan.name != 'scalability', 'col-offset-4': plan.name == 'scalability'}" style="position: relative;">
+      <p class="text-center"><strong>Connections</strong></p>
+      <p class="chart-label">{{totalConnections|readableNumber}} / {{plan.nbConnection|readableNumber}}</p>
+      <canvas id="connectionChart" width="400" height="400" class="chart"></canvas>
+    </div>
+<!--     <div ng-class="{'col':true,'col-lg-6':plan.nbProvider != 'unlimited', 'col-lg-8':plan.nbProvider == 'unlimited'}" style="position: relative;" ng-show="plan.nbApp == 'unlimited'">
+  <p class="text-center"><strong>Timeline</strong></p>
+  <canvas id="connectionTimeline" width="400" height="400" class="chart timeline"></canvas>
+</div> -->
+    <div class="col col-lg-2" style="position: relative;" ng-hide="plan.nbApp == 'unlimited'">
+      <p class="text-center"><strong>Apps</strong></p>
+      <p class="chart-label">{{apps.length}} / {{plan.nbApp}}</p>
+      <canvas id="appsChart" width="400" height="400" class="chart"></canvas>
+    </div>
+    <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth'}" ng-hide="plan.nbProvider == 'unlimited'">
+      <p class="text-center"><strong>Providers</strong></p>
+      <p class="chart-label">{{keysets.length}} / {{plan.nbProvider}}</p>
+      <canvas id="providersChart" width="400" height="400" class="chart"></canvas>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 30px">
+    <div class="col col-lg-6">
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{apps.length}}</span>Apps</h3>
+        </div>
+        <div ng-hide="apps.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't created any apps yet.</div>
+        <table ng-show="apps.length > 0" class="table" style="margin:0; padding:0">
+          <thead>
+            <th style="width: 80%">Name</th>
+            <th style="text-align: center">Connection</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="app in apps">
+              <td>{{app.name|capitalize}}</td>
+              <td style="text-align: center">
+                {{app.totalConnections}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="col col-lg-6">
+      <div class="panel">
+        <div class="panel-heading">
+          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{keysets.length}}</span>Providers</h3>
+        </div>
+        <div ng-hide="keysets.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't set any providers yet.</div>
+        <table ng-show="keysets.length > 0" class="table" style="margin:0; padding:0">
+          <thead>
+            <th style="width: 80%">Name</th>
+          </thead>
+          <tbody>
+            <tr ng-repeat="provider in keysets">
+              <td><img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/><span style="position: relative; top: 1px">{{provider|capitalize}}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+<!--   <div class="row">
+    <pre>{{plan|json}}</pre>
+    <pre>{{apps|json}}</pre>
+</div> -->
+</div>

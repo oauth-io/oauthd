@@ -1,0 +1,51 @@
+<style>
+
+.progress {
+  height: 35px;
+}
+
+.progress-bar {
+  background-color: #0074a2;
+  font-size: 20px;
+}
+
+.accordion-body {
+  background-color: #ffffff;
+}
+
+
+.btn.btn-mini {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+.glyphicon-star.black { color: black }
+.glyphicon-star.bronze { color: #A67D3D }
+.glyphicon-star.silver { color: #E6E8FA }
+.glyphicon-star.gold { color: #D9D919 }
+
+
+#profile p { font-size: 1.3em;}
+</style>
+
+<div class="container" id="profile">
+  <div class="row">
+    <div class="col col-lg-12">
+      <div class="alert alert-info" ng-show="email_changed">
+        An email has been sent to <strong>{{email_changed}}</strong> to verify it. <button style="position: relative; right: -25px; top: -2px" class="pull-right btn btn-warning btn-mini" ng-click="cancelEmailUpdate()">Cancel</button>
+      </div>
+      <div style="float: right; position: relative; top: 13px">
+        <i ng-class="{'glyphicon':true,'glyphicon-star':true,'black':plan.name=='bootstrap','bronze':plan.name=='startup','silver':plan.name=='growth', 'gold':plan.name=='scalability'}" style="position: relative; top: 2px"></i>
+        <span ng-hide="plan.name">Bootstrap Plan</span>
+        <span ng-show="plan.name">{{plan.name|capitalize}} Plan</span>
+        <a href="/pricing" class="btn btn-success btn-mini" ng-show="plan.name != 'scalability'">Upgrade</a>
+      </div>
+      <ul class="nav nav-tabs">
+        <li ng-click="changeTab('general')" ng-class="{active:tab == 'general'}"><a href="#">General</a></li>
+        <li ng-click="changeTab('payment')" ng-class="{active:tab == 'payment'}"><a href="#">Payment</a></li>
+        <li ng-click="changeTab('settings')" ng-class="{active:tab == 'settings'}"><a href="#">Settings</a></li>
+      </ul>
+      <br />
+      <div ng-include src="accountView"></div>
+    </div>
+  </div>
+</div>

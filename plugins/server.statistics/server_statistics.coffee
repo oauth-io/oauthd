@@ -65,6 +65,11 @@ exports.setup = (callback) ->
 				res.fail.push r[2][k]
 			callback null, res
 
+	# get statistics for a user
+	###	@server.get @config.base_api + '/me/stats', @auth.needed, (req, res, next) =>
+			@db.users.get req.user.id, (err, res) ->
+				console.log err, res
+	###
 	# get statistics for an app
 	@server.get @config.base_api + '/apps/:key/stats', @auth.adm, (req, res, next) =>
 		req.params.target = 'co:a:' + req.params.key

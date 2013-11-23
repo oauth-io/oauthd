@@ -79,15 +79,32 @@ exports.setup = (callback) ->
 	@server.get @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		@db.users.get req.user.id, (e, user) =>
 			return next(e) if e
-			@db.users.getApps user.id, (e, appkeys) ->
+			@db.users.getApps user.profile.id, (e, appkeys) ->
 				return next(e) if e
 				user.apps = appkeys
 				res.send user
 				next()
 
-	# update mail or password
+	@server.put @config.base_api + '/me/password', @auth.needed, (req, res, next) =>
+		@db.users.updatePassword req, @server.send(res, next)
+
+	@server.put @config.base_api + '/me/mail', @auth.needed, (req, res, next) =>
+		@db.users.updateEmail req, @server.send(res, next)
+
+	@server.del @config.base_api + '/me/mail', @auth.needed, (req, res, next) =>
+		@db.users.cancelUpdateEmail req, @server.send(res, next)
+
+	# update information (name, location, company, website)
 	@server.put @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		@db.users.updateAccount req, @server.send(res, next)
+
+	# update billing info
+	@server.post @config.base_api + '/me/billing', @auth.needed, (req, res, next) =>
+		@db.users.updateBilling req, @server.send(res, next)
+
+	# get subscriptions
+	@server.get @config.base_api + '/me/subscriptions', @auth.needed, (req, res, next) =>
+		@db.users.getAllSubscriptions req.clientId.id, @server.send(res, next)
 
 	# delete my account
 	@server.del @config.base_api + '/me', @auth.needed, (req, res, next) =>

@@ -60,6 +60,42 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		me: (success, error) ->
 			api 'me', success, error
 
+		getSubscriptions: (success, error) ->
+			api 'me/subscriptions', success, error
+
+		update: (profile, success, error) ->
+			api 'me', success, error,
+				method: "PUT",
+				data:
+					profile: profile
+
+		# stats: (success, error) ->
+		#	api 'me/stats', success, error
+
+		updateEmail: (email, success, error) ->
+			api 'me/mail', success, error,
+				method: "PUT",
+				data:
+					email: email
+
+		cancelUpdateEmail: (success, error) ->
+			api 'me/mail', success, error, method: "DELETE"
+
+		updatePassword: (pass, new_pass, success, error) ->
+			api 'me/password', success, error,
+				method: "PUT",
+				data:
+					current_password: pass,
+					new_password: new_pass
+
+
+		createBilling: (profile, billing, success, error) ->
+			api 'me/billing', success, error,
+				method: "POST",
+				data:
+					profile: profile
+					billing: billing
+
 		isValidable: (id, key, success, error) ->
 			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
 
@@ -92,7 +128,8 @@ app.factory 'MenuService', ($rootScope, $location) ->
 
 	return changed: ->
 		p = $location.path()
-		if p == '/signin' or p == '/signup' or p == '/help' or p == '/feedback' or p == '/faq' or p == '/pricing'
+
+		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
 			$('body').css('background-color', "#d8d8d8")
 		else
 			$('body').css('background-color', '#FFF')
@@ -153,6 +190,12 @@ app.factory 'AppService', ($http, $rootScope) ->
 
 		resetKey: (key, success, error) ->
 			api 'apps/' + key + '/reset', success, error, method:'post'
+
+		getTotal: (key, success, error) ->
+			api 'users/app/' + key, success, error
+
+		# stats: (key, provider, success, error) ->
+		# 	api 'apps/' + key + '/stats', success, error
 	}
 
 
@@ -169,4 +212,50 @@ app.factory 'KeysetService', ($rootScope, $http) ->
 
 		remove: (app, provider, success, error) ->
 			api 'apps/' + app + '/keysets/' + provider, success, error, method:'delete'
+
+		# stats: (app, provider, success, error) ->
+		# 	api 'apps/' + app + '/keysets/' + provider + '/stats', success, error
+	}
+
+app.factory 'PaymentService', ($rootScope, $http) ->
+	api = apiRequest $http, $rootScope
+	return {
+		process: (paymill, success, error) ->
+			api 'payment/process', success, error,
+				method:'POST'
+				data:
+					currency: paymill.currency
+					amount: paymill.amount
+					token: paymill.token
+					offer: paymill.offer
+		getCurrentSubscription: (success, error) ->
+			api 'subscription/get', success, error
+	}
+
+app.factory 'CartService', ($rootScope, $http) ->
+	api = apiRequest $http, $rootScope
+	return {
+		add: (plan, success, error) ->
+			api 'payment/cart/new', success, error,
+				method:'POST'
+				data:
+					plan: plan
+
+		get: (success, error) ->
+			api 'payment/cart/get', success, error
+	}
+
+
+app.factory 'PricingService', ($rootScope, $http) ->
+	api = apiRequest $http, $rootScope
+	return {
+		list: (success, error) ->
+			api 'plans', success, error
+
+		get: (name, success, error) ->
+			api "plans/#{name}", success, error
+
+		unsubscribe: (success, error) ->
+			api "plan/unsubscribe", success, error,
+				method : 'delete'
 	}

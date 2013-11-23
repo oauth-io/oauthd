@@ -23,10 +23,22 @@ module.exports = {
 		// options: {...other options...}
 	},
 
+	smtp: {
+		service: "Gmail",
+		auth: {
+			user: "mytest042@gmail.com",
+			pass: "P@ssword0"
+		}
+	},
+
+	paymill:{
+		secret_key: '6cc6913adcad3f37f04feda27ee75f56',
+		public_key: '235807894705702ff1aac623959c55cb'
+	},
+
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
 
-	smtp: {},
 
 	plugins: [
 		/* --- only for oauth.io --- */
@@ -34,8 +46,10 @@ module.exports = {
 		'server.users',
 		'server.adm',
 		'server.oauth_io',
+		'server.payments',
 		'server.mailjet',
 		'server.wishlist',
+		'server.pricing',
 		/* ------------------------- */
 
 		//'server.tests',
