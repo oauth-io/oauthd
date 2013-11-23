@@ -14,11 +14,13 @@
 		},
 		"access_token": {
 			"url": "/access_token",
-			"method": "get"
+			"method": "get",
+			"extra": ["user_id"]
 		},
 		"request": {
+			"url": "https://api.vk.com",
 			"query": {
-				"oauth_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
 		},
 		"parameters": {
@@ -26,9 +28,7 @@
 			"client_secret": "string",
 			"api_version": "string",
 			"scope": {
-				"type": "string",
 				"separator": ",",
-				"cardinality": "*",
 				"values": {
 					"notify": "The user allows receiving notifications.",
 					"friends": "Access to friends.",
@@ -45,17 +45,18 @@
 					"groups": "Access to user groups",
 					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
 					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
+					"notifications": "Access to the notifications",
+					"stats": "Statistics access to the user's groups and applications",
 					"offline": "Access to API at any time from an external server.",
 					"ads": "Access to advanced methods for Ads API."
 				}
 			}
 		}
 	},
-	"provider": "vk",
 	"href": {
-	  "keys": "https://vk.com/editapp?act=create",
-	  "docs": "https://vk.com/dev/main",
-	  "apps": "https://vk.com/apps?act=settings",
-	  "provider": "https://vk.com/"
+		"keys": "https://vk.com/editapp?act=create",
+		"docs": "https://vk.com/dev/main",
+		"apps": "https://vk.com/apps?act=settings",
+		"provider": "https://vk.com/"
 	}
 }

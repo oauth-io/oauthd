@@ -1,5 +1,6 @@
 {
 	"name": "Odnoklassniki",
+	"url": "http://api.odnoklassniki.ru/oauth",
 	"oauth2": {
 		"authorize": {
 			"url": "http://www.odnoklassniki.ru/oauth/authorize",
@@ -10,17 +11,11 @@
 				"scope": "{scope}"
 			}
 		},
-		"access_token": {
-			"url": "http://api.odnoklassniki.ru/oauth/token.do",
-			"method": "post"
-		},
-		"refresh": {
-			"url": "http://api.odnoklassniki.ru/oauth/token.do",
+		"access_token": "/token.do",
+		"refresh": "/token.do",
+		"request": {
 			"query": {
-				"grant_type": "refresh_token",
-				"client_id": "{client_id}",
-				"client_secret": "{client_secret}",
-				"refresh_token": "{{refresh_token}}"
+				"access_token": "{{token}}"
 			}
 		},
 		"parameters": {
@@ -32,13 +27,10 @@
 					"SET STATUS": "Set user status",
 					"PHOTO CONTENT": "Get photo content"
 				},
-				"cardinality": "*",
-				"separator": ";",
-				"type": "string"
+				"separator": ";"
 			}
 		}
 	},
-	"provider": "odnoklassniki",
 	"href": {
 		"keys": "http://www.odnoklassniki.ru/devaccess",
 		"docs": "http://apiok.ru/wiki/display/TS/Home",

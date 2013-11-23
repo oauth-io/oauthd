@@ -1,21 +1,12 @@
 {
 	"name": "QIP.ru",
+	"url": "https://openapi.qip.ru/oauth",
 	"oauth2": {
-		"authorize": {
-			"url": "https://store.qip.ru/dialog/oauth",
-			"query": {
-				"client_id": "{client_id}",
-				"response_type": "code",
-				"redirect_uri": "{{callback}}",
-				"scope": "{scope}"
-			}
-		},
-		"access_token": {
-			"url": "https://openapi.qip.ru/oauth/authorize"
-		},
+		"authorize": "https://store.qip.ru/dialog/oauth",
+		"access_token": "/authorize",
 		"request": {
 			"query": {
-				"oauth_token": "{{token}}"
+				"access_token": "{{token}}"
 			}
 		},
 		"parameters": {
@@ -25,14 +16,11 @@
 				"values": {
 					"user.about": "Основное право доступа, позволяющее приложению вызывать методы от имени пользователя и получать информацию о его профиле",
 					"friends.about": "На основании этого права приложение может получить доступ к списку друзей пользователя и информации об их профиле."
-				}, 
-				"cardinality": "*", 
-				"separator": ",", 
-				"type": "string"
+				},
+				"separator": ","
 			}
 		}
 	},
-	"provider": "qip",
 	"href": {
 		"keys": "http://developers.store.qip.ru/applications/new",
 		"docs": "http://store.qip.ru/docs/OpenApi.credentials",

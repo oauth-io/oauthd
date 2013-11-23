@@ -1,20 +1,15 @@
 {
-  "url": "https://api.twitter.com/oauth",
-  "oauth1": {
-    "request_token": "/request_token",
-    "authorize": "/authenticate",
-    "access_token": "/access_token",
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string"
-    },
-    "request": "https://api.twitter.com"
-  },
-  "href": {
-    "keys": "https://dev.twitter.com/apps/new",
-    "docs": "https://dev.twitter.com/docs",
-    "apps": "https://dev.twitter.com/apps",
-    "provider": "https://www.twitter.com/"
-  },
-  "name": "Twitter"
+	"name": "Twitter",
+	"url": "https://api.twitter.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authenticate",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://dev.twitter.com/apps/new",
+		"docs": "https://dev.twitter.com/docs",
+		"apps": "https://dev.twitter.com/apps",
+		"provider": "https://www.twitter.com/"
+	}
 }

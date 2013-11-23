@@ -1,34 +1,25 @@
 {
-  "href": {
-    "keys": "http://open.weibo.com/development",
-    "docs": "http://open.weibo.com/wiki/",
-    "apps": "http://open.weibo.com/apps",
-    "provider": "http://weibo.com"
-  },
-  "api_url": "https://api.weibo.com/2",
-  "url": "https://api.weibo.com/oauth2",
-  "oauth2": {
-    "authorize": "/authorize",
-    "access_token": {
-        "url": "/access_token",
-        "method": "post"
-    },
-    "request": {
-      "query": {
-        "access_token": "{{token}}"
-      }
-    },
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string",
-      "scope": {
-        "values": {
-        },
-        "cardinality": "*",
-        "separator": " ",
-        "type": "string"
-      }
-    }
-  },
-  "name": "SinaWeibo"
+	"name": "SinaWeibo",
+	"url": "https://api.weibo.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"revoke": {
+			"url": "/revokeoauth2",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://open.weibo.com/development",
+		"docs": "http://open.weibo.com/wiki/",
+		"apps": "http://open.weibo.com/apps",
+		"provider": "http://weibo.com"
+	}
 }

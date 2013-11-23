@@ -1,24 +1,18 @@
 {
-  "oauth1": {
-    "request_token": "https://api.tripit.com/oauth/request_token", 
-    "authorize": {
-      "url": "https://www.tripit.com/oauth/authorize",
-      "ignore_verifier": true,
-      "query": {
-        "oauth_callback": "{{callback}}"
-      }
-    },
-    "access_token": "https://api.tripit.com/oauth/access_token", 
-    "parameters": {
-      "client_secret": "string", 
-      "client_id": "string"
-    }
-  }, 
-  "href": {
-    "keys": "https://www.tripit.com/developer/create", 
-    "docs": "http://tripit.github.com/api/doc/v1/", 
-    "apps": "https://www.tripit.com/developer", 
-    "provider": "http://www.tripit.com/"
-  }, 
-  "name": "Tripit"
+	"name": "Tripit",
+	"url": "https://api.tripit.com",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": {
+			"url": "https://www.tripit.com/oauth/authorize",
+			"ignore_verifier": true
+		},
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://www.tripit.com/developer/create",
+		"docs": "http://tripit.github.com/api/doc/v1/",
+		"apps": "https://www.tripit.com/developer",
+		"provider": "http://www.tripit.com/"
+	}
 }

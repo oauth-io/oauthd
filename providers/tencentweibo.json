@@ -1,34 +1,35 @@
 {
-  "href": {
-    "keys": "http://dev.t.qq.com/apps/add/1",
-    "docs": "http://wiki.open.t.qq.com/index.php/",
-    "apps": "http://dev.t.qq.com/development",
-    "provider": "http://t.qq.com"
-  },
-  "api_url": "https://open.t.qq.com/api",
-  "url": "https://open.t.qq.com/cgi-bin/oauth2",
-  "oauth2": {
-    "authorize": "/authorize",
-    "access_token": {
-        "url": "/access_token",
-        "method": "post"
-    },
-    "request": {
-      "query": {
-        "access_token": "{{token}}"
-      }
-    },
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string",
-      "scope": {
-        "values": {
-        },
-        "cardinality": "*",
-        "separator": " ",
-        "type": "string"
-      }
-    }
-  },
-  "name": "SinaWeibo"
+	"name": "SinaWeibo",
+	"url": "https://open.t.qq.com/cgi-bin/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"extra": [
+				"openid",
+				"openkey"
+			]
+		},
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"oauth_consumer_key": "{client_id}",
+				"access_token": "{{token}}",
+				"openid": "{{openid}}",
+				"oauth_version": "2.a"
+			}
+		},
+		"refresh": "/access_token",
+		"parameters": {
+			"client_id": {
+				"scope": "public"
+			},
+			"client_secret": "string"
+		}
+	},
+	"href": {
+		"keys": "http://dev.t.qq.com/apps/add/1",
+		"docs": "http://wiki.open.t.qq.com/index.php/",
+		"apps": "http://dev.t.qq.com/development",
+		"provider": "http://t.qq.com"
+	}
 }
