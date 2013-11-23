@@ -53,8 +53,9 @@ hooks.config.push ->
 		$rootScope.providers_name = {} if not $rootScope.providers_name
 		$scope.providers_name = $rootScope.providers_name
 		$scope.keySaved = false
-		$scope.authUrl = document.location.protocol + '//' + document.location.host + '/'
-		$scope.authDomain = document.location.host
+		$scope.authUrl = oauthdconfig.host_url + oauthdconfig.base
+		$scope.authDomain = oauthdconfig.host_url
+		$scope.oauthdconfig = oauthdconfig;
 		$scope.createKeyProvider = 'facebook'
 		$scope.createKeyTemplate = "admin/templates/partials/create-key.html"
 		$scope.createAppTemplate = "admin/templates/partials/create-app.html"
@@ -483,4 +484,4 @@ hooks.config.push ->
 
 	app.controller 'NotFoundCtrl', ($scope, $routeParams, UserService, MenuService) ->
 		MenuService.changed()
-		$scope.errorGif = '/img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'
+		$scope.errorGif = 'img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'

@@ -132,7 +132,7 @@ server.post config.base + '/access_token', (req, res, next) ->
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	if Object.keys(req.params).length == 0
-		res.setHeader 'Location', '/admin'
+		res.setHeader 'Location', config.base + '/admin'
 		res.send 302
 		return next()
 	res.setHeader 'Content-Type', 'text/html'
@@ -314,13 +314,12 @@ server.get config.base_api + '/providers/:provider', auth.needed, (req, res, nex
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config
-server.get config.base_api + '/providers/:provider/logo', auth.needed, ((req, res, next) ->
+server.get config.base_api + '/providers/:provider/logo', ((req, res, next) ->
 		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
 			if not exists
 				req.params.provider = 'default'
-			req.url = '/' + req.params.provider + '.png'
-			req._url = Url.parse req.url
-			req._path = req._url._path
+			req.path()
+			req._path = '/' + req.params.provider + '.png'
 			next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'

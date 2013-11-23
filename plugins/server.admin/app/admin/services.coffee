@@ -16,7 +16,7 @@
 
 apiRequest = ($http, $rootScope) -> (url, success, error, opts) ->
 	opts ?= {}
-	opts.url = "/api/" + url
+	opts.url = oauthdconfig.base_api + "/" + url
 	if opts.data
 		opts.data = JSON.stringify opts.data
 		opts.method ?= "POST"

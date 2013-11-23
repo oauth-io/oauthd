@@ -40,18 +40,25 @@ shared.on 'app.remove', (req, app) ->
 	db.redis.srem 'adm:apps', app.id
 
 exports.setup = (callback) ->
-	@server.get @config.base + '/admin', @auth.optional, (req, res, next) ->
-		fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) ->
+
+	rmBasePath = (req, res, next) =>
+		if req.path().substr(0, @config.base.length) == @config.base
+			req._path = req._path.substr(@config.base.length)
+		next()
+
+	@server.get @config.base + '/admin', @auth.optional, (req, res, next) =>
+		fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) =>
 			res.setHeader 'Content-Type', 'text/html'
 			data = data.toString().replace /\{\{if admin\}\}([\s\S]*?)\{\{endif\}\}\n?/gm, if req.user then '$1' else ''
+			data = data.replace /\{\{jsconfig\}\}/g, "var oauthdconfig={host_url:\"#{@config.host_url}\",base:\"#{@config.base}\",base_api:\"#{@config.base_api}\"};"
 			res.end data
 			next()
 
-	@server.get new RegExp('^' + @config.base + '\/(lib|css|js|img|templates)\/.*'), restify.serveStatic
+	@server.get new RegExp('^' + @config.base + '\/(lib|css|js|img|templates)\/.*'), rmBasePath, restify.serveStatic
 		directory: __dirname + '/app'
 		maxAge: 1
 
-	@server.get new RegExp('^' + @config.base + '\/admin\/(lib|css|js|img|templates)\/*'), @auth.needed, restify.serveStatic
+	@server.get new RegExp('^' + @config.base + '\/admin\/(lib|css|js|img|templates)\/*'), rmBasePath, @auth.needed, restify.serveStatic
 		directory: __dirname + '/app'
 		maxAge: 1
 

@@ -170,7 +170,7 @@ exports.admin_api_create = {
   'app': check_setUp(function(t) {
     t.expect(7);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps',
+      url: config.host_url + config.base_api + '/apps',
       form: {name: 'A test app'}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -188,7 +188,7 @@ exports.admin_api_create = {
   'domain': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains/test.local'
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains/test.local'
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -201,7 +201,7 @@ exports.admin_api_create = {
   'keyset': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets/facebook',
       form: {response_type:"code",parameters:{client_id:"aaaa", client_secret:"bbbbbbbbb", scope: ["yy", "zz"]}}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -214,7 +214,7 @@ exports.admin_api_create = {
   }),
   'check keysets': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -228,7 +228,7 @@ exports.admin_api_create = {
   }),
   'check keyset': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets/facebook', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -242,7 +242,7 @@ exports.admin_api_create = {
   }),
   'check domains': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -256,7 +256,7 @@ exports.admin_api_create = {
   }),
   'check app': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key, function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -277,7 +277,7 @@ exports.admin_api_create = {
   }),
   'check me': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/me', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/me', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -292,7 +292,7 @@ exports.admin_api_update = {
   'app': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key,
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key,
       form: {name: 'Renamed app'}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -306,7 +306,7 @@ exports.admin_api_update = {
   'app key': check_setUp(function(t) {
     t.expect(9);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/reset',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/reset',
       form: {name: 'Renamed app'}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -327,7 +327,7 @@ exports.admin_api_update = {
   'domains': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains',
       form: {domains: ['test1.local', 'test2.local']}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -341,7 +341,7 @@ exports.admin_api_update = {
   'keyset': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.post({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets/facebook',
       form: {response_type:"token",parameters:{client_id:"AAAAA", client_secret:"BBBBBBB", scope: ["YY", "ZZ"]}}
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
@@ -354,7 +354,7 @@ exports.admin_api_update = {
   }),
   'check keyset': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets/facebook', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -368,7 +368,7 @@ exports.admin_api_update = {
   }),
   'check domains': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -384,7 +384,7 @@ exports.admin_api_update = {
   }),
   'check app': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key, function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -406,7 +406,7 @@ exports.admin_api_update = {
   }),
   'check me': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/me', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/me', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -420,7 +420,7 @@ exports.admin_api_update = {
 exports.admin_api_providers = {
   'list': check_setUp(function(t) {
     t.expect(7);
-    gb.auth_request.get(config.host_url + config.base + '/api/providers', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/providers', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -440,7 +440,7 @@ exports.admin_api_providers = {
   }),
   'facebook': check_setUp(function(t) {
     t.expect(6);
-    gb.auth_request.get(config.host_url + config.base + '/api/providers/facebook', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/providers/facebook', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -460,7 +460,7 @@ exports.admin_api_providers = {
   }),
   'facebook (extend)': check_setUp(function(t) {
     t.expect(7);
-    gb.auth_request.get(config.host_url + config.base + '/api/providers/facebook?extend=true', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/providers/facebook?extend=true', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -537,7 +537,7 @@ exports.admin_api_delete = {
   'domain': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.del({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains/test1.local',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains/test1.local',
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -549,7 +549,7 @@ exports.admin_api_delete = {
   }),
   'check domains': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key + '/domains', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key + '/domains', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -564,7 +564,7 @@ exports.admin_api_delete = {
   'keyset': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.del({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key + '/keysets/facebook',
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key + '/keysets/facebook',
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -576,7 +576,7 @@ exports.admin_api_delete = {
   }),
   'check app': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key, function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;
@@ -597,7 +597,7 @@ exports.admin_api_delete = {
   'app': check_setUp(function(t) {
     t.expect(4);
     gb.auth_request.del({
-      url: config.host_url + config.base + '/api/apps/' + gb.app_key
+      url: config.host_url + config.base_api + '/apps/' + gb.app_key
     }, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
@@ -609,7 +609,7 @@ exports.admin_api_delete = {
   }),
   'check app removed': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/apps/' + gb.app_key, function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/apps/' + gb.app_key, function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 500, 'invalid statusCode');
       var data;
@@ -620,7 +620,7 @@ exports.admin_api_delete = {
   }),
   'check me': check_setUp(function(t) {
     t.expect(4);
-    gb.auth_request.get(config.host_url + config.base + '/api/me', function (error, response, body) {
+    gb.auth_request.get(config.host_url + config.base_api + '/me', function (error, response, body) {
       t.equal(error, null, 'request error');
       t.equal(response.statusCode, 200, 'invalid statusCode');
       var data;

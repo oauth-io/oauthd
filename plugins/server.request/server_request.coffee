@@ -76,10 +76,10 @@ exports.setup = (callback) ->
 				api_request.once 'end', -> next false
 
 	# request's endpoints
-	@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.get new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.post new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.put new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.patch new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.del new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 
 	callback();

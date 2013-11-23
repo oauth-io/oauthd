@@ -86,7 +86,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 
 			$http(
 				method: "POST"
-				url: "/token"
+				url: "token"
 				data:
 					grant_type: "client_credentials"
 				headers:
@@ -118,16 +118,20 @@ app.controller 'SigninCtrl', ($scope, $rootScope, $timeout, $http, $location, Us
 	$scope.user = {}
 
 	$scope.userForm =
-		template: "/templates/userForm.html"
+		template: "templates/userForm.html"
 		submit: ->
 			$scope.info =
 				status: ''
 				message: ''
 
+			user =
+				name: $('#name').val()
+				pass: $('#pass').val()
+
 			#signin
-			UserService.login $scope.user, ((path)->
+			UserService.login user, ((path)->
 				window.location.reload()
 			), (error) ->
 				$scope.info =
 					status: 'error'
-					message: error?.message || 'Internal error'
+					message: error?.error_description || 'Internal error'

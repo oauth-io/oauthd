@@ -11,6 +11,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 - A working redis database >= v2.4, check [Redis quickstart](http://redis.io/topics/quickstart) for a properly installation
 - nodejs >= v0.8.2
 - npm >= v1.1
+- needed packages for npm dependencies: gcc g++ make python
 
 ## Clone the project
 
@@ -39,9 +40,7 @@ Run the redis server if it's not running yet.
 To start, stop or restart oauthd, just use
 `npm [start|stop|restart]` in oauthd folder.
 
-If you want to start oauthd in debug mode, you can also use
-
-	`grunt server`
+If you want to start oauthd in debug mode, you can also use `grunt server`
 
 This will launch nodemon and watch/recompile modified files.
 
@@ -55,6 +54,8 @@ Then you can include the generated js sdk from oauthd to use it on your sites. B
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
 
 You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
+
+You can also write a config.local.js file that will overwrite existing fields of config.js.
 
 Then the admin interface is available to your url / port set into config.js, at /admin.
 
