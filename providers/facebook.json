@@ -1,125 +1,122 @@
 {
-  "url": "https://graph.facebook.com/oauth",
-  "oauth2": {
-    "authorize": {
-      "url": "/authorize",
-      "query": {
-        "scope": "{scope}",
-        "redirect_uri": "{{callback}}",
-        "client_id": "{client_id}"
-      }
-    },
-    "access_token": "/access_token",
-    "request": {
-      "url": "https://graph.facebook.com",
-      "cors": true,
-      "query": {
-        "access_token": "{{token}}"
-      }
-    },
-    "refresh": {
-      "url": "/access_token",
-      "query": {
-        "grant_type":"fb_exchange_token",
-        "client_id": "{client_id}",
-        "client_secret": "{client_secret}",
-        "fb_exchange_token":"{{refresh_token}}"
-      }
-    },
-    "revoke": {
-      "url":"https://graph.facebook.com/me/permissions",
-      "method":"delete",
-      "query": {
-        "access_token": "{{token}}"
-      }
-    },
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string",
-      "scope": {
-        "values": {
-          "friends_groups": "Provides access to the list of groups the user is a member of as the groups connection",
-          "friends_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
-          "publish_actions": "Allows your app to publish to the Open Graph using Built-in Actions, Achievements, Scores, or Custom Actions. Your app can also publish other activity which is detailed in the Publishing Permissions doc. Note: The user-prompt for this permission will be displayed in the first screen of the Enhanced Auth Dialog and cannot be revoked as part of the authentication flow. However, a user can later revoke this permission in their Account Settings. If you want to be notified if this happens, you should subscribe to the permissions object within the Realtime API.",
-          "friends_relationship_details": "Provides access to the user's relationship preferences",
-          "user_events": "Provides access to the list of events the user is attending as the events connection",
-          "create_event": "Enables your application to create and modify events on the user's behalf",
-          "publish_checkins": "Enables your app to perform checkins on behalf of the user.",
-          "manage_friendlists": "Enables your app to create and edit the user's friend lists.",
-          "user_birthday": "Provides access to the birthday with year as the birthday property",
-          "friends_games_activity": "Allows you post and retrieve game achievement activity.",
-          "friends_interests": "Provides access to the user's list of interests as the interests connection",
-          "user_checkins": "Provides read access to the authorized user's check-ins or a friend's check-ins that the user can see. This permission is superseded by user_status for new applications as of March, 2012.",
-          "friends_notes": "Provides access to the user's notes as the notes connection",
-          "user_education_history": "Provides access to education history as the education property",
-          "user_videos": "Provides access to the videos the user has uploaded, and videos the user has been tagged in",
-          "friends_events": "Provides access to the list of events the user is attending as the events connection",
-          "user_subscriptions": "Provides access to the user's subscribers and subscribees",
-          "manage_notifications": "Enables your app to read notifications and mark them as read. Intended usage: This permission should be used to let users read and act on their notifications; it should not be used to for the purposes of modeling user behavior or data mining. Apps that misuse this permission may be banned from requesting it.",
-          "user_status": "Provides access to the user's status messages and checkins. Please see the documentation for the location_post table for information on how this permission may affect retrieval of information about the locations associated with posts.",
-          "friends_website": "Provides access to the user's web site URL",
-          "user_relationships": "Provides access to the user's family and personal relationships and relationship status",
-          "user_games_activity": "Allows you post and retrieve game achievement activity.",
-          "friends_relationships": "Provides access to the user's family and personal relationships and relationship status",
-          "user_website": "Provides access to the user's web site URL",
-          "friends_actions.video": "Allows you to retrieve the actions published by all applications using the built-in video.watches action.",
-          "friends_online_presence": "Provides access to the user's friend's online/offline presence",
-          "manage_pages": "Enables your application to retrieve access_tokens for Pages and Applications that the user administrates. The access tokens can be queried by calling /<user_id>/accounts via the Graph API. See here for generating long-lived Page access tokens that do not expire after 60 days.",
-          "xmpp_login": "Provides applications that integrate with Facebook Chat the ability to log in users.",
-          "friends_religion_politics": "Provides access to the user's religious and political affiliations",
-          "friends_photos": "Provides access to the photos the user has uploaded, and photos the user has been tagged in",
-          "rsvp_event": "Enables your application to RSVP to events on the user's behalf",
-          "friends_location": "Provides access to the user's current location as the location property",
-          "user_hometown": "Provides access to the user's hometown in the hometown property",
-          "friends_education_history": "Provides access to education history as the education property",
-          "email": "Provides access to the user's primary email address in the email property. Do not spam users. Your use of email must comply both with Facebook policies and with the CAN-SPAM Act.",
-          "friends_about_me": "Provides access to the \"About Me\" section of the profile in the about property",
-          "friends_likes": "Provides access to the list of all of the pages the user has liked as the likes connection",
-          "friends_questions": "Provides access to the questions the user or friend has asked",
-          "user_interests": "Provides access to the user's list of interests as the interests connection",
-          "read_friendlists": "Provides access to any friend lists the user created. All user's friends are provided as part of basic data, this extended permission grants access to the lists of friends a user has created, and should only be requested if your application utilizes lists of friends.",
-          "friends_activities": "Provides access to the user's list of activities as the activities connection",
-          "read_requests": "Provides read access to the user's friend requests",
-          "friends_subscriptions": "Provides access to the user's subscribers and subscribees",
-          "friends_videos": "Provides access to the videos the user has uploaded, and videos the user has been tagged in",
-          "user_groups": "Provides access to the list of groups the user is a member of as the groups connection",
-          "read_stream": "Provides access to all the posts in the user's News Feed and enables your application to perform searches against the user's News Feed",
-          "user_religion_politics": "Provides access to the user's religious and political affiliations",
-          "read_mailbox": "Provides the ability to read from a user's Facebook Inbox.",
-          "friends_birthday": "Provides access to the birthday with year as the birthday property",
-          "user_about_me": "Provides access to the \"About Me\" section of the profile in the about property",
-          "user_activities": "Provides access to the user's list of activities as the activities connection",
-          "user_online_presence": "Provides access to the user's online/offline presence",
-          "friends_work_history": "Provides access to work history as the work property",
-          "friends_status": "Provides access to the user's status messages and checkins. Please see the documentation for the location_post table for information on how this permission may affect retrieval of information about the locations associated with posts.",
-          "user_work_history": "Provides access to work history as the work property",
-          "user_actions.news": "Allows you to retrieve the actions published by all applications using the built-in news.reads action.",
-          "friends_hometown": "Provides access to the user's hometown in the hometown property",
-          "user_actions.video": "Allows you to retrieve the actions published by all applications using the built-in video.watches action.",
-          "read_insights": "Provides read access to the Insights data for pages, applications, and domains the user owns.",
-          "user_photos": "Provides access to the photos the user has uploaded, and photos the user has been tagged in",
-          "user_location": "Provides access to the user's current location as the location property",
-          "friends_actions.news": "Allows you to retrieve the actions published by all applications using the built-in news.reads action.",
-          "user_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
-          "publish_stream": "Enables your app to post content, comments, and likes to a user's stream and to the streams of the user's friends. This is a superset publishing permission which also includes publish_actions. However, please note that Facebook recommends a user-initiated sharing model. Please read the Platform Policies to ensure you understand how to properly use this permission. Note, you do not need to request the publish_stream permission in order to use the Feed Dialog, the Requests Dialog or the Send Dialog.",
-          "user_relationship_details": "Provides access to the user's relationship preferences",
-          "user_likes": "Provides access to the list of all of the pages the user has liked as the likes connection",
-          "friends_checkins": "Provides read access to the authorized user's check-ins or a friend's check-ins that the user can see. This permission is superseded by user_status for new applications as of March, 2012.",
-          "user_notes": "Provides access to the user's notes as the notes connection",
-          "ads_management": "Provides the ability to manage ads and call the Facebook Ads API on behalf of a user.",
-          "user_questions": "Provides access to the questions the user or friend has asked"
-        },
-        "cardinality": "*",
-        "separator": ",",
-        "type": "string"
-      }
-    }
-  },
-  "name": "Facebook",
-  "href": {
-    "keys": "https://developers.facebook.com/apps",
-    "docs": "https://developers.facebook.com/docs/",
-    "apps": "https://developers.facebook.com/apps",
-    "provider": "https://facebook.com/"
-  }
+	"url": "https://graph.facebook.com/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"scope": "{scope}",
+				"redirect_uri": "{{callback}}",
+				"client_id": "{client_id}"
+			}
+		},
+		"access_token": "/access_token",
+		"request": {
+			"cors": true,
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": {
+			"url": "/access_token",
+			"query": {
+				"grant_type": "fb_exchange_token",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"fb_exchange_token": "{{refresh_token}}"
+			}
+		},
+		"revoke": {
+			"url": "https://graph.facebook.com/me/permissions",
+			"method": "delete",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"friends_groups": "Provides access to the list of groups the user is a member of as the groups connection",
+					"friends_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
+					"publish_actions": "Allows your app to publish to the Open Graph using Built-in Actions, Achievements, Scores, or Custom Actions. Your app can also publish other activity which is detailed in the Publishing Permissions doc. Note: The user-prompt for this permission will be displayed in the first screen of the Enhanced Auth Dialog and cannot be revoked as part of the authentication flow. However, a user can later revoke this permission in their Account Settings. If you want to be notified if this happens, you should subscribe to the permissions object within the Realtime API.",
+					"friends_relationship_details": "Provides access to the user's relationship preferences",
+					"user_events": "Provides access to the list of events the user is attending as the events connection",
+					"create_event": "Enables your application to create and modify events on the user's behalf",
+					"publish_checkins": "Enables your app to perform checkins on behalf of the user.",
+					"manage_friendlists": "Enables your app to create and edit the user's friend lists.",
+					"user_birthday": "Provides access to the birthday with year as the birthday property",
+					"friends_games_activity": "Allows you post and retrieve game achievement activity.",
+					"friends_interests": "Provides access to the user's list of interests as the interests connection",
+					"user_checkins": "Provides read access to the authorized user's check-ins or a friend's check-ins that the user can see. This permission is superseded by user_status for new applications as of March, 2012.",
+					"friends_notes": "Provides access to the user's notes as the notes connection",
+					"user_education_history": "Provides access to education history as the education property",
+					"user_videos": "Provides access to the videos the user has uploaded, and videos the user has been tagged in",
+					"friends_events": "Provides access to the list of events the user is attending as the events connection",
+					"user_subscriptions": "Provides access to the user's subscribers and subscribees",
+					"manage_notifications": "Enables your app to read notifications and mark them as read. Intended usage: This permission should be used to let users read and act on their notifications; it should not be used to for the purposes of modeling user behavior or data mining. Apps that misuse this permission may be banned from requesting it.",
+					"user_status": "Provides access to the user's status messages and checkins. Please see the documentation for the location_post table for information on how this permission may affect retrieval of information about the locations associated with posts.",
+					"friends_website": "Provides access to the user's web site URL",
+					"user_relationships": "Provides access to the user's family and personal relationships and relationship status",
+					"user_games_activity": "Allows you post and retrieve game achievement activity.",
+					"friends_relationships": "Provides access to the user's family and personal relationships and relationship status",
+					"user_website": "Provides access to the user's web site URL",
+					"friends_actions.video": "Allows you to retrieve the actions published by all applications using the built-in video.watches action.",
+					"friends_online_presence": "Provides access to the user's friend's online/offline presence",
+					"manage_pages": "Enables your application to retrieve access_tokens for Pages and Applications that the user administrates. The access tokens can be queried by calling /<user_id>/accounts via the Graph API. See here for generating long-lived Page access tokens that do not expire after 60 days.",
+					"xmpp_login": "Provides applications that integrate with Facebook Chat the ability to log in users.",
+					"friends_religion_politics": "Provides access to the user's religious and political affiliations",
+					"friends_photos": "Provides access to the photos the user has uploaded, and photos the user has been tagged in",
+					"rsvp_event": "Enables your application to RSVP to events on the user's behalf",
+					"friends_location": "Provides access to the user's current location as the location property",
+					"user_hometown": "Provides access to the user's hometown in the hometown property",
+					"friends_education_history": "Provides access to education history as the education property",
+					"email": "Provides access to the user's primary email address in the email property. Do not spam users. Your use of email must comply both with Facebook policies and with the CAN-SPAM Act.",
+					"friends_about_me": "Provides access to the \"About Me\" section of the profile in the about property",
+					"friends_likes": "Provides access to the list of all of the pages the user has liked as the likes connection",
+					"friends_questions": "Provides access to the questions the user or friend has asked",
+					"user_interests": "Provides access to the user's list of interests as the interests connection",
+					"read_friendlists": "Provides access to any friend lists the user created. All user's friends are provided as part of basic data, this extended permission grants access to the lists of friends a user has created, and should only be requested if your application utilizes lists of friends.",
+					"friends_activities": "Provides access to the user's list of activities as the activities connection",
+					"read_requests": "Provides read access to the user's friend requests",
+					"friends_subscriptions": "Provides access to the user's subscribers and subscribees",
+					"friends_videos": "Provides access to the videos the user has uploaded, and videos the user has been tagged in",
+					"user_groups": "Provides access to the list of groups the user is a member of as the groups connection",
+					"read_stream": "Provides access to all the posts in the user's News Feed and enables your application to perform searches against the user's News Feed",
+					"user_religion_politics": "Provides access to the user's religious and political affiliations",
+					"read_mailbox": "Provides the ability to read from a user's Facebook Inbox.",
+					"friends_birthday": "Provides access to the birthday with year as the birthday property",
+					"user_about_me": "Provides access to the \"About Me\" section of the profile in the about property",
+					"user_activities": "Provides access to the user's list of activities as the activities connection",
+					"user_online_presence": "Provides access to the user's online/offline presence",
+					"friends_work_history": "Provides access to work history as the work property",
+					"friends_status": "Provides access to the user's status messages and checkins. Please see the documentation for the location_post table for information on how this permission may affect retrieval of information about the locations associated with posts.",
+					"user_work_history": "Provides access to work history as the work property",
+					"user_actions.news": "Allows you to retrieve the actions published by all applications using the built-in news.reads action.",
+					"friends_hometown": "Provides access to the user's hometown in the hometown property",
+					"user_actions.video": "Allows you to retrieve the actions published by all applications using the built-in video.watches action.",
+					"read_insights": "Provides read access to the Insights data for pages, applications, and domains the user owns.",
+					"user_photos": "Provides access to the photos the user has uploaded, and photos the user has been tagged in",
+					"user_location": "Provides access to the user's current location as the location property",
+					"friends_actions.news": "Allows you to retrieve the actions published by all applications using the built-in news.reads action.",
+					"user_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
+					"publish_stream": "Enables your app to post content, comments, and likes to a user's stream and to the streams of the user's friends. This is a superset publishing permission which also includes publish_actions. However, please note that Facebook recommends a user-initiated sharing model. Please read the Platform Policies to ensure you understand how to properly use this permission. Note, you do not need to request the publish_stream permission in order to use the Feed Dialog, the Requests Dialog or the Send Dialog.",
+					"user_relationship_details": "Provides access to the user's relationship preferences",
+					"user_likes": "Provides access to the list of all of the pages the user has liked as the likes connection",
+					"friends_checkins": "Provides read access to the authorized user's check-ins or a friend's check-ins that the user can see. This permission is superseded by user_status for new applications as of March, 2012.",
+					"user_notes": "Provides access to the user's notes as the notes connection",
+					"ads_management": "Provides the ability to manage ads and call the Facebook Ads API on behalf of a user.",
+					"user_questions": "Provides access to the questions the user or friend has asked"
+				},
+				"separator": ","
+			}
+		}
+	},
+	"name": "Facebook",
+	"href": {
+		"keys": "https://developers.facebook.com/apps",
+		"docs": "https://developers.facebook.com/docs/",
+		"apps": "https://developers.facebook.com/apps",
+		"provider": "https://facebook.com/"
+	}
 }

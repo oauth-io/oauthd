@@ -1,43 +1,27 @@
 {
-        "name":"Mail.ru",
-        "url":"https://connect.mail.ru/oauth",
-        "oauth2":{
-                "authorize":{
-                        "url":"/authorize",
-                        "query":{
-                                "client_id":"{client_id}",
-                                "response_type":"code",
-                                "redirect_uri":"{{callback}}"
-                        }
-                },
-                "access_token":{
-                        "url":"/token",
-                        "method":"post"
-                },
-                "request":{
-                        "query":{
-                                "oauth_token":"{{token}}"
-                        }
-                },
-                "refresh": {
-                        "url": "/token",
-                        "query": {
-                                "grant_type":"refresh_token",
-                                "client_id": "{client_id}",
-                                "client_secret": "{client_secret}",
-                                "refresh_token":"{{refresh_token}}"
-                        }
-                },
-                "parameters":{
-                        "client_id":"string",
-                        "client_secret":"string"
-                }
-        },
-        "provider":"mailru",
-        "href": {
-                "keys": "http://api.mail.ru/sites/my/add/",
-                "docs": "http://api.mail.ru/docs/",
-                "apps": "http://api.mail.ru/sites/my/",
-                "provider": "http://api.mail.ru/"
-        }
+	"name": "Mail.ru",
+	"url": "https://connect.mail.ru/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}"
+			}
+		},
+		"access_token": "/token",
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"refresh": "/token"
+	},
+	"href": {
+		"keys": "http://api.mail.ru/sites/my/add/",
+		"docs": "http://api.mail.ru/docs/",
+		"apps": "http://api.mail.ru/sites/my/",
+		"provider": "http://api.mail.ru/"
+	}
 }

@@ -1,27 +1,19 @@
 {
-  "href": {
-    "keys": "http://dev.t.qq.com/apps/add/1",
-    "docs": "http://wiki.open.t.qq.com/index.php/",
-    "apps": "http://dev.t.qq.com/development",
-    "provider": "http://t.qq.com"
-  },
-  "api_url": "https://open.t.qq.com/api",
-  "url": "https://open.t.qq.com/cgi-bin/oauth2",
-  "oauth2": {
-    "authorize": "/authorize",
-    "access_token": {
-        "url": "/access_token",
-        "method": "post"
-    },
-    "request": {
-      "query": {
-        "access_token": "{{token}}"
-      }
-    },
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string"
-    }
-  },
-  "name": "SinaWeibo"
+	"name": "SinaWeibo",
+	"url": "https://open.t.qq.com/cgi-bin/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://dev.t.qq.com/apps/add/1",
+		"docs": "http://wiki.open.t.qq.com/index.php/",
+		"apps": "http://dev.t.qq.com/development",
+		"provider": "http://t.qq.com"
+	}
 }
