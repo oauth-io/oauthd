@@ -385,6 +385,8 @@ hooks.config.push ->
 
 			nb_domain = $scope.createAppForm.domains.length
 
+			$scope.addDomain()
+
 			if nb_domain == 0
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
