@@ -70,6 +70,8 @@ server.send = send = (res, next) -> (e, r) ->
 	res.send (if r? then r else check.nullv)
 	next()
 
+fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
+
 # generated js sdk
 server.get config.base + '/download/latest/oauth.js', (req, res, next) ->
 	sdk_js.get (e, r) ->
@@ -159,7 +161,7 @@ server.get config.base + '/', (req, res, next) ->
 			view += '\t"use strict";\n'
 			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 			if state.redirect_uri
-				redirect_infos = Url.parse state.redirect_uri, true
+				redirect_infos = Url.parse fixUrl(state.redirect_uri), true
 				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 			else
 				view += '\tvar opener = window.opener || window.parent.window.opener;\n'
@@ -179,9 +181,9 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 
 	domain = null
 	origin = null
-	ref = req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri
+	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri)
 	if ref
-		urlinfos = Url.parse(ref)
+		urlinfos = Url.parse ref
 		if not urlinfos.hostname
 			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 		origin = urlinfos.protocol + '//' + urlinfos.host
