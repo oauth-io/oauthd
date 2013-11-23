@@ -47,6 +47,7 @@
     "grunt-contrib-less": "~0.8.1",
     "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
-    "restify-oauth2-oauthd": "~2.1.0"
+    "restify-oauth2-oauthd": "~2.1.0",
+    "jayschema": "~0.2.0"
   }
 }
