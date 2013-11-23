@@ -56,7 +56,7 @@ exports.setup = (callback) ->
 		maxAge: 1
 
 	# get my infos
-	@server.get @config.base + '/api/me', @auth.needed, (req, res, next) =>
+	@server.get @config.base_api + '/me', @auth.needed, (req, res, next) =>
 		db_getApps (e, appkeys) ->
 			return next(e) if e
 			res.send apps:appkeys
