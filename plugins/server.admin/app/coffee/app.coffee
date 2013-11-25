@@ -132,6 +132,9 @@ app.controller 'SigninCtrl', ($scope, $rootScope, $timeout, $http, $location, Us
 			UserService.login user, ((path)->
 				window.location.reload()
 			), (error) ->
+				return if not error
 				$scope.info =
 					status: 'error'
 					message: error?.error_description || 'Internal error'
+
+			return false

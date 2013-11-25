@@ -1,6 +1,6 @@
 <div class="well">
     <h4 style="text-align: center">Sign in - Admin interface</h4><br />
-  <form name="signup" class="form-horizontal">
+  <form ng-submit="userForm.submit()" name="signup" class="form-horizontal" method="POST" action="signin">
     <div class="alert alert-danger" ng-show="info.status == 'error'">
       {{info.message}}
     </div>
@@ -10,18 +10,18 @@
     <div class="row">
       <label class="control-label col col-lg-4" for="name">Your login</label>
       <div class="controls col col-lg-8">
-        <input type="text" class="input" ng-model="user.name" id="name" name="name" ng-minlength="8">
+        <input type="email" class="input" ng-model="user.name" id="name" name="name" ng-minlength="6" required>
       </div>
     </div>
     <div class="row">
       <label class="control-label col col-lg-4" for="pass">Your password</label>
       <div class="controls col col-lg-8">
-        <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="8">
+        <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6" required>
       </div>
     </div>
     <div class="row">
       <div class="col col-offset-4 col-lg-8">
-        <button ng-click="userForm.submit()" class="btn btn-primary">
+        <button type="submit" class="btn btn-primary">
           <span>Sign in</span>
         </button>
       </div>
