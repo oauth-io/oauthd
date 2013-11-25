@@ -36,8 +36,8 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					<h3>{{plan.name|capitalize}}</h3>
 					<h1>{{plan.amount/100}}$</h1>
 					<p style="margin: 0 10px 15px">
-						<button ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
-						<button ng-show="plan.name == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
+						<button disabled="disabled" ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
+						<button disabled="disabled" ng-show="plan.name == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
 						<img src="/img/ajax-loader-pricing.gif" id="loader_{{plan.id}}" style="display:none;"/>
 					</p>
 				</th>
@@ -78,32 +78,6 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 		</table>
 
 		<p style="font-size: 1.5em; margin-bottom: 50px;">For a commercial licence of <a href="https://github.com/oauth-io/oauthd">oauthd</a>, the opensource daemon of OAuth.io under AGPL license (<a href="https://github.com/oauth-io/oauthd">github.com/oauth-io/oauthd</a>), contact us at <a href="mailto:team@oauth.io">team@oauth.io</a></p>
-	</div>
-	<div class="row" style="background-color: #cbe7f9">
-		<p style="text-align: center;"><img src="/img/anyquestions.png" style="position: relative; top: -55px"></p>
-		<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">The answer you need</h1>
-		<div class="container" style="margin-bottom: 80px">
-			<div class="row">
-				<div class="col col-lg-5 col-offset-1">
-					<h3>How to decide which offer to take?</h3>
-					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Minima, labore, accusantium, molestiae, eaque autem odit possimus quia id sequi laudantium nulla reiciendis sunt quo optio qui modi quisquam voluptatibus nostrum.</p>
-				</div>
-				<div class="col col-lg-5">
-					<h3>What if I go over my users limit?</h3>
-					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, laudantium, hic, itaque, aliquid maxime impedit numquam eos debitis natus totam esse dolores commodi delectus tempore sapiente fugiat dolor quaerat quod.</p>
-				</div>
-			</div>
-			<div class="row">
-				<div class="col col-lg-5 col-offset-1">
-					<h3>What does justify these prices?</h3>
-					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. A, quas, aliquid vitae omnis dicta fuga molestiae veritatis laborum ea nesciunt deserunt eius. Nulla, cum, illo nisi numquam culpa eos esse.</p>
-				</div>
-				<div class="col col-lg-5">
-					<h3>Am I assured that everything will go well?</h3>
-					<p style="font-size: 1.2em">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis, praesentium itaque voluptatum placeat mollitia illo optio architecto veniam ducimus rem pariatur quam dolores sed temporibus qui voluptatibus ipsam deleniti perspiciatis.</p>
-				</div>
-			</div>
-		</div>
 	</div>
 	<div class="row" style="background-color: #0074a2; color: white">
 		<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px"></p>
