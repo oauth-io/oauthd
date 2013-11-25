@@ -86,49 +86,50 @@ filter:progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=90, Str
 				</div>
 			</div>
 
-			<div class="row" style="margin: 20px auto 0; max-width: 900px;">
-				<div class="col col-lg-7">
-					<div class="panel" style="border: 0px">
-					  	<div class="panel-heading" style="background-color: #5fb3e5; padding: 10px 20px;">
-					    	<h3 class="panel-title" style="margin: 0; color: white;">In your HTML</h3>
-					  	</div>
-					  	<div class="panel-body">
-							<pre style=" font-size: 1.02em;">&lt;img src="/img/facebook-connect.png" <strong>id="fb-connect"</strong>&gt;</pre>
-		     			</div>
-		     		</div>
+			<div class="row" style="margin: 20px auto 0; max-width: 990px;">
+				<div class="col col-lg-6">
 		     		<div class="panel" style="border: 0px">
 					  	<div class="panel-heading" style="background-color: #5fb3e5; padding: 10px 20px;">
-					    	<h3 class="panel-title" style="margin: 0; color: white;">In your Javascript</h3>
+					    	<h3 class="panel-title" style="margin: 0; color: white;">With Facebook</h3>
 					  	</div>
 		     			<div class="panel-body">
-							<pre style="font-size: 1.0em;">$('#fb-connect').click(function() {
-    OAuth.initialize('<strong>YOUR_PUBLIC_KEY</strong>');
-    OAuth.popup('<strong>facebook</strong>', function(<strong>err</strong>, <strong>res</strong>) {
-        if (<strong>err</strong>) {
-            // do something with error
-            alert(JSON.stringify(<strong>err</strong>));
-            return;
-        }
-        $('#token').html(<strong>res.access_token</strong>)
-                   .parent().show();
-    });
-});</pre>
+							<pre style="font-size: 1.0em;">OAuth.popup('<strong>facebook</strong>', function(<strong>err</strong>, <strong>res</strong>) {
+    if (<strong>err</strong>) {
+        // do something with error
+    }
+    <strong>res</strong>.get('<strong>/me</strong>')
+       .done(function(data) {
+        alert('Hello ' + data.name)
+    })
+})</pre>
+<p style=""><button style="font-weight: bold; font-size: 30px;" class="btn btn-large btn-block btn-default" ng-click="demoFbConnect()"><img style="position: relative; top: -5px; left: -20px" src="img/fbwhite.png">Connect with Facebook</button></p>
 						</div>
 					</div>
 				</div>
-				<div class="col col-lg-5" style="text-align: center">
-					<div id="token" style="display: none; color: white; font-size: 24px; word-break:break-all; text-align: left;"></div>
-					<div id="get-token">
-						<h3 style="margin-top: 0px;color: white; font-weight: bold; font-size: 3.5em;">Click here<br/>to get your token</h3>
-						<embed src="/img/arrowdown.svg" type="image/svg+xml" />
-						<div style="margin: 0px auto 0;">
-							<p style=""><button style="font-weight: bold; font-size: 30px;" class="btn btn-large btn-block btn-default" ng-click="demoFbConnect()"><img style="position: relative; top: -5px; left: -20px" src="img/fbwhite.png">Connect with facebook</button></p>
+				<div class="col col-lg-6">
+		     		<div class="panel" style="border: 0px">
+					  	<div class="panel-heading" style="background-color: #5fb3e5; padding: 10px 20px;">
+					    	<h3 class="panel-title" style="margin: 0; color: white;">With Twitter</h3>
+					  	</div>
+		     			<div class="panel-body">
+							<pre style="font-size: 1.0em;">OAuth.popup('<strong>twitter</strong>', function(<strong>err</strong>, <strong>res</strong>) {
+    if (<strong>err</strong>) {
+        // do something with error
+    }
+    <strong>res</strong>.get('<strong>/1.1/account/verify_credentials.json</strong>')
+       .done(function(data) {
+        alert('Hello ' + data.name)
+    })
+})</pre>
+<p style=""><button style="font-weight: bold; font-size: 30px;" class="btn btn-large btn-block btn-default" ng-click="demoTwiConnect()"><img style="position: relative; top: -5px; left: -20px; height: 40px" src="img/twitterwhite.png">Connect with Twitter</button></p>
 						</div>
 					</div>
-					<div>
-						<div style="margin: 0px auto 0;">
-							<p style="margin-top: 77px"><a href="http://oauth-io.github.io/oauth-js" style="font-size: 30px; font-weight: bold" class="btn btn-large btn-block btn-success">See the demo</a></p>
-						</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-lg-4 col-offset-4" style="text-align: center">
+					<div style="margin: 0px auto 0;">
+						<p style="margin-top: 37px"><a href="http://oauth-io.github.io/oauth-js" style="font-size: 30px; font-weight: bold" class="btn btn-large btn-block btn-success">See the demo</a></p>
 					</div>
 				</div>
 			</div>
