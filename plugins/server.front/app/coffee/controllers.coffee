@@ -43,7 +43,7 @@ IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, Me
 				alert JSON.stringify err
 				return
 			res.get('/1.1/account/verify_credentials.json').done (data) ->
-				alert data.name
+				alert 'Hello ' + data.name
 
 	$scope.demoFbConnect = () ->
 		OAuth.initialize window.demoKey
@@ -52,7 +52,7 @@ IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, Me
 				alert JSON.stringify err
 				return
 			res.get('/me').done (data) ->
-				alert data.name
+				alert 'Hello ' + data.name
 
 	$scope.providerClick = (provider) ->
 		$scope.selectedProvider = provider
