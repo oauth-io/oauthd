@@ -32,8 +32,8 @@ module.exports = {
 	},
 
 	paymill:{
-		secret_key: '6cc6913adcad3f37f04feda27ee75f56',
-		public_key: '235807894705702ff1aac623959c55cb'
+		secret_key: '923660828109fb1ca53c8e1b6916d94d',
+		public_key: '8a8394c340c4033a0140d9f61cfd3145'
 	},
 
 	cacheTime: 1,

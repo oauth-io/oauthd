@@ -36,6 +36,14 @@ IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, Me
 		"deezer"
 	]
 
+	$scope.demoTwiConnect = () ->
+		OAuth.initialize window.demoKey
+		OAuth.popup 'twitter', (err, res) ->
+			if err
+				alert JSON.stringify err
+				return
+			res.get('/1.1/account/verify_credentials.json').done (data) ->
+				alert data.name
 
 	$scope.demoFbConnect = () ->
 		OAuth.initialize window.demoKey
@@ -43,8 +51,8 @@ IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, Me
 			if err
 				alert JSON.stringify err
 				return
-			$('#token').html("Your access token:<br/>" + res.access_token).show();
-			$('#get-token').hide()
+			res.get('/me').done (data) ->
+				alert data.name
 
 	$scope.providerClick = (provider) ->
 		$scope.selectedProvider = provider
