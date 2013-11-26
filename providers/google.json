@@ -19,11 +19,7 @@
 				"id_token"
 			]
 		},
-		"request": {
-			"query": {
-				"oauth_token": "{{token}}"
-			}
-		},
+		"request": "https://www.googleapis.com",
 		"refresh": "/token",
 		"revoke": {
 			"url": "/revoke",
