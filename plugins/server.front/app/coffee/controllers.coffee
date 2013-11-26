@@ -719,47 +719,44 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 			key = $(droppable.target).find('.app-public-key').text().trim()
 
 		ProviderService.get name, ((data) =>
-			# console.log "uh?!"
-			#$scope.$apply (->
 
-				$scope.$broadcast 'btShow'
-				$scope.createKeyProvider = name
-				$scope.createKeyAppKey = key
-				$scope.createKeyHref = data.data.href
-				a = $rootScope.apps.find (n) ->
-					return n.key == $scope.createKeyAppKey
+			$scope.$broadcast 'btShow'
+			$scope.createKeyProvider = name
+			$scope.createKeyAppKey = key
+			$scope.createKeyHref = data.data.href
+			a = $rootScope.apps.find (n) ->
+				return n.key == $scope.createKeyAppKey
 
 
-				$scope.createKeyAppName = a.name
-				$scope.createKeyStep = 2
-				if Object.has data.data, "oauth2"
-					$scope.oauthType = "OAuth 2"
-					$scope.createKeyConf = data.data.oauth2.parameters || {}
-					oauth = "oauth2"
-				else
-					$scope.oauthType = "OAuth 1.0a"
-					$scope.createKeyConf = data.data.oauth1.parameters || {}
-					oauth = "oauth1"
+			$scope.createKeyAppName = a.name
+			$scope.createKeyStep = 2
+			if Object.has data.data, "oauth2"
+				$scope.oauthType = "OAuth 2"
+				$scope.createKeyConf = data.data.oauth2.parameters || {}
+				oauth = "oauth2"
+			else
+				$scope.oauthType = "OAuth 1.0a"
+				$scope.createKeyConf = data.data.oauth1.parameters || {}
+				oauth = "oauth1"
 
-				for k,v of data.data.parameters
-					$scope.createKeyConf[k] = v
+			for k,v of data.data.parameters
+				$scope.createKeyConf[k] = v
 
-				$http(
-					method: "GET"
-					url: '/img/providers/' + $scope.createKeyProvider + '-config.png'
-				).success(->
-					$scope.createKeyConfigImg = true
-				).error(->
-					$scope.createKeyConfigImg = false
-				)
+			$http(
+				method: "GET"
+				url: '/img/providers/' + $scope.createKeyProvider + '-config.png'
+			).success(->
+				$scope.createKeyConfigImg = true
+			).error(->
+				$scope.createKeyConfigImg = false
+			)
 
-				if not a.keysField?
-					a.keysField = {}
-				a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters || {}
-				for k,v of data.data.parameters
-					a.keysField[$scope.createKeyProvider][k] = v
+			if not a.keysField?
+				a.keysField = {}
+			a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters || {}
+			for k,v of data.data.parameters
+				a.keysField[$scope.createKeyProvider][k] = v
 
-			#), 100
 		), (error) ->
 
 ##################
@@ -902,7 +899,6 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	setKeysField = (app, provider)->
 		if not app.keysField?[provider]?
 			ProviderService.get provider, (conf) ->
-				# console.log "#####conf", conf.data
 				if not app.keysField?
 					app.keysField = {}
 				oauth = "oauth1"

@@ -246,7 +246,8 @@
 				var i;
 				for (i in opts) { options[i] = opts[i]; }
 				if ( ! options.oauthio.request.cors) {
-					if (options.url && options.url[0] != '/' )
+					options.url = encodeURIComponent(options.url);
+					if (options.url[0] != '/')
 						options.url = '/' + options.url;
 					options.url = config.oauthd_url + '/request/' + options.oauthio.provider + options.url;
 					options.headers = options.headers || {};

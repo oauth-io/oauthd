@@ -11,7 +11,12 @@
 	},
 	"oauth2": {
 		"authorize": "https://www.dropbox.com/1/oauth2/authorize",
-		"access_token": "https://api.dropbox.com/1/oauth2/token"
+		"access_token": "https://api.dropbox.com/1/oauth2/token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
 	},
 	"href": {
 		"keys": "https://www.dropbox.com/developers/apps/create",
