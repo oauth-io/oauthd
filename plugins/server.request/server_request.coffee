@@ -76,6 +76,21 @@ exports.setup = (callback) ->
 				api_request.once 'end', -> next false
 
 	# request's endpoints
+	@server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
+		origin = null
+		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
+		urlinfos = Url.parse(ref)
+		if not urlinfos.hostname
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
+		origin = urlinfos.protocol + '//' + urlinfos.host
+
+		res.setHeader 'access-control-allow-origin', origin
+		res.setHeader 'access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE'
+		res.setHeader 'access-control-allow-headers', 'accept, authorization, oauthio'
+
+		res.send 200
+		next false
+
 	@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
