@@ -86,7 +86,9 @@ exports.setup = (callback) ->
 
 		res.setHeader 'access-control-allow-origin', origin
 		res.setHeader 'access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE'
-		res.setHeader 'access-control-allow-headers', 'accept, authorization, oauthio'
+		if req.headers['access-control-request-headers']
+			res.setHeader 'access-control-allow-headers', req.headers['access-control-request-headers']
+		res.cache maxAge: 120
 
 		res.send 200
 		next false
