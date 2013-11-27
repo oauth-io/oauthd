@@ -51,7 +51,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 			</thead>
 			<tbody>
 				<tr>
-					<td class="plan-label">Montly connections</td>
+					<td class="plan-label">Monthly connections</td>
 					<td>5 000</td>
 					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection|readableNumber}}</td>
 					<td>-</td>
