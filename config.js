@@ -50,6 +50,7 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist',
 		'server.pricing',
+		'server.apiratings',
 		/* ------------------------- */
 
 		//'server.tests',

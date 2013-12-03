@@ -142,7 +142,8 @@ server.get config.base + '/', (req, res, next) ->
 		return next new check.Error 'state', 'must be present'
 	db.states.get req.params.state, (err, state) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state || state.step != "0"
+		return next new check.Error 'state', 'invalid or expired' if not state
+		return next new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
