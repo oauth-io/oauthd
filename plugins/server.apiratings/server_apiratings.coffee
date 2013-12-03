@@ -10,7 +10,18 @@ exports.setup = (callback) ->
 
 		@db.redis.sadd "apiratings:users", mail
 
+		res.setHeader 'access-control-allow-origin', 'http://apiratings.org'
+		res.setHeader 'access-control-allow-methods', 'POST'
+
 		res.send error:false
 		next()
+
+	@server.opts '/apiratings/signup', (req, res, next) =>
+		res.setHeader 'access-control-allow-origin', 'http://apiratings.org'
+		res.setHeader 'access-control-allow-methods', 'POST'
+		if req.headers['access-control-request-headers']
+			res.setHeader 'access-control-allow-headers', req.headers['access-control-request-headers']
+		res.send 200
+		next false
 
 	callback()
