@@ -159,6 +159,10 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$location.path '/key-manager'
 
 	if not $scope.info
+		if document.location.hash.match /^#err=./
+			$scope.info =
+				status: 'error'
+				message: (document.location.hash.match /^#err=(.+)$/)[1]
 		$scope.info =
 			status: ''
 			message: ''
