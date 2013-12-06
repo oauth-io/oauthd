@@ -20,7 +20,6 @@ exit = require './exit'
 check = require './check'
 formatters = require './formatters'
 sdk_js = require './sdk_js'
-sdk_android = require './sdk_android'
 
 oauth =
 	oauth1: require './oauth1'
@@ -86,13 +85,6 @@ server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req,
 		res.setHeader 'Content-Type', 'application/javascript'
 		res.send r
 		next()
-
-# generated jar sdk
-server.get config.base + '/download/latest/oauth.jar', (req, res, next) ->
-	res.setHeader 'Content-Type', 'application/java-archive'
-	fileStream = fs.createReadStream(config.rootdir + '/app/jar/oauth.jar')
-	fileStream.pipe(res);
-	res.once 'end', -> next false
 
 # oauth: refresh token
 server.post config.base + '/refresh_token/:provider', (req, res, next) ->
