@@ -104,9 +104,9 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 	#MenuService.changed()
 	#if UserService.isLogin()
 	#	$location.path '/key-manager'
-	console.log "start isValidable"
+	# console.log "start isValidable"
 	UserService.isValidable $routeParams.id, $routeParams.key, ((data) ->
-		console.log "check if validable", data
+		# console.log "check if validable", data
 		$location.path '/404' if not data.data.is_validable and not data.data.is_updated
 
 		if UserService.isLogin() and data.data.is_updated

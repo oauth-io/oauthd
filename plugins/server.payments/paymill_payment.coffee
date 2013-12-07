@@ -23,8 +23,9 @@ class PaymillPayment
 
 		if @isNew
 			payment_obj = @prepare()
-
+			console.log payment_obj, "toto"
 			PaymillBase.paymill.payments.create payment_obj, (err, payment) =>
+				console.log err, "1" if err
 				return callback err if err
 
 				@id = payment.data.id
@@ -47,6 +48,7 @@ class PaymillPayment
 					"#{payment_prefix}:created_at", payment.data.created_at ]
 
 				]).exec (err) ->
+					console.log err, "2" if err
 					return callback err if err
 					return callback null, @
 
