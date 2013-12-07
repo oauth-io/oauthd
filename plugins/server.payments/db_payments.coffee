@@ -275,6 +275,7 @@ exports.process = (data, client, callback) ->
 
 	isNewSubscription = false
 
+	console.log "process..."
 	async.series [
 
 		# create Paymill user
@@ -283,7 +284,9 @@ exports.process = (data, client, callback) ->
 				console.error err if err
 				return cb err if err
 
+				console.log "creating user..."
 				if not current_id?
+					console.log " new user..."
 					isNewSubscription = true
 					@pm_client = new PaymillClient
 					@pm_client.user_id = client_id
@@ -292,6 +295,7 @@ exports.process = (data, client, callback) ->
 						return cb err if err
 						cb()
 				else
+					console.log " existing user..."
 					isNewSubscription = false
 					@pm_client = new PaymillClient current_id
 					@pm_client.user_id = client_id
@@ -303,10 +307,12 @@ exports.process = (data, client, callback) ->
 
 		# create payment
 		(cb) =>
+			console.log "creating payment..."
 			@pm_payment = new PaymillPayment
 			@pm_payment.token = data.token
 			@pm_payment.client = @pm_client
 			@pm_payment.save (err, res) ->
+				console.log err, "creating payment" if err
 				return cb err if err
 				cb()
 
@@ -328,8 +334,9 @@ exports.process = (data, client, callback) ->
 
 		# create subscription
 		(cb) =>
-			if data.offer # it's a subscription to an offer
 
+			if data.offer # it's a subscription to an offer
+				console.log "subscription ok..."
 				@pm_subscription = new PaymillSubscription if not @pm_subscription?
 				@pm_subscription.client = @pm_client
 				@pm_subscription.offer = { id : data.offer }
