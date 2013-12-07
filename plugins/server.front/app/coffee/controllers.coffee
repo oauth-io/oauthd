@@ -1769,7 +1769,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 		params_for_token = checkoutParamsForToken()
 
 		paymill_data =
-			currency: 'EUR'
+			currency: 'USD'
 			amount: $scope.cart.total * 100
 			token: ''
 			offer: $scope.cart.plan_id
@@ -1820,11 +1820,11 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 		# 	return null
 
 		params =
-			currency: $('.currency').val()
+			currency: 'USD'
 			number: $('.card-number').val()
 			exp_month: $('.card-expiry-month').val()
 			exp_year: $('.card-expiry-year').val()
 			cvc: $('.card-cvc').val()
-			cardholder: $('.card-holdername').val()
+			amount: $scope.cart.total * 100
 
 		return params
