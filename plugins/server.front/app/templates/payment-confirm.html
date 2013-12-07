@@ -143,10 +143,39 @@ div.heading
           <div class="controls controls-row row">
 
             <div class="span3">
-              <p clasd="card-expiry-label" style="font-size:1.5em;">Expiration date: <font color="red" >*</font></p>
-              <input class="card-expiry-month span1" type="text" size="2" id="card-expiry-month" ng-required="true"/>
+              <p class="card-expiry-label" style="font-size:1.5em;">Expiration date: <font color="red" >*</font></p>
+              <select class="card-expiry-month span1" placeholder="MM" id="card-expiry-month" ng-required="true">
+                <option value="01">01</option>
+                <option value="02">02</option>
+                <option value="03">03</option>
+                <option value="04">04</option>
+                <option value="05">05</option>
+                <option value="06">06</option>
+                <option value="07">07</option>
+                <option value="08">08</option>
+                <option value="09">09</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+              </select>
               <span style="float:left;position:relative;font-size:2em;top:10px;margin:0 5px 0 5px;">/</span>
-              <input class="card-expiry-year span1" type="text" size="4" id="card-expiry-year" ng-required="true"/>
+              <select ng-required="true" placeholder="YYYY" class="card-expiry-year span2">
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+              </select>
             </div>
 
             <div class="span1">

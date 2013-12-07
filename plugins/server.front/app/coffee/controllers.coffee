@@ -1767,7 +1767,6 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 
 		# process order
 		params_for_token = checkoutParamsForToken()
-
 		paymill_data =
 			currency: 'USD'
 			amount: $scope.cart.total * 100
