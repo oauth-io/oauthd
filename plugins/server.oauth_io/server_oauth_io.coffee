@@ -1,14 +1,29 @@
 
 Mailer = require '../../lib/mailer'
 restify = require 'restify'
+request = require 'request'
 
 exports.setup = (callback) ->
 
+	hipchat = (txt) =>
+		return if not @config.hipchat?.token
+		request {
+			url: 'https://api.hipchat.com/v1/rooms/message'
+			method: 'POST'
+			qs:
+				auth_token: @config.hipchat.token
+			form:
+				room_id: @config.hipchat.room
+				from: @config.hipchat.name
+				message: txt.replace(/\n/g,'<br/>')
+				message_format: 'html'
+		}, (e, r, body) ->
+
 	@server.post @config.base + '/contact-us', (req, res, next) =>
 
-		body = "From: " + req.body.name_from?.toString().replace('<','&lt;').replace('>','&gt;') + "\n"
-		body += "Email: " + req.body.email_from?.toString().replace('<','&lt;').replace('>','&gt;') + "\n\n"
-		body += req.body.body?.toString().replace('<','&lt;').replace('>','&gt;')
+		body = "From: " + req.body.name_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;') + "\n"
+		body += "Email: " + req.body.email_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;') + "\n\n"
+		body += req.body.body?.toString().replace(/<'/g,'&lt;').replace(/>/g,'&gt;')
 
 		options =
 			to:
@@ -19,6 +34,7 @@ exports.setup = (callback) ->
 			subject: "[Contact Us] Mail from oauth.io"
 			body: body
 
+		hipchat options.body
 		mailer = new Mailer options, {}
 		mailer.send (err, result) ->
 			return next err if err

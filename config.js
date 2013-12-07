@@ -31,7 +31,7 @@ module.exports = {
 		}
 	},
 
-	paymill:{
+	paymill: {
 		secret_key: '923660828109fb1ca53c8e1b6916d94d',
 		public_key: '8a8394c340c4033a0140d9f61cfd3145'
 	},
@@ -39,6 +39,11 @@ module.exports = {
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
 
+	hipchat: {
+		//token: '...HipChat API token...'
+		//room: '...ID or name of the room...'
+		//name: '...Name the message will appear be sent from...'
+	},
 
 	plugins: [
 		/* --- only for oauth.io --- */
