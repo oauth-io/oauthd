@@ -17,6 +17,7 @@ exports.setup = (callback) ->
 				from: @config.hipchat.name
 				message: txt.replace(/\n/g,'<br/>')
 				message_format: 'html'
+				notify: '1'
 		}, (e, r, body) ->
 
 	@server.post @config.base + '/contact-us', (req, res, next) =>
