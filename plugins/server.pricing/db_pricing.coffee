@@ -145,7 +145,7 @@ exports.removeOffer = (name, callback) ->
 					status = res[1]
 
 					paymill.offers.remove id_offer, (err, offer) ->
-						return callback err if err
+						#return callback err if err
 
 						db.redis.multi([
 							[ 'del', prefix+':id', prefix+':currency', prefix+':nbConnection', prefix+':interval',prefix+':created_at',prefix+':updated_at',prefix+':amount', prefix+':subscription_count:active',prefix+':subscription_count:inactive',prefix+':status', prefix+':name', prefix+':nbApp', prefix+':nbProvider', prefix+':responseDelay',prefix+':parent', prefix]
@@ -163,7 +163,7 @@ exports.removeOffer = (name, callback) ->
 					status = res[1]
 
 					paymill.offers.remove id_offer, (err, offer) ->
-						return callback err if err
+						#return callback err if err
 
 						db.redis.multi([
 							[ 'del', prefix_ttc+':id', prefix_ttc+':currency', prefix_ttc+':nbConnection', prefix_ttc+':interval',prefix_ttc+':created_at',prefix_ttc+':updated_at',prefix_ttc+':amount', prefix_ttc+':subscription_count:active',prefix_ttc+':subscription_count:inactive',prefix_ttc+':status', prefix_ttc+':name', prefix_ttc+':nbApp', prefix_ttc+':nbProvider', prefix_ttc+':responseDelay', prefix_ttc+':parent', prefix_ttc]
