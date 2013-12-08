@@ -15,4 +15,5 @@ branches:
     - "master"
 notifications:
   hipchat:
-    secure: "ifjLqKZGg0dN8acCjcov0IeW+2ob8zg6K5N1fh8YitJOGjOe1BhRBKe+6xT2yyvu+dYl+MrfL3BaXLjUzXe2R7gxTCc+vvBrBaJiyiSd0xBk0ZCG2XopxmvT5dgvdA+kgysVuDNYiewIFyojn3kY7kIM0T+NMfN83RJed7sfDEE="
+    room:
+      - secure: "ZQrGnURfq6eyP4M0KCvVA43Dw5R+jSEb5UPj5Ujo0j50OyhkjANvmODj3amWHAxVsoPra336A+eemnTMsY7plQ1/duQ1rkxnP5+8RG+kIRp57sbgLXa24nCiOQia0NBsDjeJqpUMkCKqNNmq/NzbzcqgiqZZpkrTAYplsqy2eKY="
