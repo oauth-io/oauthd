@@ -284,6 +284,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 							options.url = '/' + options.url;
 						options.url = options.oauthio.request.url + options.url;
 					}
+					options.url = replaceParam(options.url, options.oauthio.tokens, options.oauthio.request.parameters);
 
 					if (options.oauthio.request.query) {
 						var qs = [];
