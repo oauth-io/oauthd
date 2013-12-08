@@ -112,6 +112,15 @@ exports.setup = (callback) ->
 
 	# get total connexion of an app
 	@server.get @config.base_api + '/users/app/:key', @auth.needed, (req, res, next) =>
-		@db.timelines.getTotal "co:a:#{req.params.key}", @server.send(res, next)
+		@db.timelines.getTimeline "co:a:#{req.params.key}",
+			unit: 'm',
+			start: (new Date / 1000),
+			end: (new Date / 1000),
+			(err, stats) =>
+				return next err if err
+				keys = Object.keys(stats)
+				return next new @check.Error 'unknown' if ! keys[0]
+				res.send stats[keys[0]].toString()
+				next()
 
 	callback()

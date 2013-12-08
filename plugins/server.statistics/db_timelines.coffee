@@ -18,7 +18,7 @@ exports.getTotal = check 'string', (target, callback) ->
 		return callback err if err
 		callback null, total
 
-exports.getTimeline = check 'string', unit:'string', start:'int', end:'int', (target, data, callback) ->
+exports.getTimeline = check 'string', unit:'string', start:'number', end:'number', (target, data, callback) ->
 	unit = data.unit || 'm'
 	keys = {}
 	date = new Date (data.start * 1000)
