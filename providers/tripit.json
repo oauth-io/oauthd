@@ -2,12 +2,12 @@
 	"name": "Tripit",
 	"url": "https://api.tripit.com",
 	"oauth1": {
-		"request_token": "/request_token",
+		"request_token": "/oauth/request_token",
 		"authorize": {
 			"url": "https://www.tripit.com/oauth/authorize",
 			"ignore_verifier": true
 		},
-		"access_token": "/access_token"
+		"access_token": "/oauth/access_token"
 	},
 	"href": {
 		"keys": "https://www.tripit.com/developer/create",
