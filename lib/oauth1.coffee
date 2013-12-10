@@ -33,7 +33,7 @@ ksort = (w) ->
 	return r
 
 build_auth_string = (authparams) ->
-	"OAuth " + (k + '="' + v + '"' for k,v of authparams).join ","
+	"OAuth " + (k + '="' + v + '"' for k,v of ksort authparams).join ","
 
 sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
 	data = method + '&' + (encodeURIComponent baseurl) + '&'
@@ -76,22 +76,16 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			query[name] = param if param
 		options =
 			url: request_token.url
-			method: 'POST'
-
-		query.oauth_nonce = db.generateUid()
-		query.oauth_timestamp = Math.floor new Date / 1000
-		query.oauth_version = "1.0"
-		query.oauth_callback = encodeURIComponent query.oauth_callback
-		if not query.oauth_signature_method
-			query.oauth_signature_method = 'HMAC-SHA1'
+			method: request_token.method?.toUpperCase() || "POST"
+			oauth:
+				callback: query.oauth_callback
+				consumer_key: parameters.client_id
+				consumer_secret: parameters.client_secret
+		delete query.oauth_callback
+		if options.method == 'POST'
+			options.form = query
 		else
-			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
-		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&', query)
-		else
-			return callback new check.Error 'Unknown signature method'
-		options.form = {}
-		options.headers = Authorization: build_auth_string query
+			options.qs = query
 
 		# do request to request_token
 		request options, (e, r, body) ->
@@ -145,10 +139,6 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				callback null, url
 
 
-#    this.saveToken(api, oauth_tokens);
-#
-
-
 exports.access_token = (state, req, callback) ->
 	# manage errors in callback
 	if req.params.error || req.params.error_description
@@ -177,31 +167,32 @@ exports.access_token = (state, req, callback) ->
 
 		access_token = provider.oauth1.access_token
 		query = {}
+		hard_params = state:state.id, callback:config.host_url+config.relbase
+		for extra in (provider.oauth1.authorize.extra||[])
+			hard_params[extra] = req.params[extra] if req.params[extra]
 		for name, value of access_token.query
-			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			param = replace_param value, params, hard_params, parameters
 			if typeof param != 'string'
 				return callback param
 			query[name] = param if param
 		options =
-			url: replace_param access_token.url, params, {}, parameters
-			method: 'POST'
-
-		query.oauth_nonce = db.generateUid()
-		query.oauth_timestamp = Math.floor new Date / 1000
-		query.oauth_version = "1.0"
-		query.oauth_token = req.params.oauth_token
+			url: replace_param access_token.url, params, hard_params, parameters
+			method: access_token.method?.toUpperCase() || "POST"
+			oauth:
+				callback: query.oauth_callback
+				consumer_key: parameters.client_id
+				consumer_secret: parameters.client_secret
+				token: req.params.oauth_token
+				token_secret: state.token
 		if provider.oauth1.authorize.ignore_verifier != true
-			query.oauth_verifier = req.params.oauth_verifier
-		if not query.oauth_signature_method
-			query.oauth_signature_method = 'HMAC-SHA1'
+			options.oauth.verifier = req.params.oauth_verifier
 		else
-			query.oauth_signature_method = query.oauth_signature_method.toUpperCase()
-		if query.oauth_signature_method == 'HMAC-SHA1'
-			query.oauth_signature = encodeURIComponent sign_hmac_sha1('POST', options.url, parameters.client_secret + '&' + state.token, query)
+			options.oauth.verifier = ""
+		delete query.oauth_callback
+		if options.method == 'POST'
+			options.form = query
 		else
-			return callback new check.Error 'Unknown signature method'
-		options.form = {}
-		options.headers = Authorization: build_auth_string query
+			options.qs = query
 
 		# do request to access_token
 		request options, (e, r, body) ->
@@ -254,11 +245,16 @@ exports.access_token = (state, req, callback) ->
 				if v.scope == 'public'
 					requestclone.parameters ?= {}
 					requestclone.parameters[k] = parameters[k]
-			callback null,
+			result =
 				oauth_token: body.oauth_token
 				oauth_token_secret: body.oauth_token_secret
 				expires_in: expire
 				request: requestclone
+			for extra in (access_token.extra||[])
+				result[extra] = body[extra] if body[extra]
+			for extra in (provider.oauth1.authorize.extra||[])
+				result[extra] = req.params[extra] if req.params[extra]
+			callback null, result
 
 exports.request = (provider, parameters, req, callback) ->
 	params = {}
