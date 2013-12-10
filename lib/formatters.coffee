@@ -60,10 +60,12 @@ formatters =
 		if body instanceof Error
 			if body instanceof check.Error || body instanceof restify.RestError
 				msg = body.message
-				if body.body? && Object.keys(body.body).length
+				if typeof body.body == 'object' && Object.keys(body.body).length
 					msg += "<br/>"
 					for k,v of body.body
 						msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
+				else if typeof body.body == 'string' && body.body != ""
+					msg += '<br/><span style="color:red">' + body.body + '</span>'
 				body = msg
 			else
 				body = "Internal error"
