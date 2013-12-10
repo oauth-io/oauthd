@@ -28,6 +28,9 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
+								"method":
+									type: "string"
+									enum: ["get", "post"]
 								"query":
 									type: "object"
 						}
@@ -48,6 +51,10 @@ module.exports =
 									type: "boolean"
 								"query":
 									type: "object"
+								"extra":
+									type: "array"
+									items:
+										type: "string"
 						}
 					]
 				"access_token":
@@ -61,8 +68,15 @@ module.exports =
 							properties:
 								"url":
 									type: "string"
+								"method":
+									type: "string"
+									enum: ["get", "post"]
 								"query":
 									type: "object"
+								"extra":
+									type: "array"
+									items:
+										type: "string"
 						}
 					]
 				"request":

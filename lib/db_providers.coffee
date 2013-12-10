@@ -41,12 +41,10 @@ def =
 	oauth1:
 		request_token:
 			query:
-				oauth_consumer_key: "{client_id}"
 				oauth_callback: "{{callback}}"
 		authorize: {}
 		access_token:
-			query:
-				oauth_consumer_key: "{client_id}"
+			query: {}
 		request: {}
 
 
