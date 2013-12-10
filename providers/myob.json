@@ -1,14 +1,15 @@
 {
   "href": {
+    "keys": "http://developer.myob.com",
     "docs": "http://developer.myob.com", 
     "apps": "http://myob.com.au/addons/",
     "provider": "http://myob.com.au"
   },
   "name": "MYOB",
-  "provider": "myob",
+  "url": "https://secure.myob.com/oauth2",
   "oauth2": {
     "authorize": {
-      "url": "https://secure.myob.com/oauth2/account/authorize",
+      "url": "/account/authorize",
       "query": {
         "client_id": "{client_id}",
         "scope": "{scope}",
@@ -18,13 +19,21 @@
       }
     },
     "access_token": {
-      "url": "https://secure.myob.com/oauth2/v1/authorize",
+      "url": "/v1/authorize",
       "method": "post",
-      "body": "client_id={client_id}&client_secret={client_secret}&scope={scope}&grant_type=authorization_code&code={{code}}&redirect_uri={{callback}}&state={{state}}"
+      "query": {
+        "client_id":"{client_id}",
+        "client_secret":"{client_secret}",
+	"scope":"{scope}",
+	"grant_type":"authorization_code",
+	"code":"{{code}}",
+	"redirect_uri":"{{callback}}",
+	"state":"{{state}}"
+      }
     },
     "refresh": {
       "method": "post",
-      "url": "https://secure.myob.com/oauth2/v1/authorize",
+      "url": "/v1/authorize",
       "query": {
         "client_id":"{client_id}",
         "client_secret":"{client_secret}",
@@ -39,9 +48,7 @@
         "values": {
           "CompanyFile": "Access to MYOB AccountRight CompanyFile(s)."
         },
-        "cardinality": "*",
-        "separator": " ",
-        "type": "string"
+        "cardinality": "*"
       }
     }
   }
