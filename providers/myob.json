@@ -1,55 +1,35 @@
 {
-  "href": {
-    "keys": "http://developer.myob.com",
-    "docs": "http://developer.myob.com", 
-    "apps": "http://myob.com.au/addons/",
-    "provider": "http://myob.com.au"
-  },
-  "name": "MYOB",
-  "url": "https://secure.myob.com/oauth2",
-  "oauth2": {
-    "authorize": {
-      "url": "/account/authorize",
-      "query": {
-        "client_id": "{client_id}",
-        "scope": "{scope}",
-        "response_type": "code",
-        "redirect_uri": "{{callback}}",
-	"state":"{{state}}"
-      }
-    },
-    "access_token": {
-      "url": "/v1/authorize",
-      "method": "post",
-      "query": {
-        "client_id":"{client_id}",
-        "client_secret":"{client_secret}",
-	"scope":"{scope}",
-	"grant_type":"authorization_code",
-	"code":"{{code}}",
-	"redirect_uri":"{{callback}}",
-	"state":"{{state}}"
-      }
-    },
-    "refresh": {
-      "method": "post",
-      "url": "/v1/authorize",
-      "query": {
-        "client_id":"{client_id}",
-        "client_secret":"{client_secret}",
-        "refresh_token":"{{refresh_token}}",		
-        "grant_type":"refresh_token"
-      }
-    },
-    "parameters": {
-      "client_secret": "string",
-      "client_id": "string",
-      "scope": {
-        "values": {
-          "CompanyFile": "Access to MYOB AccountRight CompanyFile(s)."
-        },
-        "cardinality": "*"
-      }
-    }
-  }
+	"name": "MYOB",
+	"url": "https://secure.myob.com/oauth2",
+	"oauth2": {
+		"authorize": "/account/authorize",
+		"access_token": {
+			"url": "/v1/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"scope": "{scope}",
+				"grant_type": "authorization_code",
+				"code": "{{code}}",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}"
+			}
+		},
+		"refresh": "/v1/authorize",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"CompanyFile": "Access to MYOB AccountRight CompanyFile(s)."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://developer.myob.com",
+		"docs": "http://developer.myob.com",
+		"apps": "http://myob.com.au/addons/",
+		"provider": "http://myob.com.au"
+	}
 }
