@@ -19,8 +19,8 @@
   },
   "scripts": {
     "install": "grunt",
-    "start": "forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start ./lib/oauthd.js",
-    "stop": "forever stop ./lib/oauthd.js",
+    "start": "forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start lib/oauthd.js",
+    "stop": "forever stop lib/oauthd.js",
     "test": "grunt test && coffee ./test/providers_check.coffee"
   },
   "keywords": [
