@@ -48,7 +48,7 @@ By default, you can access it by [http://localhost:6284/admin](http://localhost:
 
 ![OAuthd signin](https://oauth.io/img/oauthd-signin.png "OAuthd")
 
-The first time you connect, the given login & pass will be registered as the admin user, so don't forget it !
+The first time you connect, the given login & pass will be registered as the admin user. If you lose it, you can reset the login with `node ./tools/login_reset.js` in the oauthd folder.
 
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
