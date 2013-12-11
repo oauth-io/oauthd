@@ -1441,6 +1441,9 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 		$location.path '/signin'
 		return
 
+
+	$scope.processingOrder = false
+
 	$scope.countries = [{code : "US", name : "United States"},
 						{code : "AL", name : "Albania"},
 						{code : "DZ", name : "Algeria"},
@@ -1719,10 +1722,9 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 				$scope.error =
 					state: true
 					message: fields[i]
+				$scope.processingOrder = false
 				return null
-
-		$('#bt-payment').hide 0, ->
-			$('#waiting-payment').fadeIn(1000)
+		$scope.processingOrder = true
 
 		if $scope.profile.use_profile_for_billing
 			$scope.billing = $scope.profile
@@ -1739,10 +1741,14 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 				state : true
 				message : error.message
 
-			$('#waiting-payment').hide 0, ->
-				$('#bt-payment').show().css('display', 'inline');
+			$scope.processingOrder = false
 
 	$scope.process_order = ->
+		$scope.processingOrder = true
+		$scope.error =
+				state: false
+				message : ''
+
 		fields = {
 			"#card-number": "error card number missing"
 			"#card-expiry-month": "error expiration date missing (month)"
@@ -1756,14 +1762,8 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 				$scope.error =
 					state: true
 					message: fields[i]
+				$scope.processingOrder = false
 				return null
-
-		$('#bt-payment').hide 0, ->
-			$('#waiting-payment').fadeIn(1000)
-
-		$scope.error =
-				state: false
-				message : ''
 
 		# process order
 		params_for_token = checkoutParamsForToken()
@@ -1786,29 +1786,28 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 						state: true
 						message : error.message
 
-					$('#waiting-payment').hide 0, ->
-						$('#bt-payment').show().css('display', 'inline');
-
+					$scope.processingOrder = false
 
 	checkoutParamsForToken = ->
 		if !paymill.validateCardNumber($('.card-number').val())
 			$scope.error =
 				state: true
 				message : 'Invalid card number'
+			$scope.processingOrder = false
 			return null
 
 		if !paymill.validateExpiry($('.card-expiry-month').val(), $('.card-expiry-year').val())
 			$scope.error =
 				state: true
 				message : 'Invalid card expiry date'
-
+			$scope.processingOrder = false
 			return null
 
 		if !paymill.validateCvc($('.card-cvc').val(), $('.card-number').val())
 			$scope.error =
 				state: true
 				message : 'Invalid card CVC'
-
+			$scope.processingOrder = false
 			return null
 
 		# if $('.card-holdername').val() == ''

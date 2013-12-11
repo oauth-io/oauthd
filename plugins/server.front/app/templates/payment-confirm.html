@@ -118,9 +118,7 @@ div.heading
 
 
       <div> <!-- <credit card info> -->
-        <div class="alert alert-danger" ng-show="error.state">
-          {{error.message}}
-        </div>
+
 
 
        <font color="red" >* fields are required </font></br></br>
@@ -185,6 +183,9 @@ div.heading
 
           </div>
         </div>
+        <div class="alert alert-danger" ng-show="error.state">
+          {{error.message}}
+        </div>
       </div> <!-- </credit card info>  -->
     </div>
   </div>
@@ -193,8 +194,8 @@ div.heading
 
       <div class="row">
         <p style="font-size:3em;color:#ffffff;">Subscribe me to the {{cart.plan_name}} pack
-          <a ng-click="process_order()" id="bt-payment" style="border: 2px solid #ffffff;border-radius:4px;background-color:#cbe7f9; width:300px;padding:10px;margin:10px;color:black;text-decoration:none;font-size:0.8em;cursor:pointer;">Subscribe</a>
-          <img src="/img/ajax-loader-payment.gif" id="waiting-payment" style="display:none;" />
+          <a ng-hide="processingOrder" ng-click="process_order()" id="bt-payment" style="border: 2px solid #ffffff;border-radius:4px;background-color:#cbe7f9; width:300px;padding:10px;margin:10px;color:black;text-decoration:none;font-size:0.8em;cursor:pointer;">Subscribe</a>
+          <img ng-show="processingOrder" src="/img/ajax-loader-payment.gif" id="waiting-payment" style="display:none;" />
         </p>
       </div>
 
