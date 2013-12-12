@@ -50,6 +50,7 @@ module.exports = {
 		'server.auth',
 		'server.users',
 		'server.adm',
+		'server.hipchat',
 		'server.oauth_io',
 		'server.payments',
 		'server.mailjet',

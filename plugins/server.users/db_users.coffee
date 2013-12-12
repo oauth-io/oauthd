@@ -206,7 +206,8 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 			prefix+'validated', 1,
 			prefix+'pass', pass,
 			prefix+'salt', dynsalt,
-			prefix+'key', db.generateUid()
+			prefix+'key', db.generateUid(),
+			prefix+'date_validate', (new Date).getTime()
 		], (err) ->
 			return err if err
 			return callback null, mail: res.mail, id: res.id

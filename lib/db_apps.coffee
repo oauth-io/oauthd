@@ -40,8 +40,12 @@ exports.create = (req, callback) ->
 				return callback err if err
 				prefix = 'a:' + idapp + ':'
 				cmds = [
-					[ 'mset', prefix+'name', data.name,
-						prefix+'key', key, prefix+'secret', secret ],
+					[ 'mset',
+						prefix+'name', data.name,
+						prefix+'key', key,
+						prefix+'secret', secret,
+						prefix+'owner', req.user.id,
+						prefix+'date', (new Date).getTime() ],
 					[ 'hset', 'a:keys', key, idapp ]
 				]
 				if data.domains
@@ -189,7 +193,8 @@ exports.addKeyset = check check.format.key, 'string', parameters:'object', respo
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.mset 'a:' + idapp + ':k:' + provider, JSON.stringify(data.parameters)
-			, 'a:' + idapp + ':ktype:' + provider, data.response_type, (err, res) ->
+			, 'a:' + idapp + ':ktype:' + provider, data.response_type
+			, 'a:' + idapp + ':kdate:' + provider, (new Date).getTime(), (err, res) ->
 				return callback err if err
 				plugins.data.emit 'app.addkeyset', provider:provider, app:key, id:idapp
 				callback()

@@ -139,7 +139,7 @@ server.get config.base + '/', (req, res, next) ->
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
-			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+			plugins.data.emit 'connect.callback', origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
 			if not e
 				if state.options.response_type != 'token'
 					db.states.set req.params.state, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs

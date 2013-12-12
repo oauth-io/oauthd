@@ -388,6 +388,14 @@ exports.process = (data, client, callback) ->
 							return callback err if err
 							cb()
 
+						# cohort analysis: consumer
+						db.redis.get 'u:' + @pm_client.user_id + ':date_consumer', (e, r) =>
+							return if e or r
+							db.redis.set 'u:' + @pm_client.user_id + ':date_consumer', (new Date).getTime(), (->)
+
+						shared.emit 'user.pay', user:user, invoice:invoice
+
+
 	], (err, result) =>
 		return callback err if err
 		return callback null, result

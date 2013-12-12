@@ -4,6 +4,7 @@
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
 
+Url = require 'url'
 async = require 'async'
 require './db_timelines'
 require './db_rankings'
@@ -30,6 +31,36 @@ exports.setup = (callback) ->
 		@db.timelines.addUse target:'co:p:' + data.provider + ':' + data.status, (->)
 		@db.timelines.addUse target:'co:a:' + data.key + ':p:' + data.provider + ':' + data.status, (->)
 		auth_array data
+		if data.status == 'success'
+			@db.redis.hget 'a:keys', data.key, (e, idapp) =>
+				return if e or not idapp
+				@db.redis.get 'a:' + idapp + ':owner', (e, iduser) =>
+					return if e or not iduser
+
+					# cohort analysis: activation check
+					@db.redis.get 'u:' + iduser + ':date_activation', (e, r) =>
+						return if e or r
+						@db.redis.set 'u:' + iduser + ':date_activation', (new Date).getTime(), (->)
+
+					# cohort analysis: development check
+					origin = data.origin
+					domain = Url.parse origin
+					if not domain.protocol
+						origin = 'http://' + origin
+						domain = Url.parse origin
+					if domain.host != @config.url.host
+						@db.redis.get 'u:' + iduser + ':date_development', (e, r) =>
+							return if e or r
+							@db.redis.set 'u:' + iduser + ':date_development', (new Date).getTime(), (->)
+
+					# cohort analysis: production
+					if not origin.match /local/
+						@db.redis.incr 'u:' + iduser + ':ext_authcount', (e, r) =>
+							return if e or r < 50
+							@db.redis.get 'u:' + iduser + ':date_production', (e, r) =>
+								return if e or r
+								@db.redis.set 'u:' + iduser + ':date_production', (new Date).getTime(), (->)
+
 
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co:p:' + data.provider, (->)
