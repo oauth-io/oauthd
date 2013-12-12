@@ -9,7 +9,7 @@ request = require 'request'
 
 exports.setup = (callback) ->
 
-	hipchat = (txt) =>
+	hipchat = (data) =>
 		return if not @config.hipchat?.token
 		request {
 			url: 'https://api.hipchat.com/v1/rooms/message'
@@ -17,17 +17,17 @@ exports.setup = (callback) ->
 			qs:
 				auth_token: @config.hipchat.token
 			form:
-				room_id: @config.hipchat.room
+				room_id: data.room
 				from: @config.hipchat.name
-				message: txt.replace(/\n/g,'<br/>')
+				message: data.message.replace(/\n/g,'<br/>')
 				message_format: 'html'
 				notify: '1'
 		}, (e, r, body) ->
 
-	@on 'user.contact', (data) ->
-		hipchat data.body
+	@on 'user.contact', (data) =>
+		hipchat room:@config.hipchat.room_support, message:data.body
 
-	@on 'user.pay', (data) ->
-		hipchat data.user.profile.name + ' bought offer ' + data.invoice.plan_name + ' ($' + data.invoice.total + ') *shlingggggggggggg*'
+	@on 'user.pay', (data) =>
+		hipchat room:@config.hipchat.room_activities, message:data.user.profile.name + ' bought offer ' + data.invoice.plan_name + ' ($' + data.invoice.total + ') *shlingggggggggggg*'
 
 	callback()

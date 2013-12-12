@@ -41,7 +41,8 @@ module.exports = {
 
 	hipchat: {
 		//token: '...HipChat API token...'
-		//room: '...ID or name of the room...'
+		//room_support: '...ID or name of the support room...'
+		//room_activities: '...ID or name of the activities room...'
 		//name: '...Name the message will appear be sent from...'
 	},
 
