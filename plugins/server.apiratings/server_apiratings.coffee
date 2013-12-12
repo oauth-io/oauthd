@@ -1,4 +1,4 @@
-
+restify = require 'restify'
 
 exports.setup = (callback) ->
 	@server.post '/apiratings/signup', (req, res, next) =>
