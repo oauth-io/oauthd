@@ -14,6 +14,7 @@
 		"access_token": "/access_token",
 		"request": {
 			"url": "https://api.foursquare.com",
+			"cors": true,
 			"query": {
 				"oauth_token": "{{token}}"
 			}
