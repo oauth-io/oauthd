@@ -89,6 +89,11 @@ hooks.config = ->
 
 			resetAllSecrets: (success, error) ->
 				api "adm/secrets/reset", success, error
+
+			getCohort: (data, success, error) ->
+				url = "adm/scripts/appsbynewusers?start=#{data.start}"
+				url += "&end=#{data.end}" if data.end
+				api url, success, error
 		}
 
 	#################################
@@ -108,13 +113,31 @@ hooks.config = ->
 			if (confirm("Are you sure to reset all user's secrets keys ??"))
 				AdmService.resetAllSecrets (-> alert("done")), (-> alert("error"))
 
+		$scope.cohortAnalysis = ->
+			data =
+				start: Math.round(new Date($('#cohortStart').val()) / 1000)
+				end: $('#cohortEnd').val() && Math.round(new Date($('#cohortEnd').val()) / 1000)
+			AdmService.getCohort data, ( (res) ->
+				for i of res.data[2]
+					res.data[2][i] = new Date(Date.now() - res.data[2][i]).relative().replace " ago", ""
+				$scope.cohort =
+					sum: res.data[0]
+					conversion: res.data[1]
+					lag: res.data[2]
+			), ( (err) -> alert err.message)
+
+		$('#cohortStart').val(Date.create('last month').format('{yyyy}/{MM}/{dd}')).datepicker()
+		$('#cohortEnd').datepicker()
+		$('#cohort-row div').css('text-align', 'center').css('vertical-align', 'middle')
+		$('#cohort-row span.glyphicon').css('font-size', '24px')
+
 		# Users list
 
 		$scope.users = []
 		$scope.nbUsers = 0
 		$scope.nbUnvalidatedUser = 0
 
-		countUnvalidatedUser = ()->
+		countUnvalidatedUser = () ->
 			$scope.nbUnvalidatedUser = 0
 			for i of $scope.users
 				if $scope.users[i].validated == '0'

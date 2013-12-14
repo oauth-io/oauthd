@@ -6,6 +6,7 @@
 
 async = require 'async'
 Mailer = require '../../lib/mailer'
+fs = require 'fs'
 
 exports.setup = (callback) ->
 
@@ -185,5 +186,20 @@ OAuth.io Team'
 	@server.post @config.base_api + '/adm/plan/update', @auth.adm, (req, res, next) =>
 		@db.pricing.updateStatus req.body.name, req.body.currentStatus, @server.send(res, next)
 
+	redisScripts =
+		appsbynewusers: @check start:'int', end:['int', 'none'], (data, callback) =>
+			start = Math.floor(data.start)
+			end = Math.floor(data.end || (new Date).getTime() / 1000)
+			return callback new @check.Error 'start', 'start must be > 01/06/2013' if start < 1370037600 # 01/06/2013 00:00:00
+			return callback new @check.Error 'start must be < end !' if end - start < 0
+			return callback new @check.Error 'time interval must be within 3 months' if end - start > 3600*24*93
+			fs.readFile __dirname + '/lua/appsbynewusers.lua', 'utf8', (err, script) =>
+				@db.redis.eval script, 0, start*1000, end*1000, (e,r) ->
+					return callback e if e
+					r[1][i] /= 100 for i of r[1]
+					return callback null, r
+
+	@server.get @config.base_api + '/adm/scripts/appsbynewusers', @auth.adm, (req, res, next) =>
+		redisScripts.appsbynewusers req.params, @server.send(res, next)
 
 	callback()

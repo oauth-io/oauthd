@@ -35,6 +35,34 @@ $('#navTab a').click(function (e) {
 				<form ng-submit="resetSecrets()">
 					<button class="col" type="submit">Reset all secret keys</button>
 				</form>
+				<form ng-submit="cohortAnalysis()" class="form-inline" role="form">
+					<div class="form-group">
+						<label class="sr-only" for="cohortStart">Start date</label>
+						<input type="text" class="form-control" id="cohortStart" placeholder="Start date">
+					</div>
+					<div class="form-group">
+						<label class="sr-only" for="cohortEnd">End date</label>
+						<input type="text" class="form-control" id="cohortEnd" placeholder="End date">
+					</div>
+					<button type="submit" class="btn btn-default">Cohort Analysis (what does "cohort" means?)</button>
+				</form>
+			</div>
+			<div class="col col-lg-12" id="cohort-row" ng-show="cohort">
+				<div class="row">
+					<div class="col col-lg-2"><div class="well well-sm">Subscribe<br/>{{cohort.sum[0]}}</div></div>
+					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[0]}} %<br/>{{cohort.lag[0]}}</div>
+					<div class="col col-lg-2"><div class="well well-sm">Registration<br/>{{cohort.sum[1]}}</div></div>
+					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[1]}} %<br/>{{cohort.lag[1]}}</div>
+					<div class="col col-lg-2"><div class="well well-sm">Activation<br/>{{cohort.sum[2]}}</div></div>
+					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[2]}} %<br/>{{cohort.lag[2]}}</div>
+				</div>
+				<div class="row">
+					<div class="col col-lg-2"><div class="well well-sm">Development<br/>{{cohort.sum[3]}}</div></div>
+					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[3]}} %<br/>{{cohort.lag[3]}}</div>
+					<div class="col col-lg-2"><div class="well well-sm">Production<br/>{{cohort.sum[4]}}</div></div>
+					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[4]}} %<br/>{{cohort.lag[4]}}</div>
+					<div class="col col-lg-2"><div class="well well-sm">Consumer<br/>{{cohort.sum[5]}}</div></div>
+				</div>
 			</div>
 		</div>
 
