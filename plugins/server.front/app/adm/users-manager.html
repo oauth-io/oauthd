@@ -149,10 +149,17 @@ $('#navTab a').click(function (e) {
 							<option value="92">3 month</option>
 							<option value="183">6 month</option>
 						</select>
+						<div class="form-group">
+							<label class="sr-only" for="cohortStart">Start date</label>
+							<input type="text" class="form-control" id="statsStart" placeholder="Start date" ng-model="chart.start" ng-change="chartSubmit()">
+						</div>
+						<div class="form-group">
+							<label class="sr-only" for="cohortEnd">End date</label>
+							<input type="text" class="form-control" id="statsEnd" placeholder="End date" ng-model="chart.end" ng-change="chartSubmit()">
+						</div>
 						<button class="col" type="submit">Search</button>
-					</div>
 				</form>
-				<h4><strong>Total:</strong> {{chart.total}}</h4>
+				<h4><strong>Total:</strong> {{chart.total}} - <strong>Selection total:</strong> {{chart.selTotal}}</h4>
 				<div class="row" style="margin-top: 10px;">
 					<canvas id="chartCanevas" width="1000" height="400"></canvas>
 				</div>

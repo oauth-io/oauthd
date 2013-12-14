@@ -126,7 +126,7 @@ hooks.config = ->
 					lag: res.data[2]
 			), ( (err) -> alert err.message)
 
-		$('#cohortStart').val(Date.create('last month').format('{yyyy}/{MM}/{dd}')).datepicker()
+		$('#cohortStart').val(Date.create('last month').format('{dd}/{MM}/{yyyy}')).datepicker()
 		$('#cohortEnd').datepicker()
 		$('#cohort-row div').css('text-align', 'center').css('vertical-align', 'middle')
 		$('#cohort-row span.glyphicon').css('font-size', '24px')
@@ -184,6 +184,8 @@ hooks.config = ->
 			AdmService.stat opts, (res) ->
 				chart = new Chart $("#" + id).get(0).getContext('2d')
 				$scope.chart.total = res.data.total
+				$scope.chart.selTotal = 0
+				$scope.chart.selTotal += v for k,v of res.data.timeline
 				chart.Line
 					labels: Object.keys(res.data.timeline)
 					datasets: [
@@ -196,17 +198,29 @@ hooks.config = ->
 
 		displayStat 'users', 'chartCanevas'
 		$scope.chartSubmit = ->
-			if not $scope.chart.day
-				$scope.chart.day = 1
-			if $scope.chart.day <= 3
+			statsStart = $('#statsStart').val()
+			statsEnd = $('#statsEnd').val()
+			days = $scope.chart.day || 1
+			opts = start: new Date() - 24*3600*1000*days
+			if statsEnd
+				statsEnd = opts.end = new Date(statsEnd).getTime()
+			if statsStart
+				statsStart = opts.start = new Date(statsStart).getTime()
+			if statsStart
+				statsEnd ||= new Date().getTime()
+				$scope.chart.day = days = Math.floor((statsEnd - statsStart) / 1000 / 3600 / 24)
+			if days <= 3
 				unit = 'h'
-			else if $scope.chart.day <= 93
+			else if days <= 93
 				unit = 'd'
 			else
 				unit = 'm'
-			displayStat $scope.chart.stat, 'chartCanevas',
-				start: new Date() - 24*3600*1000*$scope.chart.day
-				unit: unit
+			opts.unit = unit
+			console.log opts, new Date(opts.start), new Date(opts.end)
+			displayStat $scope.chart.stat, 'chartCanevas', opts
+
+		$('#statsStart').datepicker()
+		$('#statsEnd').datepicker()
 
 		$scope.mailjetUpdate = ->
 			AdmService.mailjetUpdate (->), (err) -> alert err.message
