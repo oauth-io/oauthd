@@ -16,6 +16,9 @@ exports.setup = (callback) ->
 		res.send error:false
 		next()
 
+	@server.get '/apiratings/adm/tralalatsointsoin', (req, res, next) =>
+		@db.redis.smembers "apiratings:users", @server.send(res, next)
+
 	@server.opts '/apiratings/signup', (req, res, next) =>
 		res.setHeader 'access-control-allow-origin', 'http://apiratings.org'
 		res.setHeader 'access-control-allow-methods', 'POST'
