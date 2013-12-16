@@ -2,14 +2,7 @@
 	"name": "Wordpress",
 	"url": "https://public-api.wordpress.com/oauth2",
 	"oauth2": {
-		"authorize": {
-			"url": "/authorize",
-			"query": {
-				"client_id": "{client_id}",
-				"redirect_uri": "{{callback}}",
-				"response_type": "code"
-			}
-		},
+		"authorize": "/authorize",
 		"access_token": "/token"
 	},
 	"href": {
