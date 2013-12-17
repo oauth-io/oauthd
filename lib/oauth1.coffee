@@ -233,7 +233,7 @@ exports.access_token = (state, req, callback) ->
 
 			if not body.oauth_token
 				return callback new check.Error 'Could not find oauth_token in response'
-			if not body.oauth_token_secret
+			if not body.oauth_token_secret?
 				return callback new check.Error 'Could not find oauth_token_secret in response'
 			expire = body.expire
 			expire ?= body.expires
