@@ -27,7 +27,7 @@ dbproviders = require './db_providers'
 dbapps = require './db_apps'
 config = require './config'
 
-OAuth10aResponseParser = require './oauth1-response-parser'
+OAuth1ResponseParser = require './oauth1-response-parser'
 
 ksort = (w) ->
 	r = {}
@@ -92,7 +92,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		# do request to request_token
 		request options, (e, r, body) ->
 			return callback(e) if e
-			responseParser = new OAuth10aResponseParser(r, body, request_token.format)
+			responseParser = new OAuth1ResponseParser(r, body, request_token.format)
 			return callback(responseParser.error) if responseParser.error
 
 			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
