@@ -52,6 +52,82 @@ replace_param = (param, params, hard_params, keyset) ->
 			return keyset[val].join params[val].separator || ","
 		return keyset[val]
 
+class OAuth10aResponseParser
+	constructor: (response, body, format) ->
+		@_response = response
+		@_body = body
+		@_format = format
+		@_contentType = @_response.headers['content-type']
+
+		if not @_isResponseOk
+			@_setError('Error while requesting request_token (HTTP status code: ' + @_response.statusCode + ')')
+			return
+		if not @_hasBody()
+			@_setError('Error while requesting request_token (empty response)')
+			return
+
+		if @_isJsonResponse()
+			@_parseBodyAsJson()
+		if @_isFormResponse()
+			@_parseBodyAsForm()
+		if @error
+			return
+
+		@_parseUnknownBody() if not @_parsedBody
+		if not @_hasKeyAndSecret()
+			@_setError('Could not find request_token in response')
+			return
+
+		@oauth_token = @_parsedBody.oauth_token
+		@oauth_token_secret = @_parsedBody.oauth_token_secret
+
+	_isResponseOk: () ->
+		return @_response.statusCode == 200
+
+	_hasBody: () ->
+		return !!@_body
+
+	_isJsonResponse: () ->
+		return @_format == 'json' or
+					 @_contentType == 'application/json'
+
+	_isFormResponse: () ->
+		return @_format == 'url' or
+					 @_contentType == 'application/x-www-form-urlencoded'
+
+	_parseBodyAsJson: () ->
+		@_parseBody(JSON.parse)
+
+	_parseBodyAsForm: () ->
+		@_parseBody(querystring.parse)
+
+	_parseUnknownBody: () ->
+		@_parseBodyAsJson()
+		delete @error # this is a fallback, ignore error
+		@_parseBodyAsForm() if not @_parsedBody
+		delete @error # this is a fallback, ignore error
+
+	_parseBody: (parseFunc) ->
+		try
+			@_parsedBody = parseFunc(@_body)
+		catch ex
+			@_setError('Unable to parse body of request_token response')
+			return
+		if not @_parsedBody
+			return
+		if @_parsedBody.error or @_parsedBody.error_description
+			@_setError(@_parsedBody.error_description || 'Error while requesting token')
+			delete @_parsedBody
+
+	_hasKeyAndSecret: () ->
+		return !!@_parsedBody and
+					 !!@_parsedBody.oauth_token and
+					 !!@_parsedBody.oauth_token_secret
+
+	_setError: (message) ->
+		@_error = new check.Error(message)
+		@_error.body = @_body
+
 exports.authorize = (provider, parameters, opts, callback) ->
 	params = {}
 	params[k] = v for k,v of provider.parameters
@@ -89,40 +165,11 @@ exports.authorize = (provider, parameters, opts, callback) ->
 
 		# do request to request_token
 		request options, (e, r, body) ->
-			return callback e if e
+			return callback(e) if e
+			responseParser = new OAuth10aResponseParser(r, body, request_token.format)
+			return callback(responseParser.error) if responseParser.error
 
-			if not body && r.statusCode == 200
-				return callback new check.Error 'Http error while requesting request_token (empty response)'
-
-			if body
-				if request_token.format == 'json' or r.headers['content-type'] == 'application/json'
-					body = JSON.parse(body)
-				else if request_token.format == 'url' or r.headers['content-type'] == 'application/x-www-form-urlencoded'
-					body = querystring.parse(body)
-				else
-					try
-						body = JSON.parse(body)
-					catch err
-						try
-							body = querystring.parse(body)
-						catch err
-							err = new check.Error 'Unable to parse body of request_token response'
-							err.body.body = body
-							return callback err
-				if body.error || body.error_description
-					err = new check.Error body.error_description || 'Error while requesting token'
-					err.body = body
-					return callback err
-
-			if r.statusCode != 200
-				err = new check.Error 'Http error while requesting token (' + r.statusCode + ')'
-				err.body = body
-				return callback err
-
-			if not body.oauth_token or not body.oauth_token_secret
-				return callback new check.Error 'Could not find request_token in response'
-
-			dbstates.setToken state.id, body.oauth_token_secret, (e, r) ->
+			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
 				return callback e if e
 				authorize = provider.oauth1.authorize
 				query = {}
@@ -133,7 +180,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 					if typeof param != 'string'
 						return callback param
 					query[name] = param if param
-				query.oauth_token = body.oauth_token
+				query.oauth_token = responseParser.oauth_token
 				url = replace_param authorize.url, params, {}, parameters
 				url += "?" + querystring.stringify query
 				callback null, url
