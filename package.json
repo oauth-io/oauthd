@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "hiredis": "~0.1.15",
-    "redis": "~0.8.3",
+    "redis": "~0.9.2",
     "restify": "~2.5.1",
     "async": "~0.2.9",
     "request": "~2.21.0",
