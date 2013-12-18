@@ -82,6 +82,19 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				consumer_key: parameters.client_id
 				consumer_secret: parameters.client_secret
 		delete query.oauth_callback
+
+		switch request_token.format
+			when 'json'
+				acceptHeader = 'application/json'
+			when 'url'
+				acceptHeader = 'application/x-www-form-urlencoded'
+			else
+				acceptHeader = null
+		if acceptHeader
+			if not options.headers
+				options.headers = []
+			options.headers["Accept"] = acceptHeader
+
 		if options.method == 'POST'
 			options.form = query
 		else
