@@ -83,7 +83,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		# do request to request_token
 		request options, (e, r, body) ->
 			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, request_token.format)
+			responseParser = new OAuth1ResponseParser(r, body, request_token.format, 'request_token')
 			return callback(responseParser.error) if responseParser.error
 
 			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
@@ -160,45 +160,14 @@ exports.access_token = (state, req, callback) ->
 
 		# do request to access_token
 		request options, (e, r, body) ->
-			return callback e if e
+			return callback(e) if e
+			responseParser = new OAuth1ResponseParser(r, body, access_token.format, 'access_token')
+			return callback(responseParser.error) if responseParser.error
 
-			if not body && r.statusCode == 200
-				return callback new check.Error 'Http error while requesting access_token (empty response)'
-
-			if body
-				if access_token.format == 'json' or r.headers['content-type'] == 'application/json'
-					body = JSON.parse(body)
-				else if access_token.format == 'url' or r.headers['content-type'] == 'application/x-www-form-urlencoded'
-					body = querystring.parse(body)
-				else
-					try
-						body = JSON.parse(body)
-					catch err
-						try
-							body = querystring.parse(body)
-						catch err
-							err = new check.Error 'Unable to parse body of access_token response'
-							err.body.body = body
-							return callback err
-				if body.error || body.error_description
-					err = new check.Error
-					err.error body.error_description || 'Error while requesting token'
-					err.body = body
-					return callback err
-
-			if r.statusCode != 200
-				err = new check.Error 'Http error while requesting token (' + r.statusCode + ')'
-				err.body = body
-				return callback err
-
-			if not body.oauth_token
-				return callback new check.Error 'Could not find oauth_token in response'
-			if not body.oauth_token_secret?
-				return callback new check.Error 'Could not find oauth_token_secret in response'
-			expire = body.expire
-			expire ?= body.expires
-			expire ?= body.expires_in
-			expire ?= body.expires_at
+			expire = responseParser.body.expire
+			expire ?= responseParser.body.expires
+			expire ?= responseParser.body.expires_in
+			expire ?= responseParser.body.expires_at
 			if expire
 				expire = parseInt expire
 				now = (new Date).getTime()
@@ -210,12 +179,12 @@ exports.access_token = (state, req, callback) ->
 					requestclone.parameters ?= {}
 					requestclone.parameters[k] = parameters[k]
 			result =
-				oauth_token: body.oauth_token
-				oauth_token_secret: body.oauth_token_secret
+				oauth_token: responseParser.oauth_token
+				oauth_token_secret: responseParser.oauth_token_secret
 				expires_in: expire
 				request: requestclone
 			for extra in (access_token.extra||[])
-				result[extra] = body[extra] if body[extra]
+				result[extra] = responseParser.body[extra] if responseParser.body[extra]
 			for extra in (provider.oauth1.authorize.extra||[])
 				result[extra] = req.params[extra] if req.params[extra]
 			callback null, result
