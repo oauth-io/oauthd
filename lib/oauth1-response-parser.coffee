@@ -1,18 +1,19 @@
 querystring = require 'querystring'
 check = require './check'
 
-module.exports = class
-	constructor: (response, body, format) ->
+class OAuth1ResponseParser
+	constructor: (response, body, format, tokenType) ->
 		@_response = response
-		@_body = body
+		@_unparsedBody = body
 		@_format = format
 		@_contentType = @_response.headers['content-type']
-
+		@_errorPrefix = 'Error while parsing response for ' + tokenType
+		
 		if not @_isResponseOk
-			@_setError('Error while requesting request_token (HTTP status code: ' + @_response.statusCode + ')')
+			@_setError('HTTP status code: ' + @_response.statusCode)
 			return
 		if not @_hasBody()
-			@_setError('Error while requesting request_token (empty response)')
+			@_setError('Empty response')
 			return
 
 		if @_isJsonResponse()
@@ -22,19 +23,19 @@ module.exports = class
 		if @error
 			return
 
-		@_parseUnknownBody() if not @_parsedBody
+		@_parseUnknownBody() if not @body
 		if not @_hasKeyAndSecret()
-			@_setError('Could not find request_token in response')
+			@_setError('oauth_token or oauth_token_secret not found')
 			return
 
-		@oauth_token = @_parsedBody.oauth_token
-		@oauth_token_secret = @_parsedBody.oauth_token_secret
+		@oauth_token = @body.oauth_token
+		@oauth_token_secret = @body.oauth_token_secret
 
 	_isResponseOk: () ->
 		return @_response.statusCode == 200
 
 	_hasBody: () ->
-		return !!@_body
+		return !!@_unparsedBody
 
 	_isJsonResponse: () ->
 		return @_format == 'json' or
@@ -53,26 +54,28 @@ module.exports = class
 	_parseUnknownBody: () ->
 		@_parseBodyAsJson()
 		delete @error # this is a fallback, ignore error
-		@_parseBodyAsForm() if not @_parsedBody
+		@_parseBodyAsForm() if not @body
 		delete @error # this is a fallback, ignore error
 
 	_parseBody: (parseFunc) ->
 		try
-			@_parsedBody = parseFunc(@_body)
+			@body = parseFunc(@_unparsedBody)
 		catch ex
-			@_setError('Unable to parse body of request_token response')
+			@_setError('Unable to parse response')
 			return
-		if not @_parsedBody
+		if not @body
 			return
-		if @_parsedBody.error or @_parsedBody.error_description
-			@_setError(@_parsedBody.error_description || 'Error while requesting token')
-			delete @_parsedBody
+		if @body.error or @body.error_description
+			@_setError(@body.error_description || 'Unable to parse response')
+			delete @body
 
 	_hasKeyAndSecret: () ->
-		return !!@_parsedBody and
-		!!@_parsedBody.oauth_token and
-		!!@_parsedBody.oauth_token_secret
+		return !!@body and
+		!!@body.oauth_token and
+		!!@body.oauth_token_secret
 
 	_setError: (message) ->
-		@_error = new check.Error(message)
-		@_error.body = @_body
+		@error = new check.Error(@_errorPrefix + ' ' + message)
+		@error.body = @_unparsedBody
+
+module.exports = OAuth1ResponseParser
