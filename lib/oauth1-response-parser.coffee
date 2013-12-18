@@ -7,7 +7,7 @@ class OAuth1ResponseParser
 		@_unparsedBody = body
 		@_format = format
 		@_contentType = @_response.headers['content-type']
-		@_errorPrefix = 'Error while parsing response for ' + tokenType
+		@_errorPrefix = 'Error while parsing \'' + tokenType + '\''
 		
 		if not @_isResponseOk
 			@_setError('HTTP status code: ' + @_response.statusCode)
@@ -75,7 +75,7 @@ class OAuth1ResponseParser
 		!!@body.oauth_token_secret
 
 	_setError: (message) ->
-		@error = new check.Error(@_errorPrefix + ' ' + message)
+		@error = new check.Error(@_errorPrefix + ' (' + message + ')')
 		@error.body = @_unparsedBody
 
 module.exports = OAuth1ResponseParser
