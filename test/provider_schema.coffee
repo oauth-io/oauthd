@@ -47,6 +47,10 @@ module.exports =
 								"method":
 									type: "string"
 									enum: ["get", "post"]
+								"format":
+									description: "force the response content type"
+									type: "string"
+									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
 								"query":
 									type: "object"
 								"headers":
@@ -89,7 +93,13 @@ module.exports =
 								"method":
 									type: "string"
 									enum: ["get", "post"]
+								"format":
+									description: "force the response content type"
+									type: "string"
+									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
 								"query":
+									type: "object"
+								"headers":
 									type: "object"
 								"extra":
 									type: "array"
@@ -171,6 +181,8 @@ module.exports =
 									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
 								"query":
 									type: "object"
+								"headers":
+									type: "object"
 						}
 					]
 				"refresh":
@@ -192,6 +204,8 @@ module.exports =
 									type: "string"
 									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
 								"query":
+									type: "object"
+								"headers":
 									type: "object"
 						}
 					]
