@@ -1,4 +1,3 @@
-require('newrelic');
 module.exports = {
 	host_url: "https://oauth.local",		// mounted on this url
 	base: "/auth",							// add a base url path. e.g: "/auth"
