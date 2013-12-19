@@ -1,0 +1,27 @@
+{
+	"name": "Evernote (Sandbox)",
+	"url": "https://sandbox.evernote.com",
+	"oauth1": {
+		"request_token": {
+			"url": "/oauth",
+			"format": "url"
+		},
+		"authorize": "/OAuth.action",
+		"access_token": {
+			"url": "/oauth",
+			"format": "url",
+			"extra": [
+				"edam_shard",
+				"edam_userId",
+				"edam_noteStoreUrl",
+				"edam_webApiUrlPrefix"
+			]
+		}
+	},
+	"href": {
+		"keys": "http://dev.evernote.com/doc/",
+		"docs": "http://dev.evernote.com/doc/",
+		"apps": "https://sandbox.evernote.com/AuthorizedServices.action",
+		"provider": "https://sandbox.evernote.com"
+	}
+}

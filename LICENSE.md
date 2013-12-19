@@ -617,3 +617,8 @@ Program, unless a warranty or assumption of liability accompanies a
 copy of the Program in return for a fee.
 
                      END OF TERMS AND CONDITIONS
+
+---
+
+EVERNOTE and the Evernote Elephant logo are trademarks of Evernote
+Corporation and used under a license.
