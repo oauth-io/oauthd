@@ -51,6 +51,10 @@ module.exports =
 									type: "object"
 								"headers":
 									type: "object"
+								"format":
+									description: "force the response content type"
+									type: "string"
+									enum: ["json", "url"]
 						}
 					]
 				"authorize":
@@ -95,6 +99,10 @@ module.exports =
 									type: "array"
 									items:
 										type: "string"
+								"format":
+									description: "force the response content type"
+									type: "string"
+									enum: ["json", "url"]
 						}
 					]
 				"request":
