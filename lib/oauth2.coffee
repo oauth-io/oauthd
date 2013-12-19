@@ -150,8 +150,6 @@ exports.refresh = (keyset, provider, token, callback) ->
 	query = {}
 	for name, value of refresh.query
 		param = replace_param value, params, refresh_token:token, parameters
-		if typeof param != 'string'
-			return callback param
 		query[name] = param if param
 	headers = {}
 	headers["Accept"] = short_formats[refresh.format] || refresh.format if refresh.format
@@ -217,8 +215,6 @@ exports.request = (provider, parameters, req, callback) ->
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.qs[name] = param if param
 
 	# build headers
@@ -229,8 +225,6 @@ exports.request = (provider, parameters, req, callback) ->
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.headers[name] = param if param
 
 	# build body
