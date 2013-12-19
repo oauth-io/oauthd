@@ -109,8 +109,6 @@ exports.authorize = (provider, parameters, opts, callback) ->
 					query = opts.options.authorize
 				for name, value of authorize.query
 					param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
-					if typeof param != 'string'
-						return callback param
 					query[name] = param if param
 				query.oauth_token = responseParser.oauth_token
 				url = replace_param authorize.url, params, {}, parameters
@@ -236,8 +234,6 @@ exports.request = (provider, parameters, req, callback) ->
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.qs[name] = param if param
 
 	options.oauth =
@@ -254,8 +250,6 @@ exports.request = (provider, parameters, req, callback) ->
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.headers[name] = param if param
 
 	# build body
