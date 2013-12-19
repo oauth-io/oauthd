@@ -620,5 +620,4 @@ copy of the Program in return for a fee.
 
 ---
 
-EVERNOTE and the Evernote Elephant logo are trademarks of Evernote
-Corporation and used under a license.
+Many logos in the folder `provider` are trademarks and used under a license.
