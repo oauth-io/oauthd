@@ -71,9 +71,11 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			query = opts.options.request_token
 		for name, value of request_token.query
 			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
-			if typeof param != 'string'
-				return callback param
 			query[name] = param if param
+		headers = {}
+		for name, value of request_token.headers
+			param = replace_param value, params, {}, parameters
+			headers[name] = param if param
 		options =
 			url: request_token.url
 			method: request_token.method?.toUpperCase() || "POST"
@@ -83,18 +85,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				consumer_secret: parameters.client_secret
 		delete query.oauth_callback
 
-		switch request_token.format
-			when 'json'
-				acceptHeader = 'application/json'
-			when 'url'
-				acceptHeader = 'application/x-www-form-urlencoded'
-			else
-				acceptHeader = null
-		if acceptHeader
-			if not options.headers
-				options.headers = []
-			options.headers["Accept"] = acceptHeader
-
+		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
 		else

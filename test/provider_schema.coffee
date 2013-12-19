@@ -49,6 +49,8 @@ module.exports =
 									enum: ["get", "post"]
 								"query":
 									type: "object"
+								"headers":
+									type: "object"
 						}
 					]
 				"authorize":
