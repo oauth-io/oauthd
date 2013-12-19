@@ -11,8 +11,8 @@ class OAuth1ResponseParser extends OAuthResponseParser
 			@_setError @body.error_description || 'Error in response'
 			delete @body
 
-		if not @body.oauth_token or not @body.oauth_token_secret
-			return @_setError 'oauth_token or oauth_token_secret not found'
+		return @_setError 'oauth_token not found' if not @body.oauth_token
+		return @_setError 'oauth_token_secret not found' if not @body.oauth_token_secret?
 
 		@oauth_token = @body.oauth_token
 		@oauth_token_secret = @body.oauth_token_secret

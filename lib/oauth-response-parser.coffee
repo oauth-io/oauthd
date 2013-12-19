@@ -45,6 +45,6 @@ class OAuthResponseParser
 		else
 			@error.body = @_unparsedBody
 
-OAuthResponseParser.short_format = json:'application/json', url:'application/x-www-form-urlencoded'
+OAuthResponseParser.short_formats = json:'application/json', url:'application/x-www-form-urlencoded'
 
 module.exports = OAuthResponseParser
