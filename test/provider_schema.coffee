@@ -176,7 +176,7 @@ module.exports =
 								"format":
 									description: "force the response content type"
 									type: "string"
-									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
+									enum: ["json", "url"]
 								"query":
 									type: "object"
 						}
@@ -198,7 +198,7 @@ module.exports =
 								"format":
 									description: "force the response content type"
 									type: "string"
-									enum: ["json", "url", "application/json", "application/x-www-form-urlencoded"]
+									enum: ["json", "url"]
 								"query":
 									type: "object"
 						}
