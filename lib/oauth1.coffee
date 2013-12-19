@@ -18,6 +18,7 @@ dbapps = require './db_apps'
 config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
+short_formats = OAuth1ResponseParser.short_formats
 
 ksort = (w) ->
 	r = {}
@@ -64,9 +65,12 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			query = opts.options.request_token
 		for name, value of request_token.query
 			param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
-			if typeof param != 'string'
-				return callback param
 			query[name] = param if param
+		headers = {}
+		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
+		for name, value of request_token.headers
+			param = replace_param value, params, {}, parameters
+			headers[name] = param if param
 		options =
 			url: request_token.url
 			method: request_token.method?.toUpperCase() || "POST"
@@ -75,6 +79,8 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				consumer_key: parameters.client_id
 				consumer_secret: parameters.client_secret
 		delete query.oauth_callback
+
+		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
 		else
@@ -83,7 +89,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		# do request to request_token
 		request options, (e, r, body) ->
 			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, request_token.format, 'request_token')
+			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'request_token')
 			return callback(responseParser.error) if responseParser.error
 
 			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
@@ -136,9 +142,12 @@ exports.access_token = (state, req, callback) ->
 			hard_params[extra] = req.params[extra] if req.params[extra]
 		for name, value of access_token.query
 			param = replace_param value, params, hard_params, parameters
-			if typeof param != 'string'
-				return callback param
 			query[name] = param if param
+		headers = {}
+		headers["Accept"] = short_formats[access_token.format] || access_token.format if access_token.format
+		for name, value of access_token.headers
+			param = replace_param value, params, {}, parameters
+			headers[name] = param if param
 		options =
 			url: replace_param access_token.url, params, hard_params, parameters
 			method: access_token.method?.toUpperCase() || "POST"
@@ -153,6 +162,8 @@ exports.access_token = (state, req, callback) ->
 		else
 			options.oauth.verifier = ""
 		delete query.oauth_callback
+
+		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
 		else
@@ -161,7 +172,7 @@ exports.access_token = (state, req, callback) ->
 		# do request to access_token
 		request options, (e, r, body) ->
 			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, access_token.format, 'access_token')
+			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
 			return callback(responseParser.error) if responseParser.error
 
 			expire = responseParser.body.expire
