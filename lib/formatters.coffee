@@ -45,7 +45,7 @@ buildReply = (body, res) ->
 			if res.statusStr == 'error'
 				result.code = res.statusCode if res.statusCodeInternal
 				result.message = res.message
-				result.data = body if body? && Object.keys(body).length
+				result.data = body if typeof body == 'object' && Object.keys(body).length
 			else
 				body = null if not body?
 				result.data = body
