@@ -69,7 +69,7 @@ exports.access_token = (state, req, callback) ->
 		if req.params.error_description
 			err.error req.params.error_description
 		else
-			err.error errors_desc.authorize[req.params.error] || 'Error while authorizing'
+			err.error OAuth2ResponseParser.errors_desc.authorize[req.params.error] || 'Error while authorizing'
 		err.body.error = req.params.error if req.params.error
 		err.body.error_uri = req.params.error_uri if req.params.error_uri
 		return callback err

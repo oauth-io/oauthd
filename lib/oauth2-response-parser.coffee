@@ -33,5 +33,6 @@ class OAuth2ResponseParser extends OAuthResponseParser
 
 		@access_token = @body.access_token
 
+OAuth2ResponseParser.errors_desc = errors_desc
 
 module.exports = OAuth2ResponseParser
