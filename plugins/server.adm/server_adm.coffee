@@ -22,6 +22,12 @@ exports.setup = (callback) ->
 		@db.redis.hget 'a:keys', data.key, (e,app) =>
 			@db.ranking_timelines.addScore 'a:co', id:app, (->)
 
+	@on 'request', (data) =>
+		@db.timelines.addUse target:'req', (->)
+		@db.ranking_timelines.addScore 'p:req', id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:req', id:app, (->)
+
 	@userInvite = (iduser, callback) =>
 		prefix = 'u:' + iduser + ':'
 		@db.redis.mget [
