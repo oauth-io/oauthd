@@ -23,7 +23,7 @@ app.factory 'OAuthIOService', ($http, $rootScope, $cookieStore) ->
 			data:
 				name_from: options.from.name
 				email_from: options.from.email
-				subject : options.subject
+				subject: options.subject
 				body: options.body
 			url: 'auth/contact-us'
 		).success(success).error(error)

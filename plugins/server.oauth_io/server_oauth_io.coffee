@@ -6,24 +6,20 @@ exports.setup = (callback) ->
 
 	@server.post @config.base + '/contact-us', (req, res, next) =>
 
-		body = "From: " + req.body.name_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;') + "\n"
-		body += "Email: " + req.body.email_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;') + "\n\n"
-		body += req.body.body?.toString().replace(/<'/g,'&lt;').replace(/>/g,'&gt;')
+		contact =
+			name: req.body.name_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')
+			email: req.body.email_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')
+			subject: req.body.subject?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')
+			message: req.body.body?.toString().replace(/<'/g,'&lt;').replace(/>/g,'&gt;')
 
-		options =
-			to:
-				email: "team@oauth.io"
-			from:
-				name: "Contact form"
-				email: "team@oauth.io"
-			subject: "[Contact Us] Mail from oauth.io"
-			body: body
+		contact.body = "From: " + contact.name + "\n"
+		contact.body += "Email: " + contact.email + "\n"
+		contact.body += "Subject: " + contact.subject + "\n\n"
+		contact.body += contact.message
 
-		@emit 'user.contact', body:body, email:req.body.email_from?.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;')
-		mailer = new Mailer options, {}
-		mailer.send (err, result) ->
-			return next err if err
-			res.send result
+		@emit 'user.contact', contact
+		res.send @check.nullv
+		next()
 
 	if ! @config.http_port
 		console.log "Warning: oauth_io plugin is not configured"

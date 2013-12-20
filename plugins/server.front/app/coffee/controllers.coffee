@@ -1045,6 +1045,7 @@ ContactUsCtrl = ($scope, $rootScope, OAuthIOService, MenuService) ->
 
 		name = $scope.mailForm.name.$viewValue
 		email = $scope.mailForm.mail.$viewValue
+		subject = $scope.mailForm.subject.$viewValue
 		message = $scope.mailForm.message.$viewValue
 
 		if not name? or name.length == 0
@@ -1059,6 +1060,12 @@ ContactUsCtrl = ($scope, $rootScope, OAuthIOService, MenuService) ->
 			$rootScope.error.message = "Please, enter a valid email"
 			return
 
+		if not subject? or subject.length == 0
+			$rootScope.error.state = true
+			$rootScope.error.type = "SEND_MAIL"
+			$rootScope.error.message = "Please, enter a subject"
+			return
+
 		if not message? or message.length == 0
 			$rootScope.error.state = true
 			$rootScope.error.type = "SEND_MAIL"
@@ -1068,8 +1075,8 @@ ContactUsCtrl = ($scope, $rootScope, OAuthIOService, MenuService) ->
 		options =
 			from:
 				name: name
-				email: "#{email}"
-			subject: "[Contact Us] Mail from oauth.io - #{email} (#{name})"
+				email: email
+			subject: subject
 			body: message
 
 		OAuthIOService.sendMail options, ((data) ->
@@ -1329,12 +1336,12 @@ InspectorCtrl = (UserService, ProviderService, AppService, KeysetService, OAuthI
 			), (err) ->
 				console.log err
 
-	window.contact = (from_email, from_name, object, body) ->
+	window.contact = (from_email, from_name, subject, body) ->
 		OAuthIOService.sendMail {
 			from:
 				mail: from_email,
 				name: from_name,
-			object: object,
+			subject: subject,
 			body: body
 		}, ((data) ->
 			console.log data
