@@ -39,24 +39,16 @@ exports.setup = (callback) ->
 			if replies[2] == '1'
 				return callback new check.Error "not validable"
 			options =
+				templateName:"mail_validation"
+				templatePath:"./app/template/"
 				to:
 					email: replies[0]
 				from:
 					name: 'OAuth.io'
 					email: 'team@oauth.io'
 				subject: 'Validate your OAuth.io Beta account'
-				body: 'Welcome on OAuth.io Beta!\n\n
-In order to validate your email address, please click the following link: https://' + @config.url.host + '/validate/' + iduser + '/' + replies[1] + '.\n
-Your feedback is über-important to us: it would help improve developer\'s life even more.\n\n
-So don\'t hesitate to reply to this email.\n\n
-Thanks for trying out OAuth.io beta!\n\n
---\n
-OAuth.io Team'
-
 			data =
-				body: options.body.replace(/\n/g, "<br />")
-				id: iduser
-				key: replies[1]
+				url: 'https://' + @config.url.host + '/validate/' + iduser + '/' + replies[1]
 			mailer = new Mailer options, data
 			mailer.send (err, result) =>
 				return callback err if err
