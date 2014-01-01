@@ -1,18 +1,18 @@
 <div class="container">
-	<form name="mailForm" class="form-horizontal"> 		
+	<form name="mailForm" class="form-horizontal">
 		<div class="row">
 			<h1 class="col col-offset-4" style="position:realtive;">Contact Us</h1>
 		</div>
 		<div class="row">
 			<div class="alert alert-danger col col-lg-5 col-offset-4" ng-show="error.state && error.type == 'SEND_MAIL'">
 				{{error.message}}
-			</div>		
+			</div>
 			<div class="alert alert-success col col-lg-5 col-offset-4" ng-show="sent">
 				Thank you {{name}} for contacting us, your email has been sent.<br />
 				We'll get back to you as soon as possible.
 			</div>
 		</div>
-		<div class="row">		
+		<div class="row">
 			<label class="control-label col col-lg-4" for="name">Your name</label>
 			<div class="col col-lg-5">
 				<input type="text" placeholder="Name" ng-model="name" id="sendmail-name" name="name" required>
@@ -23,7 +23,13 @@
 			<div class="col col-lg-5">
 				<input type="email" placeholder="Email" ng-model="email" id="sendmail-email" name="mail" required>
 			</div>
-		</div>	
+		</div>
+		<div class="row">
+			<label class="control-label col col-lg-4" for="subject">Subject</label>
+			<div class="col col-lg-5">
+				<input type="text" placeholder="Subject" ng-model="subject" id="sendmail-subject" name="subject" required>
+			</div>
+		</div>
 		<div class="row">
 			<label class="control-label col col-lg-4" for="message">Your message</label>
 			<div class="col col-lg-5">
@@ -31,8 +37,8 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col col-lg-2 col-offset-4">			
-		  		<button type="button" class="btn btn-primary" ng-click="sendMail()">Send</button>	
+			<div class="col col-lg-2 col-offset-4">
+		  		<button type="button" class="btn btn-primary" ng-click="sendMail()">Send</button>
 			</div>
 		</div>
 	</form>

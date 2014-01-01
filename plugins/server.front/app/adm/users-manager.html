@@ -123,23 +123,28 @@ $('#navTab a').click(function (e) {
 						<input class="col" type="text" ng-model="chart.stat" value="users"/>
 						<select class="col" ng-model="chart.stat" ng-change="chartSubmit()">
 							<option value="users">users</option>
+							<option value="u:validate">users validate</option>
 							<option value="u:login">users sign in</option>
 							<option value="apps">apps</option>
 							<option value="keysets">keysets</option>
 							<option value="co">connections</option>
+							<option value="req">requests</option>
 							<option value="co:success">connections success</option>
 							<option value="co:error">connections fails</option>
 							<option value="co:p:facebook">facebook connections</option>
 							<option value="co:p:facebook:success">facebook connections success</option>
 							<option value="co:p:facebook:error">facebook connections fails</option>
+							<option value="req:p:twitter">twitter api requests</option>
 							<option value="p:facebook:keysets">facebook keysets</option>
 							<option value="co:a:AN APP KEY">an app connections</option>
 							<option value="co:a:AN APP KEY:success">an app connections success</option>
 							<option value="co:a:AN APP KEY:error">an app connections fails</option>
 							<option value="a:AN APP KEY:keysets">an app keysets</option>
+							<option value="req:a:AN APP KEY">an app requests</option>
 							<option value="co:a:AN APP KEY:p:facebook">an app facebook connections</option>
 							<option value="co:a:AN APP KEY:p:facebook:success">an app facebook connections success</option>
 							<option value="co:a:AN APP KEY:p:facebook:error">an app facbeook connections fails</option>
+							<option value="req:a:AN APP KEY:p:twitter">an app twitter requests</option>
 						</select>
 						<select ng-model="chart.day" ng-change="chartSubmit()">
 							<option value="1">1 day</option>
@@ -158,6 +163,7 @@ $('#navTab a').click(function (e) {
 							<input type="text" class="form-control" id="statsEnd" placeholder="End date" ng-model="chart.end" ng-change="chartSubmit()">
 						</div>
 						<button class="col" type="submit">Search</button>
+					</div>
 				</form>
 				<h4><strong>Total:</strong> {{chart.total}} - <strong>Selection total:</strong> {{chart.selTotal}}</h4>
 				<div class="row" style="margin-top: 10px;">
@@ -371,11 +377,13 @@ $('#navTab a').click(function (e) {
 								<li><a ng-click='setRankingTarget("a:co")'>Apps -> auth</a></li>
 								<li><a ng-click='setRankingTarget("a:co:success")'>Apps -> auth success</a></li>
 								<li><a ng-click='setRankingTarget("a:co:error")'>Apps -> auth errors</a></li>
+								<li><a ng-click='setRankingTarget("a:req")'>Apps -> requests</a></li>
 								<li class="divider"></li>
 								<li><a ng-click='setRankingTarget("p:k")'>Providers -> keys</a></li>
 								<li><a ng-click='setRankingTarget("p:co")'>Providers -> auth</a></li>
 								<li><a ng-click='setRankingTarget("p:co:success")'>Providers -> auth success</a></li>
 								<li><a ng-click='setRankingTarget("p:co:error")'>Providers -> auth errors</a></li>
+								<li><a ng-click='setRankingTarget("p:req")'>Providers -> requests</a></li>
 							</ul>
 						</li>
 						<li>

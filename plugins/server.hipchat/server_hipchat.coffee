@@ -9,6 +9,9 @@ request = require 'request'
 
 exports.setup = (callback) ->
 
+	if not @config.hipchat?.token
+		console.log 'Warning: hipchat plugin is not configured'
+
 	hipchat = (data) =>
 		return if not @config.hipchat?.token
 		request {

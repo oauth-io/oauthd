@@ -25,22 +25,8 @@ dbproviders = require './db_providers'
 dbapps = require './db_apps'
 config = require './config'
 
-errors_desc =
-	authorize:
-		'invalid_request': "The request is missing a required parameter, includes an unsupported parameter or parameter value, or is otherwise malformed."
-		'invalid_client': "The client identifier provided is invalid."
-		'unauthorized_client': "The client is not authorized to use the requested response type."
-		'redirect_uri_mismatch': "The redirection URI provided does not match a pre-registered value."
-		'access_denied': "The end-user or authorization server denied the request."
-		'unsupported_response_type': "The requested response type is not supported by the authorization server."
-		'invalid_scope': "The requested scope is invalid, unknown, or malformed."
-	access_token:
-		'invalid_request': "The request is missing a required parameter, includes an unsupported parameter or parameter value, repeats a parameter, includes multiple credentials, utilizes more than one mechanism for authenticating the client, or is otherwise malformed.",
-		'invalid_client': "The client identifier provided is invalid, the client failed to authenticate, the client did not include its credentials, provided multiple client credentials, or used unsupported credentials type.",
-		'unauthorized_client': "The authenticated client is not authorized to use the access grant type provided.",
-		'invalid_scope': "The requested scope is invalid, unknown, malformed, or exceeds the previously granted scope.",
-		'invalid_grant': "The provided access grant is invalid, expired, or revoked (e.g. invalid assertion, expired authorization token, bad end-user password credentials, or mismatching authorization code and redirection URI).",
-		'unsupported_grant_type': "The access grant included - its type or another attribute - is not supported by the authorization server."
+OAuth2ResponseParser = require './oauth2-response-parser'
+short_formats = OAuth2ResponseParser.short_formats
 
 replace_param = (param, params, hard_params, keyset) ->
 	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
@@ -70,8 +56,6 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			query = opts.options.authorize
 		for name, value of authorize.query
 			param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
-			if typeof param != 'string'
-				return callback param
 			query[name] = param if param
 		url = replace_param authorize.url, params, {}, parameters
 		url += "?" + querystring.stringify query
@@ -85,7 +69,7 @@ exports.access_token = (state, req, callback) ->
 		if req.params.error_description
 			err.error req.params.error_description
 		else
-			err.error errors_desc.authorize[req.params.error] || 'Error while authorizing'
+			err.error OAuth2ResponseParser.errors_desc.authorize[req.params.error] || 'Error while authorizing'
 		err.body.error = req.params.error if req.params.error
 		err.body.error_uri = req.params.error_uri if req.params.error_uri
 		return callback err
@@ -106,14 +90,18 @@ exports.access_token = (state, req, callback) ->
 		query = {}
 		for name, value of access_token.query
 			param = replace_param value, params, code:req.params.code, state:state.id, callback:config.host_url+config.base, parameters
-			if typeof param != 'string'
-				return callback param
 			query[name] = param if param
+		headers = {}
+		headers["Accept"] = short_formats[access_token.format] || access_token.format if access_token.format
+		for name, value of access_token.headers
+			param = replace_param value, params, {}, parameters
+			headers[name] = param if param
 		options =
 			url: replace_param access_token.url, params, {}, parameters
 			method: access_token.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 
+		options.headers = headers if Object.keys(headers).length
 		if options.method == "GET"
 			options.qs = query
 		else
@@ -122,42 +110,13 @@ exports.access_token = (state, req, callback) ->
 		# do request to access_token
 		request options, (e, r, body) ->
 			return callback e if e
+			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
+			return callback(responseParser.error) if responseParser.error
 
-			if not body && r.statusCode == 200
-				return callback new check.Error 'Http error while requesting access_token (empty response)'
-
-			if body
-				if access_token.format == 'json' or r.headers['content-type'] == 'application/json'
-					body = JSON.parse(body)
-				else if access_token.format == 'url' or r.headers['content-type'] == 'application/x-www-form-urlencoded'
-					body = querystring.parse(body)
-				else
-					try
-						body = JSON.parse(body)
-					catch err
-						try
-							body = querystring.parse(body)
-						catch err
-							err = new check.Error 'Unable to parse body of access_token response'
-							err.body.body = body
-							return callback err
-				if body.error || body.error_description
-					err = new check.Error
-					err.error body.error_description || errors_desc.access_token[body.error] || 'Error while requesting token'
-					err.body = body
-					return callback err
-
-			if r.statusCode != 200
-				err = new check.Error 'Http error while requesting token (' + r.statusCode + ')'
-				err.body = body
-				return callback err
-
-			if not body.access_token
-				return callback new check.Error 'Could not find access_token in response'
-			expire = body.expire
-			expire ?= body.expires
-			expire ?= body.expires_in
-			expire ?= body.expires_at
+			expire = responseParser.body.expire
+			expire ?= responseParser.body.expires
+			expire ?= responseParser.body.expires_in
+			expire ?= responseParser.body.expires_at
 			if expire
 				expire = parseInt expire
 				now = (new Date).getTime()
@@ -169,14 +128,14 @@ exports.access_token = (state, req, callback) ->
 					requestclone.parameters ?= {}
 					requestclone.parameters[k] = parameters[k]
 			result =
-				access_token: body.access_token
-				token_type: body.token_type
+				access_token: responseParser.access_token
+				token_type: responseParser.body.token_type
 				expires_in: expire
 				base: provider.baseurl
 				request: requestclone
-			result.refresh_token = body.refresh_token if body.refresh_token && response_type == "code"
+			result.refresh_token = responseParser.body.refresh_token if responseParser.body.refresh_token && response_type == "code"
 			for extra in (access_token.extra||[])
-				result[extra] = body[extra] if body[extra]
+				result[extra] = responseParser.body[extra] if responseParser.body[extra]
 			for extra in (provider.oauth2.authorize.extra||[])
 				result[extra] = req.params[extra] if req.params[extra]
 			callback null, result
@@ -191,14 +150,18 @@ exports.refresh = (keyset, provider, token, callback) ->
 	query = {}
 	for name, value of refresh.query
 		param = replace_param value, params, refresh_token:token, parameters
-		if typeof param != 'string'
-			return callback param
 		query[name] = param if param
+	headers = {}
+	headers["Accept"] = short_formats[refresh.format] || refresh.format if refresh.format
+	for name, value of refresh.headers
+		param = replace_param value, params, refresh_token:token, parameters
+		headers[name] = param if param
 	options =
 		url: replace_param refresh.url, params, {}, parameters
 		method: refresh.method?.toUpperCase() || "POST"
 		followAllRedirects: true
 
+	options.headers = headers if Object.keys(headers).length
 	if options.method == "GET"
 		options.qs = query
 	else
@@ -207,51 +170,22 @@ exports.refresh = (keyset, provider, token, callback) ->
 	# request new token
 	request options, (e, r, body) ->
 		return callback e if e
+		responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'refresh token')
+		return callback(responseParser.error) if responseParser.error
 
-		if not body && r.statusCode == 200
-			return callback new check.Error 'Http error while requesting new token (empty response)'
-
-		if body
-			if refresh.format == 'json' or r.headers['content-type'] == 'application/json'
-				body = JSON.parse(body)
-			else if refresh.format == 'url' or r.headers['content-type'] == 'application/x-www-form-urlencoded'
-				body = querystring.parse(body)
-			else
-				try
-					body = JSON.parse(body)
-				catch err
-					try
-						body = querystring.parse(body)
-					catch err
-						err = new check.Error 'Unable to parse body of refresh token response'
-						err.body.body = body
-						return callback err
-			if body.error || body.error_description
-				err = new check.Error
-				err.error body.error_description || errors_desc.access_token[body.error] || 'Error while requesting new token'
-				err.body = body
-				return callback err
-
-		if r.statusCode != 200
-			err = new check.Error 'Http error while requesting new token (' + r.statusCode + ')'
-			err.body = body
-			return callback err
-
-		if not body.access_token
-			return callback new check.Error 'Could not find access_token in response'
-		expire = body.expire
-		expire ?= body.expires
-		expire ?= body.expires_in
-		expire ?= body.expires_at
+		expire = responseParser.body.expire
+		expire ?= responseParser.body.expires
+		expire ?= responseParser.body.expires_in
+		expire ?= responseParser.body.expires_at
 		if expire
 			expire = parseInt expire
 			now = (new Date).getTime()
 			expire -= now if expire > now
 		result =
-			access_token: body.access_token
-			token_type: body.token_type
+			access_token: responseParser.body.access_token
+			token_type: responseParser.body.token_type
 			expires_in: expire
-		result.refresh_token = body.refresh_token if body.refresh_token && keyset.response_type == "code"
+		result.refresh_token = responseParser.body.refresh_token if responseParser.body.refresh_token && keyset.response_type == "code"
 		callback null, result
 
 exports.request = (provider, parameters, req, callback) ->
@@ -281,8 +215,6 @@ exports.request = (provider, parameters, req, callback) ->
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.qs[name] = param if param
 
 	# build headers
@@ -293,8 +225,6 @@ exports.request = (provider, parameters, req, callback) ->
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
 		param = replace_param value, params, parameters.oauthio, parameters
-		if typeof param != 'string'
-			return callback param
 		options.headers[name] = param if param
 
 	# build body

@@ -68,6 +68,11 @@ exports.setup = (callback) ->
 		@db.timelines.addUse target:'co:a:' + data.key, (->)
 		auth_array data
 
+	@on 'request', (data) =>
+		@db.timelines.addUse target:'req:p:' + data.provider, (->)
+		@db.timelines.addUse target:'req:a:' + data.key + ':p:' + data.provider, (->)
+		@db.timelines.addUse target:'req:a:' + data.key, (->)
+
 	sendStats = @check target:'string', unit:['string','none'], start:'int', end:['int','none'], (data, callback) =>
 		now = Math.floor((new Date).getTime() / 1000)
 		data.unit ?= 'd'
