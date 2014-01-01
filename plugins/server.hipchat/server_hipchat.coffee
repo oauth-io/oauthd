@@ -11,9 +11,9 @@ exports.setup = (callback) ->
 
 	if not @config.hipchat?.token
 		console.log 'Warning: hipchat plugin is not configured'
+		return callback()
 
 	hipchat = (data) =>
-		return if not @config.hipchat?.token
 		request {
 			url: 'https://api.hipchat.com/v1/rooms/message'
 			method: 'POST'

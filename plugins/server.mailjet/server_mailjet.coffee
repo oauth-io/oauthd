@@ -8,17 +8,12 @@ request = require 'request'
 
 exports.setup = (callback) ->
 
-	mailjet = request.defaults {
-		auth: @config.mailjet?.auth || {
-			user: 'xxxxxxxxxxxxxxxxxxxxx'
-			pass: 'yyyyyyyyyyyyyyyyyyyyy'
-		}
-	}
-
-	camp_id = @config.mailjet?.camp_id || 'zzzzz'
-
 	if not @config.mailjet?.auth || not @config.mailjet.camp_id
 		console.log 'Warning: mailjet plugin is not configured'
+		return callback()
+
+	mailjet = request.defaults auth: @config.mailjet.auth
+	camp_id = @config.mailjet.camp_id
 
 	@on 'user.register', (user) =>
 		mailjet.post {

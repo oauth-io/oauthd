@@ -197,7 +197,16 @@ exports.setup = (callback) ->
 					r[1][i] /= 100 for i of r[1]
 					return callback null, r
 
+		dbapps_update_owners: (callback) =>
+			fs.readFile __dirname + '/lua/dbapps_update_owners.lua', 'utf8', (err, script) =>
+				@db.redis.eval script, 0, (e,r) ->
+					return callback e if e
+					return callback null, r
+
 	@server.get @config.base_api + '/adm/scripts/appsbynewusers', @auth.adm, (req, res, next) =>
 		redisScripts.appsbynewusers req.params, @server.send(res, next)
+
+	@server.get @config.base_api + '/adm/scripts/dbapps_update_owners', @auth.adm, (req, res, next) =>
+		redisScripts.dbapps_update_owners @server.send(res, next)
 
 	callback()

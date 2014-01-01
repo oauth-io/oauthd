@@ -46,6 +46,11 @@ module.exports = {
 		//name: '...Name the message will appear be sent from...'
 	},
 
+	consumer_io: {
+		//site_id: '...Site ID...'
+		//api_key: '...API key...'
+	},
+
 	plugins: [
 		/* --- only for oauth.io --- */
 		'server.auth',
@@ -58,6 +63,8 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist',
 		'server.pricing',
+		'server.consumer_io',
+		'server.cohort',
 		'server.apiratings',
 		/* ------------------------- */
 

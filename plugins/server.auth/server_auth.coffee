@@ -22,7 +22,7 @@ hooks =
 				['expire', 'session:' + token, _config.expire]
 			]).exec (err, r) ->
 				return cb err if err
-				shared.emit 'user.login'
+				shared.emit 'user.login', res
 				return cb null, token
 
 	authenticateToken: (token, cb) ->

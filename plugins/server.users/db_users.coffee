@@ -210,6 +210,7 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 			prefix+'date_validate', (new Date).getTime()
 		], (err) ->
 			return err if err
+			shared.emit 'user.validate', id: res.id, mail: res.mail
 			return callback null, mail: res.mail, id: res.id
 
 # lost password
