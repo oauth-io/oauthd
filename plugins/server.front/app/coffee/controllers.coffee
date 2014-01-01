@@ -6,7 +6,6 @@
 		# else
 			# $location.path('/home').replace()
 
-
 LogoutCtrl = ($location, UserService, MenuService) ->
 	$location.ga_skip = true;
 	UserService.logout ->
@@ -410,6 +409,10 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	, (error) ->
 		console.log error
 
+	$scope.limitReach = ->
+		return true if $scope.apps?.length >= $scope.plan?.nbApp or $scope.totalConnections? >= $scope.plan?.nbConnection or $scope.keysets? >= $scope.plan?.nbProvider
+		return false
+
 	$scope.changeEmailState = false
 	$scope.emailSent = false
 	$scope.updateDone = false
@@ -573,10 +576,50 @@ WishlistCtrl = ($filter, $scope, WishlistService, $timeout, MenuService) ->
 ##############################
 # API KEY MANAGER CONTROLLER #
 ##############################
-ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, ProviderService) ->
+ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->
 	MenuService.changed()
 	if not UserService.isLogin()
 		$location.path '/signin'
+
+	$scope.limitReach = false
+	UserService.me (success) ->
+		$scope.plan = success.data.plan
+
+		if not $scope.plan
+			$scope.plan =
+				name: "Bootstrap"
+				nbConnection: 5000
+				nbApp: 2
+				nbProvider: 5
+				responseDelay: 48
+
+		$scope.planApps = []
+		$scope.totalConnections = 0
+		$scope.planKeysets = []
+
+		for i of success.data.apps
+			AppService.get success.data.apps[i], ((app) ->
+
+				AppService.getTotal app.data.key, (success2) ->
+					app.data.totalConnections = parseInt(success2.data) || 0
+					$scope.totalConnections += parseInt(success2.data) || 0
+					if parseInt(i) + 1 == parseInt(success.data.apps.length)
+						$scope.loading = false
+				, (error) ->
+					console.log error
+
+				$scope.planApps.push app.data
+				$scope.planKeysets.add app.data.keysets if app.data.keysets != []
+				$scope.planKeysets = $scope.planKeysets.unique()
+			), (error) ->
+				console.log error
+
+	, (error) ->
+		console.log error
+
+	$scope.limitReach = ->
+		return true if $scope.planApps?.length >= $scope.plan?.nbApp or $scope.totalConnections? >= $scope.plan?.nbConnection or $scope.planKeysets? >= $scope.plan?.nbProvider
+		return false
 
 	$rootScope.providers_name = {} if not $rootScope.providers_name
 	$scope.providers_name = $rootScope.providers_name
@@ -586,6 +629,7 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 	$scope.createAppTemplate = "/templates/partials/create-app.html"
 	$scope.providersTemplate = "/templates/partials/providers.html"
 	$scope.createKeyLastStepTemplate = "/templates/partials/create-key-laststep.html"
+
 
 	$scope.cancelCreateKey = ->
 		if $scope.createKeyStep <= 2
