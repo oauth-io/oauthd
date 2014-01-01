@@ -20,6 +20,10 @@
   }
 </style>
 <div ng-controller="generalAccountCtrl">
+  <div class="row" ng-show="limitReach()">
+    <div class="col col-lg-12">
+      <p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p></div><br>
+  </div>
   <div class="row">
     <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth', 'col-lg-4': plan.name == 'scalability', 'col-offset-3': plan.name != 'scalability', 'col-offset-4': plan.name == 'scalability'}" style="position: relative;">
       <p class="text-center"><strong>Connections</strong></p>

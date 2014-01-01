@@ -1,4 +1,7 @@
 <div class="container">
+	<div class="row" ng-show="limitReach()">
+		<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
+	</div>
 	<div class="row">
 		<div class="col col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
 		<div class="col col-lg-8" ng-controller="AppCtrl">
