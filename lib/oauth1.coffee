@@ -108,6 +108,9 @@ exports.authorize = (provider, parameters, opts, callback) ->
 
 
 exports.access_token = (state, req, callback) ->
+	if not req.params.oauth_token && not req.params.error
+		req.params.error_description ?= 'Authorization refused'
+
 	# manage errors in callback
 	if req.params.error || req.params.error_description
 		err = new check.Error

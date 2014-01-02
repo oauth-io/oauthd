@@ -4,7 +4,12 @@
 	"oauth1": {
 		"request_token": "/requestToken",
 		"access_token": "/accessToken",
-		"authorize": "/authenticate"
+		"authorize": {
+			"url": "/authenticate",
+			"query": {
+				"state": "{{state}}"
+			}
+		}
 	},
 	"href": {
 		"keys": "https://www.linkedin.com/secure/developer?newapp=",
