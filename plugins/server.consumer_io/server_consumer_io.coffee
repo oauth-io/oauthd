@@ -130,6 +130,7 @@ exports.setup = (callback) ->
 					do ->
 						user = id:iduser, mail:mail
 						updateUser user,
+							created_at:timestamp(r[i*7])
 							date_inscr:timestamp(r[i*7])
 							date_validate:timestamp(r[i*7+1])
 							date_activation:timestamp(r[i*7+2])
