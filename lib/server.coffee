@@ -154,9 +154,14 @@ server.get config.base + '/', (req, res, next) ->
 		res.send 302
 		return next()
 	res.setHeader 'Content-Type', 'text/html'
-	if not req.params.state
-		return next new check.Error 'state', 'must be present'
-	db.states.get req.params.state, (err, state) ->
+	stateid = req.params.state
+	if not stateid
+		if req.headers.referer
+			stateref = req.headers.referer.match /state=([^&$]+)/
+			stateid = stateref?[1]
+		if not stateid
+			return next new check.Error 'state', 'must be present'
+	db.states.get stateid, (err, state) ->
 		return next err if err
 		return next new check.Error 'state', 'invalid or expired' if not state
 		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
@@ -167,13 +172,13 @@ server.get config.base + '/', (req, res, next) ->
 			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
 			if not e
 				if state.options.response_type != 'token'
-					db.states.set req.params.state, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
+					db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
 				if state.options.response_type == 'code'
 					r = {}
 				if state.options.response_type != 'token'
-					r.code = req.params.state
+					r.code = stateid
 				if state.options.response_type == 'token'
-					db.states.del req.params.state, (->)
+					db.states.del stateid, (->)
 			callback e, r
 
 # oauth: popup or redirection to provider's authorization url
