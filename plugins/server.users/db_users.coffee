@@ -6,8 +6,6 @@
 
 async = require 'async'
 Mailer = require '../../lib/mailer'
-Payment = require '../server.payments/db_payments'
-Clients = require '../server.payments/paymill_client'
 
 {config,check,db} = shared = require '../shared'
 
@@ -59,7 +57,7 @@ exports.updateBilling = (req, callback) ->
 			profile_prefix + 'use_profile_for_billing', profile.use_profile_for_billing ]
 
 	if billing?
-
+		Payment = require '../server.payments/db_payments'
 		Payment.getCart user_id, (err, cart) ->
 			return callback err if err
 
@@ -322,7 +320,7 @@ exports.updatePassword = (req, callback) ->
 
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
-
+	Clients = require '../server.payments/paymill_client'
 	client = new Clients()
 	client.user_id = iduser
 
@@ -482,6 +480,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 				return callback null, name:replies[0], nbConnection:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
 
 exports.getAllSubscriptions = check 'int', (iduser, callback) ->
+	Clients = require '../server.payments/paymill_client'
 	client = new Clients()
 	client.user_id = iduser
 	client.getSubscriptions (err, subscriptions) ->
