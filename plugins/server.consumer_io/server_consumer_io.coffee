@@ -1,4 +1,7 @@
 request = require 'request'
+PaymillBase = require '../server.payments/paymill_base'
+PaymillClient = require '../server.payments/paymill_client'
+
 
 exports.setup = (callback) ->
 
@@ -57,7 +60,19 @@ exports.setup = (callback) ->
 	@on 'user.login', (user) =>
 		sendEvent user, 'login'
 
-	# todo: user.pay (pricing)
+	@on 'user.pay', (data) =>
+		sendEvent data.user.profile, 'buy', invoice
+
+	@on 'user.subscribe', (user, offer) =>
+		pclient = new PaymillClient
+		pclient.user_id = user.id
+		pclient.getCurrentPlan (e, offer_name) ->
+			return if e or not offer_name
+			updateUser user, offer_name: offer_name
+
+	@on 'user.unsubscribe', (user) =>
+		updateUser user, offer_name: 'free'
+		sendEvent user, 'unsubscribe'
 
 	@on 'app.create', (req, app) =>
 		sendEvent req.user, 'app.create', app
@@ -112,15 +127,22 @@ exports.setup = (callback) ->
 				return next err if err
 				i = 0
 				for mail,iduser of users
-					updateUser {id:iduser, mail:mail},
-						date_inscr:timestamp(r[i*7])
-						date_validate:timestamp(r[i*7+1])
-						date_activation:timestamp(r[i*7+2])
-						date_development:timestamp(r[i*7+3])
-						date_production:timestamp(r[i*7+4])
-						date_consumer:timestamp(r[i*7+5])
-						key:r[i*7+6]
-					i++
+					do ->
+						user = id:iduser, mail:mail
+						updateUser user,
+							date_inscr:timestamp(r[i*7])
+							date_validate:timestamp(r[i*7+1])
+							date_activation:timestamp(r[i*7+2])
+							date_development:timestamp(r[i*7+3])
+							date_production:timestamp(r[i*7+4])
+							date_consumer:timestamp(r[i*7+5])
+							key:r[i*7+6]
+						pclient = new PaymillClient
+						pclient.user_id = user.id
+						pclient.getCurrentPlan (e, offer_name) ->
+							return if e
+							updateUser user, offer_name: offer_name || 'free'
+						i++
 				res.send @check.nullv
 				next()
 

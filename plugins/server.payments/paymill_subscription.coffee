@@ -156,6 +156,8 @@ class PaymillSubscription
 			]).exec (err) =>
 				return callback err if err
 
+				shared.emit 'user.subscribe', {id:@client.user_id}, offer_id:subscription.data.offer
+
 				if not @isNew
 					PaymillBase.paymill.transactions.list description:@old_subscription.id, (err, transaction) =>
 

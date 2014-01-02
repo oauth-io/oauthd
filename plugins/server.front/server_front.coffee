@@ -56,6 +56,7 @@ bootPathCache = (opts) ->
 init = (callback) ->
 	fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) =>
 		callback err if err
+		cache.index = data.toString().replace /\{\{config\.([a-zA-Z0-9]+)\.([a-zA-Z0-9]+)\}\}/g, (m,prop,prop2) => @config[prop]?[prop2]
 		cache.index = data.toString().replace /\{\{config\.([a-zA-Z0-9]+)\}\}/g, (m,prop) => @config[prop]
 		callback()
 
