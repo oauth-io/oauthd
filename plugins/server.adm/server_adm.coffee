@@ -51,9 +51,9 @@ exports.setup = (callback) ->
 				url: 'https://' + @config.url.host + '/validate/' + iduser + '/' + replies[1]
 			mailer = new Mailer options, data
 			mailer.send (err, result) =>
-				return callback err if err
-				@db.redis.set prefix+'validated', '2'
-				callback()
+				console.error 'error while sending validation mail !', err if err
+			@db.redis.set prefix+'validated', '2'
+			callback()
 
 	@server.post @config.base_api + '/adm/users/:id/invite', @auth.adm, (req, res, next) =>
 		@userInvite req.params.id, @server.send(res, next)
