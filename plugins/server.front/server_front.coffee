@@ -63,14 +63,27 @@ exports.setup = (callback) ->
 	init.call @, (e) =>
 		console.error 'error', e if e
 
-		@server.get '/', checkAdmin, bootPathCache(logged:true), (req, res, next) ->
+		sendIndex = (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
-			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
-			res.end data
-			next()
+			data = data.replace /\{\{if admin\}\}([\s\S]*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			sendres = ->
+				data = data.replace /\{\{if logged\}\}([\s\S]*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+				res.end data
+				next()
+			if req.token
+				db.redis.hgetall 'session:' + req.token, (err, session) ->
+					if err or not session
+						req.token = null
+						return sendres()
+					data = data.replace /\{\{user.id\}\}/g, session.id
+					data = data.replace /\{\{user.mail\}\}/g, session.mail
+					sendres()
+			else
+				sendres()
+
+		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
 
 		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
@@ -84,13 +97,6 @@ exports.setup = (callback) ->
 			directory: __dirname + '/errors'
 			maxAge: 1 # no cache on errors !
 
-		@server.get /.*/, checkAdmin, bootPathCache(logged:true), (req, res, next) ->
-			res.setHeader 'Content-Type', 'text/html'
-			res.set 'Last-Modified', bootTime
-			data = cache.index
-			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
-			res.end data
-			next()
+		@server.get /.*/, checkAdmin, bootPathCache(logged:true), sendIndex
 
 		callback()

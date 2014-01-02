@@ -13,10 +13,10 @@ exports.setup = (callback) ->
 			emitCohort step, user, now
 
 	@on 'user.register', (user) =>
-		emitCohort 'inscr', user
+		emitCohort 'inscr', user, (new Date).getTime()
 
 	@on 'user.validate', (user) =>
-		emitCohort 'validate', user
+		emitCohort 'validate', user, (new Date).getTime()
 
 	@on 'connect.callback', (data) =>
 		return if data.status != 'success'

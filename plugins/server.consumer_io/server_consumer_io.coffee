@@ -42,7 +42,7 @@ exports.setup = (callback) ->
 			console.error "Error while sending event to consumer.io", e, user.id, name, data, body, r.statusCode if e or r.statusCode != 200
 
 	@on 'cohort.inscr', (user, now) =>
-		updateUser user, date_inscr:timestamp(now)
+		updateUser user, date_inscr:timestamp(now), created_at:timestamp(now), key:user.key
 	@on 'cohort.validate', (user, now) =>
 		updateUser user, date_validate:timestamp(now)
 	@on 'cohort.activation', (user, now) =>
@@ -107,17 +107,19 @@ exports.setup = (callback) ->
 				cmds.push 'u:' + iduser + ':date_development'
 				cmds.push 'u:' + iduser + ':date_production'
 				cmds.push 'u:' + iduser + ':date_consumer'
+				cmds.push 'u:' + iduser + ':key'
 			@db.redis.mget cmds, (err, r) =>
 				return next err if err
 				i = 0
 				for mail,iduser of users
 					updateUser {id:iduser, mail:mail},
-						date_inscr:timestamp(r[i*6]),
-						date_validate:timestamp(r[i*6+1]),
-						date_activation:timestamp(r[i*6+2]),
-						date_development:timestamp(r[i*6+3]),
-						date_production:timestamp(r[i*6+4]),
-						date_consumer:timestamp(r[i*6+5]),
+						date_inscr:timestamp(r[i*7])
+						date_validate:timestamp(r[i*7+1])
+						date_activation:timestamp(r[i*7+2])
+						date_development:timestamp(r[i*7+3])
+						date_production:timestamp(r[i*7+4])
+						date_consumer:timestamp(r[i*7+5])
+						key:r[i*7+6]
 					i++
 				res.send @check.nullv
 				next()

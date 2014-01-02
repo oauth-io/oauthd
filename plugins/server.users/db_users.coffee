@@ -20,15 +20,16 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
+			key = db.generateUid()
 			db.redis.multi([
 				[ 'mset', prefix+'mail', data.mail,
-					prefix+'key', db.generateUid(),
+					prefix+'key', key,
 					prefix+'validated', 0,
 					prefix+'date_inscr', date_inscr ],
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				user = id:val, mail:data.mail, date_inscr:date_inscr
+				user = id:val, mail:data.mail, date_inscr:date_inscr, key:key
 				shared.emit 'user.register', user
 				return callback null, user
 
@@ -202,15 +203,16 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 	}, (err, res) ->
 		return callback new check.Error "This page does not exists." if not res.is_validable or err
 		prefix = 'u:' + res.id + ':'
+		key = db.generateUid()
 		db.redis.mset [
 			prefix+'validated', 1,
 			prefix+'pass', pass,
 			prefix+'salt', dynsalt,
-			prefix+'key', db.generateUid(),
+			prefix+'key', key,
 			prefix+'date_validate', (new Date).getTime()
 		], (err) ->
 			return err if err
-			shared.emit 'user.validate', id: res.id, mail: res.mail
+			shared.emit 'user.validate', id: res.id, mail: res.mail, key:key
 			return callback null, mail: res.mail, id: res.id
 
 # lost password
