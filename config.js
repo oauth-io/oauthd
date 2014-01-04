@@ -63,7 +63,7 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist',
 		'server.pricing',
-		'server.consumer_io',
+		'server.customer_io',
 		'server.cohort',
 		'server.apiratings',
 		/* ------------------------- */
