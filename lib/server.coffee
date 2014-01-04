@@ -129,6 +129,24 @@ server.post config.base + '/access_token', (req, res, next) ->
 			res.send r
 			next()
 
+clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
+	body = formatters.build e || r
+	body.state = data.state if data.state
+	body.provider = data.provider.toLowerCase() if data.provider
+	view = '<script>(function() {\n'
+	view += '\t"use strict";\n'
+	view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
+	if data.redirect_uri
+		view += '\tdocument.location.href = "' + data.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
+	else
+		view += '\tvar opener = window.opener || window.parent.window.opener;\n'
+		view += '\tif (opener)\n'
+		view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
+		view += '\twindow.close();\n'
+	view += '})();</script>'
+	res.send view
+	next()
+
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	if Object.keys(req.params).length == 0
@@ -140,7 +158,9 @@ server.get config.base + '/', (req, res, next) ->
 		return next new check.Error 'state', 'must be present'
 	db.states.get req.params.state, (err, state) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state || state.step != "0"
+		return next new check.Error 'state', 'invalid or expired' if not state
+		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
+		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
@@ -154,39 +174,33 @@ server.get config.base + '/', (req, res, next) ->
 					r.code = req.params.state
 				if state.options.response_type == 'token'
 					db.states.del req.params.state, (->)
-			body = formatters.build e || r
-			body.state = state.options.state
-			body.provider = state.provider.toLowerCase()
-			view = '<script>(function() {\n'
-			view += '\t"use strict";\n'
-			view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
-			if state.redirect_uri
-				redirect_infos = Url.parse fixUrl(state.redirect_uri), true
-				view += '\tdocument.location.href = "' + state.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
-			else
-				view += '\tvar opener = window.opener || window.parent.window.opener;\n'
-				view += '\tif (opener)\n'
-				view += '\t\topener.postMessage(msg, "' + state.origin + '");\n'
-				view += '\twindow.close();\n'
-			view += '})();</script>'
-			res.send view
-			next()
+			callback e, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/auth/:provider', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
-	key = req.params.k
-	if not key
-		return next new restify.MissingParameterError 'Missing oauthd public key.'
 
 	domain = null
 	origin = null
-	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri)
-	if ref
-		urlinfos = Url.parse ref
-		if not urlinfos.hostname
-			return next new restify.InvalidHeaderError 'Missing origin or referer.'
-		origin = urlinfos.protocol + '//' + urlinfos.host
+	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
+	urlinfos = Url.parse ref
+	if not urlinfos.hostname
+		return next new restify.InvalidHeaderError 'Missing origin or referer.'
+	origin = urlinfos.protocol + '//' + urlinfos.host
+
+	options = {}
+	if req.params.opts
+		try
+			options = JSON.parse(req.params.opts)
+			return cb new check.Error 'Options must be an object' if typeof options != 'object'
+		catch e
+			return cb new check.Error 'Error in request parameters'
+
+	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, res, next
+
+	key = req.params.k
+	if not key
+		return callback new restify.MissingParameterError 'Missing OAuthd public key.'
 
 	oauthv = req.params.oauthv && {
 		"2":"oauth2"
@@ -215,20 +229,14 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 		(keyset, provider, cb) ->
 			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			{parameters, response_type} = keyset
-			options = {}
-			if req.params.opts
-				try
-					options = JSON.parse(req.params.opts)
-					return cb new check.Error 'Options must be an object' if typeof options != 'object'
-				catch e
-					return cb new check.Error 'Error in request parameters'
+			plugins.data.emit 'connect.auth', key:key, provider:provider.provider, parameters:parameters
 			if response_type != 'token' and (not options.state or options.state_type)
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 			oauth[oauthv].authorize provider, parameters, opts, cb
 	], (err, url) ->
-		return next err if err
+		return callback err if err
 		res.setHeader 'Location', url
 		res.send 302
 		next()
