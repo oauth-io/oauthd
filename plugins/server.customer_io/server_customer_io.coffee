@@ -82,6 +82,10 @@ exports.setup = (callback) ->
 		updateUser user, nb_apps: nb
 	@on 'user.update_nbproviders', (user, nb) =>
 		updateUser user, nb_providers: nb
+	@on 'user.update_nbauth', (user, month, nb) =>
+		userInfo = {}
+		userInfo['nb_auth_' + month] = nb
+		updateUser user, userInfo
 
 	@on 'app.remkeyset', (data) =>
 		@db.apps.getOwner data.app, (e, user) =>

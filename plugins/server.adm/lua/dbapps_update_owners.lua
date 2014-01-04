@@ -6,6 +6,6 @@ for k,v in pairs(userapps) do
 	apps = redis.call("smembers", "u:"..userid..":apps")
 
 	for k,v in pairs(apps) do
-		redis.call("set", "a:"..k..":owner", userid)
+		redis.call("set", "a:"..apps[k]..":owner", userid)
 	end
 end

@@ -534,6 +534,37 @@ exports.updateProviders = check 'int', (iduser, callback) ->
 				return callback e if e
 				callback null, providers.length
 
+exports.updateConnections = check 'int', ['int','number'], (iduser, date, callback) ->
+	setStat = (sum) ->
+		db.redis.set "u:#{iduser}:nb_auth:#{year}-#{month+1}", sum, (e, r) ->
+			return callback e if e
+			shared.emit 'user.update_nbauth', id:iduser, "#{year}-#{month+1}", sum
+			callback()
+
+	date = new Date date
+	year = date.getFullYear()
+	month = date.getMonth()
+	exports.getApps iduser, (e, keys) ->
+		return callback e if e
+		return setStat 0 if not keys or not keys.length
+		stkeys = ("st:co:a:#{key}:m:#{year}-#{month+1}" for key in keys)
+		db.redis.mget stkeys, (e,stats) ->
+			return callback e if e
+			sum = 0
+			for st in stats
+				sum += st-0 if st
+			setStat sum
+
+shared.on 'connect.auth', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_auth:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbauth', user, "#{year}-#{month+1}", nb
+
 ## Event: add app to user when created
 shared.on 'app.create', (req, app) ->
 	if req.user?.id

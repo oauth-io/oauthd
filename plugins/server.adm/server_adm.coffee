@@ -217,9 +217,26 @@ exports.setup = (callback) ->
 				do (iduser) =>
 					cmds.push (callback) => @db.users.updateProviders iduser, callback
 			console.log '[ADMIN] beginning dbusers_providers'
-			async.parallel cmds, (e,r) ->
+			async.series cmds, (e,r) ->
 				return console.log '[ADMIN] error dbusers_providers', e if e
 				console.log '[ADMIN] finished dbusers_providers'
+			res.send @check.nullv
+			next()
+
+	@server.get @config.base_api + '/adm/updates/dbusers_auths', @auth.adm, (req, res, next) =>
+		@db.redis.hgetall 'u:mails', (err, users) =>
+			return next err if err
+			cmds = []
+			now = new Date - 0
+			lastmonth = new Date(now - 30 * 24 * 3600 * 1000) - 0
+			for mail,iduser of users
+				do (iduser) =>
+					cmds.push (callback) => @db.users.updateConnections iduser, now, callback
+					cmds.push (callback) => @db.users.updateConnections iduser, lastmonth, callback
+			console.log '[ADMIN] beginning dbusers_auths'
+			async.series cmds, (e,r) ->
+				return console.log '[ADMIN] error dbusers_auths', e if e
+				console.log '[ADMIN] finished dbusers_auths'
 			res.send @check.nullv
 			next()
 
