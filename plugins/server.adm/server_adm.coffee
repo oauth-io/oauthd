@@ -209,4 +209,18 @@ exports.setup = (callback) ->
 	@server.get @config.base_api + '/adm/scripts/dbapps_update_owners', @auth.adm, (req, res, next) =>
 		redisScripts.dbapps_update_owners @server.send(res, next)
 
+	@server.get @config.base_api + '/adm/updates/dbusers_providers', @auth.adm, (req, res, next) =>
+		@db.redis.hgetall 'u:mails', (err, users) =>
+			return next err if err
+			cmds = []
+			for mail,iduser of users
+				do (iduser) =>
+					cmds.push (callback) => @db.users.updateProviders iduser, callback
+			console.log '[ADMIN] beginning dbusers_providers'
+			async.parallel cmds, (e,r) ->
+				return console.log '[ADMIN] error dbusers_providers', e if e
+				console.log '[ADMIN] finished dbusers_providers'
+			res.send @check.nullv
+			next()
+
 	callback()

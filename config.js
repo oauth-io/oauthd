@@ -46,7 +46,7 @@ module.exports = {
 		//name: '...Name the message will appear be sent from...'
 	},
 
-	consumer_io: {
+	customer_io: {
 		//site_id: '...Site ID...'
 		//api_key: '...API key...'
 	},

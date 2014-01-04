@@ -510,12 +510,52 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
+exports.updateProviders = check 'int', (iduser, callback) ->
+	exports.getApps iduser, (e, apps) ->
+		return callback e if e
+		cmds = []
+		providers = {}
+		for app in apps
+			do (app) ->
+				cmds.push (callback) ->
+					db.apps.getKeysets app, (e, keysets) ->
+						#return callback e if e
+						return callback() if e # skip crashed apps
+						providers[keyset] = true for keyset in keysets
+						callback()
+		async.parallel cmds, (e,r) ->
+			return callback e if e
+			pkey = 'u:' + iduser + ':providers'
+			providers = Object.keys(providers)
+			providers.unshift 'sadd', pkey
+			multicmds = [['del', pkey]]
+			multicmds.push providers if providers.length > 2
+			db.redis.multi(multicmds).exec (e,r) ->
+				return callback e if e
+				callback null, providers.length
+
 ## Event: add app to user when created
 shared.on 'app.create', (req, app) ->
 	if req.user?.id
 		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
+		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
+			shared.on 'user.update_nbapps', req.user, nbapps
+
 
 ## Event: remove app from user when deleted
 shared.on 'app.remove', (req, app) ->
 	if req.user?.id
 		db.redis.srem 'u:' + req.user.id + ':apps', app.id
+		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
+			shared.on 'user.update_nbapps', req.user, nbapps
+
+updateProviders_byapp = (data) ->
+	db.apps.getOwner data.app, (e, user) ->
+		return if e
+		exports.updateProviders user.id, (e, nb) ->
+			return if e
+			shared.on 'user.update_nbproviders', user, nb
+
+
+shared.on 'app.remkeyset', updateProviders_byapp
+shared.on 'app.addkeyset', updateProviders_byapp
