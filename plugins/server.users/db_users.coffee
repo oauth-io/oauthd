@@ -570,7 +570,7 @@ shared.on 'app.create', (req, app) ->
 	if req.user?.id
 		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
 		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
-			shared.on 'user.update_nbapps', req.user, nbapps
+			shared.emit 'user.update_nbapps', req.user, nbapps
 
 
 ## Event: remove app from user when deleted
@@ -578,14 +578,14 @@ shared.on 'app.remove', (req, app) ->
 	if req.user?.id
 		db.redis.srem 'u:' + req.user.id + ':apps', app.id
 		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
-			shared.on 'user.update_nbapps', req.user, nbapps
+			shared.emit 'user.update_nbapps', req.user, nbapps
 
 updateProviders_byapp = (data) ->
 	db.apps.getOwner data.app, (e, user) ->
 		return if e
 		exports.updateProviders user.id, (e, nb) ->
 			return if e
-			shared.on 'user.update_nbproviders', user, nb
+			shared.emit 'user.update_nbproviders', user, nb
 
 
 shared.on 'app.remkeyset', updateProviders_byapp
