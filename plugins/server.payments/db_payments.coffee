@@ -12,8 +12,6 @@ restify = require 'restify'
 Mailer = require '../../lib/mailer'
 { db, check, config } = shared = require '../shared'
 PaymillBase = require './paymill_base'
-PaymillSubscription = require './paymill_subscription'
-PaymillPayment = require './paymill_payment'
 DbUser = require '../server.users/db_users'
 Payment = require '../server.payments/db_payments'
 
@@ -309,6 +307,7 @@ exports.process = (data, client, callback) ->
 		# create payment
 		(cb) =>
 			console.log "creating payment..."
+			PaymillPayment = require './paymill_payment'
 			@pm_payment = new PaymillPayment
 			@pm_payment.token = data.token
 			@pm_payment.client = @pm_client
@@ -338,6 +337,7 @@ exports.process = (data, client, callback) ->
 
 			if data.offer # it's a subscription to an offer
 				console.log "subscription ok..."
+				PaymillSubscription = require './paymill_subscription'
 				@pm_subscription = new PaymillSubscription if not @pm_subscription?
 				@pm_subscription.client = @pm_client
 				@pm_subscription.offer = { id : data.offer }

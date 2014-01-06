@@ -63,7 +63,7 @@ exports.setup = (callback) ->
 		sendEvent user, 'login'
 
 	@on 'user.pay', (data) =>
-		sendEvent data.user.profile, 'buy', invoice
+		sendEvent data.user.profile, 'buy', data.invoice
 
 	@on 'user.subscribe', (user, offer) =>
 		pclient = new PaymillClient
