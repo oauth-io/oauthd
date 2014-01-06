@@ -14,7 +14,6 @@ Mailer = require '../../lib/mailer'
 PaymillBase = require './paymill_base'
 PaymillSubscription = require './paymill_subscription'
 PaymillPayment = require './paymill_payment'
-PaymillClient = require './paymill_client'
 DbUser = require '../server.users/db_users'
 Payment = require '../server.payments/db_payments'
 
@@ -284,6 +283,8 @@ exports.process = (data, client, callback) ->
 				console.error err if err
 				return cb err if err
 
+				PaymillClient = require './paymill_client'
+
 				console.log "creating user..."
 				if not current_id?
 					console.log " new user..."
@@ -396,6 +397,8 @@ exports.process = (data, client, callback) ->
 		return callback null, result
 
 exports.getSubscription = (client_id, callback) ->
+	PaymillClient = require './paymill_client'
+
 	pm_client = new PaymillClient client_id
 	pm_client.user_id = client_id
 	pm_client.getCurrentSubscription (err, res) =>

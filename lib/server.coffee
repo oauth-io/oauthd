@@ -195,9 +195,9 @@ server.get config.base + '/:provider', (req, res, next) ->
 	if req.params.opts
 		try
 			options = JSON.parse(req.params.opts)
-			return cb new check.Error 'Options must be an object' if typeof options != 'object'
+			return next new check.Error 'Options must be an object' if typeof options != 'object'
 		catch e
-			return cb new check.Error 'Error in request parameters'
+			return next new check.Error 'Error in request parameters'
 
 	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, res, next
 
