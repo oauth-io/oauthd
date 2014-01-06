@@ -1828,6 +1828,12 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 
 		if params_for_token?
 			paymill.createToken params_for_token, (error, result) ->
+				if not result?.token and error.message
+					$scope.error =
+						state: true
+						message: "Paymill Error: " + error.message.replace /\+/g, " "
+					$scope.processingOrder = false
+					return
 				paymill_data.token = result.token
 				PaymentService.process paymill_data, (success) ->
 					$rootScope.subscription = success.data[2].data.id
