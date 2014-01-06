@@ -240,4 +240,29 @@ exports.setup = (callback) ->
 			res.send @check.nullv
 			next()
 
+	@server.get @config.base_api + '/adm/updates/cohort_ready', @auth.adm, (req, res, next) =>
+		console.log '[ADMIN] beginning cohort_ready'
+		@db.redis.hgetall 'u:mails', (err, users) =>
+			return next err if err
+			cmds = []
+			for mail,iduser of users
+				pfx = 'u:' + iduser + ':'
+				cmds.push ['scard', pfx+'apps']
+				cmds.push ['scard', pfx+'providers']
+			@db.redis.multi(cmds).exec (err, r) =>
+				console.log '[ADMIN] error with big multi', err if err
+				return next err if err
+				i = 0
+				for mail,iduser of users
+					do (mail, iduser) =>
+						user = mail:mail, id:iduser
+						console.log 'emit', user, r[i*2], r[i*2+1]
+						@emit 'user.update_nbapps', user, r[i*2]
+						@emit 'user.update_nbproviders', user, r[i*2+1]
+					i++
+				console.log '[ADMIN] finished cohort_ready (there still may be some events in queue)'
+
+			res.send @check.nullv
+			next()
+
 	callback()

@@ -46,6 +46,15 @@ exports.setup = (callback) ->
 						setDate 'production', user
 
 	@on 'user.pay', (data) =>
-		setDate 'consumer', data.user.profile.id
+		setDate 'consumer', data.user.profile
+
+	@on 'user.update_nbapps', (user, nb) =>
+		setDate 'ready', user if nb >= 2
+
+	@on 'user.update_nbproviders', (user, nb) =>
+		setDate 'ready', user if nb >= 2
+
+	#@on 'user.update_nbauth', (user, month, nb) =>
+		#setDate 'ready', user if nb >= 10000 # todo: per user
 
 	callback()

@@ -56,6 +56,8 @@ exports.setup = (callback) ->
 		updateUser user, date_production:timestamp(now)
 	@on 'cohort.consumer', (user, now) =>
 		updateUser user, date_consumer:timestamp(now)
+	@on 'cohort.ready', (user, now) =>
+		updateUser user, date_ready:timestamp(now)
 
 	@on 'user.login', (user) =>
 		sendEvent user, 'login'
