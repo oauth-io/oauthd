@@ -1833,7 +1833,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 						state: true
 						message: "Paymill Error: " + error.message.replace /\+/g, " "
 					$scope.processingOrder = false
-					$scope.apply()
+					$scope.$apply()
 					return
 				paymill_data.token = result.token
 				PaymentService.process paymill_data, (success) ->
