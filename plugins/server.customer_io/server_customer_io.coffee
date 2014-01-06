@@ -1,9 +1,9 @@
 request = require 'request'
-PaymillBase = require '../server.payments/paymill_base'
-PaymillClient = require '../server.payments/paymill_client'
 async = require 'async'
 
 exports.setup = (callback) ->
+
+	PaymillClient = require '../server.payments/paymill_client'
 
 	if not @config.customer_io?.site_id or not @config.customer_io.api_key
 		console.log 'Warning: customer.io plugin is not configured'
