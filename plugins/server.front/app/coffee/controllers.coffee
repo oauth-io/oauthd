@@ -1834,6 +1834,7 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 						message: "Paymill Error: " + error.message.replace /\+/g, " "
 					$scope.processingOrder = false
 					$scope.$apply()
+					_cio.track "paymill.error", message:error.message.replace(/\+/g, " ")
 					return
 				paymill_data.token = result.token
 				PaymentService.process paymill_data, (success) ->
