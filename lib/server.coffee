@@ -156,37 +156,42 @@ clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_ur
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
-	stateid = req.params.state
-	if not stateid
+	getState = (callback) ->
+		return callback null, req.params.state if req.params.state
 		if req.headers.referer
 			stateref = req.headers.referer.match /state=([^&$]+)/
 			stateid = stateref?[1]
-		if not stateid
-			return next new check.Error 'state', 'must be present'
-	db.states.get stateid, (err, state) ->
+			return callback null, stateid if stateid
+		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		if oaio_uid
+			db.redis.get 'cli:state:' + oaio_uid, callback
+	getState (err, stateid) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state
-		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
-		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-		oauth[state.oauthv].access_token state, req, (e, r) ->
-			status = if e then 'error' else 'success'
-			cmds = []
-			for hook in plugins.data.hooks['connect.auth']
-				do (hook) ->
-					cmds.push (cb) -> hook req, res, cb
-			async.series cmds, (err) ->
-				return callback err || e if err || e
+		return next new check.Error 'state', 'must be present' if not stateid
+		db.states.get stateid, (err, state) ->
+			return next err if err
+			return next new check.Error 'state', 'invalid or expired' if not state
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
+			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+			oauth[state.oauthv].access_token state, req, (e, r) ->
+				status = if e then 'error' else 'success'
+				cmds = []
+				for hook in plugins.data.hooks['connect.auth']
+					do (hook) ->
+						cmds.push (cb) -> hook req, res, cb
+				async.series cmds, (err) ->
+					return callback err || e if err || e
 
-				plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
-				if state.options.response_type != 'token'
-					db.states.set stateid, token:JSON.stringify(r), step:1, (->)
-				if state.options.response_type == 'code'
-					r = {}
-				if state.options.response_type != 'token'
-					r.code = stateid
-				if state.options.response_type == 'token'
-					db.states.del stateid, (->)
-				callback null, r
+					plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+					if state.options.response_type != 'token'
+						db.states.set stateid, token:JSON.stringify(r), step:1, (->)
+					if state.options.response_type == 'code'
+						r = {}
+					if state.options.response_type != 'token'
+						r.code = stateid
+					if state.options.response_type == 'token'
+						db.states.del stateid, (->)
+					callback null, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
@@ -253,6 +258,12 @@ server.get config.base + '/:provider', (req, res, next) ->
 				options.parameters = parameters
 				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 				oauth[oauthv].authorize provider, parameters, opts, cb
+		(authorize, cb) ->
+				return cb null, authorize.url if not req.oaio_uid
+				db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+					return cb err if err
+					db.redis.expire 'cli:state:' + req.oaio_uid, 600
+					cb null, authorize.url
 	], (err, url) ->
 		return callback err if err
 		res.setHeader 'Location', url

@@ -88,7 +88,7 @@
 
 		if (data.status === 'error' || data.status === 'fail') {
 			err = new Error(data.message);
-			err.body = data.data;
+			if (data.data) err.body = data.data;
 			return opts.callback(err);
 		}
 

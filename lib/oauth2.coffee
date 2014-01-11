@@ -23,6 +23,7 @@ check = require './check'
 dbstates = require './db_states'
 dbproviders = require './db_providers'
 dbapps = require './db_apps'
+db = require './db'
 config = require './config'
 
 OAuth2ResponseParser = require './oauth2-response-parser'
@@ -30,6 +31,7 @@ short_formats = OAuth2ResponseParser.short_formats
 
 replace_param = (param, params, hard_params, keyset) ->
 	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+		return db.generateUid() if val == "nonce"
 		return hard_params[val] || ""
 	return param.replace /\{(.*?)\}/g, (match, val) ->
 		return "" if ! params[val] || ! keyset[val]
@@ -50,6 +52,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		options:opts.options
 		expire:600
 	, (err, state) ->
+		return callback err if err
 		authorize = provider.oauth2.authorize
 		query = {}
 		if typeof opts.options?.authorize == 'object'
@@ -59,7 +62,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			query[name] = param if param
 		url = replace_param authorize.url, params, {}, parameters
 		url += "?" + querystring.stringify query
-		callback null, url
+		callback null, url:url, state:state.id
 
 exports.access_token = (state, req, callback) ->
 
@@ -100,6 +103,7 @@ exports.access_token = (state, req, callback) ->
 			url: replace_param access_token.url, params, {}, parameters
 			method: access_token.method?.toUpperCase() || "POST"
 			followAllRedirects: true
+			encoding: null
 
 		options.headers = headers if Object.keys(headers).length
 		if options.method == "GET"
@@ -111,34 +115,35 @@ exports.access_token = (state, req, callback) ->
 		request options, (e, r, body) ->
 			return callback e if e
 			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
-			return callback(responseParser.error) if responseParser.error
+			responseParser.parse (err, response) ->
+				return callback err if err
 
-			expire = responseParser.body.expire
-			expire ?= responseParser.body.expires
-			expire ?= responseParser.body.expires_in
-			expire ?= responseParser.body.expires_at
-			if expire
-				expire = parseInt expire
-				now = (new Date).getTime()
-				expire -= now if expire > now
-			requestclone = {}
-			requestclone[k] = v for k, v of provider.oauth2.request
-			for k, v of params
-				if v.scope == 'public'
-					requestclone.parameters ?= {}
-					requestclone.parameters[k] = parameters[k]
-			result =
-				access_token: responseParser.access_token
-				token_type: responseParser.body.token_type
-				expires_in: expire
-				base: provider.baseurl
-				request: requestclone
-			result.refresh_token = responseParser.body.refresh_token if responseParser.body.refresh_token && response_type == "code"
-			for extra in (access_token.extra||[])
-				result[extra] = responseParser.body[extra] if responseParser.body[extra]
-			for extra in (provider.oauth2.authorize.extra||[])
-				result[extra] = req.params[extra] if req.params[extra]
-			callback null, result
+				expire = response.body.expire
+				expire ?= response.body.expires
+				expire ?= response.body.expires_in
+				expire ?= response.body.expires_at
+				if expire
+					expire = parseInt expire
+					now = (new Date).getTime()
+					expire -= now if expire > now
+				requestclone = {}
+				requestclone[k] = v for k, v of provider.oauth2.request
+				for k, v of params
+					if v.scope == 'public'
+						requestclone.parameters ?= {}
+						requestclone.parameters[k] = parameters[k]
+				result =
+					access_token: response.access_token
+					token_type: response.body.token_type
+					expires_in: expire
+					base: provider.baseurl
+					request: requestclone
+				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
+				for extra in (access_token.extra||[])
+					result[extra] = response.body[extra] if response.body[extra]
+				for extra in (provider.oauth2.authorize.extra||[])
+					result[extra] = req.params[extra] if req.params[extra]
+				callback null, result
 
 exports.refresh = (keyset, provider, token, callback) ->
 	parameters = keyset.parameters
@@ -160,6 +165,7 @@ exports.refresh = (keyset, provider, token, callback) ->
 		url: replace_param refresh.url, params, {}, parameters
 		method: refresh.method?.toUpperCase() || "POST"
 		followAllRedirects: true
+		encoding: null
 
 	options.headers = headers if Object.keys(headers).length
 	if options.method == "GET"
@@ -171,22 +177,23 @@ exports.refresh = (keyset, provider, token, callback) ->
 	request options, (e, r, body) ->
 		return callback e if e
 		responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'refresh token')
-		return callback(responseParser.error) if responseParser.error
+		responseParser.parse (err, response) ->
+			return callback err if err
 
-		expire = responseParser.body.expire
-		expire ?= responseParser.body.expires
-		expire ?= responseParser.body.expires_in
-		expire ?= responseParser.body.expires_at
-		if expire
-			expire = parseInt expire
-			now = (new Date).getTime()
-			expire -= now if expire > now
-		result =
-			access_token: responseParser.body.access_token
-			token_type: responseParser.body.token_type
-			expires_in: expire
-		result.refresh_token = responseParser.body.refresh_token if responseParser.body.refresh_token && keyset.response_type == "code"
-		callback null, result
+			expire = response.body.expire
+			expire ?= response.body.expires
+			expire ?= response.body.expires_in
+			expire ?= response.body.expires_at
+			if expire
+				expire = parseInt expire
+				now = (new Date).getTime()
+				expire -= now if expire > now
+			result =
+				access_token: response.body.access_token
+				token_type: response.body.token_type
+				expires_in: expire
+			result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
+			callback null, result
 
 exports.request = (provider, parameters, req, callback) ->
 	params = {}
