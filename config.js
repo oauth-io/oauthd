@@ -44,6 +44,7 @@ module.exports = {
 		//room_support: '...ID or name of the support room...'
 		//room_activities: '...ID or name of the activities room...'
 		//name: '...Name the message will appear be sent from...'
+		//crash_monitor: true // will send a crash notif on hipchat
 	},
 
 	customer_io: {

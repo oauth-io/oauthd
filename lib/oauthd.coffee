@@ -25,4 +25,4 @@ async.series [
 		console.error 'Error while initialisation', err.stack.toString()
 		plugins.data.emit 'server', err
 	else
-		console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)'
+		console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
