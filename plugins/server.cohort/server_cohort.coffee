@@ -55,6 +55,9 @@ exports.setup = (callback) ->
 		setDate 'ready', user if nb >= 2
 
 	#@on 'user.update_nbauth', (user, month, nb) =>
-		#setDate 'ready', user if nb >= 10000 # todo: per user
+		#setDate 'ready', user if nb >= 10000
+
+	#@on 'user.update_nbmid', (user, month, nb) =>
+		#setDate 'ready', user if nb >= 1000
 
 	callback()

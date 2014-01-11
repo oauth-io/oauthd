@@ -88,6 +88,14 @@ exports.setup = (callback) ->
 		userInfo = {}
 		userInfo['nb_auth_' + month] = nb
 		updateUser user, userInfo
+	@on 'user.update_nbuid', (user, month, nb) =>
+		userInfo = {}
+		userInfo['nb_uid_' + month] = nb
+		updateUser user, userInfo
+	@on 'user.update_nbmid', (user, month, nb) =>
+		userInfo = {}
+		userInfo['nb_mid_' + month] = nb
+		updateUser user, userInfo
 
 	@on 'app.remkeyset', (data) =>
 		@db.apps.getOwner data.app, (e, user) =>
@@ -113,6 +121,11 @@ exports.setup = (callback) ->
 			return if e
 			sendEvent user, 'connect.auth', provider:data.provider, key:data.key
 
+	@on 'connect.auth.new_uid', (data) =>
+		@db.apps.getOwner data.key, (e, user) =>
+			return if e
+			sendEvent user, 'connect.auth.new_uid', provider:data.provider, key:data.key
+
 	@on 'connect.callback', (data) =>
 		@db.apps.getOwner data.key, (e, user) =>
 			return if e
@@ -120,6 +133,14 @@ exports.setup = (callback) ->
 			for apiname, apivalue of data.parameters
 				eventData['_' + apiname] = apivalue if Array.isArray(apivalue)
 			sendEvent user, 'connect.callback', eventData
+
+	@on 'connect.callback.new_uid', (data) =>
+		@db.apps.getOwner data.key, (e, user) =>
+			return if e
+			eventData = provider:data.provider, key:data.key, origin:data.origin, status:data.status
+			for apiname, apivalue of data.parameters
+				eventData['_' + apiname] = apivalue if Array.isArray(apivalue)
+			sendEvent user, 'connect.callback.new_uid', eventData
 
 	@server.post @config.base_api + '/adm/customerio/update', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>

@@ -55,6 +55,7 @@ module.exports = {
 		/* --- only for oauth.io --- */
 		'server.auth',
 		'server.users',
+		'server.clients',
 		'server.adm',
 		'server.hipchat',
 		'server.zendesk',

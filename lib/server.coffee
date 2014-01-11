@@ -61,6 +61,10 @@ server.send = send = (res, next) -> (e, r) ->
 	res.send (if r? then r else check.nullv)
 	next()
 
+plugins.data.hooks =
+	'connect.auth': []
+	'connect.callback': []
+
 bootPathCache = ->
 	chain = restify.conditionalRequest()
 	chain.unshift (req, res, next) ->
@@ -166,18 +170,23 @@ server.get config.base + '/', (req, res, next) ->
 		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
+			cmds = []
+			for hook in plugins.data.hooks['connect.auth']
+				do (hook) ->
+					cmds.push (cb) -> hook req, res, cb
+			async.series cmds, (err) ->
+				return callback err || e if err || e
 
-			plugins.data.emit 'connect.callback', origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
-			if not e
+				plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
 				if state.options.response_type != 'token'
-					db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
+					db.states.set stateid, token:JSON.stringify(r), step:1, (->)
 				if state.options.response_type == 'code'
 					r = {}
 				if state.options.response_type != 'token'
 					r.code = stateid
 				if state.options.response_type == 'token'
 					db.states.del stateid, (->)
-			callback e, r
+				callback null, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
@@ -231,13 +240,19 @@ server.get config.base + '/:provider', (req, res, next) ->
 		(keyset, provider, cb) ->
 			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			{parameters, response_type} = keyset
-			plugins.data.emit 'connect.auth', key:key, provider:provider.provider, parameters:parameters
 			if response_type != 'token' and (not options.state or options.state_type)
 				return cb new check.Error 'You must provide a state when server-side auth'
-			options.response_type = response_type
-			options.parameters = parameters
-			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-			oauth[oauthv].authorize provider, parameters, opts, cb
+			cmds = []
+			for hook in plugins.data.hooks['connect.auth']
+				do (hook) ->
+					cmds.push (cb) -> hook req, res, cb
+			async.series cmds, (err) ->
+				return cb err if err
+				plugins.data.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
+				options.response_type = response_type
+				options.parameters = parameters
+				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
+				oauth[oauthv].authorize provider, parameters, opts, cb
 	], (err, url) ->
 		return callback err if err
 		res.setHeader 'Location', url

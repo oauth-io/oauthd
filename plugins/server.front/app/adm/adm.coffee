@@ -285,12 +285,18 @@ hooks.config = ->
 			target_names:
 				'a:k':'Apps -> keys'
 				'a:co':'Apps -> auth'
+				'a:co:uid':'Apps -> auth (unique)'
 				'a:co:success':'Apps -> auth success'
+				'a:co:uid:success':'Apps -> auth success (unique)'
 				'a:co:error':'Apps -> auth error'
+				'a:co:uid:error':'Apps -> auth error (unique)'
 				'p:k':'Providers -> keys'
 				'p:co':'Providers -> auth'
+				'p:co:uid':'Providers -> auth (unique)'
 				'p:co:success':'Providers -> auth success'
+				'p:co:uid:success':'Providers -> auth success (unique)'
 				'p:co:error':'Providers -> auth error'
+				'p:co:uid:error':'Providers -> auth error (unique)'
 			unit_names: {'d':'Day', 'w':'Week', 'm':'Month', '':'All'}
 			target: 'p:k'
 			type: 'provider'

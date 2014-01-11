@@ -565,6 +565,26 @@ shared.on 'connect.auth', (data) ->
 			return if e
 			shared.emit 'user.update_nbauth', user, "#{year}-#{month+1}", nb
 
+shared.on 'connect.auth.new_uid', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_uid:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbuid', user, "#{year}-#{month+1}", nb
+
+shared.on 'connect.auth.new_mid', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_mid:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbmid', user, "#{year}-#{month+1}", nb
+
 ## Event: add app to user when created
 shared.on 'app.create', (req, app) ->
 	if req.user?.id

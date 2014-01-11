@@ -8,11 +8,23 @@ exports.setup = ->
 		@db.redis.hget 'a:keys', data.key, (e,app) =>
 			@db.ranking_timelines.addScore 'a:co:' + data.status, id:app, (->)
 
+	@on 'connect.callback.new_uid', (data) =>
+		@db.timelines.addUse target:'co:uid:' + data.status, (->)
+		@db.ranking_timelines.addScore 'p:co:uid:' + data.status, id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co:uid:' + data.status, id:app, (->)
+
 	@on 'connect.auth', (data) =>
 		@db.timelines.addUse target:'co', (->)
 		@db.ranking_timelines.addScore 'p:co', id:data.provider, (->)
 		@db.redis.hget 'a:keys', data.key, (e,app) =>
 			@db.ranking_timelines.addScore 'a:co', id:app, (->)
+
+	@on 'connect.auth.new_uid', (data) =>
+		@db.timelines.addUse target:'co:uid', (->)
+		@db.ranking_timelines.addScore 'p:co:uid', id:data.provider, (->)
+		@db.redis.hget 'a:keys', data.key, (e,app) =>
+			@db.ranking_timelines.addScore 'a:co:uid', id:app, (->)
 
 	@on 'request', (data) =>
 		@db.timelines.addUse target:'req', (->)

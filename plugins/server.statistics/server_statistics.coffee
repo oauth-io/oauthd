@@ -26,15 +26,85 @@ exports.setup = (callback) ->
 							@db.ranking_timelines.addScore 'p:auth_array:' + data.provider + status, id:elt, (->)
 
 	@on 'connect.callback', (data) =>
+		monthlyAddClient = =>
+			@db.timelines.addUse target:'co:mid:a:' + data.key + ':' + data.status, (->)
+			@db.timelines.addUse target:'co:mid:p:' + data.provider + ':' + data.status, (->)
+			@db.timelines.addUse target:'co:mid:a:' + data.key + ':p:' + data.provider + ':' + data.status, (->)
+			@emit 'connect.callback.new_mid', data
+
+		uniqueAddClient = =>
+			@db.timelines.addUse target:'co:uid:a:' + data.key + ':' + data.status, (->)
+			@db.timelines.addUse target:'co:uid:p:' + data.provider + ':' + data.status, (->)
+			@db.timelines.addUse target:'co:uid:a:' + data.key + ':p:' + data.provider + ':' + data.status, (->)
+			@emit 'connect.callback.new_uid', data
+
 		@db.timelines.addUse target:'co:a:' + data.key + ':' + data.status, (->)
 		@db.timelines.addUse target:'co:p:' + data.provider + ':' + data.status, (->)
 		@db.timelines.addUse target:'co:a:' + data.key + ':p:' + data.provider + ':' + data.status, (->)
+
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		monthlycli = 'cli:' + data.key + ":#{year}-#{month+1}:" + data.req.oaio_uid + ':co:callback'
+		uniquecli = 'cli:' + data.key + ':uid:' + data.req.oaio_uid + ':co:callback'
+		if data.req.new_oaio_uid
+			@db.redis.hincrby monthlycli, data.provider, 1
+			@db.redis.hincrby uniquecli, data.provider, 1
+			uniqueAddClient()
+			monthlyAddClient()
+		else
+			@db.redis.exists uniquecli, (e, exist) =>
+				return if e
+				@db.redis.hincrby uniquecli, data.provider, 1
+				return if exist
+				uniqueAddClient()
+			@db.redis.exists monthlycli, (e, exist) =>
+				return if e
+				@db.redis.hincrby monthlycli, data.provider, 1
+				return if exist
+				monthlyAddClient()
+
 		auth_array data
 
 	@on 'connect.auth', (data) =>
+		monthlyAddClient = =>
+			@db.timelines.addUse target:'co:mid:p:' + data.provider, (->)
+			@db.timelines.addUse target:'co:mid:a:' + data.key + ':p:' + data.provider, (->)
+			@db.timelines.addUse target:'co:mid:a:' + data.key, (->)
+			@emit 'connect.auth.new_mid', data
+
+		uniqueAddClient = =>
+			@db.timelines.addUse target:'co:uid:p:' + data.provider, (->)
+			@db.timelines.addUse target:'co:uid:a:' + data.key + ':p:' + data.provider, (->)
+			@db.timelines.addUse target:'co:uid:a:' + data.key, (->)
+			@emit 'connect.auth.new_uid', data
+
 		@db.timelines.addUse target:'co:p:' + data.provider, (->)
 		@db.timelines.addUse target:'co:a:' + data.key + ':p:' + data.provider, (->)
 		@db.timelines.addUse target:'co:a:' + data.key, (->)
+
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		monthlycli = 'cli:' + data.key + ":#{year}-#{month+1}:" + data.req.oaio_uid + ':co'
+		uniquecli = 'cli:' + data.key + ':uid:' + data.req.oaio_uid + ':co'
+		if data.req.new_oaio_uid
+			@db.redis.hincrby uniquecli, data.provider, 1
+			@db.redis.hincrby monthlycli, data.provider, 1
+			uniqueAddClient()
+			monthlyAddClient()
+		else
+			@db.redis.exists uniquecli, (e, exist) =>
+				return if e
+				@db.redis.hincrby uniquecli, data.provider, 1
+				return if exist
+				uniqueAddClient()
+			@db.redis.exists monthlycli, (e, exist) =>
+				return if e
+				@db.redis.hincrby monthlycli, data.provider, 1
+				return if exist
+				monthlyAddClient()
+
 		auth_array data
 
 	@on 'request', (data) =>
