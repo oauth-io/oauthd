@@ -202,7 +202,14 @@ server.get config.base + '/:provider', (req, res, next) ->
 	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
 	urlinfos = Url.parse ref
 	if not urlinfos.hostname
-		return next new restify.InvalidHeaderError 'Missing origin or referer.'
+		if ref
+			ref_origin = 'redirect_uri' if req.params.redirect_uri
+			ref_origin = 'static' if req.params.d
+			ref_origin = 'origin' if req.headers['origin']
+			ref_origin = 'referer' if req.headers['referer']
+			return next new restify.InvalidHeaderError 'Cannot find hostname in ' + ref + ' from ' + ref_origin
+		else
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 	origin = urlinfos.protocol + '//' + urlinfos.host
 
 	options = {}
