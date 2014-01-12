@@ -207,7 +207,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 			ref_origin = 'static' if req.params.d
 			ref_origin = 'origin' if req.headers['origin']
 			ref_origin = 'referer' if req.headers['referer']
-			return next new restify.InvalidHeaderError 'Cannot find hostname in ' + ref + ' from ' + ref_origin
+			return next new restify.InvalidHeaderError 'Cannot find hostname in %s from %s', ref, ref_origin
 		else
 			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 	origin = urlinfos.protocol + '//' + urlinfos.host

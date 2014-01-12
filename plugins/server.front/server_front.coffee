@@ -35,7 +35,7 @@ checkAdmin = (req, res, next) -> checkLogged req, res, ->
 		next()
 
 needAdmin = (req, res, next) -> checkAdmin req, res, ->
-	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not req.admin
+	return next new restify.ResourceNotFoundError '%s does not exist', req.url if not req.admin
 	next()
 
 bootTime = new Date
