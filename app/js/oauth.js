@@ -1,7 +1,8 @@
 (function() {
 	"use strict";
 	var config = {
-		oauthd_url: '{{auth_url}}'
+		oauthd_url: '{{auth_url}}',
+		version: 'web-0.1'
 	};
 
 	if ( ! window.OAuth) {
@@ -147,6 +148,9 @@
 			setOAuthdURL: function(url) {
 				config.oauthd_url = url;
 				config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+			},
+			getVersion: function() {
+				return config.version;
 			},
 			popup: function(provider, opts, callback) {
 				var wnd;
