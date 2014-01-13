@@ -64,7 +64,7 @@ exports.updateBilling = (req, callback) ->
 			cart_prefix = "pm:carts:#{user_id}:"
 			total = cart.unit_price * cart.quantity
 			if billing.country_code == "FR"
-				tva = 0.196
+				tva = 0.20
 				total_tva = Math.floor((total * tva) * 100) / 100
 				total += total_tva
 				total = Math.floor(total * 100) / 100
