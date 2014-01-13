@@ -38,6 +38,7 @@ sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
 
 replace_param = (param, params, hard_params, keyset) ->
 	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+		return db.generateUid() if val == "nonce"
 		return hard_params[val] || ""
 	return param.replace /\{(.*?)\}/g, (match, val) ->
 		return "" if ! params[val] || ! keyset[val]
@@ -74,6 +75,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		options =
 			url: request_token.url
 			method: request_token.method?.toUpperCase() || "POST"
+			encoding: null
 			oauth:
 				callback: query.oauth_callback
 				consumer_key: parameters.client_id
@@ -90,24 +92,28 @@ exports.authorize = (provider, parameters, opts, callback) ->
 		request options, (e, r, body) ->
 			return callback(e) if e
 			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'request_token')
-			return callback(responseParser.error) if responseParser.error
+			responseParser.parse (err, response) ->
+				return callback err if err
 
-			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
-				return callback e if e
-				authorize = provider.oauth1.authorize
-				query = {}
-				if typeof opts.options?.authorize == 'object'
-					query = opts.options.authorize
-				for name, value of authorize.query
-					param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
-					query[name] = param if param
-				query.oauth_token = responseParser.oauth_token
-				url = replace_param authorize.url, params, {}, parameters
-				url += "?" + querystring.stringify query
-				callback null, url
+				dbstates.setToken state.id, response.oauth_token_secret, (e, r) ->
+					return callback e if e
+					authorize = provider.oauth1.authorize
+					query = {}
+					if typeof opts.options?.authorize == 'object'
+						query = opts.options.authorize
+					for name, value of authorize.query
+						param = replace_param value, params, state:state.id, callback:config.host_url+config.base, parameters
+						query[name] = param if param
+					query.oauth_token = response.oauth_token
+					url = replace_param authorize.url, params, {}, parameters
+					url += "?" + querystring.stringify query
+					callback null, url:url, state:state.id
 
 
 exports.access_token = (state, req, callback) ->
+	if not req.params.oauth_token && not req.params.error
+		req.params.error_description ?= 'Authorization refused'
+
 	# manage errors in callback
 	if req.params.error || req.params.error_description
 		err = new check.Error
@@ -149,6 +155,7 @@ exports.access_token = (state, req, callback) ->
 		options =
 			url: replace_param access_token.url, params, hard_params, parameters
 			method: access_token.method?.toUpperCase() || "POST"
+			encoding: null
 			oauth:
 				callback: query.oauth_callback
 				consumer_key: parameters.client_id
@@ -171,32 +178,33 @@ exports.access_token = (state, req, callback) ->
 		request options, (e, r, body) ->
 			return callback(e) if e
 			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
-			return callback(responseParser.error) if responseParser.error
+			responseParser.parse (err, response) ->
+				return callback err if err
 
-			expire = responseParser.body.expire
-			expire ?= responseParser.body.expires
-			expire ?= responseParser.body.expires_in
-			expire ?= responseParser.body.expires_at
-			if expire
-				expire = parseInt expire
-				now = (new Date).getTime()
-				expire -= now if expire > now
-			requestclone = {}
-			requestclone[k] = v for k, v of provider.oauth1.request
-			for k, v of params
-				if v.scope == 'public'
-					requestclone.parameters ?= {}
-					requestclone.parameters[k] = parameters[k]
-			result =
-				oauth_token: responseParser.oauth_token
-				oauth_token_secret: responseParser.oauth_token_secret
-				expires_in: expire
-				request: requestclone
-			for extra in (access_token.extra||[])
-				result[extra] = responseParser.body[extra] if responseParser.body[extra]
-			for extra in (provider.oauth1.authorize.extra||[])
-				result[extra] = req.params[extra] if req.params[extra]
-			callback null, result
+				expire = response.body.expire
+				expire ?= response.body.expires
+				expire ?= response.body.expires_in
+				expire ?= response.body.expires_at
+				if expire
+					expire = parseInt expire
+					now = (new Date).getTime()
+					expire -= now if expire > now
+				requestclone = {}
+				requestclone[k] = v for k, v of provider.oauth1.request
+				for k, v of params
+					if v.scope == 'public'
+						requestclone.parameters ?= {}
+						requestclone.parameters[k] = parameters[k]
+				result =
+					oauth_token: response.oauth_token
+					oauth_token_secret: response.oauth_token_secret
+					expires_in: expire
+					request: requestclone
+				for extra in (access_token.extra||[])
+					result[extra] = response.body[extra] if response.body[extra]
+				for extra in (provider.oauth1.authorize.extra||[])
+					result[extra] = req.params[extra] if req.params[extra]
+				callback null, result
 
 exports.request = (provider, parameters, req, callback) ->
 	params = {}
@@ -246,6 +254,7 @@ exports.request = (provider, parameters, req, callback) ->
 	# build body
 	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
 		options.body = req._body || req.body
+		delete options.body if typeof options.body == 'object'
 
 	# do request
 	callback null, request(options)

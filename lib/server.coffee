@@ -61,6 +61,10 @@ server.send = send = (res, next) -> (e, r) ->
 	res.send (if r? then r else check.nullv)
 	next()
 
+plugins.data.hooks =
+	'connect.auth': []
+	'connect.callback': []
+
 bootPathCache = ->
 	chain = restify.conditionalRequest()
 	chain.unshift (req, res, next) ->
@@ -152,27 +156,42 @@ clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_ur
 # oauth: handle callbacks
 server.get config.base + '/', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
-	if not req.params.state
-		return next new check.Error 'state', 'must be present'
-	db.states.get req.params.state, (err, state) ->
+	getState = (callback) ->
+		return callback null, req.params.state if req.params.state
+		if req.headers.referer
+			stateref = req.headers.referer.match /state=([^&$]+)/
+			stateid = stateref?[1]
+			return callback null, stateid if stateid
+		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		if oaio_uid
+			db.redis.get 'cli:state:' + oaio_uid, callback
+	getState (err, stateid) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state
-		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
-		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-		oauth[state.oauthv].access_token state, req, (e, r) ->
-			status = if e then 'error' else 'success'
+		return next new check.Error 'state', 'must be present' if not stateid
+		db.states.get stateid, (err, state) ->
+			return next err if err
+			return next new check.Error 'state', 'invalid or expired' if not state
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
+			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+			oauth[state.oauthv].access_token state, req, (e, r) ->
+				status = if e then 'error' else 'success'
+				cmds = []
+				for hook in plugins.data.hooks['connect.auth']
+					do (hook) ->
+						cmds.push (cb) -> hook req, res, cb
+				async.series cmds, (err) ->
+					return callback err || e if err || e
 
-			plugins.data.emit 'connect.callback', origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
-			if not e
-				if state.options.response_type != 'token'
-					db.states.set req.params.state, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
-				if state.options.response_type == 'code'
-					r = {}
-				if state.options.response_type != 'token'
-					r.code = req.params.state
-				if state.options.response_type == 'token'
-					db.states.del req.params.state, (->)
-			callback e, r
+					plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+					if state.options.response_type != 'token'
+						db.states.set stateid, token:JSON.stringify(r), step:1, (->)
+					if state.options.response_type == 'code'
+						r = {}
+					if state.options.response_type != 'token'
+						r.code = stateid
+					if state.options.response_type == 'token'
+						db.states.del stateid, (->)
+					callback null, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/:provider', (req, res, next) ->
@@ -183,16 +202,23 @@ server.get config.base + '/:provider', (req, res, next) ->
 	ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
 	urlinfos = Url.parse ref
 	if not urlinfos.hostname
-		return next new restify.InvalidHeaderError 'Missing origin or referer.'
+		if ref
+			ref_origin = 'redirect_uri' if req.params.redirect_uri
+			ref_origin = 'static' if req.params.d
+			ref_origin = 'origin' if req.headers['origin']
+			ref_origin = 'referer' if req.headers['referer']
+			return next new restify.InvalidHeaderError 'Cannot find hostname in %s from %s', ref, ref_origin
+		else
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 	origin = urlinfos.protocol + '//' + urlinfos.host
 
 	options = {}
 	if req.params.opts
 		try
 			options = JSON.parse(req.params.opts)
-			return cb new check.Error 'Options must be an object' if typeof options != 'object'
+			return next new check.Error 'Options must be an object' if typeof options != 'object'
 		catch e
-			return cb new check.Error 'Error in request parameters'
+			return next new check.Error 'Error in request parameters'
 
 	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, res, next
 
@@ -226,13 +252,25 @@ server.get config.base + '/:provider', (req, res, next) ->
 		(keyset, provider, cb) ->
 			return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
 			{parameters, response_type} = keyset
-			plugins.data.emit 'connect.auth', key:key, provider:provider.provider, parameters:parameters
 			if response_type != 'token' and (not options.state or options.state_type)
 				return cb new check.Error 'You must provide a state when server-side auth'
-			options.response_type = response_type
-			options.parameters = parameters
-			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-			oauth[oauthv].authorize provider, parameters, opts, cb
+			cmds = []
+			for hook in plugins.data.hooks['connect.auth']
+				do (hook) ->
+					cmds.push (cb) -> hook req, res, cb
+			async.series cmds, (err) ->
+				return cb err if err
+				plugins.data.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
+				options.response_type = response_type
+				options.parameters = parameters
+				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
+				oauth[oauthv].authorize provider, parameters, opts, cb
+		(authorize, cb) ->
+				return cb null, authorize.url if not req.oaio_uid
+				db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+					return cb err if err
+					db.redis.expire 'cli:state:' + req.oaio_uid, 600
+					cb null, authorize.url
 	], (err, url) ->
 		return callback err if err
 		res.setHeader 'Location', url

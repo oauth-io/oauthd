@@ -44,12 +44,19 @@ module.exports = {
 		//room_support: '...ID or name of the support room...'
 		//room_activities: '...ID or name of the activities room...'
 		//name: '...Name the message will appear be sent from...'
+		//crash_monitor: true // will send a crash notif on hipchat
+	},
+
+	customer_io: {
+		//site_id: '...Site ID...'
+		//api_key: '...API key...'
 	},
 
 	plugins: [
 		/* --- only for oauth.io --- */
 		'server.auth',
 		'server.users',
+		'server.clients',
 		'server.adm',
 		'server.hipchat',
 		'server.zendesk',
@@ -58,6 +65,8 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist',
 		'server.pricing',
+		'server.customer_io',
+		'server.cohort',
 		'server.apiratings',
 		/* ------------------------- */
 

@@ -6,8 +6,6 @@
 
 async = require 'async'
 Mailer = require '../../lib/mailer'
-Payment = require '../server.payments/db_payments'
-Clients = require '../server.payments/paymill_client'
 
 {config,check,db} = shared = require '../shared'
 
@@ -20,15 +18,16 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
+			key = db.generateUid()
 			db.redis.multi([
 				[ 'mset', prefix+'mail', data.mail,
-					prefix+'key', db.generateUid(),
+					prefix+'key', key,
 					prefix+'validated', 0,
 					prefix+'date_inscr', date_inscr ],
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				user = id:val, mail:data.mail, date_inscr:date_inscr
+				user = id:val, mail:data.mail, date_inscr:date_inscr, key:key
 				shared.emit 'user.register', user
 				return callback null, user
 
@@ -58,7 +57,7 @@ exports.updateBilling = (req, callback) ->
 			profile_prefix + 'use_profile_for_billing', profile.use_profile_for_billing ]
 
 	if billing?
-
+		Payment = require '../server.payments/db_payments'
 		Payment.getCart user_id, (err, cart) ->
 			return callback err if err
 
@@ -202,14 +201,16 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 	}, (err, res) ->
 		return callback new check.Error "This page does not exists." if not res.is_validable or err
 		prefix = 'u:' + res.id + ':'
+		key = db.generateUid()
 		db.redis.mset [
 			prefix+'validated', 1,
 			prefix+'pass', pass,
 			prefix+'salt', dynsalt,
-			prefix+'key', db.generateUid(),
+			prefix+'key', key,
 			prefix+'date_validate', (new Date).getTime()
 		], (err) ->
 			return err if err
+			shared.emit 'user.validate', id: res.id, mail: res.mail, key:key
 			return callback null, mail: res.mail, id: res.id
 
 # lost password
@@ -319,7 +320,7 @@ exports.updatePassword = (req, callback) ->
 
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
-
+	Clients = require '../server.payments/paymill_client'
 	client = new Clients()
 	client.user_id = iduser
 
@@ -479,6 +480,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 				return callback null, name:replies[0], nbConnection:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
 
 exports.getAllSubscriptions = check 'int', (iduser, callback) ->
+	Clients = require '../server.payments/paymill_client'
 	client = new Clients()
 	client.user_id = iduser
 	client.getSubscriptions (err, subscriptions) ->
@@ -508,12 +510,103 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
 				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
 
+exports.updateProviders = check 'int', (iduser, callback) ->
+	exports.getApps iduser, (e, apps) ->
+		return callback e if e
+		cmds = []
+		providers = {}
+		for app in apps
+			do (app) ->
+				cmds.push (callback) ->
+					db.apps.getKeysets app, (e, keysets) ->
+						#return callback e if e
+						return callback() if e # skip crashed apps
+						providers[keyset] = true for keyset in keysets
+						callback()
+		async.parallel cmds, (e,r) ->
+			return callback e if e
+			pkey = 'u:' + iduser + ':providers'
+			providers = Object.keys(providers)
+			providers.unshift 'sadd', pkey
+			multicmds = [['del', pkey]]
+			multicmds.push providers if providers.length > 2
+			db.redis.multi(multicmds).exec (e,r) ->
+				return callback e if e
+				callback null, providers.length
+
+exports.updateConnections = check 'int', ['int','number'], (iduser, date, callback) ->
+	setStat = (sum) ->
+		db.redis.set "u:#{iduser}:nb_auth:#{year}-#{month+1}", sum, (e, r) ->
+			return callback e if e
+			shared.emit 'user.update_nbauth', id:iduser, "#{year}-#{month+1}", sum
+			callback()
+
+	date = new Date date
+	year = date.getFullYear()
+	month = date.getMonth()
+	exports.getApps iduser, (e, keys) ->
+		return callback e if e
+		return setStat 0 if not keys or not keys.length
+		stkeys = ("st:co:a:#{key}:m:#{year}-#{month+1}" for key in keys)
+		db.redis.mget stkeys, (e,stats) ->
+			return callback e if e
+			sum = 0
+			for st in stats
+				sum += st-0 if st
+			setStat sum
+
+shared.on 'connect.auth', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_auth:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbauth', user, "#{year}-#{month+1}", nb
+
+shared.on 'connect.auth.new_uid', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_uid:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbuid', user, "#{year}-#{month+1}", nb
+
+shared.on 'connect.auth.new_mid', (data) ->
+	db.apps.getOwner data.key, (e, user) ->
+		return if e
+		date = new Date
+		year = date.getFullYear()
+		month = date.getMonth()
+		db.redis.incr "u:#{user.id}:nb_mid:#{year}-#{month+1}", (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbmid', user, "#{year}-#{month+1}", nb
+
 ## Event: add app to user when created
 shared.on 'app.create', (req, app) ->
 	if req.user?.id
 		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
+		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
+			shared.emit 'user.update_nbapps', req.user, nbapps
+
 
 ## Event: remove app from user when deleted
 shared.on 'app.remove', (req, app) ->
 	if req.user?.id
 		db.redis.srem 'u:' + req.user.id + ':apps', app.id
+		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
+			shared.emit 'user.update_nbapps', req.user, nbapps
+
+updateProviders_byapp = (data) ->
+	db.apps.getOwner data.app, (e, user) ->
+		return if e
+		exports.updateProviders user.id, (e, nb) ->
+			return if e
+			shared.emit 'user.update_nbproviders', user, nb
+
+
+shared.on 'app.remkeyset', updateProviders_byapp
+shared.on 'app.addkeyset', updateProviders_byapp

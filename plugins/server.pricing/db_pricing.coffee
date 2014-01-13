@@ -321,6 +321,8 @@ exports.unsubscribe = (client, callback) ->
 					]).exec (err) =>
 						return callback err if err
 
+						shared.emit 'user.unsubscribe', client
+
 						Payment.delCart client.id, (err, result) ->
 							return err if err
 							return callback null, subscription_updated

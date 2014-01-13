@@ -12,9 +12,6 @@ restify = require 'restify'
 Mailer = require '../../lib/mailer'
 { db, check, config } = shared = require '../shared'
 PaymillBase = require './paymill_base'
-PaymillSubscription = require './paymill_subscription'
-PaymillPayment = require './paymill_payment'
-PaymillClient = require './paymill_client'
 DbUser = require '../server.users/db_users'
 Payment = require '../server.payments/db_payments'
 
@@ -284,6 +281,8 @@ exports.process = (data, client, callback) ->
 				console.error err if err
 				return cb err if err
 
+				PaymillClient = require './paymill_client'
+
 				console.log "creating user..."
 				if not current_id?
 					console.log " new user..."
@@ -308,6 +307,7 @@ exports.process = (data, client, callback) ->
 		# create payment
 		(cb) =>
 			console.log "creating payment..."
+			PaymillPayment = require './paymill_payment'
 			@pm_payment = new PaymillPayment
 			@pm_payment.token = data.token
 			@pm_payment.client = @pm_client
@@ -337,6 +337,7 @@ exports.process = (data, client, callback) ->
 
 			if data.offer # it's a subscription to an offer
 				console.log "subscription ok..."
+				PaymillSubscription = require './paymill_subscription'
 				@pm_subscription = new PaymillSubscription if not @pm_subscription?
 				@pm_subscription.client = @pm_client
 				@pm_subscription.offer = { id : data.offer }
@@ -388,11 +389,6 @@ exports.process = (data, client, callback) ->
 							return callback err if err
 							cb()
 
-						# cohort analysis: consumer
-						db.redis.get 'u:' + @pm_client.user_id + ':date_consumer', (e, r) =>
-							return if e or r
-							db.redis.set 'u:' + @pm_client.user_id + ':date_consumer', (new Date).getTime(), (->)
-
 						shared.emit 'user.pay', user:user, invoice:invoice
 
 
@@ -401,6 +397,8 @@ exports.process = (data, client, callback) ->
 		return callback null, result
 
 exports.getSubscription = (client_id, callback) ->
+	PaymillClient = require './paymill_client'
+
 	pm_client = new PaymillClient client_id
 	pm_client.user_id = client_id
 	pm_client.getCurrentSubscription (err, res) =>

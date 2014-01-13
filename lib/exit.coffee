@@ -36,7 +36,8 @@ process.on 'uncaughtException', (err) ->
 	if closing
 		console.error '--- uncaughtException WHILE CLOSING'
 	else
-		console.error '--- uncaughtException'
+		console.error '--- uncaughtException', (new Date).toGMTString()
+		exports.err = err
 	console.error err.stack.toString()
 	console.error '--- node exiting now...'
 	if closing

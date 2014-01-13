@@ -192,12 +192,15 @@ exports.addKeyset = check check.format.key, 'string', parameters:'object', respo
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.mset 'a:' + idapp + ':k:' + provider, JSON.stringify(data.parameters)
-			, 'a:' + idapp + ':ktype:' + provider, data.response_type
-			, 'a:' + idapp + ':kdate:' + provider, (new Date).getTime(), (err, res) ->
-				return callback err if err
-				plugins.data.emit 'app.addkeyset', provider:provider, app:key, id:idapp
-				callback()
+		db.redis.exists 'a:' + idapp + ':k:' + provider, (err, isUpdate) ->
+			return callback err if err
+			db.redis.mset 'a:' + idapp + ':k:' + provider, JSON.stringify(data.parameters)
+				, 'a:' + idapp + ':ktype:' + provider, data.response_type
+				, 'a:' + idapp + ':kdate:' + provider, (new Date).getTime(), (err, res) ->
+					return callback err if err
+					eventName = if isUpdate then 'app.updatekeyset' else 'app.addkeyset'
+					plugins.data.emit eventName, provider:provider, app:key, id:idapp
+					callback()
 
 # get keys infos of an app for a provider
 exports.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
@@ -243,10 +246,22 @@ exports.checkDomain = check check.format.key, 'string', (key, domain_str, callba
 					return callback null, true
 		return callback null, false
 
+# get owner user
+exports.getOwner = check check.format.key, (key, callback) ->
+	db.redis.hget 'a:keys', key, (err, idapp) ->
+		return callback err if err
+		return callback new check.Error 'Unknown key' unless idapp
+		db.redis.get 'a:' + idapp + ':owner', (err, iduser) ->
+			return callback err if err
+			if not iduser
+				return callback new check.Error 'Could not find app owner'
+			return callback null, id:iduser
+
 # check the secret
 exports.checkSecret = check check.format.key, check.format.key, (key, secret, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
+		return callback new check.Error 'Unknown key' unless idapp
 		db.redis.get 'a:' + idapp + ':secret', (err, sec) ->
 			return callback err if err
 			return callback null, sec == secret

@@ -37,6 +37,7 @@ app.directive 'googleAnalytics', ($location, $window) ->
 					$location.ga_skip = false
 					return
 				ga 'send', 'pageview', $location.path()
+				_cio.page $location.absUrl()
 	};
 
 app.directive 'bootstrapModal', () ->

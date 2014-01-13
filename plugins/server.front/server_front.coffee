@@ -35,7 +35,7 @@ checkAdmin = (req, res, next) -> checkLogged req, res, ->
 		next()
 
 needAdmin = (req, res, next) -> checkAdmin req, res, ->
-	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not req.admin
+	return next new restify.ResourceNotFoundError '%s does not exist', req.url if not req.admin
 	next()
 
 bootTime = new Date
@@ -56,21 +56,35 @@ bootPathCache = (opts) ->
 init = (callback) ->
 	fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) =>
 		callback err if err
-		cache.index = data.toString().replace /\{\{config\.([a-zA-Z0-9]+)\}\}/g, (m,prop) => @config[prop]
+		cache.index = data.toString().replace /\{\{config\.([a-zA-Z0-9_]+)\.([a-zA-Z0-9_]+)\}\}/g, (m,prop,prop2) => @config[prop]?[prop2]
+		cache.index = cache.index.toString().replace /\{\{config\.([a-zA-Z0-9_]+)\}\}/g, (m,prop) => @config[prop]
 		callback()
 
 exports.setup = (callback) ->
 	init.call @, (e) =>
 		console.error 'error', e if e
 
-		@server.get '/', checkAdmin, bootPathCache(logged:true), (req, res, next) ->
+		sendIndex = (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
-			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
-			res.end data
-			next()
+			data = data.replace /\{\{if admin\}\}([\s\S]*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
+			sendres = ->
+				data = data.replace /\{\{if logged\}\}([\s\S]*?)\{\{endif\}\}/g, if req.token then '$1' else ''
+				res.end data
+				next()
+			if req.token
+				db.redis.hgetall 'session:' + req.token, (err, session) ->
+					if err or not session
+						req.token = null
+						return sendres()
+					data = data.replace /\{\{user.id\}\}/g, session.id
+					data = data.replace /\{\{user.mail\}\}/g, session.mail
+					sendres()
+			else
+				sendres()
+
+		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
 
 		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
@@ -84,13 +98,6 @@ exports.setup = (callback) ->
 			directory: __dirname + '/errors'
 			maxAge: 1 # no cache on errors !
 
-		@server.get /.*/, checkAdmin, bootPathCache(logged:true), (req, res, next) ->
-			res.setHeader 'Content-Type', 'text/html'
-			res.set 'Last-Modified', bootTime
-			data = cache.index
-			data = data.replace /\{\{if admin\}\}(.*?)\{\{endif\}\}/g, if req.admin then '$1' else ''
-			data = data.replace /\{\{if logged\}\}(.*?)\{\{endif\}\}/g, if req.token then '$1' else ''
-			res.end data
-			next()
+		@server.get /.*/, checkAdmin, bootPathCache(logged:true), sendIndex
 
 		callback()

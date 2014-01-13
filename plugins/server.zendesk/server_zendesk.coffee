@@ -9,11 +9,11 @@ request = require 'request'
 
 exports.setup = (callback) ->
 
-	if not @config.zendesk?.token
+	if not @config.zendesk?.token or not @config.zendesk.user
 		console.log 'Warning: zendesk plugin is not configured'
+		return callback()
 
 	@on 'user.contact', (contact) =>
-		return if not @config.zendesk?.token or not @config.zendesk.user
 		request {
 			url: 'https://oauthio.zendesk.com/api/v2/tickets.json'
 			method: 'POST'

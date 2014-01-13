@@ -128,22 +128,34 @@ $('#navTab a').click(function (e) {
 							<option value="apps">apps</option>
 							<option value="keysets">keysets</option>
 							<option value="co">connections</option>
+							<option value="co:uid">connections (unique users)</option>
 							<option value="req">requests</option>
 							<option value="co:success">connections success</option>
+							<option value="co:uid:success">connections success (unique users)</option>
 							<option value="co:error">connections fails</option>
+							<option value="co:uid:error">connections fails (unique users)</option>
 							<option value="co:p:facebook">facebook connections</option>
+							<option value="co:uid:p:facebook">facebook connections (unique users)</option>
 							<option value="co:p:facebook:success">facebook connections success</option>
+							<option value="co:uid:p:facebook:success">facebook connections success (unique users)</option>
 							<option value="co:p:facebook:error">facebook connections fails</option>
+							<option value="co:uid:p:facebook:error">facebook connections fails (unique users)</option>
 							<option value="req:p:twitter">twitter api requests</option>
 							<option value="p:facebook:keysets">facebook keysets</option>
 							<option value="co:a:AN APP KEY">an app connections</option>
+							<option value="co:uid:a:AN APP KEY">an app connections (unique users)</option>
 							<option value="co:a:AN APP KEY:success">an app connections success</option>
+							<option value="co:uid:a:AN APP KEY:success">an app connections success (unique users)</option>
 							<option value="co:a:AN APP KEY:error">an app connections fails</option>
+							<option value="co:uid:a:AN APP KEY:error">an app connections fails (unique users)</option>
 							<option value="a:AN APP KEY:keysets">an app keysets</option>
 							<option value="req:a:AN APP KEY">an app requests</option>
 							<option value="co:a:AN APP KEY:p:facebook">an app facebook connections</option>
+							<option value="co:uid:a:AN APP KEY:p:facebook">an app facebook connections (unique users)</option>
 							<option value="co:a:AN APP KEY:p:facebook:success">an app facebook connections success</option>
+							<option value="co:uid:a:AN APP KEY:p:facebook:success">an app facebook connections success (unique users)</option>
 							<option value="co:a:AN APP KEY:p:facebook:error">an app facbeook connections fails</option>
+							<option value="co:uid:a:AN APP KEY:p:facebook:error">an app facbeook connections fails (unique users)</option>
 							<option value="req:a:AN APP KEY:p:twitter">an app twitter requests</option>
 						</select>
 						<select ng-model="chart.day" ng-change="chartSubmit()">
@@ -375,14 +387,20 @@ $('#navTab a').click(function (e) {
 							<ul class="dropdown-menu">
 								<li><a ng-click='setRankingTarget("a:k")'>Apps -> keys</a></li>
 								<li><a ng-click='setRankingTarget("a:co")'>Apps -> auth</a></li>
+								<li><a ng-click='setRankingTarget("a:co:uid")'>Apps -> auth (unique)</a></li>
 								<li><a ng-click='setRankingTarget("a:co:success")'>Apps -> auth success</a></li>
+								<li><a ng-click='setRankingTarget("a:co:uid:success")'>Apps -> auth success (unique)</a></li>
 								<li><a ng-click='setRankingTarget("a:co:error")'>Apps -> auth errors</a></li>
+								<li><a ng-click='setRankingTarget("a:co:uid:error")'>Apps -> auth errors (unique)</a></li>
 								<li><a ng-click='setRankingTarget("a:req")'>Apps -> requests</a></li>
 								<li class="divider"></li>
 								<li><a ng-click='setRankingTarget("p:k")'>Providers -> keys</a></li>
 								<li><a ng-click='setRankingTarget("p:co")'>Providers -> auth</a></li>
+								<li><a ng-click='setRankingTarget("p:co:uid")'>Providers -> auth (unique)</a></li>
 								<li><a ng-click='setRankingTarget("p:co:success")'>Providers -> auth success</a></li>
+								<li><a ng-click='setRankingTarget("p:co:uid:success")'>Providers -> auth success (unique)</a></li>
 								<li><a ng-click='setRankingTarget("p:co:error")'>Providers -> auth errors</a></li>
+								<li><a ng-click='setRankingTarget("p:co:uid:error")'>Providers -> auth errors (unique)</a></li>
 								<li><a ng-click='setRankingTarget("p:req")'>Providers -> requests</a></li>
 							</ul>
 						</li>
