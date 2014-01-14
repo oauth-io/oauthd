@@ -15,7 +15,7 @@
 		<p><em>Some common notes about the methods below:</em></p>
 		<p>Each described endpoints below are relative to <a href="https://oauth.io">https://oauth.io</a>. Every endpoints beginning with <code>/api</code> always reply a response structure according to <a href="http://labs.omniti.com/labs/jsend">JSend</a>: The field <code>status</code> can have the values <code>success</code>, <code>fail</code>, <code>error</code>, depending on the error type. Beside the <code>status</code> field, you can find the field <code>message</code> when an error is present, and <code>data</code> in case of success or when a parameter is invalid.</p>
 		<p>Every POST request should send JSON in its body with the HTTP header <code>Content-Type</code> set to <code>application/json</code>. Some endpoints can accept <code>application/x-www-form-urlencoded</code>, but we recommand to always use JSON.</p>
-		<p>Finally, every request shoud be authorized with a bearer token (if not, you will receive a 401 Unauthorized response): You can receive it by using the <code>/token</code> endpoint, and authorize your request by setting the http header <code>Authorize: Bearer <em>YOUR_TOKEN</em></code>
+		<p>Finally, every request shoud be authorized with a bearer token (if not, you will receive a 401 Unauthorized response): You can receive it by using the <code>/auth/token</code> endpoint, and authorize your request by setting the http header <code>Authorize: Bearer <em>YOUR_TOKEN</em></code>
 	</div>
 	<div class="panel-group" id="apiaccordion">
   <div class="panel panel-default">
@@ -30,7 +30,7 @@
       <div class="panel-body">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /token
+			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /auth/token
 		</div>
 		<p>Authenticate to oauth.io with <a href="http://tools.ietf.org/html/rfc6749#section-4.3">OAuth 2 client credentials.</a></p>
 		<table class="table">
