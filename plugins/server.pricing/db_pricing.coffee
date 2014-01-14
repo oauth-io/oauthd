@@ -69,22 +69,25 @@ exports.createOffer = (data, callback) ->
 						return cb err if err
 						cb null, offer.data
 
-			(cb) => # TTC (19.6%)
+			(cb) => # TTC (20%)
 
 				total_ht = data.amount / 100
-				tva = 0.196
+				tva = 0.20
 				total_tva = Math.floor((total_ht * tva) * 100) / 100
-				total_ttc = (((total_ht + total_tva) * 100 ) / 100) * 100
+				total_ttc = ((total_ht + total_tva) * 100 ) / 100
+				total_ttc *= 100 # for paymill (e.g 230.4 => 23040)
 				status = 'private'
 				parent = name
 				name += "fr"
 
+				console.log total_ttc
 				paymill.offers.create
 					amount: total_ttc
 					currency: data.currency
 					interval: data.interval
 					name: name
 				,(err, offer) ->
+					console.log err if err
 					return cb err if err
 
 					offer.data.name = name
