@@ -1440,6 +1440,7 @@ PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, Cart
 	MenuService.changed()
 
 	$scope.current_plan = null
+	$scope.devShow = window.devShow
 
 	PricingService.list (success) ->
 		$scope.current_plan = success.data.current_plan
