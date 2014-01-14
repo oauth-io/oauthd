@@ -57,7 +57,7 @@ hooks.config = ->
 					provider: name
 					status: status
 
-			createPaymentOffer: (amount, name, currency, interval, nbConnection, status, nbApp, nbProvider, responseDelay, success, error) ->
+			createPaymentOffer: (amount, name, currency, interval, nbUsers, status, nbApp, nbProvider, responseDelay, success, error) ->
 				api "adm/plan/create", success, error,
 				method:'post'
 				data:
@@ -65,7 +65,7 @@ hooks.config = ->
 					amount: amount
 					currency: currency
 					interval: interval
-					nbConnection: nbConnection
+					nbUsers: nbUsers
 					status: status
 					nbApp: nbApp
 					nbProvider: nbProvider
@@ -504,7 +504,7 @@ hooks.config = ->
 		$scope.interval =  $scope.intervals[31]
 
 
-		$scope.offersList = null
+		$scope.offersList = []
 		AdmService.getOffersList (success) ->
 			$scope.offersList = success.data.offers
 
@@ -519,7 +519,7 @@ hooks.config = ->
 			if ($('.status').is(':checked'))
 				status = "private";
 
-			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbConnection").val(), status, $(".nbApp").val(), $(".nbProvider").val(), $(".responseDelay").val(), (success) ->
+			AdmService.createPaymentOffer $(".amount").val() * 100, $(".name").val(), $(".currency").val(), intervals[$(".interval").val()],$(".nbUsers").val(), status, $(".nbApp").val(), $(".nbProvider").val(), $(".responseDelay").val(), (success) ->
 
 				for plan in success.data
 					$scope.offersList.push(plan)

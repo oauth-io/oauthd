@@ -477,7 +477,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 				replies[2] = if replies[2] == "*" then "unlimited" else replies[2]
 				replies[3] = if replies[3] == "*" then "unlimited" else replies[3]
 
-				return callback null, name:replies[0], nbConnection:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
+				return callback null, name:replies[0], nbUsers:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
 
 exports.getAllSubscriptions = check 'int', (iduser, callback) ->
 	Clients = require '../server.payments/paymill_client'
