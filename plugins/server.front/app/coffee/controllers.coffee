@@ -275,9 +275,9 @@ generalAccountCtrl = ($scope, $timeout, UserService) ->
 		if ! $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
-				nbConnection: 5000
+				nbUsers: 1000
 				nbApp: 2
-				nbProvider: 5
+				nbProvider: 2
 				responseDelay: 48
 
 		getColor = (ratio)->
@@ -289,10 +289,10 @@ generalAccountCtrl = ($scope, $timeout, UserService) ->
 				return '#3ebebd'
 
 		connectionData = [
-			value: $scope.totalConnections
-			color: getColor $scope.totalConnections / $scope.plan.nbConnection
+			value: $scope.totalUsers
+			color: getColor $scope.totalUsers / $scope.plan.nbUsers
 		,
-			value: $scope.plan.nbConnection - $scope.totalConnections
+			value: $scope.plan.nbUsers - $scope.totalUsers
 			color: '#EEEEEE'
 		]
 		connectionData[1].value = 0  if connectionData[1].value < 0
@@ -378,23 +378,23 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		if not $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
-				nbConnection: 5000
+				nbUsers: 1000
 				nbApp: 2
-				nbProvider: 5
+				nbProvider: 2
 				responseDelay: 48
 
 		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
 		$scope.apps = []
-		$scope.totalConnections = 0
+		$scope.totalUsers = 0
 		$scope.keysets = []
 
 		for i of success.data.apps
 			AppService.get success.data.apps[i], ((app) ->
 
-				AppService.getTotal app.data.key, (success2) ->
-					app.data.totalConnections = parseInt(success2.data) || 0
-					$scope.totalConnections += parseInt(success2.data) || 0
+				AppService.getTotalUsers app.data.key, (success2) ->
+					app.data.totalUsers = parseInt(success2.data) || 0
+					$scope.totalUsers += parseInt(success2.data) || 0
 					if parseInt(i) + 1 == parseInt(success.data.apps.length)
 						$scope.loading = false
 				, (error) ->
@@ -410,7 +410,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		console.log error
 
 	$scope.limitReach = ->
-		return true if $scope.apps?.length >= $scope.plan?.nbApp or $scope.totalConnections? >= $scope.plan?.nbConnection or $scope.keysets? >= $scope.plan?.nbProvider
+		return true if $scope.apps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.keysets? >= $scope.plan?.nbProvider
 		return false
 
 	$scope.changeEmailState = false
@@ -588,21 +588,21 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 		if not $scope.plan
 			$scope.plan =
 				name: "Bootstrap"
-				nbConnection: 5000
+				nbUsers: 1000
 				nbApp: 2
-				nbProvider: 5
+				nbProvider: 2
 				responseDelay: 48
 
 		$scope.planApps = []
-		$scope.totalConnections = 0
+		$scope.totalUsers = 0
 		$scope.planKeysets = []
 
 		for i of success.data.apps
 			AppService.get success.data.apps[i], ((app) ->
 
-				AppService.getTotal app.data.key, (success2) ->
-					app.data.totalConnections = parseInt(success2.data) || 0
-					$scope.totalConnections += parseInt(success2.data) || 0
+				AppService.getTotalUsers app.data.key, (success2) ->
+					app.data.totalUsers = parseInt(success2.data) || 0
+					$scope.totalUsers += parseInt(success2.data) || 0
 					if parseInt(i) + 1 == parseInt(success.data.apps.length)
 						$scope.loading = false
 				, (error) ->
@@ -618,7 +618,7 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 		console.log error
 
 	$scope.limitReach = ->
-		return true if $scope.planApps?.length >= $scope.plan?.nbApp or $scope.totalConnections? >= $scope.plan?.nbConnection or $scope.planKeysets? >= $scope.plan?.nbProvider
+		return true if $scope.planApps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.planKeysets? >= $scope.plan?.nbProvider
 		return false
 
 	$rootScope.providers_name = {} if not $rootScope.providers_name
