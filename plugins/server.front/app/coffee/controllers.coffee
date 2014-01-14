@@ -472,7 +472,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			state : false
 
 
-ProviderCtrl = ($filter, $scope, $rootScope, ProviderService, $timeout) ->
+ProviderCtrl = (MenuService, $filter, $scope, $rootScope, ProviderService, $timeout) ->
+	MenuService.changed()	
 	ProviderService.list (json) ->
 		$scope.providers = (provider.provider for provider in json.data).sort()
 		$rootScope.providers_name = {} if not $rootScope.providers_name
