@@ -26,8 +26,8 @@
   </div>
   <div class="row">
     <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth', 'col-lg-4': plan.name == 'scalability', 'col-offset-3': plan.name != 'scalability', 'col-offset-4': plan.name == 'scalability'}" style="position: relative;">
-      <p class="text-center"><strong>Connections</strong></p>
-      <p class="chart-label">{{totalConnections|readableNumber}} / {{plan.nbConnection|readableNumber}}</p>
+      <p class="text-center"><strong>Users</strong></p>
+      <p class="chart-label">{{totalUsers|readableNumber}} / {{plan.nbUsers|readableNumber}}</p>
       <canvas id="connectionChart" width="400" height="400" class="chart"></canvas>
     </div>
 <!--     <div ng-class="{'col':true,'col-lg-6':plan.nbProvider != 'unlimited', 'col-lg-8':plan.nbProvider == 'unlimited'}" style="position: relative;" ng-show="plan.nbApp == 'unlimited'">
@@ -55,13 +55,13 @@
         <table ng-show="apps.length > 0" class="table" style="margin:0; padding:0">
           <thead>
             <th style="width: 80%">Name</th>
-            <th style="text-align: center">Connection</th>
+            <th style="text-align: center">Users</th>
           </thead>
           <tbody>
             <tr ng-repeat="app in apps">
               <td>{{app.name|capitalize}}</td>
               <td style="text-align: center">
-                {{app.totalConnections}}
+                {{app.totalUsers}}
               </td>
             </tr>
           </tbody>
