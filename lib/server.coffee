@@ -139,7 +139,8 @@ clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_ur
 	body = formatters.build e || r
 	body.state = data.state if data.state
 	body.provider = data.provider.toLowerCase() if data.provider
-	view = '<script>(function() {\n'
+	view = '<!DOCTYPE html>\n'
+	view = '<html><head><script>(function() {\n'
 	view += '\t"use strict";\n'
 	view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 	if data.redirect_uri
@@ -149,7 +150,7 @@ clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_ur
 		view += '\tif (opener)\n'
 		view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
 		view += '\twindow.close();\n'
-	view += '})();</script>'
+	view += '})();</script></head><body></body></html>'
 	res.send view
 	next()
 
