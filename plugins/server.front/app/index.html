@@ -57,6 +57,7 @@
 	</script>
     <script>
       window.demoKey = "{{config.demoKey}}";
+      {{if admin}}window.devShow = true;{{endif}}
 
       {{if logged}}
       _cio.identify({

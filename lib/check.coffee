@@ -76,10 +76,15 @@ class CheckError extends Error
 		super @message
 	check: (name, arg, format) ->
 		@status = "fail"
-		return _check name, arg, @body if arguments.length == 2 # args=name, format=arg
+		if arguments.length == 2 # args=name, format=arg
+			success = _check name, arg, @body
+			@status = "error" if not Object.keys(@body).length && success == false
+			return success
 		o = {}; f = {}
 		o[name] = arg; f[name] = format
-		return _check o, f, @body
+		success = _check o, f, @body
+		@status = "error" if not Object.keys(@body).length && success == false
+		return success
 	error: (name, message) ->
 		if arguments.length == 1
 			@message = name

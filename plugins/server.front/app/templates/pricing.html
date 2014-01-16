@@ -51,9 +51,9 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 			</thead>
 			<tbody>
 				<tr>
-					<td class="plan-label">Monthly connections</td>
-					<td>5 000</td>
-					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbConnection|readableNumber}}</td>
+					<td class="plan-label">Monthly Users</td>
+					<td>1 000</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbUsers|readableNumber}}</td>
 					<td>-</td>
 				</tr>
 				<tr>
@@ -64,13 +64,13 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				</tr>
 				<tr>
 					<td class="plan-label">OAuth provider</td>
-					<td>5</td>
+					<td>2</td>
 					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbProvider}}</td>
 					<td>-</td>
 				</tr>
 				<tr>
 					<td class="plan-label">Support response delay</td>
-					<td>1 week</td>
+					<td>Email</td>
 					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.responseDelay}}</td>
 					<td>-</td>
 				</tr>

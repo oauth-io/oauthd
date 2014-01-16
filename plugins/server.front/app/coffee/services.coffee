@@ -194,6 +194,9 @@ app.factory 'AppService', ($http, $rootScope) ->
 		getTotal: (key, success, error) ->
 			api 'users/app/' + key, success, error
 
+		getTotalUsers: (key, success, error) ->
+			api 'users/app/' + key + '/users', success, error
+
 		# stats: (key, provider, success, error) ->
 		# 	api 'apps/' + key + '/stats', success, error
 	}

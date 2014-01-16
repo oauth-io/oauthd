@@ -265,7 +265,7 @@ $('#navTab a').click(function (e) {
 							<th>Amount</th>
 							<th>Interval</th>
 							<th>Status</th>
-							<th>Connection's number</th>
+							<th>Users count</th>
 							<th colspan="2"></th>
 						</tr>
 						<tr ng-repeat="offer in offersList | orderBy:'+name'" ng-model="offers">
@@ -274,7 +274,7 @@ $('#navTab a').click(function (e) {
 							<td>{{offer.amount / 100}}</td>
 							<td>{{offer.interval}}</td>
 							<td>{{offer.status}}</td>
-							<td>{{offer.nbConnection}}</td>
+							<td>{{offer.nbUsers}}</td>
 							<td>
 								<button ng-show="offer.status != 'public' && !offer.parent" class="btn btn-small btn-success" ng-click="changeStatus(offer)">Change to public</button>
 								<button ng-show="offer.status != 'private' && !offer.parent" class="btn btn-small btn-warning" ng-click="changeStatus(offer)">Change to private</button>
@@ -327,8 +327,8 @@ $('#navTab a').click(function (e) {
 
 						<div class="controls controls-row">
 							<div class="span3">
-								<label class="label">Connection number ( * = unlimited ) </label>
-								<input class="nbConnection span1" type="text" size="10" value="1000"/>
+								<label class="label">Users number ( * = unlimited ) </label>
+								<input class="nbUsers span1" type="text" size="10" value="1000"/>
 							</div>
 						</div>
 
