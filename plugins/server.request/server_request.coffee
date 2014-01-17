@@ -17,6 +17,7 @@
 async = require 'async'
 qs = require 'querystring'
 Url = require 'url'
+restify = require 'restify'
 
 oauth =
 	oauth1: require '../../lib/oauth1'
