@@ -2,7 +2,7 @@
 	"use strict";
 	var config = {
 		oauthd_url: '{{auth_url}}',
-		version: 'web-0.1'
+		version: 'web-0.1.1'
 	};
 
 	if ( ! window.OAuth) {
@@ -113,6 +113,9 @@
 			tokens = { token: res.access_token };
 		else if (res.oauth_token && res.oauth_token_secret)
 			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret};
+
+		if ( ! request)
+			return opts.callback(null, res, request);
 
 		if (request.required)
 			for (var i in request.required)
