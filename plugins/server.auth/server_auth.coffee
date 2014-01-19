@@ -67,7 +67,8 @@ exports.setup = (callback) ->
 		hooks.grantClientToken req.body.mail, req.body.pass, (e, token) =>
 			return next(e) if e
 			if token
-				res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + new Date((new Date-0)+_config.expire*1000)
+				expireDate = new Date((new Date - 0) + _config.expire * 1000)
+				res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
 				res.setHeader 'Location', @config.host_url + '/key-manager'
 			else
 				res.setHeader 'Location', @config.host_url + '/signin#err=Bad%20credentials'
