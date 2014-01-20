@@ -15,30 +15,30 @@
 				<li><a target="_blank" href="https://oauth.io//auth/download/latest/oauth.min.js"><small><small>Download OAuth.js - minified (1.4k)</small></small></a></li>
 			</ul>
 		</div>
-		<a href="https://github.com/oauth-io/oauth-js" style="margin-left: 15px"><img src="/api/providers/github/logo"></a>
+		<a href="https://github.com/oauth-io/oauth-js" style="margin-left: 15px"><img src="/api/providers/github/logo" alt="github logo"></a>
 	  </p>
 	</div>
 	<h3>I - Setup your keys in OAuth.io</h3><br />
 	<p>Once logged in with your first app created, you should have a screen which looks like this</p>
 	<p>
-		<a class="thumbnail" ng-click="showLightbox('/img/keymanager-empty.png', 'The key manager empty once logged in')" style="cursor: pointer; width: 250px"><img width="250" src="/img/keymanager-empty.png"></a>
+		<a class="thumbnail" ng-click="showLightbox('/img/keymanager-empty.png', 'The key manager empty once logged in')" style="cursor: pointer; width: 250px"><img width="250" src="/img/keymanager-empty.png" alt="key manager"></a>
 	</p><br />
 	<p>To add keys to your app, search your favorite OAuth provider and drag & drop it in your application and follow instructions inside the form.</p>
 	<p>Configure your callback on your OAuth provider:</p>
-	<p><a ng-click="showLightbox('/img/facebook-conf.png', 'Configure OAuth callback on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-conf.png"></a></p><br />
+	<p><a ng-click="showLightbox('/img/facebook-conf.png', 'Configure OAuth callback on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-conf.png" alt="facebook configuration"></a></p><br />
 	<p>Note that the domain callback is <code>oauth.io</code> and the URL callback is <code>https://oauth.io/auth</code>.</p>
 	<p>Find your API keys on your OAuth provider:</p>
 	<p>
-		<a ng-click="showLightbox('/img/facebook-apikey.png', 'Get your API Keys on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-apikey.png"></a>
+		<a ng-click="showLightbox('/img/facebook-apikey.png', 'Get your API Keys on Facebook')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/facebook-apikey.png" alt="facebook api key"></a>
 	</p><br />
 	<p>Copy paste your keys in OAuth.io</p>
 	<p>
-		<a ng-click="showLightbox('/img/keys-add.png', 'Copy paste your keys on OAuth.io')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/keys-add.png"></a>
+		<a ng-click="showLightbox('/img/keys-add.png', 'Copy paste your keys on OAuth.io')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/keys-add.png" alt="add key"></a>
 	</p><br />
 	<p><br />Then, you can repeat this step to get an app like this and you can expend provider's keys clicking on their name to get sample code and to modify easily the scope and or APIKeys (useful !)</p>
 	<p>Moreover, you can try your API keys directly on OAuth.io clicking on <button class="btn btn-primary btn-small" style="font-size: 1.0em; font-weight: bold">Try auth</button> and debug the response as needed.</p>
 	<p>
-		<a ng-click="showLightbox('/img/key-detail.png', 'And try your keys directly in OAuth.io before integrate')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/key-detail.png"></a>
+		<a ng-click="showLightbox('/img/key-detail.png', 'And try your keys directly in OAuth.io before integrate')" class="thumbnail" style="cursor: pointer; width: 250px"><img width="250" src="/img/key-detail.png" alt="try key"></a>
 	</p>
 	<hr />
 	<h3>II - Install OAuth.js</h3>
