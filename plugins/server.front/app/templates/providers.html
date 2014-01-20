@@ -9,9 +9,10 @@
 	</div>
 	<div class="row">
 		<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
-			<li ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers">
-				<a style="padding: 10px 20px">
-					<img style="margin-left: 10px" class="pull-right" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em"><span style="position: relative; top: 2px">{{provider|capitalize}}</span></span>
+			<li ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers" ng-mouseover="hoverItem = provider" ng-mouseleave="hoverItem = null">
+				<a ng-href="/key-manager/{{provider}}" style="padding: 10px 20px">
+					<img style="margin-left: 10px; margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em">
+					<span style="position: relative; top: 2px">{{provider|capitalize}}</span></span><span class="pull-right" style="position :relative;left: 10px; top: -4px" ng-show="hoverItem == provider"><button ng-click="keyFormOpen(provider)" class="btn btn-success btn-small" style="font-size: 14px">Add to your app</button></span>
 				</a>
 			</li>
 		</ul>

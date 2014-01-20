@@ -472,7 +472,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			state : false
 
 
-ProviderCtrl = ($filter, $scope, $rootScope, ProviderService, $timeout) ->
+ProviderCtrl = (MenuService, $filter, $scope, $rootScope, ProviderService, $timeout) ->
+	MenuService.changed()
 	ProviderService.list (json) ->
 		$scope.providers = (provider.provider for provider in json.data).sort()
 		$rootScope.providers_name = {} if not $rootScope.providers_name
@@ -576,7 +577,7 @@ WishlistCtrl = ($filter, $scope, WishlistService, $timeout, MenuService) ->
 ##############################
 # API KEY MANAGER CONTROLLER #
 ##############################
-ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->
+ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->
 	MenuService.changed()
 	if not UserService.isLogin()
 		$location.path '/signin'
@@ -605,6 +606,8 @@ ApiKeyManagerCtrl = ($scope, $timeout, $rootScope, $location, UserService, $http
 					$scope.totalUsers += parseInt(success2.data) || 0
 					if parseInt(i) + 1 == parseInt(success.data.apps.length)
 						$scope.loading = false
+						if $routeParams.provider?.length > 3
+							$scope.keyFormOpen $routeParams.provider
 				, (error) ->
 					console.log error
 
