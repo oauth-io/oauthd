@@ -52,9 +52,15 @@ module.exports = {
 		//api_key: '...API key...'
 	},
 
+	prerender: {
+		//host: '...prerender server host...'
+		//port: '...prerender server port...'
+	},
+
 	plugins: [
 		/* --- only for oauth.io --- */
 		'server.auth',
+		'server.prerender',
 		'server.users',
 		'server.clients',
 		'server.adm',
