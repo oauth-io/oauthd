@@ -104,6 +104,10 @@ app.config([
 			templateUrl: '/templates/key-manager.html'
 			controller: 'ApiKeyManagerCtrl'
 
+		$routeProvider.when '/key-manager/:provider',
+			templateUrl: '/templates/key-manager.html'
+			controller: 'ApiKeyManagerCtrl'
+
 		$routeProvider.when '/app-create',
 			templateUrl: '/templates/app-create.html'
 			controller: 'AppCtrl'
