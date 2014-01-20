@@ -90,7 +90,7 @@ exports.setup = (callback) ->
 			directory: __dirname + '/app'
 			maxAge: 1
 
-		@server.get /^\/(robots.txt)/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(robots.txt|sitemap.xml)/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 
