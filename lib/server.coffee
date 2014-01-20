@@ -181,9 +181,10 @@ server.get config.base + '/', (req, res, next) ->
 					do (hook) ->
 						cmds.push (cb) -> hook req, res, cb
 				async.series cmds, (err) ->
-					return callback err || e if err || e
+					return callback err if err
 
 					plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+					return callback e if e
 					if state.options.response_type != 'token'
 						db.states.set stateid, token:JSON.stringify(r), step:1, (->)
 					if state.options.response_type == 'code'
