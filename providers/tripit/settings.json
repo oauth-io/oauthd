@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.tripit.com/developer/create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.tripit.com/developer",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.tripit.com/",
+				"docs": "http://tripit.github.com/api/doc/v1/"
+			}
+		}
+	}
+}

@@ -15,14 +15,7 @@
 		},
 		"access_token": {
 			"url": "/v1/identity/openidconnect/tokenservice",
-			"extra": ["scope"],
-			"query": {
-				"client_id": "{client_id}",
-				"client_secret": "{client_secret}",
-				"grant_type": "authorization_code",
-				"code": "{{code}}",
-				"redirect_uri": "{{callback}}"
-			}
+			"extra": ["scope"]
 		},
 		"refresh": {
 			"url": "/v1/identity/openidconnect/tokenservice",

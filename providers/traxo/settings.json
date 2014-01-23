@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.traxo.com"
+		},
+		"copyingKey": {
+			"url": "https://developer.traxo.com"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.traxo.com",
+				"docs": "https://developer.traxo.com"
+			}
+		}
+	}
+}

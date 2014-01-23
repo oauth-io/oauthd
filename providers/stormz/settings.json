@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://stormz.me/oauth/applications/new"
+		},
+		"copyingKey": {
+			"url": "https://stormz.me/oauth/applications"
+		},
+		"install": {
+			"href": {
+				"provider": "https://stormz.me/",
+				"docs": "http://developer.stormz.me/"
+			}
+		}
+	}
+}

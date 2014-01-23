@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://gomiso.com/oauth_clients/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://gomiso.com/oauth_clients",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://gomiso.com/",
+				"docs": "http://gomiso.com/developers/endpoints"
+			}
+		}
+	}
+}

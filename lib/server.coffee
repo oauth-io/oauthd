@@ -354,7 +354,7 @@ server.get config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, 
 server.post config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
-# remove a keyset for an app and a provider
+# remove a keyset for a app and a provider
 server.del config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.remKeyset req.params.key, req.params.provider, send(res,next)
 
@@ -369,15 +369,29 @@ server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res,
 	else
 		db.providers.get req.params.provider, send(res,next)
 
-# get a provider config
+# get a provider config's extras
+server.get config.base_api + '/providers/:provider/settings', bootPathCache(), (req, res, next) ->
+		db.providers.getSettings req.params.provider, send(res,next)
+
+# get a provider logo
 server.get config.base_api + '/providers/:provider/logo', bootPathCache(), ((req, res, next) ->
-		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
+		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) ->
 			if not exists
 				req.params.provider = 'default'
-			req.url = '/' + req.params.provider + '.png'
+			req.url = '/' + req.params.provider + '/logo.png'
 			req._url = Url.parse req.url
 			req._path = req._url._path
 			next()
+	), restify.serveStatic
+		directory: config.rootdir + '/providers'
+		maxAge: config.cacheTime
+
+# get a provider file
+server.get config.base_api + '/providers/:provider/:file', bootPathCache(), ((req, res, next) ->
+		req.url = '/' + req.params.provider + '/' + req.params.file
+		req._url = Url.parse req.url
+		req._path = req._url._path
+		next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'
 		maxAge: config.cacheTime

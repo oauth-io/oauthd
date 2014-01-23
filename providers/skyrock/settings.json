@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.skyrock.com/developer/application/application_create.php"
+		},
+		"copyingKey": {
+			"url": "http://www.skyrock.com/developer/application/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.skyrock.com/",
+				"docs": "http://www.skyrock.com/developer/documentation/"
+			}
+		}
+	}
+}

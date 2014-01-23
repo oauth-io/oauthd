@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://stackapps.com/apps/oauth/register"
+		},
+		"copyingKey": {
+			"url": "http://stackapps.com/apps/oauth/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://stackexchange.com/",
+				"docs": "https://api.stackexchange.com/docs"
+			}
+		}
+	}
+}

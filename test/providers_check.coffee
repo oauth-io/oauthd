@@ -259,27 +259,27 @@ checkProvider = (provider, data, errors) ->
 	return
 
 checkAll = (callback) ->
-	fs.readdir rootdir + '/providers', (err, files) ->
+	fs.readdir rootdir + '/providers', (err, providers) ->
 		callback new Error 'Could not read providers folder' if err
 		errors = []
 		tasks = []
 		count = 0
-		for file in files
-			do (file) -> tasks.push (cb) ->
-				provider = /(.+)\.json$/.exec file
-				return cb() if not provider?[1]
+		for provider in providers
+			do (provider) -> tasks.push (cb) ->
+				return cb() if provider is 'default'
 				count++
-				provider = provider[1]
-				fs.exists rootdir + '/providers/' + provider + '.png', (exist) ->
+				fs.exists rootdir + '/providers/' + provider + '/logo.png', (exist) ->
 					if not exist
-						errors.push new ProviderWarning "Missing logo file '" + provider + ".png'", provider:provider
+						errors.push new ProviderWarning "Missing " + provider + "/logo.png", provider:provider
 				if not provider.match /^[a-zA-Z0-9\-_]{2,}$/
-					return errors.push new ProviderError "Bad provider name", provider:provider
+					errors.push new ProviderError "Bad provider name", provider:provider
+					cb()
 				if not provider.match /^[a-z0-9\-_]+$/
-					return errors.push new ProviderError "Provider's name must be lowercase", provider:provider
+					errors.push new ProviderError "Provider's name must be lowercase", provider:provider
+					cb()
 				if not provider.match /^[a-z0-9_]+$/
 					errors.push new ProviderWarning "Provider's name shoud use underscore '_' instead of dash '-'", provider:provider
-				fs.readFile rootdir + '/providers/' + file, (err, data) ->
+				fs.readFile rootdir + '/providers/' + provider + '/conf.json', (err, data) ->
 					errors.push new ProviderError "Could not read provider", provider:provider if err
 					checkProvider provider, data, errors if not err
 					cb()

@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.apps.yahoo.com/dashboard/createKey.html"
+		},
+		"copyingKey": {
+			"url": "https://developer.apps.yahoo.com/projects"
+		},
+		"install": {
+			"href": {
+				"provider": "http://yahoo.com",
+				"docs": "http://developer.yahoo.com/everything.html"
+			}
+		}
+	}
+}

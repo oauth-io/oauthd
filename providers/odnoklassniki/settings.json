@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.odnoklassniki.ru/devaccess",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://www.odnoklassniki.ru/dk?st.cmd=appsInfoMyDevList",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.odnoklassniki.ru/",
+				"docs": "http://apiok.ru/wiki/display/TS/Home"
+			}
+		}
+	}
+}
