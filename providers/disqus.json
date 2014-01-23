@@ -2,8 +2,8 @@
 	"name": "Disqus",
 	"url": "https://disqus.com/api/oauth/2.0",
 	"oauth2": {
-		"authorize": "/authorize",
-		"access_token": "/access_token",
+		"authorize": "/authorize/",
+		"access_token": "/access_token/",
 		"request": {
 			"query": {
 				"oauth_token": "{{token}}"

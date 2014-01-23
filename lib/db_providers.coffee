@@ -133,7 +133,6 @@ exports.getExtended = (name, callback) ->
 							fillRequired v for k, v of endpoint.query
 						if endpoint.headers
 							fillRequired v for k, v of endpoint.headers
-					endpoint.url = endpoint.url.substr(0, endpoint.url.length-1) if endpoint.url and endpoint.url[endpoint.url.length-1] == '/'
 					if not endpoint.query && endpoint_name == 'authorize' && endpoint.ignore_verifier
 						endpoint.query = oauth_callback:'{{callback}}'
 					if not endpoint.query && def[oauthv][endpoint_name].query
