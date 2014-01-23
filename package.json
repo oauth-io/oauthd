@@ -23,7 +23,7 @@
     "test": "test"
   },
   "dependencies": {
-    "grunt-nodemon": "~0.0.4",
+    "grunt-nodemon": "~0.1.2",
     "hiredis": "~0.1.15",
     "redis": "~0.8.3",
     "restify": "~2.5.1",
@@ -42,6 +42,7 @@
     "paymill-node": "~0.0.4",
     "jayschema": "~0.2.0",
     "jsonlint": "~1.6.0",
-    "prerender-node": "~0.1.15"
+    "prerender-node": "~0.1.15",
+    "ua-parser-js": "~0.6.2"
   }
 }
