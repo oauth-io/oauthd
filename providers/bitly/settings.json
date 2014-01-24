@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://bitly.com/a/oauth_apps"
+		},
+		"copyingKey": {
+			"url": "https://bitly.com/a/oauth_apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://bitly.com/",
+				"docs": "http://dev.bitly.com/"
+			}
+		}
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://angel.co/api/oauth/clients"
+		},
+		"copyingKey": {
+			"url": "https://angel.co/api/oauth/clients"
+		},
+		"install": {
+			"href": {
+				"provider": "https://angel.co",
+				"docs": "https://angel.co/api"
+			}
+		}
+	}
+}

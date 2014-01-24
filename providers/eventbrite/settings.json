@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.eventbrite.com/api/key/"
+		},
+		"copyingKey": {
+			"url": "https://www.eventbrite.com/api/key"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.eventbrite.com/",
+				"docs": "http://developer.eventbrite.com/doc/"
+			}
+		}
+	}
+}

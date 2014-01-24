@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://familysearch.org/developers"
+		},
+		"copyingKey": {
+			"url": "https://familysearch.org/products"
+		},
+		"install": {
+			"href": {
+				"provider": "https://familysearch.com/",
+				"docs": "https://familysearch.org/developers"
+			}
+		}
+	}
+}

@@ -63,14 +63,13 @@ providers = _list:{}, _cached:false
 # get providers list
 exports.getList = (callback) ->
 	if not providers._cached
-		fs.readdir config.rootdir + '/providers', (err, files) ->
+		fs.readdir config.rootdir + '/providers', (err, provider_names) ->
 			return callback err if err
 			cmds = []
-			for file in files
-				do (file) ->
-					if file.match /\.json$/
+			for provider in provider_names
+				do (provider) ->
+					if provider != 'default'
 						cmds.push (callback) ->
-							provider = file.substr(0, file.length - 5)
 							exports.get provider, (err, data) ->
 								if err
 									console.error "Error in " + provider + ".json:", err, "skipping this provider"
@@ -88,13 +87,33 @@ exports.getList = (callback) ->
 exports.get = (provider, callback) ->
 	provider_name = provider
 	providers_dir = config.rootdir + '/providers'
-	provider = Path.resolve providers_dir, provider + '.json'
+	provider = Path.resolve providers_dir, provider + '/conf.json'
 	if Path.relative(providers_dir, provider).substr(0,2) == ".."
 		return callback new check.Error 'Not authorized'
 
 	fs.readFile provider, (err, data) ->
 		if err?.code == 'ENOENT'
 			return callback new check.Error 'No such provider: ' + provider_name
+		return callback err if err
+		content = null
+		try
+			content = JSON.parse data
+		catch err
+			return callback err
+		content.provider = provider_name
+		callback null, content
+
+# get a provider's description
+exports.getSettings = (provider, callback) ->
+	provider_name = provider
+	providers_dir = config.rootdir + '/providers'
+	provider = Path.resolve providers_dir, provider + '/settings.json'
+	if Path.relative(providers_dir, provider).substr(0,2) == ".."
+		return callback new check.Error 'Not authorized'
+
+	fs.readFile provider, (err, data) ->
+		if err?.code == 'ENOENT'
+			return callback new check.Error 'No settings infos for ' + provider_name
 		return callback err if err
 		content = null
 		try

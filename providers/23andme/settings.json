@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://api.23andme.com/apply"
+		},
+		"copyingKey": {
+			"url": "https://api.23andme.com/dev"
+		},
+		"install": {
+			"href": {
+				"provider": "https://23andme.com/",
+				"docs": "https://api.23andme.com/docs"
+			}
+		}
+	}
+}

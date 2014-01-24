@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.vimeo.com/apps/new"
+		},
+		"copyingKey": {
+			"url": "https://developer.vimeo.com/apps/"
+		},
+		"install": {
+			"href": {
+				"provider": "https://vimeo.com/",
+				"docs": "http://developer.vimeo.com/apis"
+			}
+		}
+	}
+}

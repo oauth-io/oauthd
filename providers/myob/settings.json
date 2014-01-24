@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://developer.myob.com"
+		},
+		"copyingKey": {
+			"url": "http://myob.com.au/addons/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://myob.com.au",
+				"docs": "http://developer.myob.com"
+			}
+		}
+	}
+}

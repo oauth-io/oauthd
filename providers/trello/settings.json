@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://trello.com/1/appKey/generate"
+		},
+		"copyingKey": {
+			"url": "https://trello.com/1/appKey/generate",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://trello.com/",
+				"docs": "https://trello.com/docs/api/"
+			}
+		}
+	}
+}

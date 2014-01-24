@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.meetup.com/meetup_api/oauth_consumers/create/"
+		},
+		"copyingKey": {
+			"url": "http://www.meetup.com/meetup_api/oauth_consumers/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.meetup.com/",
+				"docs": "http://www.meetup.com/meetup_api/"
+			}
+		}
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://dev.twitter.com/apps/new"
+		},
+		"copyingKey": {
+			"url": "https://oauth.withings.com/partner/dashboard"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.withings.com",
+				"docs": "https://oauth.withings.com/partner/add"
+			}
+		}
+	}
+}

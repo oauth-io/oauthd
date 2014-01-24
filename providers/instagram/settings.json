@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://instagram.com/developer/clients/register/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://instagram.com/developer/clients/manage/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://instagram.com",
+				"docs": "http://instagram.com/developer/"
+			}
+		}
+	}
+}

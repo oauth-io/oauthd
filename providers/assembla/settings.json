@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.assembla.com/user/edit/manage_clients",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.assembla.com/user/edit/manage_clients",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.assembla.com/",
+				"docs": "http://api-doc.assembla.com/content/api_reference.html"
+			}
+		}
+	}
+}

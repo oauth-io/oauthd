@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.dropbox.com/developers/apps/create"
+		},
+		"copyingKey": {
+			"url": "https://www.dropbox.com/developers/apps"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.dropbox.com/",
+				"docs": "https://www.dropbox.com/developers/reference/api"
+			}
+		}
+	}
+}

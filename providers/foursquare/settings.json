@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://fr.foursquare.com/developers/register",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://foursquare.com/developers/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.foursquare.com/",
+				"docs": "https://developer.foursquare.com/overview/"
+			}
+		}
+	}
+}
