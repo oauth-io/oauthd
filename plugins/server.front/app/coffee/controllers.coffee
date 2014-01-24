@@ -810,13 +810,24 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 		), (error) ->
 
+ProviderKeyCtrl = ($scope, UserService, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	if not UserService.isLogin()
+		$scope.addKeyTemplate = '/templates/signin.html'
+	else
+		$scope.addKeyTemplate = '/templates/partials/create-key-laststep.html'
+
+	$scope.providerTemplate = '/templates/partials/create-key.html'
+	$scope.provider = $routeParams.provider
+
 ##################
 # App controller #
 ##################
 AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
 	if not UserService.isLogin()
 		$location.path '/signin'
-
 
 	$scope.loaderApps = true
 
