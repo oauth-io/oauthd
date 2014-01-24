@@ -49,7 +49,9 @@ module.exports = function(grunt) {
 			server: {
 				options: {
 					file: 'lib/oauthd.js',
-					watchedExtensions: ['js']
+					watchedExtensions: ['js'],
+					ignoredFiles: [],
+					legacyWatch: true
 				}
 			}
 		},

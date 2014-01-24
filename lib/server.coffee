@@ -22,6 +22,7 @@ Url = require 'url'
 
 async = require 'async'
 restify = require 'restify'
+UAParser = require 'ua-parser-js'
 
 config = require './config'
 db = require './db'
@@ -129,21 +130,31 @@ server.post config.base + '/access_token', (req, res, next) ->
 			res.send r
 			next()
 
-clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
+clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
 	body = formatters.build e || r
 	body.state = data.state if data.state
 	body.provider = data.provider.toLowerCase() if data.provider
-	view = '<script>(function() {\n'
+	view = '<!DOCTYPE html>\n'
+	view += '<html><head><script>(function() {\n'
 	view += '\t"use strict";\n'
 	view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 	if data.redirect_uri
-		view += '\tdocument.location.href = "' + data.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
+		if data.redirect_uri.indexOf('#') > 0
+			view += '\tdocument.location.href = "' + data.redirect_uri + '&oauthio=" + encodeURIComponent(msg);\n'
+		else
+			view += '\tdocument.location.href = "' + data.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 	else
-		view += '\tvar opener = window.opener || window.parent.window.opener;\n'
-		view += '\tif (opener)\n'
-		view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
-		view += '\twindow.close();\n'
-	view += '})();</script>'
+		uaparser = new UAParser()
+		uaparser.setUA req.headers['user-agent']
+		browser = uaparser.getBrowser()
+		if browser.name.substr(0,2) == 'IE'
+			view += '\tdocument.title = "oauthio=" + encodeURIComponent(msg);\n'
+		else
+			view += '\tvar opener = window.opener || window.parent.window.opener;\n'
+			view += '\tif (opener)\n'
+			view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
+			view += '\twindow.close();\n'
+	view += '})();</script></head><body></body></html>'
 	res.send view
 	next()
 
@@ -164,7 +175,7 @@ server.get config.base + '/', (req, res, next) ->
 	db.states.get stateid, (err, state) ->
 		return next err if err
 		return next new check.Error 'state', 'invalid or expired' if not state
-		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
+		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 		oauth[state.oauthv].access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
@@ -201,7 +212,7 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 		catch e
 			return cb new check.Error 'Error in request parameters'
 
-	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, res, next
+	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, req, res, next
 
 	key = req.params.k
 	if not key
