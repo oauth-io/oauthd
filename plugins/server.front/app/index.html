@@ -2,8 +2,9 @@
 <html ng-app="oauth">
 <head>
     <meta charset="UTF-8">
-    <title>OAuth.io - OAuth that just works.</title>
+    <title ng-bind="pageTitle"></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{pageDesc}}">
 
     <link rel="stylesheet" href="/lib/bootstrap3/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="/css/main.css" type="text/css">
@@ -80,7 +81,7 @@
         </button>
         <!-- Be sure to leave the brand out there if you want it shown -->
         <a class="navbar-brand" style="font-family: 'YanoneKLight', sans-serif; font-size: 1.8em; color: #6d6c6c" href="/">
-          <img class="pull-left" src="/img/logo.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" width="40">
+          <img class="pull-left" src="/img/logo.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" width="40" alt="OAuth.io logo">
           <span style="position: relative; top: -2px; left: 5px"><strong>OAuth.io</strong></span>
         </a>
 
@@ -111,7 +112,7 @@
       <div id="content" ng-view></div>
     </did>
     <div id="footer" class="container" style="margin-top: 30px">
-        <div style="font-size: 1.0em; margin-left: 20px; margin-bottom: 20px" class="pull-left">Powered by <a href="http://webshell.io" target="_blank"><img width="100" style="position: relative; top: -2px; left: 3px;" id="wsh-powered" src="/img/webshell-logo.png"></a></div>
+        <div style="font-size: 1.0em; margin-left: 20px; margin-bottom: 20px" class="pull-left">Powered by <a href="http://webshell.io" target="_blank" alt="Webshell logo"><img width="100" style="position: relative; top: -2px; left: 3px;" id="wsh-powered" src="/img/webshell-logo.png"></a></div>
         <div style="font-size: 1.0em; margin-bottom: 20px" class="pull-right"><a href="http://blog.oauth.io/" target="_blank">Blog</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/wishlist">Wishlist</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/imprint">Imprint</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/terms">Terms</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/contact-us">Contact</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
     </div>
     <div ng-controller="InspectorCtrl"></div>

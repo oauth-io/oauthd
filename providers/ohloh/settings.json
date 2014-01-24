@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.ohloh.net/"
+		},
+		"copyingKey": {
+			"url": "https://www.ohloh.net/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.ohloh.net/",
+				"docs": "http://meta.ohloh.net/reference/"
+			}
+		}
+	}
+}

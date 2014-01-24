@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.yammer.com/client_applications",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.yammer.com/client_applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.yammer.com/",
+				"docs": "https://developer.yammer.com/restapi/"
+			}
+		}
+	}
+}

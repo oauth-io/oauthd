@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.wordpress.com/apps/new/"
+		},
+		"copyingKey": {
+			"url": "https://developer.wordpress.com/apps/"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.wordpress.com/",
+				"docs": "http://developer.wordpress.com/docs/api/"
+			}
+		}
+	}
+}

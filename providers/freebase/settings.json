@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://code.google.com/apis/console/"
+		},
+		"copyingKey": {
+			"url": "https://code.google.com/apis/console/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://google.com/",
+				"docs": "http://code.google.com/more/"
+			}
+		}
+	}
+}

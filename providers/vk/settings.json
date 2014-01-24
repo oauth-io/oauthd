@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://vk.com/editapp?act=create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://vk.com/apps?act=settings"
+		},
+		"install": {
+			"href": {
+				"provider": "https://vk.com/",
+				"docs": "https://vk.com/dev/main"
+			}
+		}
+	}
+}

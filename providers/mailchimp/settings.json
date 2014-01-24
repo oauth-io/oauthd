@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://us6.admin.mailchimp.com/account/oauth2/client"
+		},
+		"copyingKey": {
+			"url": "https://us6.admin.mailchimp.com/account/api/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://mailchimp.com/",
+				"docs": "http://apidocs.mailchimp.com/"
+			}
+		}
+	}
+}

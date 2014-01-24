@@ -59,7 +59,7 @@
 					<span class="pull-right" style="position :relative; top: -5px; left: -5px" ng-show="hoverItem == keyProvider"><button ng-click="keyClick(keyProvider, app)" class="btn btn-success btn-small">Details</button></span>
 					<div class="panel-header">
 						<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
-							<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo">
+							<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo" alt="{{keyProvider}} logo">
 							<span style="position: relative; top: 2px">{{providers_name[keyProvider]|capitalize}}</span>
 						</a>
 					</div>
@@ -156,7 +156,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
     	<div class="modal-content">
 			<div class="modal-header">
 				<h4>
-					<img width="32" height="32" ng-src="/api/providers/{{createKeyProvider}}/logo">
+					<img width="32" height="32" ng-src="/api/providers/{{createKeyProvider}}/logo" alt="{{createKeyProvider}} logo">
 					<span style="position: relative; top: 2px; left: 8px;">Configure {{createKeyProvider|capitalize}} - {{oauthType}}</span>
 				</h4>
 			</div>

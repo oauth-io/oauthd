@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://500px.com/settings/applications#"
+		},
+		"copyingKey": {
+			"url": "http://500px.com/settings/applications"
+		},
+		"install": {
+			"href": {
+				"provider": "http://500px.com/",
+				"docs": "https://github.com/500px/api-documentation"
+			}
+		}
+	}
+}

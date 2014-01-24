@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://disqus.com/api/applications/register/"
+		},
+		"copyingKey": {
+			"url": "http://disqus.com/api/applications/"
+		},
+		"install": {
+			"href": {
+				"provider": "http://disqus.com/",
+				"docs": "http://disqus.com/api/docs/"
+			}
+		}
+	}
+}

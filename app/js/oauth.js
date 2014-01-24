@@ -2,7 +2,7 @@
 	"use strict";
 	var config = {
 		oauthd_url: '{{auth_url}}',
-		version: 'web-0.1.1'
+		version: 'web-0.1.2'
 	};
 
 	if ( ! window.OAuth) {
@@ -44,7 +44,7 @@
 	(function parse_urlfragment() {
 		var results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
 		if (results) {
-			document.location.hash = '';
+			document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, '');
 			oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
 			var cookie_state = readCookie("oauthio_state");
 			if (cookie_state) {
@@ -55,11 +55,16 @@
 	})();
 
 	function getAbsUrl(url) {
+		if (url.match(/^.{2,5}:\/\//))
+			return url;
+
 		if (url[0] === '/')
-			url = document.location.protocol + '//' + document.location.host + url;
-		else if ( ! url.match(/^.{2,5}:\/\//))
-			url = document.location.protocol + '//' + document.location.host + document.location.pathname + '/' + url;
-		return url;
+			return document.location.protocol + '//' + document.location.host + url;
+
+		var base_url = document.location.protocol + '//' + document.location.host + document.location.pathname;
+		if (base_url[base_url.length-1] != '/' && url[0] != '#')
+			return base_url + '/' + url;
+		return base_url + url;
 	}
 
 	function replaceParam(param, rep, rep2) {
@@ -79,7 +84,9 @@
 
 		try {
 			data = JSON.parse(opts.data);
-		} catch (e) {}
+		} catch (e) {
+			return opts.callback(new Error('Error while parsing result'));
+		}
 
 		if ( ! data || ! data.provider)
 			return;
@@ -132,7 +139,7 @@
 				options.oauthio = {provider:data.provider, tokens:tokens, request:request};
 				return OAuth.http(options);
 			};
-		}
+		};
 
 		res.get = make_res(request, 'GET');
 		res.post = make_res(request, 'POST');
@@ -190,6 +197,7 @@
 				wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
 
 				opts = {provider:provider};
+				var titleCheckTimer;
 				function getMessage(e) {
 					if (e.source !== wnd || e.origin !== config.oauthd_base)
 						return;
@@ -204,6 +212,7 @@
 					else if (document.detachEvent)
 						document.detachEvent("onmessage", getMessage);
 					opts.callback = function() {};
+					if (titleCheckTimer) clearInterval(titleCheckTimer);
 					return callback(e,r);
 				};
 
@@ -214,13 +223,24 @@
 				else if (window.addEventListener)
 					window.addEventListener("message", getMessage, false);
 
+				titleCheckTimer = setInterval(function() {
+					if (!wnd) return;
+					try {
+						var results = /^oauthio=(.*)$/.exec(wnd.document.title);
+						if (!results) return;
+						opts.data = decodeURIComponent(results[1].replace(/\+/g, " "));
+						wnd.close();
+						sendCallback(opts);
+					}
+					catch (e) {}
+				}, 1000);
+
 				setTimeout(function() {
 					opts.callback(new Error('Authorization timed out'));
 				}, 600 * 1000);
 
 				wnd = window.open(url, "Authorization", wnd_options);
-				if (wnd)
-					wnd.focus();
+				if (wnd) wnd.focus();
 			},
 			redirect: function(provider, opts, url) {
 				if (arguments.length == 2) {
@@ -280,8 +300,8 @@
 						for (i in options.oauthio.request.query)
 							qs.push(encodeURIComponent(i) + '=' + encodeURIComponent(
 								replaceParam(options.oauthio.request.query[i],
-											 options.oauthio.tokens,
-											 options.oauthio.request.parameters)
+											options.oauthio.tokens,
+											options.oauthio.request.parameters)
 							));
 
 						qs = qs.join('&');
@@ -293,11 +313,11 @@
 
 					if (options.oauthio.request.headers)
 					{
-						options.headers = options.headers || {}
+						options.headers = options.headers || {};
 						for (i in options.oauthio.request.headers)
 							options.headers[i] = replaceParam(options.oauthio.request.headers[i],
-															  options.oauthio.tokens,
-															  options.oauthio.request.parameters);
+																options.oauthio.tokens,
+																options.oauthio.request.parameters);
 					}
 
 					delete options.oauthio;

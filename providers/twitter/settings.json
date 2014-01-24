@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://dev.twitter.com/apps/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://dev.twitter.com/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.twitter.com/",
+				"docs": "https://dev.twitter.com/docs"
+			}
+		}
+	}
+}

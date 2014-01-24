@@ -1,0 +1,16 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://dev.evernote.com/doc/"
+		},
+		"copyingKey": {
+			"url": "https://www.evernote.com/AuthorizedServices.action"
+		},
+		"install": {
+			"href": {
+				"provider": "http://evernote.com",
+				"docs": "http://dev.evernote.com/doc/"
+			}
+		}
+	}
+}

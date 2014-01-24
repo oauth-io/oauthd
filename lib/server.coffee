@@ -12,6 +12,7 @@ Url = require 'url'
 
 async = require 'async'
 restify = require 'restify'
+UAParser = require 'ua-parser-js'
 
 config = require './config'
 db = require './db'
@@ -131,7 +132,7 @@ server.post config.base + '/access_token', (req, res, next) ->
 			res.send r
 			next()
 
-clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
+clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
 	if not e and data.redirect_uri
 		redirect_infos = Url.parse fixUrl(data.redirect_uri), true
 		if redirect_infos.hostname == config.url.hostname
@@ -144,12 +145,21 @@ clientCallback = (data, res, next) -> (e, r) -> #data:state,provider,redirect_ur
 	view += '\t"use strict";\n'
 	view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 	if data.redirect_uri
-		view += '\tdocument.location.href = "' + data.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
+		if data.redirect_uri.indexOf('#') > 0
+			view += '\tdocument.location.href = "' + data.redirect_uri + '&oauthio=" + encodeURIComponent(msg);\n'
+		else
+			view += '\tdocument.location.href = "' + data.redirect_uri + '#oauthio=" + encodeURIComponent(msg);\n'
 	else
-		view += '\tvar opener = window.opener || window.parent.window.opener;\n'
-		view += '\tif (opener)\n'
-		view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
-		view += '\twindow.close();\n'
+		uaparser = new UAParser()
+		uaparser.setUA req.headers['user-agent']
+		browser = uaparser.getBrowser()
+		if browser.name.substr(0,2) == 'IE'
+			view += '\tdocument.title = "oauthio=" + encodeURIComponent(msg);\n'
+		else
+			view += '\tvar opener = window.opener || window.parent.window.opener;\n'
+			view += '\tif (opener)\n'
+			view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
+			view += '\twindow.close();\n'
 	view += '})();</script></head><body></body></html>'
 	res.send view
 	next()
@@ -172,7 +182,7 @@ server.get config.base + '/', (req, res, next) ->
 		db.states.get stateid, (err, state) ->
 			return next err if err
 			return next new check.Error 'state', 'invalid or expired' if not state
-			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, res, next
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 			oauth[state.oauthv].access_token state, req, (e, r) ->
 				status = if e then 'error' else 'success'
@@ -222,7 +232,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		catch e
 			return next new check.Error 'Error in request parameters'
 
-	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, res, next
+	callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, req, res, next
 
 	key = req.params.k
 	if not key
@@ -344,7 +354,7 @@ server.get config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, 
 server.post config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.addKeyset req.params.key, req.params.provider, req.body, send(res,next)
 
-# remove a keyset for an app and a provider
+# remove a keyset for a app and a provider
 server.del config.base_api + '/apps/:key/keysets/:provider', auth.needed, (req, res, next) ->
 	db.apps.remKeyset req.params.key, req.params.provider, send(res,next)
 
@@ -359,15 +369,29 @@ server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res,
 	else
 		db.providers.get req.params.provider, send(res,next)
 
-# get a provider config
+# get a provider config's extras
+server.get config.base_api + '/providers/:provider/settings', bootPathCache(), (req, res, next) ->
+		db.providers.getSettings req.params.provider, send(res,next)
+
+# get a provider logo
 server.get config.base_api + '/providers/:provider/logo', bootPathCache(), ((req, res, next) ->
-		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '.png'), (exists) ->
+		fs.exists Path.normalize(config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) ->
 			if not exists
 				req.params.provider = 'default'
-			req.url = '/' + req.params.provider + '.png'
+			req.url = '/' + req.params.provider + '/logo.png'
 			req._url = Url.parse req.url
 			req._path = req._url._path
 			next()
+	), restify.serveStatic
+		directory: config.rootdir + '/providers'
+		maxAge: config.cacheTime
+
+# get a provider file
+server.get config.base_api + '/providers/:provider/:file', bootPathCache(), ((req, res, next) ->
+		req.url = '/' + req.params.provider + '/' + req.params.file
+		req._url = Url.parse req.url
+		req._path = req._url._path
+		next()
 	), restify.serveStatic
 		directory: config.rootdir + '/providers'
 		maxAge: config.cacheTime

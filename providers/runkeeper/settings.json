@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://runkeeper.com/partner/applications/register",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://runkeeper.com/partner/applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://runkeeper.com/",
+				"docs": "http://developer.runkeeper.com/healthgraph/overview"
+			}
+		}
+	}
+}

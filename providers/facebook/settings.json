@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developers.facebook.com/apps",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developers.facebook.com/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://facebook.com/",
+				"docs": "https://developers.facebook.com/docs/"
+			}
+		}
+	}
+}
