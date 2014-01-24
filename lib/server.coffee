@@ -141,7 +141,7 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 	body.state = data.state if data.state
 	body.provider = data.provider.toLowerCase() if data.provider
 	view = '<!DOCTYPE html>\n'
-	view = '<html><head><script>(function() {\n'
+	view += '<html><head><script>(function() {\n'
 	view += '\t"use strict";\n'
 	view += '\tvar msg=' + JSON.stringify(JSON.stringify(body)) + ';\n'
 	if data.redirect_uri
