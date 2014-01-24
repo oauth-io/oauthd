@@ -47,7 +47,7 @@
 </form>
 <div ng-show="createKeyKeysImg">
 	<p>It looks like that on {{createKeyProvider|capitalize}}:</p>
-	<img ng-src="admin/img/providers/{{createKeyProvider}}-keys.png"><br /><br />
+	<img ng-src="{{oauthdconfig.base_api}}/providers/{{createKeyProvider}}/keys.png"><br /><br />
 </div>
 <hr />
 <h5 ng-show="createKeyHref.docs">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>

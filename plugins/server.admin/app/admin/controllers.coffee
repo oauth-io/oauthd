@@ -159,7 +159,7 @@ hooks.config.push ->
 
 				$http(
 					method: "GET"
-					url: '/img/providers/' + $scope.createKeyProvider + '-keys.png'
+					url: $scope.oauthdconfig.base_api + '/providers/' + $scope.createKeyProvider + '/keys.png'
 				).success(->
 					$scope.createKeyKeysImg = true
 				).error(->
@@ -220,7 +220,7 @@ hooks.config.push ->
 
 				$http(
 					method: "GET"
-					url: 'admin/img/providers/' + $scope.createKeyProvider + '-config.png'
+					url: $scope.oauthdconfig.base_api + '/providers/' + $scope.createKeyProvider + '/config.png'
 				).success(->
 					$scope.createKeyConfigImg = true
 				).error(->
