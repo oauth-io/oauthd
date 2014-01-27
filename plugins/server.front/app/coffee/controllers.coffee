@@ -735,7 +735,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 			$http(
 				method: "GET"
-				url: '/img/providers/' + $scope.createKeyProvider + '-keys.png'
+				url: '/api/providers/' + $scope.createKeyProvider + '/keys.png'
 			).success(->
 				$scope.createKeyKeysImg = true
 			).error(->
@@ -795,7 +795,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 			$http(
 				method: "GET"
-				url: '/img/providers/' + $scope.createKeyProvider + '-config.png'
+				url: '/api/providers/' + $scope.createKeyProvider + '/config.png'
 			).success(->
 				$scope.createKeyConfigImg = true
 			).error(->

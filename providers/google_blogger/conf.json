@@ -1,5 +1,6 @@
 {
 	"name": "Google Blogger",
+    "desc": "The Blogger Data API allows client applications to view and update Blogger content in the form of Google Data API feeds. Your client application can use the Data API to create new blog posts, edit or delete existing posts, and query for posts that match particular criteria.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

@@ -1,5 +1,6 @@
 {
 	"name": "Google Adsense",
+    "desc": "The Google AdSense API is ideal for developers whose users create their own content through blogging, web publishing, forum/wiki/community creation, or any other application where substantial web content is generated. Using the AdSense API, developers can let users sign up for AdSense through their site or program, generate detailed performance reports for users, and choose how the AdSense revenue is shared with our revenue sharing program. Additionally users can create accounts to store publisher website information, then generate ad code snippets and filter out unwanted ads. A previous SOAP version has been deprecated in favor of REST with responses formatted as JSON.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

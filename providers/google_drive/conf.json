@@ -1,5 +1,6 @@
 {
 	"name": "Google Drive",
+    "desc": "Google Drive is a cloud based storage platform that lets users access their data, including files of any format, from any device or application that connects to the internet. The Google Drive SDK includes an HTTP API that lets developers integrate the files stored in a user's Drvie with their own third party applications. This gives users the ability to use multiple cloud apps to interact with their files that are stored in a single location in the cloud.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

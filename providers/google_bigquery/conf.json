@@ -1,5 +1,6 @@
 {
 	"name": "Google BigQuery",
+    "desc": "The Google BigQuery service allows users to run SQL-like queries against very large datasets, with potentially billions of rows. BigQuery works best for interactive analyses, typically using a small number of very large, append-only tables. Users can access BigQuery using the BigQuery browser, the bq command-line tool, the REST API, or Google Apps Script.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

@@ -1,5 +1,6 @@
 {
 	"name": "Google Mirror",
+    "desc": "The Google Mirror API allows you to build web-based services, called Glassware, that interact with Google Glass. It provides this functionality over a cloud-based API and does not require running code on Glass. The major features are described in the following sections.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

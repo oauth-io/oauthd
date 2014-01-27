@@ -1,5 +1,6 @@
 {
 	"name": "23AndMe",
+    "desc": "23andMe is a personal genetics service. 23andMe offers individual genome and DNA testing and information. The 23andMe API allows developers to access and integrate the data from 23andMe with other applications and to create new applications. Individuals consent to giving third-party access to the 23andMe data. Some example API methods include accessing user information, retrieving profiles, and getting information on genotypes",
 	"url": "https://api.23andme.com",
 	"oauth2": {
 		"authorize": "/authorize",

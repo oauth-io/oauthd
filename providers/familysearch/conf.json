@@ -1,5 +1,6 @@
 {
 	"name": "FamilySearch",
+    "desc": "FamilySearch is an online service that allows users to search for family records by names and life events, create family trees, and browse family records by location. The FamilySearch API allows developers to access and integrate the functionality and data of FamilySearch for integration with other applications. Some example API methods include searching for contributions by certain people, retrieving image information, and accessing categories of records and profiles.",
 	"url": "https://ident.familysearch.org/cis-web/oauth2/v3",
 	"oauth2": {
 		"authorize": "/authorization",

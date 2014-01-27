@@ -1,5 +1,6 @@
 {
 	"name": "Live Connect",
+    "desc": "The Interactive Live SDK is an interactive tool for exploring the Live Connect APIs and learning how they can enrich your application without having to do any coding! This tool allows you to try out the APIs without having registered a Live application.",
 	"url": "https://login.live.com",
 	"oauth2": {
 		"authorize": "/oauth20_authorize.srf",
