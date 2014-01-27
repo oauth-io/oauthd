@@ -1,5 +1,6 @@
 {
 	"name": "Deezer",
+    "desc": "Deezer is a web-based music streaming service operating out of France. Users can access their music via web browsers, mobile apps and offline. Currently the service offers a library of over 15 million songs. The service is not currently available in the United States. The API gives users access to the site's data making it available for use in third party web sites and applications. This data includes albums, artists, comments, editorials, folders, playlists, radio, searches, tracks and users. The API uses HTTP calls and responses are formatted in XML, JSON and PHP.",
 	"url": "https://connect.deezer.com/oauth",
 	"oauth2": {
 		"authorize": {

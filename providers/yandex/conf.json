@@ -1,5 +1,6 @@
 {
 	"name": "Yandex",
+    "desc": "XML API for Russian search engine.",
 	"url": "https://oauth.yandex.ru",
 	"oauth2": {
 		"authorize": {

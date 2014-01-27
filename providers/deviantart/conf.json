@@ -1,5 +1,6 @@
 {
 	"name": "DeviantArt",
+    "desc": "DeviantART is the largest online social network for artists and art enthusiasts with over 19 million registered members, attracting 45 million unique visitors per month. The site's social network environment receives over 100,000 daily uploads of original art works ranging from traditional media, such as painting and sculpture, to digital art, pixel art, films and anime. There are two ways for applications and websites to integrate with deviantART. The oEmbed API, which allows users to display content from deviantART, and the Sta.sh API, enabling submission of creative content to deviantART from any source. Both APIs use HTTP calls and responses can be formatted in XML, JSON and JSONP.",
 	"url": "https://www.deviantart.com/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",

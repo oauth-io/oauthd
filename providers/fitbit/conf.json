@@ -1,5 +1,6 @@
 {
 	"name": "FitBit",
+    "desc": "Fitbit is a website that offers tools for users to track their personal data, such as weight, activity, total sleep, etc. Fitbit also offers an API for developers to use to create tools and application that access Fitbit services and data. Users can then authenticate an external website/application to use their Fitbit data, and use the external application to push data to Fitbit. The API is still being developed.",
 	"url": "http://api.fitbit.com/oauth",
 	"oauth1": {
 		"request_token": "/request_token",

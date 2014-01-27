@@ -1,5 +1,6 @@
 {
 	"name": "Google Maps",
+    "desc": "The Google Maps API allow for the embedding of Google Maps onto web pages of outside developers, using a simple JavaScript interface or a Flash interface. It is designed to work on both mobile devices as well as traditional desktop browser applications. The API includes language localization for over 50 languages, region localization and geocoding, and has mechanisms for enterprise developers who want to utilize the Google Maps API within an intranet. The API HTTP services can be accessed over a secure (HTTPS) connection by Google Maps API Premier customers.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

@@ -1,5 +1,6 @@
 {
 	"name": "Orkut",
+    "desc": "An Orkut application is comprised of several parts, all of which combine to form a structured user experience: Application Directory, Directory Listing, My Applications, Left Navbar Link, Canvas View, Showcase View, Friend Updates.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

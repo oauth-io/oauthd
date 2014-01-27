@@ -1,5 +1,6 @@
 {
 	"name": "SinaWeibo",
+    "desc": "Sina Weibo is a Chinese microblogging website. The Sina Weibo API provides developers with programmatic access to the service. Via the API, users can read and write to all aspects of the service including microblogging, comments, users, topics, relations and much more. The API uses RESTful calls and responses are formatted in JSON. The site and documentation are in Chinese.",
 	"url": "https://api.weibo.com/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",

@@ -1,5 +1,6 @@
 {
 	"name": "Google Books",
+    "desc": "Use the Google Book Search Data API to get and modify Book Search content via feeds. Submit full-text searches for books and get book information, ratings, and reviews. Optionally get individual users' library collections and public reviews. Submit authenticated requests to create and modify library collections, ratings, labels, reviews, and more.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

@@ -1,5 +1,6 @@
 {
 	"name": "Behance",
+    "desc": "Behance is a website for creative professionals to share their work. Popular with photographers, artists and designers, the site allows its users to create portfolios of work and show current projects. The Behance API makes available much of the site's content. Developers can search and browse Behance users, discovering them by name, location or keyword. Completed projects and works in progress are also searchable via the API, which uses REST with all calls returned in JSONP.",
 	"url": "https://www.behance.net/v2/oauth",
 	"oauth2": {
 		"authorize": "/authenticate",

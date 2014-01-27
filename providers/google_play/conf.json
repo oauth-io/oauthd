@@ -1,5 +1,6 @@
 {
 	"name": "Google Play",
+    "desc": "The Google Play Android Developer API lets Android application developers manage some aspects of their Google Play developer accounts and perform some actions on data managed by Google Play.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

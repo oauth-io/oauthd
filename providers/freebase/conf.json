@@ -1,5 +1,6 @@
 {
 	"name": "Freebase",
+    "desc": "Freebase is an open database of the over 22 million real world entities like people, places, organizations and much more. It's built by the community and for the community free for anyone to query, contribute to, build applications on top of, or integrate into their websites. The Freebase API is an aggregate of HTTP APIs that provide you with read/write access to the data stored in Freebase. The APIs support different use cases and allow you to get access the same Freebase data in many different ways. The search API returns freebase data given a free text user query. The search service indexes freebase data for any given entity, as well as other sources such as Wikipedia content.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

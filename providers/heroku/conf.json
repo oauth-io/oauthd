@@ -1,5 +1,6 @@
 {
 	"name": "Heroku",
+    "desc": "Heroku API is used for manually manipulating Heroku apps. Heroku is a cloud application platform for Ruby giving developers a new way of building and deploying web apps. The service lets app developers spend 100% of their time on their application code, not managing servers, deployment, ongoing operations, or scaling. The RESTful API lets users manage and deploy Rails apps to the Heroku platform. Responses are formatted in XML.",
 	"url": "https://id.heroku.com/oauth",
 	"oauth2": {
 		"authorize": "/authorize",

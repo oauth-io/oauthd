@@ -1,5 +1,6 @@
 {
 	"name": "Google Documents",
+    "desc": "From their site: The Google Documents List data API allows client applications to upload documents to Google Documents and list them in the form of Google data API (\"GData\") feeds. Your client application can request a list of a user's documents, and query the content in an existing document.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

@@ -1,5 +1,6 @@
 {
 	"name": "MYOB",
+    "desc": "The AccountRight Live API (Application Programming Interface) is an interface which makes it easy for any app running on any device or operating system to connect to AccountRight Live company files.",
 	"url": "https://secure.myob.com/oauth2",
 	"oauth2": {
 		"authorize": "/account/authorize",

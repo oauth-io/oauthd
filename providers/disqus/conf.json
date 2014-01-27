@@ -1,5 +1,6 @@
 {
 	"name": "Disqus",
+    "desc": "Disqus provides an API for users to interact with the Disqus backend. Disqus is the webwide discussion community where you carry your conversations with you. For Bloggers - Plug in and experience the best comment system, backed by your own forum. For Everyone - Claim and track your comments across blogs!",
 	"url": "https://disqus.com/api/oauth/2.0",
 	"oauth2": {
 		"authorize": "/authorize/",

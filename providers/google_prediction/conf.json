@@ -1,5 +1,6 @@
 {
 	"name": "Google Prediction",
+    "desc": "Google Prediction API brings the power of machine learning to anyone. Upload your data and build a model to train the system by showing it the right answer for known items. When the system is trained, you can have it make predictions. All of these stages can be accessed via the API.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

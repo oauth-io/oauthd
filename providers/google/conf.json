@@ -1,5 +1,6 @@
 {
 	"name": "Google",
+    "desc": "Google APIs (or Google AJAX APIs) is a set of JavaScript APIs developed by Google that allows interaction with Google Services and integration of rich, multimedia, search or feed-based Internet content into web applications. They extensively use AJAX scripting and can be easily loaded using Google Loader.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": {

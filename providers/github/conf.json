@@ -1,5 +1,6 @@
 {
 	"name": "GitHub",
+    "desc": "GitHub is a repository of public open source and private business code. Is is a fast, efficient, distributed version control system ideal for the collaborative development of software. Use it to fork projects, send pull requests, monitor development.",
 	"url": "https://github.com/login/oauth",
 	"oauth2": {
 		"authorize": "/authorize",

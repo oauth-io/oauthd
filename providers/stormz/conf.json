@@ -1,5 +1,6 @@
 {
 	"name": "Stormz",
+    "desc": "Stormz builds collaborative technology empowering employees to collectively tackle corporate challenges. Stormz designs web based workshop sequences for brainstorming and problem solving. The Stormz API provides developer access to Stormz resources including Users, Workshops, and Activities. Data is transmitted over HTTPS and JSON formatted.",
 	"url": "https://stormz.me/oauth",
 	"oauth2": {
 		"authorize": "/authorize",
