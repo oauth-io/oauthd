@@ -1,5 +1,6 @@
 {
 	"name": "Assembla",
+    "desc": "Assembla now offers a Rails-style REST API that allows management of tickets, files, time reports, spaces, and user accounts. Assembla accelerates software development by providing software knowledge, tools, and talent for agile teams.",
 	"url": "https://api.assembla.com",
 	"oauth2": {
 		"authorize": "/authorization",

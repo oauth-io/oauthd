@@ -1,5 +1,6 @@
 {
 	"name": "Google Mail",
+    "desc": "Google Gmail now supports the standard IMAP and SMTP protocols for accessing and sending e-mail messages. The Gmail IMAP and SMTP servers have been extended to support authorization via the industry-standard OAuth protocol. This allows third party applications to access a user's email account with their permission.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

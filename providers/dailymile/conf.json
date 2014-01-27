@@ -1,5 +1,6 @@
 {
 	"name": "DailyMile",
+    "desc": "Dailymile is a \"a social training log for runners, triathletes, and cyclists\" that lets users create posts about their workouts, map workout routes, and compete with other users. Dailymile provides a RESTful API that lets developers access Dailymile data in their own applications.",
 	"url": "https://api.dailymile.com/oauth",
 	"oauth2": {
 		"authorize": "/authorize",

@@ -1,5 +1,6 @@
 {
 	"name": "VK",
+    "desc": "VK is the largest European social networking site with more than 100 million active users. Users registered with the site can create personal profiles, post status updates, upload images, and more. They can also follow and exchange messages with other VK members. The VK REST APIs enable users to interact with site programmatically to add or retrieve information.",
 	"url": "https://oauth.vk.com/",
 	"oauth2": {
 		"authorize": {

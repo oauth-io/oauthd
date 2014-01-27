@@ -1,5 +1,6 @@
 {
 	"name": "Google Tasks",
+    "desc": "Google Tasks provides a to-do list system for users within GMail, Calendar, iGoogle home page and a direct mobile site. The Google Tasks API provides developers with a set of API endpoints for searching, reading, and updating Google Tasks content and metadata. With the API a user can retrieve, update, delete and create task lists as well as retrieve, update, order, delete and create tasks.\nThe service is currently in Google Labs, so it's considered to be in beta. The API uses RESTful calls and responses are formatted in JSON.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

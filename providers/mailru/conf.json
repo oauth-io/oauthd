@@ -1,5 +1,6 @@
 {
 	"name": "Mail.ru",
+    "desc": "With the Mail.Ru API, developers have the ability to integrate the Mail.Ru services into their websites and applications.",
 	"url": "https://connect.mail.ru/oauth",
 	"oauth2": {
 		"authorize": {

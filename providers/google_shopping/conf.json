@@ -1,26 +1,27 @@
 {
-	"name": "Google Shopping",
-	"url": "https://accounts.google.com/o/oauth2",
-	"oauth2": {
-		"authorize": "/auth",
-		"access_token": "/token",
-		"request": "https://www.googleapis.com",
-		"refresh": "/token",
-		"parameters": {
-			"client_secret": "string",
-			"client_id": "string",
-			"scope": {
-				"values": {
-					"https://www.googleapis.com/auth/shoppingapi": "View your product data",
-					"https://www.googleapis.com/auth/structuredcontent": "Read/write access to Shopping Content API."
-				}
-			}
-		}
-	},
-	"href": {
-		"keys": "https://code.google.com/apis/console/",
-		"docs": "http://code.google.com/more/",
-		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
-	}
+    "name": "Google Shopping",
+    "desc": "The Search API for Shopping makes it easy for developers, Google Affiliate Network publishers, and Google Commerce Search customers to build innovative applications using product data. The API simplifies access to product data and is optimized to deliver the most relevant product results.¶",
+    "url": "https://accounts.google.com/o/oauth2",
+    "oauth2": {
+        "authorize": "/auth",
+        "access_token": "/token",
+        "request": "https://www.googleapis.com",
+        "refresh": "/token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "https://www.googleapis.com/auth/shoppingapi": "View your product data",
+                    "https://www.googleapis.com/auth/structuredcontent": "Read/write access to Shopping Content API."
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://code.google.com/apis/console/",
+        "docs": "http://code.google.com/more/",
+        "apps": "https://code.google.com/apis/console/",
+        "provider": "http://google.com/"
+    }
 }

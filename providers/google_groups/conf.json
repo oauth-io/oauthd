@@ -1,5 +1,6 @@
 {
 	"name": "Google Groups",
+    "desc": "Google Groups provides a convenient way for your users to send messages to groups of people they frequently contact. With the Google Apps Groups Settings API account-level administrators can manage the group settings for your Google Apps account. Once your groups are initially set up using the Directory API, use the Group Settings API to manage internal and external group access, edit the group's notifications, configure discussion archiving and message moderation, and customize your account's user groups.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

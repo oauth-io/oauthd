@@ -1,5 +1,6 @@
 {
 	"name": "Google URL Shortener",
+    "desc": "The Google URL Shortener takes long URLs and creates short links on the goo.gl domain name. The REST-based API requires authentication with an API Key and Auth Token (OAuth).",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

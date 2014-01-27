@@ -1,5 +1,6 @@
 {
 	"name": "Google Apps Reseller",
+    "desc": "The Google Apps Reseller API allows reseller administrators and service integrators to place customer orders and manage Google Apps monthly post-pay subscriptions. The API is meant to enable businesses to scale easily by integrating components of the Google Apps reseller tools into customer and sales systems. The API exposes methods for working with customers and subscriptions. It uses RESTful calls and responses are formatted in JSON.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

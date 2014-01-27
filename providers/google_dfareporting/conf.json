@@ -1,5 +1,6 @@
 {
 	"name": "Google DFA Reporting",
+    "desc": "The DFA Reporting API is a language-neutral REST API that offers programmatic access to the same reports as can be generated through the Report Builder web service. Also, reports created in Report Builder can be modified, run and downloaded by the API.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",

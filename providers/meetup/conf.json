@@ -1,5 +1,6 @@
 {
 	"name": "MeetUp",
+    "desc": "From their site: The Meetup API allows developers to use the Topics, Groups and Events hosted and created on Meetup.com in their own applications and mashups. Any Meetup.com member can request an API key. The API is currently read only -- actions like RSVP'ing, joining groups or posting messages aren't supported yet.",
 	"url": "https://secure.meetup.com/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",

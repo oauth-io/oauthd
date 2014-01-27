@@ -1,5 +1,6 @@
 {
 	"name": "Google Analytics",
+    "desc": "With Google Analytics, you can gather, view, and analyze data about your website traffic. By embedding the basic JavaScript snippet into your pages, you see which content gets the most visits, average page views and time on site for visits, which ads are driving the most visitors to your site, and more. The Google Analytics Data Export API lets develop client applications that download Analytics data in the form of Google Data API feeds. Your client application can use the Data Export API to request data from an existing Analytics profile for an authorized user, and refine the results of the request using query parameters. Currently, the Data Export API supports read-only access to your Google Analytics data. The current feeds in the Data Export API contain two general categories of Analytics data: Analytics accounts and website profiles; Analytics report data from a single profile.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": "/auth",
