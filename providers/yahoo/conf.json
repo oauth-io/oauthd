@@ -1,5 +1,6 @@
 {
 	"name": "Yahoo",
+    "desc": "Yahoo! Web Search Web Services give users the ability to integrate Yahoo! Search technologies into other sites, applications, and environments. The Web Search Web Services will query Yahoo! systems without making the user leave your website or interface and incorporate the results in your applications. Four search types within this service. Context Search: The Contextual Web Search service (discontinued on August 31, 2009) returns web pages matching a context-based query, helping you make your searches more powerful. Related Suggestion: The Related Suggestion service returns suggested queries to extend the power of a submitted query, providing variations on a theme to help you dig deeper. Spelling Suggestion: The Spelling Suggestion service returns suggested spelling for a given term. Web Search: The Web Search service allows you to search the Internet for web pages by submitting queries via REST. All services use RESTful architecture and responses can be formatted in either XML, JSON or PHP.",
 	"url": "http://social.yahooapis.com",
 	"oauth1": {
 		"request_token": "https://api.login.yahoo.com/oauth/v2/get_request_token",
