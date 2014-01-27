@@ -28,23 +28,7 @@ dbapps = require './db_apps'
 config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
-short_formats = OAuth1ResponseParser.short_formats
-
-ksort = (w) ->
-	r = {}
-	r[k] = w[k] for k in Object.keys(w).sort()
-	return r
-
-build_auth_string = (authparams) ->
-	"OAuth " + (k + '="' + v + '"' for k,v of ksort authparams).join ","
-
-sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
-	data = method + '&' + (encodeURIComponent baseurl) + '&'
-	data += encodeURIComponent (k + '=' + v for k,v of ksort parameters).join '&'
-
-	hmacsha1 = crypto.createHmac "sha1", secret
-	hmacsha1.update data
-	hmacsha1.digest "base64"
+short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
 
 replace_param = (param, params, hard_params, keyset) ->
 	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
