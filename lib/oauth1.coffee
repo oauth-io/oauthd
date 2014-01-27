@@ -28,7 +28,7 @@ dbapps = require './db_apps'
 config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
-short_formats = OAuth1ResponseParser.short_formats
+short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
 
 replace_param = (param, params, hard_params, keyset) ->
 	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
