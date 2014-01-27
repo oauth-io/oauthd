@@ -1,6 +1,23 @@
 <div class="container">
 	<div class="row" style="margin-bottom: 30px">
-		<h1 style="text-align:center"><img style="margin-left: 10px; position: relative; top: -5px; margin-right: 10px" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em">{{provider}}</h1>
+		<h1 style="text-align:center"><img style="margin-left: 10px; position: relative; top: -5px; margin-right: 10px" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em">{{providerConf.data.name}}</span></h1>
+	</div>
+	<div class="row" style="">
+		<p>{{providerConf.data.desc}}</p>
+		<ul>
+			<li>OAuth2</li>
+			<li>Cross domain</li>
+			<li>Refresh token</li>
+			<li>Revoke</li>
+		</ul>
+	</div>
+	<div class="row">
+		<div class="col col-lg-6">
+			<pre>{{providerConf|json}}</pre>
+		</div>
+		<div class="col col-lg-6">
+			<pre>{{settings|json}}</pre>
+		</div>
 	</div>
 	<div class="row">
 		<div class="col col-lg-8">

@@ -810,9 +810,17 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 		), (error) ->
 
-ProviderKeyCtrl = ($scope, UserService, $routeParams, $location) ->
+ProviderKeyCtrl = ($scope, UserService, ProviderService, $routeParams, $location) ->
 	if not $routeParams.provider
 		$location.path '/providers'
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.providerConf = provider
+			$scope.settings = settings
+		), (error) ->
+	), (error) ->
+
 
 	if not UserService.isLogin()
 		$scope.addKeyTemplate = '/templates/signin.html'

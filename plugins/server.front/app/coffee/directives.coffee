@@ -38,7 +38,15 @@ app.directive 'googleAnalytics', ($location, $window) ->
 					return
 				ga 'send', 'pageview', $location.path()
 				_cio.page $location.absUrl()
-	};
+	}
+
+app.directive 'selectize', ($timeout) ->
+    return {
+        restrict: 'A',
+        link: (scope, element, attrs) ->
+            $timeout ->
+                $(element).selectize scope.$eval(attrs.selectize)
+    }
 
 app.directive 'bootstrapModal', () ->
 	def =
