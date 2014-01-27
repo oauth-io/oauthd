@@ -32,8 +32,9 @@ check = require './check'
 formatters = require './formatters'
 sdk_js = require './sdk_js'
 
+OAuth1 = require './oauth1'
 oauth =
-	oauth1: require './oauth1'
+	oauth1: new OAuth1
 	oauth2: require './oauth2'
 
 auth = plugins.data.auth
