@@ -1,5 +1,6 @@
 {
 	"name": "Tripit",
+	"desc": "The TripIt API allows users to access the TripIt's information about travel and itineraries. TripIt facilitates integration and organization of travel information from many different sources. The TripIt API allows third parties to easily interface with this platform.",
 	"url": "https://api.tripit.com",
 	"oauth1": {
 		"request_token": "/oauth/request_token",

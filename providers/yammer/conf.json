@@ -1,5 +1,6 @@
 {
 	"name": "Yammer",
+    "desc": "Yammer is a private social network for companies. The tool was originally for making companies and organizations more productive through the exchange of short frequent answers to one simple question: \"What are you working on?\" The Yammer API allows third-party developers to create their own Yammer applications.",
 	"url": "https://www.yammer.com",
 	"oauth2": {
 		"authorize": {

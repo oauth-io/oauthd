@@ -1,5 +1,6 @@
 {
 	"name": "PayPal",
+	"desc": "PayPal offers online payment solutions and has more than 153 million customers worldwide. The PayPal API makes powerful functionality available to developers by exposing various features of the PayPal platform. Functionality includes but is not limited to invoice management, transaction processing and account management.",
 	"url": "https://api.{domain}",
 	"oauth2": {
 		"authorize": {

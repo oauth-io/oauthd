@@ -26,6 +26,8 @@ dbapps = require './db_apps'
 db = require './db'
 config = require './config'
 
+logger = new (require './logger') "oauth2"
+
 OAuth2ResponseParser = require './oauth2-response-parser'
 short_formats = OAuth2ResponseParser.short_formats
 
@@ -116,6 +118,7 @@ exports.access_token = (state, req, callback) ->
 			return callback e if e
 			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
 			responseParser.parse (err, response) ->
+				logger.log "asana fail", err.message, err.body, options if provider.name == "Asana" and err?.body?.error == "unsupported_grant_type"
 				return callback err if err
 
 				expire = response.body.expire
