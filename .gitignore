@@ -6,6 +6,8 @@
 /plugins/server.*/*.js
 !/plugins/server.*/gruntConfig.js
 /lib/*.js
+/lib/*.map
+/plugins/**/*.map
 .nodemonignore
 nohup.out
 config.local.js

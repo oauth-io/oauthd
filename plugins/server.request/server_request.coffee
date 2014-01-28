@@ -17,9 +17,10 @@
 async = require 'async'
 qs = require 'querystring'
 Url = require 'url'
+OAuth1 = require '../../lib/oauth1'
 
 oauth =
-	oauth1: require '../../lib/oauth1'
+	oauth1: new OAuth1
 	oauth2: require '../../lib/oauth2'
 
 exports.setup = (callback) ->
