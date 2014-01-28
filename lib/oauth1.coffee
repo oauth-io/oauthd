@@ -32,15 +32,6 @@ short_formats = json: 'application/json', url: 'application/x-www-form-urlencode
 
 OAuthBase = require './oauth-base'
 
-replace_param = (param, params, hard_params, keyset) ->
-	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
-		return hard_params[val] || ""
-	return param.replace /\{(.*?)\}/g, (match, val) ->
-		return "" if ! params[val] || ! keyset[val]
-		if Array.isArray(keyset[val])
-			return keyset[val].join params[val].separator || ","
-		return keyset[val]
-
 class OAuth1 extends OAuthBase
 	constructor: ->
 		@_params = {}
@@ -48,6 +39,15 @@ class OAuth1 extends OAuthBase
 
 	_setParams: (parameters) ->
 		@_params[k] = v for k,v of parameters
+
+	_replace_param: (param, params, hard_params, keyset) ->
+		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+			return hard_params[val] || ""
+		return param.replace /\{(.*?)\}/g, (match, val) ->
+			return "" if ! params[val] || ! keyset[val]
+			if Array.isArray(keyset[val])
+				return keyset[val].join params[val].separator || ","
+			return keyset[val]
 
 	authorize: (provider, parameters, opts, callback) ->
 		@_setParams(provider.parameters)
@@ -61,20 +61,20 @@ class OAuth1 extends OAuthBase
 			options: opts.options,
 			expire: 600
 		dbstates.add data, (err, state) =>
-			@dbstatesAddedCallback(err, state, provider, parameters, opts, callback)
+			@_dbAddedCallback(err, state, provider, parameters, opts, callback)
 
-	dbstatesAddedCallback: (err, state, provider, parameters, opts, callback) ->
+	_dbAddedCallback: (err, state, provider, parameters, opts, callback) ->
 		request_token = provider.oauth1.request_token
 		query = {}
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
 		for name, value of request_token.query
-			param = replace_param value, @_params, state:state.id, callback:config.host_url+config.relbase, parameters
+			param = @_replace_param value, @_params, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
 		for name, value of request_token.headers
-			param = replace_param value, @_params, {}, parameters
+			param = @_replace_param value, @_params, {}, parameters
 			headers[name] = param if param
 		options =
 			url: request_token.url
@@ -92,24 +92,27 @@ class OAuth1 extends OAuthBase
 			options.qs = query
 
 		# do request to request_token
-		request options, (e, r, body) ->
+		request options, (e, r, body) =>
 			return callback(e) if e
 			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'request_token')
 			return callback(responseParser.error) if responseParser.error
 
-			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
-				return callback e if e
-				authorize = provider.oauth1.authorize
-				query = {}
-				if typeof opts.options?.authorize == 'object'
-					query = opts.options.authorize
-				for name, value of authorize.query
-					param = replace_param value, @_params, state:state.id, callback:config.host_url+config.relbase, parameters
-					query[name] = param if param
-				query.oauth_token = responseParser.oauth_token
-				url = replace_param authorize.url, @_params, {}, parameters
-				url += "?" + querystring.stringify query
-				callback null, url
+			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) =>
+				@_dbSetTokenCallback(e, r, state, provider, parameters, opts, responseParser, callback)
+
+	_dbSetTokenCallback: (e, r, state, provider, parameters, opts, responseParser, callback) ->
+		return callback e if e
+		authorize = provider.oauth1.authorize
+		query = {}
+		if typeof opts.options?.authorize == 'object'
+			query = opts.options.authorize
+		for name, value of authorize.query
+			param = @_replace_param value, @_params, state:state.id, callback:config.host_url+config.relbase, parameters
+			query[name] = param if param
+		query.oauth_token = responseParser.oauth_token
+		url = @_replace_param authorize.url, @_params, {}, parameters
+		url += "?" + querystring.stringify query
+		callback null, url
 
 	access_token: (state, req, callback) ->
 		if not req.params.oauth_token && not req.params.error
@@ -145,15 +148,15 @@ class OAuth1 extends OAuthBase
 			for extra in (provider.oauth1.authorize.extra||[])
 				hard_params[extra] = req.params[extra] if req.params[extra]
 			for name, value of access_token.query
-				param = replace_param value, @_params, hard_params, parameters
+				param = @_replace_param value, @_params, hard_params, parameters
 				query[name] = param if param
 			headers = {}
 			headers["Accept"] = short_formats[access_token.format] || access_token.format if access_token.format
 			for name, value of access_token.headers
-				param = replace_param value, @_params, {}, parameters
+				param = @_replace_param value, @_params, {}, parameters
 				headers[name] = param if param
 			options =
-				url: replace_param access_token.url, @_params, hard_params, parameters
+				url: @_replace_param access_token.url, @_params, hard_params, parameters
 				method: access_token.method?.toUpperCase() || "POST"
 				oauth:
 					callback: query.oauth_callback
@@ -224,13 +227,13 @@ class OAuth1 extends OAuthBase
 			if options.url[0] != '/'
 				options.url = '/' + options.url
 			options.url = oauthrequest.url + options.url
-		options.url = replace_param options.url, params, parameters.oauthio, parameters
+		options.url = @_replace_param options.url, params, parameters.oauthio, parameters
 
 		# build query
 		options.qs = {}
 		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
-			param = replace_param value, params, parameters.oauthio, parameters
+			param = @_replace_param value, params, parameters.oauthio, parameters
 			options.qs[name] = param if param
 
 		options.oauth =
@@ -246,7 +249,7 @@ class OAuth1 extends OAuthBase
 			'accept-language':req.headers['accept-language']
 			'content-type':req.headers['content-type']
 		for name, value of oauthrequest.headers
-			param = replace_param value, params, parameters.oauthio, parameters
+			param = @_replace_param value, params, parameters.oauthio, parameters
 			options.headers[name] = param if param
 
 		# build body
