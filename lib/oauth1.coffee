@@ -49,13 +49,6 @@ class OAuth1 extends OAuthBase
 				return keyset[val].join params[val].separator || ","
 			return keyset[val]
 
-	_createHeaders: (token, parameters) ->
-		headers = {}
-		headers["Accept"] = short_formats[token.format] || token.format if token.format
-		for name, value of token.headers
-			param = @_replaceParam value, @_params, {}, parameters
-			headers[name] = param if param
-
 	authorize: (provider, parameters, opts, callback) ->
 		@_setParams(provider.parameters)
 		@_setParams(provider.oauth1.parameters)
@@ -79,7 +72,11 @@ class OAuth1 extends OAuthBase
 		for name, value of request_token.query
 			param = @_replaceParam value, @_params, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
-		headers = @_createHeaders(opts.options?.request_token, parameters)
+		headers = {}
+		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
+		for name, value of request_token.headers
+			param = @_replaceParam value, @_params, {}, parameters
+			headers[name] = param if param
 		options =
 			url: request_token.url
 			method: request_token.method?.toUpperCase() || "POST"
