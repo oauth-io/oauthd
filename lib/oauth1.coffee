@@ -208,9 +208,8 @@ class OAuth1 extends OAuthBase
 				callback null, result
 
 	request: (provider, parameters, req, callback) ->
-		params = {}
-		params[k] = v for k,v of provider.parameters
-		params[k] = v for k,v of provider.oauth1.parameters
+		@_setParams(provider.parameters)
+		@_setParams(provider.oauth1.parameters)
 
 		if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
 			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
@@ -227,13 +226,13 @@ class OAuth1 extends OAuthBase
 			if options.url[0] != '/'
 				options.url = '/' + options.url
 			options.url = oauthrequest.url + options.url
-		options.url = @_replace_param options.url, params, parameters.oauthio, parameters
+		options.url = @_replace_param options.url, @_params, parameters.oauthio, parameters
 
 		# build query
 		options.qs = {}
 		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
-			param = @_replace_param value, params, parameters.oauthio, parameters
+			param = @_replace_param value, @_params, parameters.oauthio, parameters
 			options.qs[name] = param if param
 
 		options.oauth =
@@ -249,7 +248,7 @@ class OAuth1 extends OAuthBase
 			'accept-language':req.headers['accept-language']
 			'content-type':req.headers['content-type']
 		for name, value of oauthrequest.headers
-			param = @_replace_param value, params, parameters.oauthio, parameters
+			param = @_replace_param value, @_params, parameters.oauthio, parameters
 			options.headers[name] = param if param
 
 		# build body
