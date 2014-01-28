@@ -40,10 +40,17 @@ class OAuth1 extends OAuthBase
 				return keyset[val].join params[val].separator || ","
 			return keyset[val]
 
+	_createHeaders: (token, parameters) ->
+		headers = {}
+		headers["Accept"] = short_formats[token.format] || token.format if token.format
+		for name, value of token.headers
+			param = @_replaceParam value, @_params, {}, parameters
+			headers[name] = param if param
+
 	authorize: (provider, parameters, opts, callback) ->
 		@_setParams(provider.parameters)
 		@_setParams(provider.oauth1.parameters)
-		data =
+		newStateData =
 			key: opts.key,
 			provider: provider.provider,
 			redirect_uri: opts.redirect_uri,
@@ -51,10 +58,11 @@ class OAuth1 extends OAuthBase
 			origin: opts.origin,
 			options: opts.options,
 			expire: 600
-		dbstates.add data, (err, state) =>
-			@_dbAddedCallback(err, state, provider, parameters, opts, callback)
+		dbstates.add newStateData, (err, state) =>
+			return callback(err) if err
+			@_getRequestToken(state, provider, parameters, opts, callback)
 
-	_dbAddedCallback: (err, state, provider, parameters, opts, callback) ->
+	_getRequestToken: (state, provider, parameters, opts, callback) ->
 		request_token = provider.oauth1.request_token
 		query = {}
 		if typeof opts.options?.request_token == 'object'
@@ -62,11 +70,7 @@ class OAuth1 extends OAuthBase
 		for name, value of request_token.query
 			param = @_replaceParam value, @_params, state:state.id, callback:config.host_url+config.base, parameters
 			query[name] = param if param
-		headers = {}
-		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
-		for name, value of request_token.headers
-			param = @_replaceParam value, @_params, {}, parameters
-			headers[name] = param if param
+		headers = @_createHeaders(opts.options?.request_token, parameters)
 		options =
 			url: request_token.url
 			method: request_token.method?.toUpperCase() || "POST"
@@ -76,7 +80,6 @@ class OAuth1 extends OAuthBase
 				consumer_key: parameters.client_id
 				consumer_secret: parameters.client_secret
 		delete query.oauth_callback
-
 		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
@@ -84,17 +87,21 @@ class OAuth1 extends OAuthBase
 			options.qs = query
 
 		# do request to request_token
-		request options, (e, r, body) =>
-			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'request_token')
+		request options, (err, response, body) =>
+			return callback(err) if err
+			@_parseGetRequestTokenResponse(response, body, provider, parameters, opts, headers, state, callback)
+
+	_parseGetRequestTokenResponse: (response, body, provider, parameters, opts, headers, state, callback) ->
+
+		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
 			responseParser.parse (err, response) ->
 				return callback err if err
 
-				dbstates.setToken state.id, response.oauth_token_secret, (e, r) =>
-					return callback e if e
-					@_dbSetTokenCallback(r, state, provider, parameters, opts, response, callback)
+				dbstates.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
+					return callback(err) if err
+					callback null, @_generateRequestTokenAuthorizeUrl(state, provider, parameters, opts, response)
 
-	_dbSetTokenCallback: (r, state, provider, parameters, opts, response, callback) ->
+	_generateRequestTokenAuthorizeUrl: (state, provider, parameters, opts, response) ->
 		authorize = provider.oauth1.authorize
 		query = {}
 		if typeof opts.options?.authorize == 'object'
@@ -105,7 +112,7 @@ class OAuth1 extends OAuthBase
 		query.oauth_token = response.oauth_token
 		url = @_replaceParam authorize.url, @_params, {}, parameters
 		url += "?" + querystring.stringify query
-		callback null, url:url, state:state.id
+		return url:url, state:state.id
 
 	access_token: (state, req, callback) ->
 		if not req.params.oauth_token && not req.params.error
