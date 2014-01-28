@@ -30,7 +30,7 @@ class OAuth1 extends OAuthBase
 	_setParams: (parameters) ->
 		@_params[k] = v for k,v of parameters
 
-	_replace_param: (param, params, hard_params, keyset) ->
+	_replaceParam: (param, params, hard_params, keyset) ->
 		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
 			return db.generateUid() if val == "nonce"
 			return hard_params[val] || ""
@@ -60,12 +60,12 @@ class OAuth1 extends OAuthBase
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
 		for name, value of request_token.query
-			param = @_replace_param value, @_params, state:state.id, callback:config.host_url+config.base, parameters
+			param = @_replaceParam value, @_params, state:state.id, callback:config.host_url+config.base, parameters
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
 		for name, value of request_token.headers
-			param = @_replace_param value, @_params, {}, parameters
+			param = @_replaceParam value, @_params, {}, parameters
 			headers[name] = param if param
 		options =
 			url: request_token.url
@@ -100,10 +100,10 @@ class OAuth1 extends OAuthBase
 		if typeof opts.options?.authorize == 'object'
 			query = opts.options.authorize
 		for name, value of authorize.query
-			param = @_replace_param value, @_params, state:state.id, callback:config.host_url+config.base, parameters
+			param = @_replaceParam value, @_params, state:state.id, callback:config.host_url+config.base, parameters
 			query[name] = param if param
 		query.oauth_token = response.oauth_token
-		url = @_replace_param authorize.url, @_params, {}, parameters
+		url = @_replaceParam authorize.url, @_params, {}, parameters
 		url += "?" + querystring.stringify query
 		callback null, url:url, state:state.id
 
@@ -141,15 +141,15 @@ class OAuth1 extends OAuthBase
 			for extra in (provider.oauth1.authorize.extra||[])
 				hard_params[extra] = req.params[extra] if req.params[extra]
 			for name, value of access_token.query
-				param = @_replace_param value, @_params, hard_params, parameters
+				param = @_replaceParam value, @_params, hard_params, parameters
 				query[name] = param if param
 			headers = {}
 			headers["Accept"] = short_formats[access_token.format] || access_token.format if access_token.format
 			for name, value of access_token.headers
-				param = @_replace_param value, @_params, {}, parameters
+				param = @_replaceParam value, @_params, {}, parameters
 				headers[name] = param if param
 			options =
-				url: @_replace_param access_token.url, @_params, hard_params, parameters
+				url: @_replaceParam access_token.url, @_params, hard_params, parameters
 				method: access_token.method?.toUpperCase() || "POST"
 				oauth:
 					callback: query.oauth_callback
@@ -220,13 +220,13 @@ class OAuth1 extends OAuthBase
 			if options.url[0] != '/'
 				options.url = '/' + options.url
 			options.url = oauthrequest.url + options.url
-		options.url = @_replace_param options.url, @_params, parameters.oauthio, parameters
+		options.url = @_replaceParam options.url, @_params, parameters.oauthio, parameters
 
 		# build query
 		options.qs = {}
 		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
-			param = @_replace_param value, @_params, parameters.oauthio, parameters
+			param = @_replaceParam value, @_params, parameters.oauthio, parameters
 			options.qs[name] = param if param
 
 		options.oauth =
@@ -242,7 +242,7 @@ class OAuth1 extends OAuthBase
 			'accept-language':req.headers['accept-language']
 			'content-type':req.headers['content-type']
 		for name, value of oauthrequest.headers
-			param = @_replace_param value, @_params, parameters.oauthio, parameters
+			param = @_replaceParam value, @_params, parameters.oauthio, parameters
 			options.headers[name] = param if param
 
 		# build body
