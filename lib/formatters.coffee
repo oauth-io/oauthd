@@ -66,6 +66,11 @@ formatters =
 						msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
 				else if typeof body.body == 'string' && body.body != ""
 					msg += '<br/><span style="color:red">' + body.body + '</span>'
+				if config.debug && body.stack
+					if body.we_cause?.stack
+						msg += "<br/>" + body.we_cause.stack.split "<br/>"
+					else
+						msg += "<br/>" + body.stack.split "<br/>"
 				body = msg
 			else
 				body = "Internal error"
