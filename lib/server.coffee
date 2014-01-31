@@ -450,10 +450,14 @@ server.get config.base_api + '/providers/:provider/:file', bootPathCache(), ((re
 exports.listen = (callback) ->
 	# tell plugins to configure the server if needed
 	plugins.run 'setup', ->
-		server.listen config.port, (err) ->
+		listen_args = [config.port]
+		listen_args.push config.bind if config.bind
+		listen_args.push (err) ->
 			return callback err if err
 			#exit.push 'Http(s) server', (cb) -> server.close cb
 			#/!\ server.close = timeout if at least one connection /!\ wtf?
-			console.log '%s listening at %s', server.name, server.url
+			console.log '%s listening at %s for %s', server.name, server.url, config.host_url
 			plugins.data.emit 'server', null
 			callback null, server
+
+		server.listen.apply server, listen_args
