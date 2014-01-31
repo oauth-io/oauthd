@@ -22,9 +22,8 @@ check = require './check'
 formatters = require './formatters'
 sdk_js = require './sdk_js'
 
-OAuth1 = require './oauth1'
 oauth =
-	oauth1: new OAuth1
+	oauth1: require './oauth1'
 	oauth2: require './oauth2'
 
 auth = plugins.data.auth
@@ -109,7 +108,8 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				return next e if e
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
-				oauth.oauth2.refresh keyset, provider, req.body.token, send(res,next)
+				oa = new oauth.oauth2
+				oa.refresh keyset, provider, req.body.token, send(res,next)
 
 # iframe injection for IE
 server.get config.base + '/iframe', (req, res, next) ->
@@ -230,7 +230,8 @@ server.get config.base + '/', (req, res, next) ->
 			return next new check.Error 'state', 'invalid or expired' if not state
 			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-			oauth[state.oauthv].access_token state, req, (e, r) ->
+			oa = new oauth[state.oauthv]
+			oa.access_token state, req, (e, r) ->
 				status = if e then 'error' else 'success'
 				cmds = []
 				for hook in plugins.data.hooks['connect.auth']
@@ -322,7 +323,8 @@ server.get config.base + '/:provider', (req, res, next) ->
 				options.response_type = response_type
 				options.parameters = parameters
 				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-				oauth[oauthv].authorize provider, parameters, opts, cb
+				oa = new oauth[state.oauthv]
+				oa.authorize provider, parameters, opts, cb
 		(authorize, cb) ->
 				return cb null, authorize.url if not req.oaio_uid
 				db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
