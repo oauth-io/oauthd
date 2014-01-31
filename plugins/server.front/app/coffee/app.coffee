@@ -125,8 +125,23 @@ app.config([
 
 		$routeProvider.when '/provider/:provider',
 			templateUrl: '/templates/provider.html'
-			controller: 'ProviderKeyCtrl'
+			controller: 'ProviderPageCtrl'
 
+		$routeProvider.when '/provider/:provider/app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppKeyCtrl'
+
+		$routeProvider.when '/provider/:provider/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
 
 		$routeProvider.when '/app-create',
 			templateUrl: '/templates/app-create.html'

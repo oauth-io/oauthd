@@ -2,7 +2,8 @@
 	"settings": {
 		"createApp": {
 			"url": "https://dev.twitter.com/apps/new",
-			"image": "config.png"
+			"image": "config.png",
+			"text": "You can configure your application permission on the same page that you configured the callbacks with the label <code>Access level</code>."
 		},
 		"copyingKey": {
 			"url": "https://dev.twitter.com/apps",

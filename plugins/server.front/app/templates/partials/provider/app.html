@@ -1,0 +1,24 @@
+<div class="row">
+	<div class="col col-lg-12">
+		<p class="text-center" style="font-size: 1.3em">To authorize your users using {{providerConf.data.name}}, you just have to select an existing OAuth.io application or create one.</p>
+	</div>
+</div>
+<div class="row" style="margin: 15px 0">
+	<div class="col col-lg-6 col-offset-3">
+		<div class="list-group">
+			<a class="list-group-item" ng-href="/provider/{{provider}}/app/{{app.key}}" ng-repeat="app in apps">
+				<h4 class="list-group-item-heading">{{app.name}}</h4>
+				<p class="list-group-item-text">{{app.domains.join(' ')}}</p>
+			</a>
+		</div>
+		<p class="text-center">Or<br /><br /><a href="/app-create" class="btn btn-large btn-primary">Create an app</a></p>
+	</div>
+<!-- 	<select id="app-select" placeholder="Choose an OAuth.io app" ng-options="a.key as a.name for a in apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)">
+	</select>
+ -->
+</div>
+<!-- <div class="row">
+	<div class="col col-lg-12">
+		<pre>{{apps|json}}</pre>
+	</div>
+</div> -->

@@ -198,8 +198,8 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					$(window).off()
 					$(document).off()
 					$location.ga_skip = true;
-					document.location.href = '/#' + path
-					document.location.reload()
+					console.log path
+					$location.path path
 				), (error) ->
 					$scope.info =
 						status: 'error'
@@ -810,9 +810,81 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 		), (error) ->
 
-ProviderKeyCtrl = ($scope, UserService, ProviderService, $routeParams, $location) ->
+
+ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, ProviderService, AppService, $timeout, $routeParams, $location) ->
 	if not $routeParams.provider
 		$location.path '/providers'
+	if not $routeParams.app
+		$location.path '/providers/' + $routeParams.provider + '/app'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 3
+
+	$scope.providerTemplate = '/templates/partials/provider/apikey.html'
+
+
+	$scope.scopeSelect =
+		escapeMarkup: (m) ->
+			return m
+
+
+	AppService.get $routeParams.app, ((app) =>
+		delete app.data.secret
+		$scope.app = app.data
+		$scope.app.keysets.sort()
+	), (error) ->
+		console.log "error", error
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.providerConf = provider
+			$scope.parameters = provider.data.oauth2?.parameters || provider.data.oauth1?.parameters || {}
+			$scope.settings = settings
+
+			$http(
+				method: "GET"
+				url: '/api/providers/' + $scope.provider + '/keys.png'
+			).success(->
+				$scope.createKeyKeysImg = true
+			).error(->
+				$scope.createKeyKeysImg = false
+			)
+
+			$scope.apikeyUpdate = false
+			KeysetService.get $routeParams.app, $routeParams.provider, ((json) ->
+				console.log $scope.parameters, json.data
+				if json.data?
+					$scope.apikeyUpdate = true
+					for field of json.data.parameters
+						if not $scope.parameters[field]?
+							$scope.parameters[field] = {}
+						$scope.parameters[field].value = json.data.parameters[field]
+				else
+					for field in $scope.parameters
+						field.value = ""
+			), (error) ->
+
+		), (error) ->
+	), (error) ->
+
+ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderService) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 4
+
+	$scope.providerTemplate = '/templates/partials/provider/sample.html'
+
+	AppService.get $routeParams.app, ((app) =>
+		console.log app.data
+		delete app.data.secret
+		$scope.app = app.data
+		$scope.app.keysets.sort()
+	), (error) ->
+		console.log "error", error
 
 	ProviderService.get $routeParams.provider, ((provider) ->
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
@@ -821,14 +893,63 @@ ProviderKeyCtrl = ($scope, UserService, ProviderService, $routeParams, $location
 		), (error) ->
 	), (error) ->
 
+ProviderAppCtrl = ($scope, MenuService, UserService, ProviderService, AppService, $timeout, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
 
-	if not UserService.isLogin()
-		$scope.addKeyTemplate = '/templates/signin.html'
-	else
-		$scope.addKeyTemplate = '/templates/partials/create-key-laststep.html'
-
-	$scope.providerTemplate = '/templates/partials/create-key.html'
+	MenuService.changed()
 	$scope.provider = $routeParams.provider
+	$scope.state = 2
+
+	$scope.providerTemplate = '/templates/partials/provider/app.html'
+	counter = 0
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		$scope.providerConf = provider
+	), (error) ->
+
+	UserService.me (success) ->
+		$scope.apps = success.data.apps
+		for i of success.data.apps
+			do (i) ->
+				AppService.get $scope.apps[i], ((app) =>
+					#console.log app.data
+					delete app.data.secret
+					$scope.createKeyAppKey = app.data.key if counter == 1
+					$scope.apps[i] = app.data
+					$scope.apps[i].keysets.sort()
+					$scope.apps[i].keys = {}
+					$scope.apps[i].response_type = {}
+					$scope.apps[i].showKeys = false
+				), (error) ->
+					console.log "error", error
+
+ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppService, $timeout, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 1
+
+	$scope.providerTemplate = '/templates/partials/provider/configure.html'
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.providerConf = provider
+			$scope.settings = settings
+			$scope.provider = $routeParams.provider
+			$scope.oauthVersion = 2
+			$scope.oauthVersion = 1 if typeof $scope.providerConf.data.oauth1 != 'undefined'
+			$scope.cors = false
+			$scope.cors = true if $scope.providerConf.data.oauth2?.request?.cors
+			$scope.revoke = false
+			$scope.revoke = true if $scope.providerConf.data.oauth2?.revoke? or $scope.providerConf.data.oauth1?.revoke?
+			$scope.refresh = false
+			$scope.refresh = true if $scope.providerConf.data.oauth2?.refresh? or $scope.providerConf.data.oauth1?.refresh?
+		), (error) ->
+	), (error) ->
+
 
 ##################
 # App controller #
@@ -885,9 +1006,8 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	# alert $location.path()
 	UserService.me ((me)->
 		$rootScope.apps = me.data.apps
-		n = $rootScope.apps.length
 		$rootScope.noApp = false
-		if n == 0
+		if $rootScope.apps.length == 0
 			if $location.path() == '/key-manager'
 				# $location.path "/app-create"
 				createDefaultApp()
