@@ -28,57 +28,31 @@ dbapps = require './db_apps'
 config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
-short_formats = OAuth1ResponseParser.short_formats
+OAuthBase = require './oauth-base'
 
-ksort = (w) ->
-	r = {}
-	r[k] = w[k] for k in Object.keys(w).sort()
-	return r
+class OAuth1 extends OAuthBase
+	constructor: ->
+		super 'oauth1'
 
-build_auth_string = (authparams) ->
-	"OAuth " + (k + '="' + v + '"' for k,v of ksort authparams).join ","
+	authorize: (provider, parameters, opts, callback) ->
+		@_setParams provider.parameters
+		@_setParams provider.oauth1.parameters
+		@_createState provider, opts, (err, state) =>
+			return callback err if err
+			@_getRequestToken state, provider, parameters, opts, callback
 
-sign_hmac_sha1 = (method, baseurl, secret, parameters) ->
-	data = method + '&' + (encodeURIComponent baseurl) + '&'
-	data += encodeURIComponent (k + '=' + v for k,v of ksort parameters).join '&'
-
-	hmacsha1 = crypto.createHmac "sha1", secret
-	hmacsha1.update data
-	hmacsha1.digest "base64"
-
-replace_param = (param, params, hard_params, keyset) ->
-	param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
-		return hard_params[val] || ""
-	return param.replace /\{(.*?)\}/g, (match, val) ->
-		return "" if ! params[val] || ! keyset[val]
-		if Array.isArray(keyset[val])
-			return keyset[val].join params[val].separator || ","
-		return keyset[val]
-
-exports.authorize = (provider, parameters, opts, callback) ->
-	params = {}
-	params[k] = v for k,v of provider.parameters
-	params[k] = v for k,v of provider.oauth1.parameters
-	dbstates.add
-		key:opts.key
-		provider:provider.provider
-		redirect_uri:opts.redirect_uri
-		oauthv:'oauth1'
-		origin:opts.origin
-		options:opts.options
-		expire:600
-	, (err, state) ->
+	_getRequestToken: (state, provider, parameters, opts, callback) ->
 		request_token = provider.oauth1.request_token
 		query = {}
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
 		for name, value of request_token.query
-			param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
+			param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
 		headers = {}
-		headers["Accept"] = short_formats[request_token.format] || request_token.format if request_token.format
+		headers["Accept"] = @_short_formats[request_token.format] || request_token.format if request_token.format
 		for name, value of request_token.headers
-			param = replace_param value, params, {}, parameters
+			param = @_replaceParam value, {}, parameters
 			headers[name] = param if param
 		options =
 			url: request_token.url
@@ -88,7 +62,6 @@ exports.authorize = (provider, parameters, opts, callback) ->
 				consumer_key: parameters.client_id
 				consumer_secret: parameters.client_secret
 		delete query.oauth_callback
-
 		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
@@ -96,168 +69,172 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			options.qs = query
 
 		# do request to request_token
-		request options, (e, r, body) ->
-			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'request_token')
-			return callback(responseParser.error) if responseParser.error
+		request options, (err, response, body) =>
+			return callback(err) if err
+			@_parseGetRequestTokenResponse(response, body, provider, parameters, opts, headers, state, callback)
 
-			dbstates.setToken state.id, responseParser.oauth_token_secret, (e, r) ->
-				return callback e if e
-				authorize = provider.oauth1.authorize
-				query = {}
-				if typeof opts.options?.authorize == 'object'
-					query = opts.options.authorize
-				for name, value of authorize.query
-					param = replace_param value, params, state:state.id, callback:config.host_url+config.relbase, parameters
-					query[name] = param if param
-				query.oauth_token = responseParser.oauth_token
-				url = replace_param authorize.url, params, {}, parameters
-				url += "?" + querystring.stringify query
-				callback null, url
+	_parseGetRequestTokenResponse: (response, body, provider, parameters, opts, headers, state, callback) ->
+		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
+		return callback(responseParser.error) if responseParser.error
+		dbstates.setToken state.id, responseParser.oauth_token_secret, (err, returnCode) =>
+			return callback(err) if err
+			callback null, @_generateRequestTokenAuthorizeUrl(state, provider, parameters, opts, responseParser)
 
-
-exports.access_token = (state, req, callback) ->
-	if not req.params.oauth_token && not req.params.error
-		req.params.error_description ?= 'Authorization refused'
-
-	# manage errors in callback
-	if req.params.error || req.params.error_description
-		err = new check.Error
-		err.error req.params.error_description || 'Error while authorizing'
-		err.body.error = req.params.error if req.params.error
-		err.body.error_uri = req.params.error_uri if req.params.error_uri
-		return callback err
-
-	# get infos from state
-	async.parallel [
-		(callback) -> dbproviders.getExtended state.provider, callback
-		(callback) -> dbapps.getKeyset state.key, state.provider, callback
-	], (err, res) ->
-		return callback err if err
-		[provider, {parameters,response_type}] = res
-		err = new check.Error
-		if provider.oauth1.authorize.ignore_verifier == true
-			err.check req.params, oauth_token:'string'
-		else
-			err.check req.params, oauth_token:'string', oauth_verifier:'string'
-		return callback err if err.failed()
-		params = {}
-		params[k] = v for k,v of provider.parameters
-		params[k] = v for k,v of provider.oauth1.parameters
-
-		access_token = provider.oauth1.access_token
+	_generateRequestTokenAuthorizeUrl: (state, provider, parameters, opts, responseParser) ->
+		authorize = provider.oauth1.authorize
 		query = {}
-		hard_params = state:state.id, callback:config.host_url+config.relbase
-		for extra in (provider.oauth1.authorize.extra||[])
-			hard_params[extra] = req.params[extra] if req.params[extra]
-		for name, value of access_token.query
-			param = replace_param value, params, hard_params, parameters
+		if typeof opts.options?.authorize == 'object'
+			query = opts.options.authorize
+		for name, value of authorize.query
+			param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
-		headers = {}
-		headers["Accept"] = short_formats[access_token.format] || access_token.format if access_token.format
-		for name, value of access_token.headers
-			param = replace_param value, params, {}, parameters
-			headers[name] = param if param
-		options =
-			url: replace_param access_token.url, params, hard_params, parameters
-			method: access_token.method?.toUpperCase() || "POST"
-			oauth:
-				callback: query.oauth_callback
-				consumer_key: parameters.client_id
-				consumer_secret: parameters.client_secret
-				token: req.params.oauth_token
-				token_secret: state.token
-		if provider.oauth1.authorize.ignore_verifier != true
-			options.oauth.verifier = req.params.oauth_verifier
-		else
-			options.oauth.verifier = ""
-		delete query.oauth_callback
+		query.oauth_token = responseParser.oauth_token
+		url = @_replaceParam authorize.url, {}, parameters
+		url += "?" + querystring.stringify query
+		return url
 
-		options.headers = headers if Object.keys(headers).length
-		if options.method == 'POST'
-			options.form = query
-		else
-			options.qs = query
+	access_token: (state, req, callback) ->
+		if not req.params.oauth_token && not req.params.error
+			req.params.error_description ?= 'Authorization refused'
 
-		# do request to access_token
-		request options, (e, r, body) ->
-			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
-			return callback(responseParser.error) if responseParser.error
+		# manage errors in callback
+		if req.params.error || req.params.error_description
+			err = new check.Error
+			err.error req.params.error_description || 'Error while authorizing'
+			err.body.error = req.params.error if req.params.error
+			err.body.error_uri = req.params.error_uri if req.params.error_uri
+			return callback err
 
-			expire = responseParser.body.expire
-			expire ?= responseParser.body.expires
-			expire ?= responseParser.body.expires_in
-			expire ?= responseParser.body.expires_at
-			if expire
-				expire = parseInt expire
-				now = (new Date).getTime()
-				expire -= now if expire > now
-			requestclone = {}
-			requestclone[k] = v for k, v of provider.oauth1.request
-			for k, v of params
-				if v.scope == 'public'
-					requestclone.parameters ?= {}
-					requestclone.parameters[k] = parameters[k]
-			result =
-				oauth_token: responseParser.oauth_token
-				oauth_token_secret: responseParser.oauth_token_secret
-				expires_in: expire
-				request: requestclone
-			for extra in (access_token.extra||[])
-				result[extra] = responseParser.body[extra] if responseParser.body[extra]
+		# get infos from state
+		async.parallel [
+			(callback) -> dbproviders.getExtended state.provider, callback
+			(callback) -> dbapps.getKeyset state.key, state.provider, callback
+		], (err, res) =>
+			return callback err if err
+			[provider, {parameters,response_type}] = res
+			err = new check.Error
+			if provider.oauth1.authorize.ignore_verifier == true
+				err.check req.params, oauth_token:'string'
+			else
+				err.check req.params, oauth_token:'string', oauth_verifier:'string'
+			return callback err if err.failed()
+			@_setParams provider.parameters
+			@_setParams provider.oauth1.parameters
+
+			access_token = provider.oauth1.access_token
+			query = {}
+			hard_params = state:state.id, callback:config.host_url+config.relbase
 			for extra in (provider.oauth1.authorize.extra||[])
-				result[extra] = req.params[extra] if req.params[extra]
-			callback null, result
+				hard_params[extra] = req.params[extra] if req.params[extra]
+			for name, value of access_token.query
+				param = @_replaceParam value, hard_params, parameters
+				query[name] = param if param
+			headers = {}
+			headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
+			for name, value of access_token.headers
+				param = @_replaceParam value, {}, parameters
+				headers[name] = param if param
+			options =
+				url: @_replaceParam access_token.url, hard_params, parameters
+				method: access_token.method?.toUpperCase() || "POST"
+				oauth:
+					callback: query.oauth_callback
+					consumer_key: parameters.client_id
+					consumer_secret: parameters.client_secret
+					token: req.params.oauth_token
+					token_secret: state.token
+			if provider.oauth1.authorize.ignore_verifier != true
+				options.oauth.verifier = req.params.oauth_verifier
+			else
+				options.oauth.verifier = ""
+			delete query.oauth_callback
 
-exports.request = (provider, parameters, req, callback) ->
-	params = {}
-	params[k] = v for k,v of provider.parameters
-	params[k] = v for k,v of provider.oauth1.parameters
+			options.headers = headers if Object.keys(headers).length
+			if options.method == 'POST'
+				options.form = query
+			else
+				options.qs = query
 
-	if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
-		return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
+			# do request to access_token
+			request options, (e, r, body) ->
+				return callback(e) if e
+				responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
+				return callback(responseParser.error) if responseParser.error
 
-	oauthrequest = provider.oauth1.request
+				expire = responseParser.body.expire
+				expire ?= responseParser.body.expires
+				expire ?= responseParser.body.expires_in
+				expire ?= responseParser.body.expires_at
+				if expire
+					expire = parseInt expire
+					now = (new Date).getTime()
+					expire -= now if expire > now
+				requestclone = {}
+				requestclone[k] = v for k, v of provider.oauth1.request
+				for k, v of @_params
+					if v.scope == 'public'
+						requestclone.parameters ?= {}
+						requestclone.parameters[k] = parameters[k]
+				result =
+					oauth_token: responseParser.oauth_token
+					oauth_token_secret: responseParser.oauth_token_secret
+					expires_in: expire
+					request: requestclone
+				for extra in (access_token.extra||[])
+					result[extra] = responseParser.body[extra] if responseParser.body[extra]
+				for extra in (provider.oauth1.authorize.extra||[])
+					result[extra] = req.params[extra] if req.params[extra]
+				callback null, result
 
-	options =
-		method: req.method
-		followAllRedirects: true
+	request: (provider, parameters, req, callback) ->
+		@_setParams provider.parameters
+		@_setParams provider.oauth1.parameters
 
-	# build url
-	options.url = decodeURIComponent(req.params[1])
-	if ! options.url.match(/^[a-z]{2,16}:\/\//)
-		if options.url[0] != '/'
-			options.url = '/' + options.url
-		options.url = oauthrequest.url + options.url
-	options.url = replace_param options.url, params, parameters.oauthio, parameters
+		if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
+			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 
-	# build query
-	options.qs = {}
-	options.qs[name] = value for name, value of req.query
-	for name, value of oauthrequest.query
-		param = replace_param value, params, parameters.oauthio, parameters
-		options.qs[name] = param if param
+		oauthrequest = provider.oauth1.request
 
-	options.oauth =
-		consumer_key: parameters.client_id
-		consumer_secret: parameters.client_secret
-		token: parameters.oauthio.oauth_token
-		token_secret: parameters.oauthio.oauth_token_secret
+		options =
+			method: req.method
+			followAllRedirects: true
 
-	# build headers
-	options.headers =
-		accept:req.headers.accept
-		'accept-encoding':req.headers['accept-encoding']
-		'accept-language':req.headers['accept-language']
-		'content-type':req.headers['content-type']
-	for name, value of oauthrequest.headers
-		param = replace_param value, params, parameters.oauthio, parameters
-		options.headers[name] = param if param
+		# build url
+		options.url = decodeURIComponent(req.params[1])
+		if ! options.url.match(/^[a-z]{2,16}:\/\//)
+			if options.url[0] != '/'
+				options.url = '/' + options.url
+			options.url = oauthrequest.url + options.url
+		options.url = @_replaceParam options.url, parameters.oauthio, parameters
 
-	# build body
-	if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
-		options.body = req._body || req.body
+		# build query
+		options.qs = {}
+		options.qs[name] = value for name, value of req.query
+		for name, value of oauthrequest.query
+			param = @_replaceParam value, parameters.oauthio, parameters
+			options.qs[name] = param if param
 
-	# do request
-	callback null, request(options)
+		options.oauth =
+			consumer_key: parameters.client_id
+			consumer_secret: parameters.client_secret
+			token: parameters.oauthio.oauth_token
+			token_secret: parameters.oauthio.oauth_token_secret
+
+		# build headers
+		options.headers =
+			accept:req.headers.accept
+			'accept-encoding':req.headers['accept-encoding']
+			'accept-language':req.headers['accept-language']
+			'content-type':req.headers['content-type']
+		for name, value of oauthrequest.headers
+			param = @_replaceParam value, parameters.oauthio, parameters
+			options.headers[name] = param if param
+
+		# build body
+		if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
+			options.body = req._body || req.body
+
+		# do request
+		callback null, request(options)
+
+module.exports = OAuth1

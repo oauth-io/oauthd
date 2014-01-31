@@ -62,11 +62,12 @@ exports.setup = (callback) ->
 				return cb new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
+			oa = new oauth[oauthv]
 
 			parameters.oauthio = oauthio
 
 			# let oauth modules do the request
-			oauth[oauthv].request provider, parameters, req, (err, api_request) ->
+			oa.request provider, parameters, req, (err, api_request) ->
 				return cb err if err
 
 				api_request.pipefilter = (response, dest) ->

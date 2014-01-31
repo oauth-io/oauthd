@@ -106,7 +106,8 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				return next e if e
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
-				oauth.oauth2.refresh keyset, provider, req.body.token, send(res,next)
+				oa = new oauth.oauth2
+				oa.refresh keyset, provider, req.body.token, send(res,next)
 
 
 
@@ -177,7 +178,8 @@ server.get config.base + '/', (req, res, next) ->
 		return next new check.Error 'state', 'invalid or expired' if not state
 		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-		oauth[state.oauthv].access_token state, req, (e, r) ->
+		oa = new oauth[state.oauthv]
+		oa.access_token state, req, (e, r) ->
 			status = if e then 'error' else 'success'
 
 			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
@@ -250,7 +252,8 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-			oauth[oauthv].authorize provider, parameters, opts, cb
+			oa = new oauth[oauthv]
+			oa.authorize provider, parameters, opts, cb
 	], (err, url) ->
 		return callback err if err
 		res.setHeader 'Location', url
