@@ -17,10 +17,9 @@
 async = require 'async'
 qs = require 'querystring'
 Url = require 'url'
-OAuth1 = require '../../lib/oauth1'
 
 oauth =
-	oauth1: new OAuth1
+	oauth1: require '../../lib/oauth1'
 	oauth2: require '../../lib/oauth2'
 
 exports.setup = (callback) ->
@@ -63,11 +62,12 @@ exports.setup = (callback) ->
 				return cb new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
+			oa = new oauth[oauthv]
 
 			parameters.oauthio = oauthio
 
 			# let oauth modules do the request
-			oauth[oauthv].request provider, parameters, req, (err, api_request) ->
+			oa.request provider, parameters, req, (err, api_request) ->
 				return cb err if err
 
 				api_request.pipefilter = (response, dest) ->
