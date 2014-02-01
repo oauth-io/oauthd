@@ -1,0 +1,22 @@
+{
+  "name": "oauthio-tools",
+  "description": "OAuth that just works.",
+  "private": true,
+  "version": "0.1.0",
+  "homepage": "https://oauth.io",
+  "author": "OAuth team <team@oauth.io>",
+  "repository": {
+    "type": "git",
+    "url": "gitolite@91.121.120.153:oauthd"
+  },
+  "licenses": "proprietary",
+  "main": "lib/oauthd.coffee",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "devDependencies": {},
+  "keywords": [],
+  "dependencies": {
+    "netpbm": "~0.1.1"
+  }
+}
