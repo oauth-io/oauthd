@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "http://google.com/",
-				"docs": "http://developers.google.com/youtube/analytics/"
+				"docs": "https://developers.google.com/youtube/v3"
 			}
 		}
 	}

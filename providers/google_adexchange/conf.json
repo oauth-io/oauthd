@@ -54,7 +54,7 @@
 	},
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
-		"docs": "https://developers.google.com/ad-exchange/buyer-rest",
+		"docs": "https://developers.google.com/ad-exchange/seller-rest/",
 		"apps": "https://code.google.com/apis/console/",
 		"provider": "http://google.com/"
 	}

@@ -58,7 +58,7 @@
 	},
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
-		"docs": "http://developers.google.com/youtube/analytics/",
+		"docs": "https://developers.google.com/youtube/v3",
 		"apps": "https://code.google.com/apis/console/",
 		"provider": "http://google.com/"
 	}
