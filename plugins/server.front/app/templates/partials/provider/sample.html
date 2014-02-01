@@ -32,7 +32,7 @@
 		<p style="font-size: 1.3em">You have 2 ways of authorizing your user:</p>
 	</div>
 	<div class="col col-lg-6">
-		<pre>OAuth.initialize('{{app.key}}')</pre>
+		<pre>OAuth.initialize('{{app.key||"Your_Public_Key"}}')</pre>
 	</div>
 </div>
 <div class="row">
@@ -62,7 +62,7 @@
 
 	</div>
 	<div class="col col-lg-6">
-		<pre>OAuth.redirect('<span class="api-text">facebook</span>', "<strong>callback/url</strong>");</pre>
+		<pre>OAuth.redirect('<span class="api-text">{{provider}}</span>', "<strong>callback/url</strong>");</pre>
 	</div>
 </div>
 
