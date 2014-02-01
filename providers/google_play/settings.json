@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "http://google.com/",
-				"docs": "https://developers.google.com/android-publisher"
+				"docs": "https://developers.google.com/games/services/web/api/states"
 			}
 		}
 	}

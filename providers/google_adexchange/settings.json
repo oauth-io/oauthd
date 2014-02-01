@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "http://google.com/",
-				"docs": "https://developers.google.com/ad-exchange/buyer-rest"
+				"docs": "https://developers.google.com/ad-exchange/seller-rest/"
 			}
 		}
 	}

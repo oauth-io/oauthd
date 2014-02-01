@@ -56,7 +56,7 @@
 	},
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
-		"docs": "https://developers.google.com/android-publisher",
+		"docs": "https://developers.google.com/games/services/web/api/states",
 		"apps": "https://code.google.com/apis/console/",
 		"provider": "http://google.com/"
 	}
