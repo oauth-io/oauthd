@@ -155,6 +155,8 @@ getApi = (infos, callback) ->
 		if not merged
 			provider.name = extra[provider_name]?.name || api_name
 			provider.desc = extra[provider_name]?.description || body.description
+			settings.settings.install.href.docs = body.documentationLink
+			provider.href.docs = body.documentationLink
 
 		result.logo_url = body.icons.x32
 		if fs.existsSync(root + 'providers/' + provider_name + '/conf.json')
