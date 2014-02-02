@@ -6,6 +6,7 @@
 /plugins/server.*/*.js
 !/plugins/server.*/gruntConfig.js
 /lib/*.js
+/tools/node_modules/
 .nodemonignore
 nohup.out
 config.local.js

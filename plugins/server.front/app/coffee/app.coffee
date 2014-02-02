@@ -16,13 +16,13 @@ app.config([
 			templateUrl: '/templates/providers.html'
 			controller: 'ProviderCtrl'
 			title: 'API Providers'
-			desc: 'Integrate 90+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar'
+			desc: 'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar'
 
 		$routeProvider.when '/wishlist',
 			templateUrl: '/templates/wishlist.html'
 			controller: 'WishlistCtrl'
 			title: 'API wishlist'
-			desc: 'OAuth.io supports 90+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !'
+			desc: 'OAuth.io supports 100+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !'
 
 		$routeProvider.when '/terms',
 			templateUrl: '/templates/terms.html'
@@ -38,7 +38,7 @@ app.config([
 			templateUrl: '/templates/docs.html'
 			controller: 'DocsCtrl'
 			title: 'Documentation'
-			desc: 'Integrate 90+ OAuth providers in minutes. Setup your keys, install oauth.js, and you are ready to play !'
+			desc: 'Integrate 100+ OAuth providers in minutes. Setup your keys, install oauth.js, and you are ready to play !'
 
 		$routeProvider.when '/faq',
 			templateUrl: '/templates/faq.html'
