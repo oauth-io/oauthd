@@ -110,7 +110,45 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 					return next new check.Error "refresh token not supported for " + req.params.provider
 				oauth.oauth2.refresh keyset, provider, req.body.token, send(res,next)
 
+# iframe injection for IE
+server.get config.base + '/iframe', (req, res, next) ->
+	res.setHeader 'Content-Type', 'text/html'
+	res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
+	e = new check.Error
+	e.check req.params, d:'string'
+	origin = check.escape req.params.d
+	return next e if e.failed()
+	content = '<!DOCTYPE html>\n'
+	content += '<html><head><script>(function() {\n'
 
+	content += 'function eraseCookie(name) {\n'
+	content += '	var date = new Date();\n'
+	content += '	date.setTime(date.getTime() - 86400000);\n'
+	content += '	document.cookie = name+"=; expires="+date.toGMTString()+"; path=/";\n'
+	content += '}\n'
+
+	content += 'function readCookie(name) {\n'
+	content += '	var nameEQ = name + "=";\n'
+	content += '	var ca = document.cookie.split(";");\n'
+	content += '	for(var i = 0; i < ca.length; i++) {\n'
+	content += '		var c = ca[i];\n'
+	content += '		while (c.charAt(0) === " ") c = c.substring(1,c.length);\n'
+	content += '		if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);\n'
+	content += '	}\n'
+	content += '	return null;\n'
+	content += '}\n'
+
+	content += 'var cookieCheckTimer = setInterval(function() {\n'
+	content += '	var results = readCookie("oauthio_last");\n'
+	content += '	if (!results) return;\n'
+	content += '	var msg = decodeURIComponent(results.replace(/\\+/g, " "));\n'
+	content += '	parent.postMessage(msg, "' + origin + '");\n'
+	content += '	eraseCookie("oauthio_last");\n'
+	content += '}, 1000);\n'
+
+	content += '})();</script></head><body></body></html>'
+	res.send content
+	next()
 
 # oauth: get access token from server
 server.post config.base + '/access_token', (req, res, next) ->
@@ -154,7 +192,14 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 		uaparser.setUA req.headers['user-agent']
 		browser = uaparser.getBrowser()
 		if browser.name.substr(0,2) == 'IE'
-			view += '\tdocument.title = "oauthio=" + encodeURIComponent(msg);\n'
+			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
+			view += 'function createCookie(name, value) {\n'
+			view += '	var date = new Date();\n'
+			view += '	date.setTime(date.getTime() + 600000);\n'
+			view += '	var expires = "; expires="+date.toGMTString();\n'
+			view += '	document.cookie = name+"="+value+expires+"; path=/";\n'
+			view += '}\n'
+			view += 'createCookie("oauthio_last",encodeURIComponent(msg));\n'
 		else
 			view += '\tvar opener = window.opener || window.parent.window.opener;\n'
 			view += '\tif (opener)\n'

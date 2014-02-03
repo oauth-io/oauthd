@@ -116,6 +116,9 @@ check = ->
 check.clone = (cloned) -> =>
 	return cloned.apply @, _clone arguments
 
+check.escape = (str) ->
+	return str.replace(/[\\\/"']/g, '\\$&').replace /\u0000/g, '\\0'
+
 check.Error = CheckError
 check.nullv = {} # this means a null
 

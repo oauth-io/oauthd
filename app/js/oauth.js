@@ -2,7 +2,7 @@
 	"use strict";
 	var config = {
 		oauthd_url: '{{auth_url}}',
-		version: 'web-0.1.2'
+		version: 'web-0.1.3'
 	};
 
 	if ( ! window.OAuth) {
@@ -163,7 +163,7 @@
 				return config.version;
 			},
 			popup: function(provider, opts, callback) {
-				var wnd;
+				var wnd, frm;
 				if ( ! config.key)
 					return callback(new Error('OAuth object must be initialized'));
 				if (arguments.length == 2) {
@@ -197,10 +197,10 @@
 				wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
 
 				opts = {provider:provider};
-				var titleCheckTimer;
 				function getMessage(e) {
-					if (e.source !== wnd || e.origin !== config.oauthd_base)
+					if (e.origin !== config.oauthd_base)
 						return;
+					try { wnd.close(); } catch(e) {}
 					opts.data = e.data;
 					return sendCallback(opts);
 				}
@@ -212,7 +212,6 @@
 					else if (document.detachEvent)
 						document.detachEvent("onmessage", getMessage);
 					opts.callback = function() {};
-					if (titleCheckTimer) clearInterval(titleCheckTimer);
 					return callback(e,r);
 				};
 
@@ -223,17 +222,15 @@
 				else if (window.addEventListener)
 					window.addEventListener("message", getMessage, false);
 
-				titleCheckTimer = setInterval(function() {
-					if (!wnd) return;
-					try {
-						var results = /^oauthio=(.*)$/.exec(wnd.document.title);
-						if (!results) return;
-						opts.data = decodeURIComponent(results[1].replace(/\+/g, " "));
-						wnd.close();
-						sendCallback(opts);
-					}
-					catch (e) {}
-				}, 1000);
+				if (! frm && (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0)) {
+					frm = document.createElement("iframe");
+					frm.src = config.oauthd_url + "/auth/iframe?d=" + encodeURIComponent(getAbsUrl('/'));
+					frm.width = 0
+					frm.height = 0
+					frm.frameBorder = 0
+					frm.style.visibility = "hidden";
+					document.body.appendChild(frm);
+				}
 
 				setTimeout(function() {
 					opts.callback(new Error('Authorization timed out'));
