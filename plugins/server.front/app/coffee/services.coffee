@@ -130,7 +130,7 @@ app.factory 'MenuService', ($rootScope, $location) ->
 		p = $location.path()
 
 		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-			$('body').css('background-color', "#d8d8d8")
+			$('body').css('background-color', "#FFF")
 		else
 			$('body').css('background-color', '#FFF')
 

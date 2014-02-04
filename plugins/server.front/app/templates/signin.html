@@ -1,77 +1,120 @@
 <div class="container">
 	<div class="row" style="margin-top: 30px">
-		<div class="col col-lg-10 col-offset-1">
+		<div class="col col-lg-8 col-offset-2">
 			<div style="background-color: white; font-family: 'YanoneKRegular', Monaco, Menlo !important">
-			  <div style="background-color: #cbe7f9; height: 20px"></div>
-			  <div style="padding: 25px 50px">
-			    <div class="row">
-			      <div class="col col-lg-4">
-					<object data="/img/logo.svg" style="position: relative; left: 25px; top: 50px" type="image/svg+xml">
-					  <img src="/img/logo.png" />
-					</object>
-			      </div>
-			      <div class="col col-lg-6">
-			        <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
-			            <h4 style="font-size: 1.1em; ">Log in</h4><br />
-			        </div>
-			        <div ng-show="userForm.mode == 'Lost password'">
-			            <h4 style="text-align: center">Forgot my password</h4>
-			            <br />
-			        </div>
-			        <form class="form-vertical" ng-submit="userForm.submit()" method="POST">
-			          <div class="alert alert-danger" ng-show="info.status == 'error'">
-			            {{info.message}}
-			          </div>
-			          <div class="alert alert-info" ng-show="info.status == 'info'">
-			            {{info.message}}
-			          </div>
-			          <div>
-			            <label for="mail" style="font-size: 1.3em">Email</label>
-			            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required>
-			          </div>
-			          <div ng-hide="userForm.mode == 'Lost password' || userForm.pass.hide" style="margin-top: 15px">
-			            <label for="pass" style="font-size: 1.3em">Password</label>
-			            <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6">
-			          </div>
-			          <div class="row">
-			            <div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
-			              <button type="submit" class="btn btn-primary">
-			                <span ng-show="userForm.mode == 'Lost password'">
-			                  Reset my password
-			                </span>
-			                <span  style="font-size: 18px; " ng-hide="userForm.mode == 'Lost password'">Log in</span>
-			              </button>
-			            </div>
+			  	<div style="padding: 25px 50px">
+		    		<div class="row">
+			      		<div class="col col-lg-10 col-offset-1">
+							<object data="/img/logo.svg" style="float: left; position: relative; top: 17px;left: 10px; width: 60px; height: 60px;" type="image/svg+xml">
+				  				<img src="/img/logo.png" />
+							</object>
+							<div style="font-size: 2.0em; margin-left: 90px;">
+			        			<div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
+			           				<h5 style="font-size: 0.7em; margin-top: 25px">Log in</h5><br />
+			        			</div>
+			        			<div ng-show="userForm.mode == 'Lost password'">
+			            			<h5 style="text-align: center">Forgot my password</h5>
+			            			<br />
+			        			</div>
+			        		</div>
+			        		<div ng-show="connect" ng-init="connect=true">
+								<div class="row">
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large twitter" ng-click="socialSignin('twitter')">
+											<img src="/api/providers/twitter/logo" class="pull-left" style="margin-left: 25px">
+											Connect with Twitter
+										</button>
+									</div>
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large facebook" ng-click="socialSignin('facebook')">
+											<img src="/api/providers/facebook/logo" class="pull-left" style="margin-left: 25px">
+											Connect with Facebook
+										</button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 15px">
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large google" ng-click="socialSignin('google_plus')">
+											<img src="/api/providers/google_plus/logo" class="pull-left" style="margin-left: 25px">
+											Connect with Google Plus
+										</button>
+									</div>
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large linkedin" ng-click="socialSignin('linkedin')">
+											<img src="/api/providers/linkedin/logo" class="pull-left" style="margin-left: 25px">
+											Connect with Linkedin
+										</button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 15px">
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large github" ng-click="socialSignin('github')">
+											<img src="/api/providers/github/logo" class="pull-left" style="margin-left: 25px">
+											Connect with Github
+										</button>
+									</div>
+									<div class="col col-lg-6">
+										<button class="btn btn-block btn-large vk" ng-click="socialSignin('vk')">
+											<img src="/api/providers/vk/logo" class="pull-left" style="margin-left: 25px">
+											Connect with VK
+										</button>
+									</div>
+								</div>
+								<div class="row" style="margin-top: 25px">
+									<div class="col col-lg-12 text-center">
+										<a href="#" style="font-size: 1.3em" ng-click="formDisplay=true; connect=false">Log in using email and password</a>
+									</div>
+								</div>
+							</div>
+				        	<form class="form-vertical" ng-show="formDisplay" ng-submit="userForm.submit()" method="POST">
+					          	<div class="alert alert-danger" ng-show="info.status == 'error'">
+					            	{{info.message}}
+					          	</div>
+					          	<div class="alert alert-info" ng-show="info.status == 'info'">
+					            	{{info.message}}
+					          	</div>
+					          	<div>
+				            		<label for="mail" style="font-size: 1.3em">Email</label>
+					            	<input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required>
+					          	</div>
+					          	<div ng-hide="userForm.mode == 'Lost password' || userForm.pass.hide" style="margin-top: 15px">
+					            	<label for="pass" style="font-size: 1.3em">Password</label>
+					            	<input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6">
+					          	</div>
+					          	<div class="row">
+					            	<div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
+					              		<button type="submit" class="btn btn-primary">
+					                		<span ng-show="userForm.mode == 'Lost password'">
+					                  			Reset my password
+					                		</span>
+					                		<span  style="font-size: 18px; " ng-hide="userForm.mode == 'Lost password'">Log in</span>
+					              		</button>
+				            		</div>
 
-			            <div style="clear: both; position: relative; top: 15px;">
-			              <p style="font-size: 1.2em; ;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a></p>
-			              <a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; margin-left: 15px">cancel</a>
-			            </div>
-			          </div>
-			        </form>
-			        <div class="alert alert-danger" ng-show="signup.status == 'error'">
-			          <strong>Oups!</strong> {{signup.message}}
-			        </div>
-			        <div ng-show="userForm.mode == 'Sign up'">
-			          <div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
-			            <strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
-			          </div>
-			          <div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
-			            <strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			  </div>
-			  <div style="background-color: #cbe7f9; height: 20px"></div>
+				            		<div style="clear: both; position: relative; top: 15px;">
+					              		<p style="font-size: 1.2em; ;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a> - <a href="#" ng-click="formDisplay=false; connect=true">Log in using social connect</a></p>
+					              		<a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; margin-left: 15px">cancel</a>
+
+				            		</div>
+				          		</div>
+				        	</form>
+
+					        <div class="alert alert-danger" ng-show="signup.status == 'error'">
+					          	<strong>Oups!</strong> {{signup.message}}
+					        </div>
+					        <div ng-show="userForm.mode == 'Sign up'">
+					          	<div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+					            	<strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+					          	</div>
+					          	<div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
+					            	<strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
+					          	</div>
+					        </div>
+		              		<p style="font-size: 1.2em; margin: 20px 0; text-align: center"><a style="cursor: pointer;" href="/signup">You don't have an account? <span style="text-decoration: underline">Register</span></a></p>
+		      			</div>
+			    	</div>
+			  	</div>
 			</div>
-		</div>
-	</div>
-</div>
-<div class="container">
-	<div class="row">
-		<div class="col col-offset-1">
-			<p style="font-size: 1.2em; "><a style="cursor: pointer;" href="/signup">I don't have an account yet? <span style="text-decoration: underline">Register</span></a></p>
 		</div>
 	</div>
 </div>

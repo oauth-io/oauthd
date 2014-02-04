@@ -157,6 +157,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 	if UserService.isLogin()
 		$location.path '/key-manager'
 
+
 	if not $scope.info
 		if document.location.hash.match /^#err=./
 			$scope.info =
@@ -171,10 +172,17 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			status:''
 			message:''
 
-	$scope.oauth = (provider) ->
+	$scope.oauth = (provider, callback) ->
 		OAuth.initialize 'ZjsbIbKdkuw5fmEkBHDZfUqEadY'
 		OAuth.popup provider, (err, success) ->
 			console.log err, success
+			if callback
+				callback err, success
+
+
+	$scope.socialSignin = (provider) ->
+		$scope.oauth provider, (err, res) ->
+			alert 'todo'
 
 	$scope.userForm =
 		template: "/templates/partials/userForm.html"
