@@ -14,6 +14,7 @@ $('#navTab a').click(function (e) {
 			<li ng-class="{active: tabShow == 'apps'}"><a ng-click="tabShow = 'apps'">Apps</a></li>
 			<li ng-class="{active: tabShow == 'providers'}"><a ng-click="tabShow = 'providers'">Providers</a></li>
 			<li ng-class="{active: tabShow == 'stats'}"><a ng-click="tabShow = 'stats'">Stats</a></li>
+			<li ng-class="{active: tabShow == 'scopes'}"><a ng-click="tabShow = 'scopes'">Scopes</a></li>
 			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
 			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
 			<li ng-class="{active: tabShow == 'payment'}"><a ng-click="tabShow = 'payment'">Payment</a></li>
@@ -504,6 +505,43 @@ $('#navTab a').click(function (e) {
 
 				<div class="row">
 					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="providerPagination.nbPages" current-page="providerPagination.current" max-size="providerPagination.max"></pagination>
+				</div>
+
+			</div>
+		</div>
+
+
+		<!-- scopes -->
+		<div ng-show="tabShow == 'scopes'">
+			<div class="col col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col col-lg-12">
+				<div class="row">
+					<div class="col col-lg-1">Scopes</div>
+					<div class="input-group col col-lg-11">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="scopeQuery.name" ng-change="scopeQueryChange()" value="*">
+					</div>
+				</div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Scope</th>
+						<th>% User failures</th>
+						<th>Count</th>
+					</tr>
+					<tr ng-repeat="scope in scopeFiltered | orderBy:['-score','+name'] | startFrom:(scopePagination.current-1)*scopePagination.nbPerPage | limitTo:scopePagination.nbPerPage">
+						<td>{{scope.name}}</td>
+						<td>{{scope.score / 100}} %</td>
+						<td>{{scope.count}}</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="scopePagination.nbPages" current-page="scopePagination.current" max-size="scopePagination.max"></pagination>
 				</div>
 
 			</div>
