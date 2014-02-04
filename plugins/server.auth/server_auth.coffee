@@ -10,7 +10,7 @@ restifyOAuth2 = require 'restify-oauth2-oauthd'
 shared = require '../shared'
 
 _config =
-	expire: 3600*5
+	expire: 3600*36
 
 hooks =
 	grantClientToken: (clientId, clientSecret, cb) ->
@@ -40,6 +40,7 @@ exports.needed = (req, res, next) ->
 	if not req.clientId
 		return next new restify.UnauthorizedError "You need authentication"
 	req.user = req.clientId
+	shared.db.redis.expire 'session:' + req.token, _config.expire
 	req.body ?= {}
 	if not req.params.key?
 		return next()

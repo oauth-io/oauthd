@@ -1,3 +1,14 @@
+refreshSession = ($rootScope) ->
+	if $rootScope.accessToken
+		date = new Date()
+		date.setTime date.getTime() - 86400000
+		document.cookie = "accessToken=; expires="+date.toGMTString()+"; path=/"
+		date = new Date()
+		date.setTime date.getTime() + 3600*36*1000
+		expires = "; expires="+date.toGMTString()
+		document.cookie = "accessToken=%22"+$rootScope.accessToken+"%22"+expires+"; path=/"
+		return
+
 apiRequest = ($http, $rootScope) -> (url, success, error, opts) ->
 	opts ?= {}
 	opts.url = "/api/" + url
@@ -13,6 +24,7 @@ apiRequest = ($http, $rootScope) -> (url, success, error, opts) ->
 	req = $http(opts)
 	req.success(success) if success
 	req.error(error) if error
+	refreshSession $rootScope
 	return
 
 
@@ -46,6 +58,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 			).success((data) ->
 				$rootScope.accessToken = data.access_token
 				$cookieStore.put 'accessToken', data.access_token
+				refreshSession $rootScope
 
 				path = $rootScope.authRequired || '/key-manager'
 				success path if success
