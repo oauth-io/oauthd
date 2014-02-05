@@ -1,6 +1,7 @@
 User-agent: *
 Disallow: /signin
 Disallow: /signup
+Disallow: /logout
 Disallow: /404
 Disallow: /key-manager/*
 Disallow: /account
