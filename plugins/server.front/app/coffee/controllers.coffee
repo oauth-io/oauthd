@@ -173,7 +173,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			message:''
 
 	$scope.oauth = (provider, callback) ->
-		OAuth.initialize 'ZjsbIbKdkuw5fmEkBHDZfUqEadY'
+		OAuth.initialize window.loginKey
 		OAuth.popup provider, (err, success) ->
 			console.log err, success
 			if callback

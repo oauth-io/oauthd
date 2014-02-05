@@ -18,6 +18,7 @@ async = require 'async'
 qs = require 'querystring'
 Url = require 'url'
 restify = require 'restify'
+request = require 'request'
 
 oauth =
 	oauth1: require '../../lib/oauth1'
@@ -26,6 +27,34 @@ oauth =
 exports.setup = (callback) ->
 
 	fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
+
+	@apiRequest = (req, provider_name, oauthio, callback) =>
+		req.headers ?= {}
+		async.parallel [
+			(callback) => @db.providers.getExtended provider_name, callback
+			(callback) => @db.apps.getKeyset oauthio.k, provider_name, callback
+		], (err, results) =>
+			return callback err if err
+			[provider, {parameters}, domaincheck] = results
+
+			# select oauth version
+			oauthv = oauthio.oauthv && {
+				"2":"oauth2"
+				"1":"oauth1"
+			}[oauthio.oauthv]
+			if oauthv and not provider[oauthv]
+				return callback new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
+			oauthv ?= 'oauth2' if provider.oauth2
+			oauthv ?= 'oauth1' if provider.oauth1
+
+			parameters.oauthio = oauthio
+
+			@emit 'request', provider:provider_name, key:oauthio.k
+
+			# let oauth modules do the request
+			oauth[oauthv].request provider, parameters, req, (err, options) ->
+				return callback err if err
+				return callback null, options
 
 	doRequest = (req, res, next) =>
 		cb = @server.send(res, next)
@@ -51,6 +80,7 @@ exports.setup = (callback) ->
 			return cb err if err
 			[provider, {parameters}, domaincheck] = results
 
+			req.apiUrl = decodeURIComponent(req.params[1])
 			if ! domaincheck
 				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 
@@ -69,8 +99,9 @@ exports.setup = (callback) ->
 			@emit 'request', provider:req.params[0], key:oauthio.k
 
 			# let oauth modules do the request
-			oauth[oauthv].request provider, parameters, req, (err, api_request) ->
+			oauth[oauthv].request provider, parameters, req, (err, options) ->
 				return cb err if err
+				api_request = request options
 
 				api_request.pipefilter = (response, dest) ->
 					dest.setHeader 'access-control-allow-origin', origin

@@ -8,6 +8,7 @@ crypto = require 'crypto'
 restify = require 'restify'
 restifyOAuth2 = require 'restify-oauth2-oauthd'
 shared = require '../shared'
+request = require 'request'
 
 _config =
 	expire: 3600*5
@@ -76,56 +77,117 @@ exports.setup = (callback) ->
 			next()
 
 	getInfos =
-		'twitter': @check oauth_token:'string', oauth_token_secret:'string', (data, callback) -> callback null, id:4242
-		'facebook': @check access_token:'string', (data, callback) -> callback null, id:2222, email:'bumpmann@oauth.io'
-		'google': @check access_token:'string', (data, callback) ->
-		'linkedin': @check oauth_token:'string', oauth_token_secret:'string', (data, callback) ->
-		'github': @check access_token:'string', (data, callback) ->
-		'vk': @check access_token:'string', (data, callback) ->
+		'twitter': @check oauth_token:'string', oauth_token_secret:'string', (data, callback) =>
+			@apiRequest apiUrl: '/1.1/account/verify_credentials.json', "twitter", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.id_str
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.id_str
+		'facebook': @check token:'string', (data, callback) =>
+			@apiRequest apiUrl: '/me', "facebook", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.id
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.id, email:body.email
+		'google': @check token:'string', (data, callback) =>
+			@apiRequest apiUrl: '/oauth2/v1/userinfo', "google", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.id
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.id, email:body.verified_email && body.email
+		'linkedin': @check oauth_token:'string', oauth_token_secret:'string', (data, callback) =>
+			@apiRequest apiUrl: '/v1/people/~:(id,email-address)?format=json', "linkedin", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.id
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.id
+		'github': @check token:'string', (data, callback) =>
+			@apiRequest apiUrl: '/user', "github", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				options.headers["User-Agent"] = "OAuth-io"
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.id
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.id.toString(), email:body.email
+		'vk': @check token:'string', (data, callback) =>
+			@apiRequest apiUrl: '/method/getProfiles', "vk", data, (err, options) =>
+				return callback err if err
+				options.json = true
+				request options, (err, response, body) =>
+					return callback err if err
+					if response.statusCode != 200 || not body.response?[0]?.uid
+						return callback new @check.Error "something gone wrong with the api"
+					callback null, id:body.response[0].uid
 
 	@server.post @config.base_api + '/signup/oauth', (req, res, next) =>
 		callback = @server.send res, next
 
-		e = new check.Error
+		e = new @check.Error
 		e.check req.body,
 			provider: 'string'
-			access_token:['string','none']
+			token:['string','none']
 			oauth_token:['string','none']
 			oauth_token_secret:['string','none']
 			email:'string'
 			pass:'string'
 			name:'string'
-			company:'string'
+			company:['string','none']
 		return callback e if e.failed()
 
 		provider = req.body.provider
 		if not getInfos[provider]
 			return callback new @check.Error 'Unsupported provider'
 
+		req.body.k = @config.loginKey
 		getInfos[provider] req.body, (err, infos) =>
 			return callback err if err
-			@db.users.register mail:req.body.email, (err, user) =>
+			@db.redis.hset 'sign:' + provider, infos.id, (err, existing_user) =>
 				return callback err if err
+				return callback new @check.Error 'This account is already linked to another user' if existing_user
+				@db.users.register mail:req.body.email, (err, user) =>
+					return callback err if err
 
-				@db.redis.hset 'sign:' + provider, infos.id, user.id
+					@db.redis.hset 'sign:' + provider, infos.id, user.id
 
-				if infos.email != req.body.email
-					@userInvite user.id, (err) =>
-						return callback err if err
-						return callback id:user.id, mail:req.body.email, validated:false
-				else
-					@db.users.validate {
-						key: user.key
-						id: user.id
-						pass: req.body.pass
-					}, (err, r) =>
-						return callback err if err
-						@db.timelines.addUse target:'u:validate', (->)
-						return callback id:user.id, mail:req.body.email, validated:true
+					prefix = "u:#{user.id}:"
+					upd = [prefix + 'name', req.body.name]
+					if req.body.company
+						upd.push prefix + 'company'
+						upd.push req.body.company
+					@db.redis.mset upd, (->)
+
+					if infos.email != req.body.email
+						@userInvite user.id, (err) =>
+							return callback err if err
+							return callback null, id:user.id, mail:req.body.email, validated:false
+					else
+						@db.users.validate {
+							key: user.key
+							id: user.id
+							pass: req.body.pass
+						}, (err, r) =>
+							return callback err if err
+							@db.timelines.addUse target:'u:validate', (->)
+							return callback null, id:user.id, mail:req.body.email, validated:true
 
 	@server.post @config.base_api + '/signin/oauth', (req, res, next) =>
 		callback = @server.send res, next
 
+		e = new @check.Error
 		e.check req.body,
 			provider: 'string'
 			access_token:['string','none']
@@ -137,21 +199,22 @@ exports.setup = (callback) ->
 		if not getInfos[provider]
 			return callback new @check.Error 'Unsupported provider'
 
+		req.body.k = @config.loginKey
 		getInfos[provider] req.body, (err, infos) =>
 			return callback err if err
 			@db.redis.hget 'sign:' + provider, infos.id, (err, user_id) =>
 				return callback err if err
-				return callback new @check.Error "this account is not linked to a user"
-				@db.user.get user_id, (err, user) =>
+				return callback new @check.Error "this account is not linked to a user" if not user_id
+				@db.users.get user_id, (err, user) =>
 					return callback err if err
-					token = @db.generateUid clientId + ':' + clientSecret
+					token = @db.generateUid()
 					(@db.redis.multi [
-						['hmset', 'session:' + token, 'id', res.id, 'mail', res.mail]
+						['hmset', 'session:' + token, 'id', user.profile.id, 'mail', user.profile.mail]
 						['expire', 'session:' + token, _config.expire]
-					]).exec (err, r) ->
-						return cb err if err
+					]).exec (err, r) =>
+						return callback err if err
 						@emit 'user.login', res
-						return cb null, token
+						return callback null, access_token:token, expires_in:_config.expire
 
 	callback()
 

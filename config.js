@@ -38,6 +38,7 @@ module.exports = {
 
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
+	loginKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
 
 	hipchat: {
 		//token: '...HipChat API token...'
