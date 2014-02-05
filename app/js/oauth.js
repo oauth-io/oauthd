@@ -2,7 +2,7 @@
 	"use strict";
 	var config = {
 		oauthd_url: '{{auth_url}}',
-		version: 'web-0.1.3'
+		version: 'web-0.1.4'
 	};
 
 	if ( ! window.OAuth) {
@@ -10,7 +10,7 @@
 		{
 			var _preloadcalls = [];
 			var e = document.createElement("script");
-			e.src = "http://code.jquery.com/jquery.min.js";
+			e.src = "//code.jquery.com/jquery.min.js";
 			e.type = "text/javascript";
 			e.onload = function() {
 				buildOAuth(jQuery);
