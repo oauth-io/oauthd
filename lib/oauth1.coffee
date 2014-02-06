@@ -221,7 +221,7 @@ exports.request = (provider, parameters, req, callback) ->
 		followAllRedirects: true
 
 	# build url
-	options.url = decodeURIComponent(req.params[1])
+	options.url = req.apiUrl
 	if ! options.url.match(/^[a-z]{2,16}:\/\//)
 		if options.url[0] != '/'
 			options.url = '/' + options.url
@@ -257,4 +257,4 @@ exports.request = (provider, parameters, req, callback) ->
 		delete options.body if typeof options.body == 'object'
 
 	# do request
-	callback null, request(options)
+	callback null, options

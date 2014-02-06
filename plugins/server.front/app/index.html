@@ -1,8 +1,8 @@
 <!doctype html>
-<html ng-app="oauth">
+<html lang="en" data-ng-app="oauth">
 <head>
     <meta charset="UTF-8">
-    <title ng-bind="pageTitle"></title>
+    <title data-ng-bind="pageTitle">OAuth that just works.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{pageDesc}}">
 
@@ -58,6 +58,7 @@
 	</script>
     <script>
       window.demoKey = "{{config.demoKey}}";
+      window.loginKey = "{{config.loginKey}}";
       {{if admin}}window.devShow = true;{{endif}}
 
       {{if logged}}
