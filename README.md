@@ -11,17 +11,22 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 - A working redis database >= v2.4, check [Redis quickstart](http://redis.io/topics/quickstart) for a properly installation
 - nodejs >= v0.8.2
 - npm >= v1.1
-- needed packages for npm dependencies: gcc g++ make python curl
+- needed packages for npm dependencies: python curl bash
 
-## Clone the project
+## Installation
 
-    git clone git://github.com/oauth-io/oauthd.git
+Run the redis server if it's not running yet.
 
-## Install global dependencies
+	(sudo) npm install -g forever oauthd
+	oauthd config
+	oauthd start
+
+You can use `oauthd [start|stop|status|startsync|config]` to manage your daemon.
+
+## Development installation
 
     (sudo) npm install -g coffee-script grunt-cli forever
-
-## Install OAuth dependencies
+    git clone git://github.com/oauth-io/oauthd.git
 
 In the cloned project dir, issue:
 
@@ -33,31 +38,30 @@ If you have a problem during `npm install` you may want to restart the compilati
 
 	grunt
 
-## Using OAuth daemon
-
-Run the redis server if it's not running yet.
-
-To start, stop or restart oauthd, just use
-`npm [start|stop|restart]` in oauthd folder.
+To start or stop oauthd, just use
+`npm [start|stop]` in the oauthd folder.
 
 If you want to start oauthd in debug mode, you can also use `grunt server`
 
 This will launch nodemon and watch/recompile modified files.
 
+
+## Using OAuth daemon
+
+You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
+You can also write a config.local.js file that will overwrite existing fields of config.js.
+
 By default, you can access it by [http://localhost:6284/admin](http://localhost:6284/admin).
 
 ![OAuthd signin](https://oauth.io/img/oauthd-signin.png "OAuthd")
+
+Then the admin interface is available to your url / port set into config.js, at /admin.
 
 The first time you connect, the given login & pass will be registered as the admin user. If you lose it, you can reset the login with `node ./tools/login_reset.js` in the oauthd folder.
 
 Then you can include the generated js sdk from oauthd to use it on your sites. By example for a local test:
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
 
-You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
-
-You can also write a config.local.js file that will overwrite existing fields of config.js.
-
-Then the admin interface is available to your url / port set into config.js, at /admin.
 
 ## Contributing & Licenses
 

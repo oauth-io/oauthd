@@ -1,7 +1,7 @@
 {
   "name": "oauthd",
   "description": "OAuth that just works.",
-  "version": "0.1.2",
+  "version": "0.1.11",
   "homepage": "https://oauth.io",
   "author": "OAuth team <team@oauth.io>",
   "repository": {
@@ -17,10 +17,14 @@
   "engines": {
     "node": ">= 0.8.0"
   },
+  "bin": {
+    "oauthd": "./oauthd.sh"
+  },
   "scripts": {
-    "install": "grunt",
-    "start": "bash ./run.sh",
-    "stop": "bash ./stop.sh",
+    "install": "echo Please run 'oauthd config' to edit the configuration file.",
+    "prepublish": "grunt",
+    "start": "bash ./oauthd.sh start",
+    "stop": "bash ./oauthd.sh stop",
     "test": "grunt test && coffee ./test/providers_check.coffee"
   },
   "keywords": [
@@ -37,7 +41,8 @@
     "restify": "~2.5.1",
     "async": "~0.2.9",
     "request": "~2.25.0",
-    "restify-oauth2-oauthd": "~2.1.0"
+    "restify-oauth2-oauthd": "~2.1.0",
+    "ua-parser-js": "~0.6.2"
   },
   "devDependencies": {
     "grunt-nodemon": "~0.1.2",
@@ -49,7 +54,6 @@
     "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
     "jayschema": "~0.2.0",
-    "jsonlint": "~1.6.0",
-    "ua-parser-js": "~0.6.2"
+    "jsonlint": "~1.6.0"
   }
 }
