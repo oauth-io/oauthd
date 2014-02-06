@@ -1,26 +1,8 @@
-/*
-OAuth daemon
-Copyright (C) 2013 Webshell SAS
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
- any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
 (function() {
 	"use strict";
 	var config = {
 		oauthd_url: '{{auth_url}}',
-		version: 'web-0.1.3'
+		version: 'web-0.1.4'
 	};
 
 	if ( ! window.OAuth) {
@@ -28,7 +10,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		{
 			var _preloadcalls = [];
 			var e = document.createElement("script");
-			e.src = "http://code.jquery.com/jquery.min.js";
+			e.src = "//code.jquery.com/jquery.min.js";
 			e.type = "text/javascript";
 			e.onload = function() {
 				buildOAuth(jQuery);
@@ -147,10 +129,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 				tokens[request.required[i]] = res[request.required[i]];
 
 		var make_res = function(request, method) {
-			return function(opts) {
+			return function(opts, opts2) {
 				var options = {};
-				if (typeof opts === 'string')
-					options = {url:opts};
+				if (typeof opts === 'string') {
+					if (typeof opts2 === 'object')
+						for (var i in opts2) { options[i] = opts2[i]; }
+					options.url = opts;
+				}
 				else if (typeof opts === 'object')
 					for (var i in opts) { options[i] = opts[i]; }
 				options.type = options.type || method;
