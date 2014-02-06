@@ -129,10 +129,13 @@
 				tokens[request.required[i]] = res[request.required[i]];
 
 		var make_res = function(request, method) {
-			return function(opts) {
+			return function(opts, opts2) {
 				var options = {};
-				if (typeof opts === 'string')
-					options = {url:opts};
+				if (typeof opts === 'string') {
+					if (typeof opts2 === 'object')
+						for (var i in opts2) { options[i] = opts2[i]; }
+					options.url = opts;
+				}
 				else if (typeof opts === 'object')
 					for (var i in opts) { options[i] = opts[i]; }
 				options.type = options.type || method;
