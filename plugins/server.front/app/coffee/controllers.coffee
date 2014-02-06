@@ -1,20 +1,13 @@
-#IndexCtrl = ($scope, $location, UserService, MenuService)->
-	#$location.ga_skip = true;
-	# if $location.path() == '/'
-		# if UserService.isLogin()
-		# 	$location.path('/key-manager').replace()
-		# else
-			# $location.path('/home').replace()
 
 LogoutCtrl = ($location, UserService, MenuService) ->
 	$location.ga_skip = true;
 	UserService.logout ->
-		$location.path '/home'
+		$location.path '/'
 
 ###########################
 # Landing page Controller #
 ###########################
-IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
+IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 	MenuService.changed()
 	# if UserService.isLogin()
 	# 	$location.path '/key-manager'

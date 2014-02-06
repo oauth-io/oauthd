@@ -22,7 +22,7 @@ exports.init = ->
 
 	prerender.set 'afterRender', (req, prerender_res) =>
 		@db.redis.set 'prerender:' + req.url, prerender_res.body, =>
-			@db.redis.expire 'prerender:' + req.url, 3600*48
+			@db.redis.expire 'prerender:' + req.url, 3600*30
 
 	@server.use (req, res, next) =>
 		req.protocol = 'https'

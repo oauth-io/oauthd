@@ -86,6 +86,11 @@ exports.setup = (callback) ->
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
 
+		@server.get '/home', (req, res, next) ->
+			res.setHeader 'Location', '/'
+			res.send 301
+			next()
+
 		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
