@@ -5,20 +5,57 @@
 			  	<div style="padding: 25px 50px">
 		    		<div class="row">
 			      		<div class="col col-lg-10 col-offset-1">
-							<object data="/img/logo.svg" style="float: left; position: relative; top: 17px;left: 10px; width: 60px; height: 60px;" type="image/svg+xml">
-				  				<img src="/img/logo.png" />
-							</object>
-							<div style="font-size: 2.0em; margin-left: 90px;">
-			        			<div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
-			           				<h5 style="font-size: 0.7em; margin-top: 25px">Log in</h5><br />
-			        			</div>
-			        			<div ng-show="userForm.mode == 'Lost password'">
-			            			<h5 style="text-align: center">Forgot my password</h5>
-			            			<br />
-			        			</div>
-			        		</div>
-			        		<div class="row">
-								<div class="col col-lg-9">
+		        			<div style="font-size: 2.0em">
+		           				<h5 ng-hide="userForm.mode == 'Lost password'" style="text-align: center; font-size: 1.2em;"><img src="/img/logo.png" style="position: relative; top: 0px;left: -10px; width: 60px; height: 60px;">Log in</h5>
+		            			<h5 ng-show="userForm.mode == 'Lost password'" style="text-align: center"><img src="/img/logo.png" style="position: relative; top: 17px;left: 10px; width: 60px; height: 60px;">Forgot my password</h5>
+		        			</div>
+			        		<div class="row" style="margin-top: 40px">
+			        			<div class="col col-lg-12">
+					        		<div ng-show="connect" ng-init="connect=true; formDisplay=true">
+					        			<h3 style="text-align: center; margin-bottom: 45px;">Connect with your favorite network</h3>
+										<div class="row">
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large text-center twitter" ng-click="socialSignin('twitter')">
+													<img src="/api/providers/twitter/logo"> Twitter
+												</button>
+											</div>
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large facebook text-center" ng-click="socialSignin('facebook')">
+													<img src="/api/providers/facebook/logo"> Facebook
+												</button>
+											</div>
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large google text-center" ng-click="socialSignin('google_plus')">
+													<img src="/api/providers/google_plus/logo"> Google
+												</button>
+											</div>
+										</div>
+										<div class="row" style="margin-top: 15px">
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large linkedin text-center" ng-click="socialSignin('linkedin')">
+													<img src="/api/providers/linkedin/logo"> Linkedin
+												</button>
+											</div>
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large github text-center" ng-click="socialSignin('github')">
+													<img src="/api/providers/github/logo"> Github
+												</button>
+											</div>
+											<div class="col col-lg-4">
+												<button class="btn btn-block btn-large vk text-center" ng-click="socialSignin('vk')">
+													<img src="/api/providers/vk/logo"> VK
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="ui divider horizontal" style="font-size: 1.3em; margin-top: 40px">
+								Or
+							</div>
+			        		<div class="row" style="margin-top: 40px">
+								<div class="col col-lg-12">
+				        			<h3 style="text-align: center; margin-bottom: 40px">Connect using your email/password</h3>
 						        	<form class="form-vertical" ng-show="formDisplay" ng-submit="userForm.submit()" method="POST">
 							          	<div class="alert alert-danger" ng-show="info.status == 'error'">
 							            	{{info.message}}
@@ -36,7 +73,7 @@
 							          	</div>
 							          	<div class="row">
 							            	<div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
-							              		<button type="submit" class="btn btn-primary">
+							              		<button type="submit" class="btn btn-large btn-primary">
 							                		<span ng-show="userForm.mode == 'Lost password'">
 							                  			Reset my password
 							                		</span>
@@ -47,46 +84,6 @@
 
 						          		</div>
 						        	</form>
-								</div>
-			        			<div class="col col-lg-3">
-					        		<div ng-show="connect" ng-init="connect=true; formDisplay=true">
-										<div class="row">
-											<div class="col col-lg-6" style="padding:2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('twitter')">
-													<img src="/api/providers/twitter/logo">
-												</button>
-											</div>
-											<div class="col col-lg-6" style="padding:2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('facebook')">
-													<img src="/api/providers/facebook/logo">
-												</button>
-											</div>
-										</div>
-										<div class="row" style="margin-top: 4px">
-											<div class="col col-lg-6" style="padding:2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('google_plus')">
-													<img src="/api/providers/google_plus/logo">
-												</button>
-											</div>
-											<div class="col col-lg-6" style="padding: 0 2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('linkedin')">
-													<img src="/api/providers/linkedin/logo">
-												</button>
-											</div>
-										</div>
-										<div class="row" style="margin-top: 4px">
-											<div class="col col-lg-6" style="padding:2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('github')">
-													<img src="/api/providers/github/logo">
-												</button>
-											</div>
-											<div class="col col-lg-6" style="padding:2px">
-												<button class="btn btn-block btn-large text-center" ng-click="socialSignin('vk')">
-													<img src="/api/providers/vk/logo">
-												</button>
-											</div>
-										</div>
-									</div>
 								</div>
 							</div>
 					        <div class="alert alert-danger" ng-show="signup.status == 'error'">
@@ -101,7 +98,7 @@
 					          	</div>
 					        </div>
 	        		  		<div style="clear: both;">
-			              		<p style="font-size: 1.2em; margin: 20px 0; text-align: center;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a> - <a href="#" ng-click="formDisplay=false; connect=true">Log in using social connect</a></p>
+			              		<p style="font-size: 1.2em; margin: 20px 0; text-align: center;"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; margin-left: 20px; ">Forgot my password</a></p>
 			              		<a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; margin-left: 15px">cancel</a>
 
 		            		</div>

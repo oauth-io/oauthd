@@ -179,10 +179,25 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			if callback
 				callback err, success
 
+	me =
+		'facebook': '/me'
+		'twitter': '/1.1/account/verify_credentials.json'
+		'google_plus': ''
+		'linkedin': ''
+		'github': ''
+		'vk': ''
 
 	$scope.socialSignin = (provider) ->
 		$scope.oauth provider, (err, res) ->
-			alert 'todo'
+			return false if err
+			res.get(me[provider]).done (data)->
+				alert 'hello ' + data.name
+
+	$scope.socialSignup = (provider) ->
+		$scope.oauth provider, (err, res) ->
+			return false if err
+			res.get(me[provider]).done (data)->
+				alert 'hello ' + data.name
 
 	$scope.userForm =
 		template: "/templates/partials/userForm.html"

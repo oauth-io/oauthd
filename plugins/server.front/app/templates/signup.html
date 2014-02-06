@@ -13,56 +13,54 @@
 								<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal; color: #666">And never worry about OAuth again...</h5>
 							</div><br /><br />
 							<div style="clear: left;">
-								<div ng-show="connect" ng-init="connect=true">
+					        	<h3 style="text-align: center; margin-bottom: 45px;">Sign up with your favorite network</h3>
+								<div ng-init="connect=true">
 									<div class="row">
-										<div class="col col-lg-6">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large twitter" data-provider="twitter">
 												<img src="/api/providers/twitter/logo" class="pull-left" style="margin-left: 25px">
 												Twitter
 											</button>
 										</div>
-										<div class="col col-lg-6">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large facebook" data-provider="facebook">
 												<img src="/api/providers/facebook/logo" class="pull-left" style="margin-left: 25px">
 												Facebook
 											</button>
 										</div>
-									</div>
-									<div class="row" style="margin-top: 15px">
-										<div class="col col-lg-6">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large google" data-provider="google_plus">
 												<img src="/api/providers/google_plus/logo" class="pull-left" style="margin-left: 25px">
 												Google Plus
 											</button>
 										</div>
-										<div class="col col-lg-6">
+									</div>
+									<div class="row" style="margin-top: 15px">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large linkedin" data-provider="linkedin">
 												<img src="/api/providers/linkedin/logo" class="pull-left" style="margin-left: 25px">
 												Linkedin
 											</button>
 										</div>
-									</div>
-									<div class="row" style="margin-top: 15px">
-										<div class="col col-lg-6">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large github" data-provider="github">
 												<img src="/api/providers/github/logo" class="pull-left" style="margin-left: 25px">
 												Github
 											</button>
 										</div>
-										<div class="col col-lg-6">
+										<div class="col col-lg-4">
 											<button class="btn btn-block btn-large vk" data-provider="vk">
 												<img src="/api/providers/vk/logo" class="pull-left" style="margin-left: 25px">
 												VK
 											</button>
 										</div>
 									</div>
-									<div class="row" style="margin-top: 25px">
-										<div class="col col-lg-12 text-center">
-											<a href="#" style="font-size: 1.3em" ng-click="formDisplay=true; connect=false">Sign up with your email</a>
-										</div>
-									</div>
 								</div>
-								<form name="signup" ng-show="formDisplay" class="form-vertical" ng-submit="userForm.submit()" method="POST" >
+								<div class="ui divider horizontal" style="font-size: 1.3em; margin-top: 40px">
+									Or
+								</div>
+								<h3 style="text-align: center; margin: 45px 0;">Fill the following information</h3>
+								<form name="signup" class="form-vertical" ng-submit="userForm.submit()" method="POST" >
 						  			<div class="alert alert-danger" ng-show="info.status == 'error'">
 										{{info.message}}
 						  			</div>
@@ -87,7 +85,7 @@
 								  	</div>
 								  	<div style="margin-top: 30px">
 								  		<p style="font-size:1.3em; color: #666">By signing up, you agree to our <a href="/terms">Terms of service</a></p>
-										<button type="submit" style="" class="btn btn-primary">
+										<button type="submit" style="" class="btn btn-large btn-primary">
 									  		<span style="font-size: 18px;">Sign up</span>
 										</button>
 								  	</div>
