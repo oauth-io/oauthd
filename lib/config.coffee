@@ -20,10 +20,10 @@ config = require '../config'
 
 if config.host_url[config.host_url.length-1] == '/'
 	config.host_url = config.host_url.substr(0,config.host_url.length-1)
-config.base = Path.resolve '/', config.base
+config.base = Path.normalize(config.base).replace `/\\/g`, '/'
 config.relbase = config.base
 config.base = '' if config.base == '/'
-config.base_api = Path.resolve '/', config.base_api
+config.base_api = Path.normalize(config.base_api).replace `/\\/g`, '/'
 config.url = Url.parse config.host_url
 
 module.exports = config

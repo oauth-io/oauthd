@@ -26,8 +26,6 @@ module.exports = {
 		// options: {...other options...}
 	},
 
-	smtp: {}, // defaults to localhost:25, see nodemailer for further options
-
 	plugins: [
 		'server.statistics',
 		'server.admin.auth',
