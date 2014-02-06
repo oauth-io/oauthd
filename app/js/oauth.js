@@ -162,6 +162,9 @@
 				config.oauthd_url = url;
 				config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
 			},
+			getVersion: function() {
+				return config.version;
+			},
 			popup: function(provider, opts, callback) {
 				var wnd, frm;
 				if ( ! config.key)
