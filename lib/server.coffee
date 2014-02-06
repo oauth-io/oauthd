@@ -427,4 +427,5 @@ exports.listen = (callback) ->
 			plugins.data.emit 'server', null
 			callback null, server
 
+		server.on 'error', (err) -> callback err
 		server.listen.apply server, listen_args

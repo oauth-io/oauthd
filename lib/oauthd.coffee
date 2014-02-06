@@ -32,7 +32,7 @@ async.series [
 	server.listen
 ], (err) ->
 	if err
-		console.error 'Error while initialisation', err.stack.toString()
+		console.error 'Error while initialisation', err.message
 		plugins.data.emit 'server', err
 	else
 		console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)'

@@ -54,10 +54,11 @@ function check_setUp(callback) {
     test._ok = test.ok;
     test._expect = test.expect;
     test.ok = function (a, b) { if (!a) test._nok_=true; test._ok(a,b); }
-    test.expect = function (i) { return test._expect(i+4); }
+    test.expect = function (i) { return test._expect(i+5); }
     var oauthd = require('../lib/oauthd');
     console.log("");
-    oauthd.plugins.data.on('server', function(err) {
+    oauthd.plugins.data.on('server', function(e) {
+      test.ok(!e, e && e.message + " Please exit any oauthd instance (with npm stop) before running npm test");
       oauthd.plugins.data.db.redis.info(function(e,v) {
         test.ok(!e, e && e.message);
         var redis_version = v.match(/redis_version:([0-9.]+)/);

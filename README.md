@@ -11,7 +11,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 - A working redis database >= v2.4, check [Redis quickstart](http://redis.io/topics/quickstart) for a properly installation
 - nodejs >= v0.8.2
 - npm >= v1.1
-- needed packages for npm dependencies: gcc g++ make python
+- needed packages for npm dependencies: gcc g++ make python curl
 
 ## Clone the project
 
