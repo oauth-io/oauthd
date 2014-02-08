@@ -204,7 +204,10 @@ exports.request = (provider, parameters, req, callback) ->
 	params[k] = v for k,v of provider.oauth2.parameters
 
 	if ! parameters.oauthio.token
-		return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
+		if parameters.oauthio.access_token
+			parameters.oauthio.token = parameters.oauthio.access_token
+		else
+			return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
 	oauthrequest = provider.oauth2.request
 

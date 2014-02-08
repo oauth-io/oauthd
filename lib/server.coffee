@@ -409,6 +409,8 @@ server.get config.base_api + '/providers', bootPathCache(), (req, res, next) ->
 
 # get a provider config
 server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res, next) ->
+	res.setHeader 'access-control-allow-origin', '*'
+	res.setHeader 'access-control-allow-methods', 'GET'
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
