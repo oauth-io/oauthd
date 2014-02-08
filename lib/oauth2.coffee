@@ -170,7 +170,7 @@ class OAuth2 extends OAuthBase
 					now = (new Date).getTime()
 					expire -= now if expire > now
 				result =
-					access_token: response.body.access_token
+					access_token: response.access_token
 					token_type: response.body.token_type
 					expires_in: expire
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
@@ -181,7 +181,10 @@ class OAuth2 extends OAuthBase
 		@_setParams provider.oauth2.parameters
 
 		if ! parameters.oauthio.token
-			return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
+			if parameters.oauthio.access_token
+				parameters.oauthio.token = parameters.oauthio.access_token
+			else
+				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
 		oauthrequest = provider.oauth2.request
 

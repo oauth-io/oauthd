@@ -397,7 +397,9 @@ server.get config.base_api + '/providers', auth.needed, (req, res, next) ->
 	db.providers.getList send(res,next)
 
 # get a provider config
-server.get config.base_api + '/providers/:provider', auth.needed, (req, res, next) ->
+server.get config.base_api + '/providers/:provider', (req, res, next) ->
+	res.setHeader 'access-control-allow-origin', '*'
+	res.setHeader 'access-control-allow-methods', 'GET'
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
