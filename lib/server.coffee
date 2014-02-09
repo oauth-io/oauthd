@@ -217,7 +217,7 @@ server.get config.base + '/', (req, res, next) ->
 			stateref = req.headers.referer.match /state=([^&$]+)/
 			stateid = stateref?[1]
 			return callback null, stateid if stateid
-		oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+		oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
 		if oad_uid
 			db.redis.get 'cli:state:' + oad_uid, callback
 	getState (err, stateid) ->
@@ -242,7 +242,7 @@ server.get config.base + '/', (req, res, next) ->
 						r.code = stateid
 					if state.options.response_type == 'token'
 						db.states.del stateid, (->)
-					oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+					oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
 					if not oad_uid
 						oad_uid = db.generateUid()
 						d = new Date (new Date).getTime() + 30*24*3600*1000
@@ -311,7 +311,7 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 			oa = new oauth[oauthv]
 			oa.authorize provider, parameters, opts, cb
 		(authorize, cb) ->
-			oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+			oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
 			return cb null, authorize.url if not oad_uid
 			db.redis.set 'cli:state:' + oad_uid, authorize.state, (err) ->
 				return cb err if err

@@ -86,7 +86,7 @@ exports.needed = (req, res, next) ->
 		req.body ?= {}
 		next()
 	return cb() if req.clientId
-	token = req.headers.cookie?.match /accessToken=%22(.*)%22/
+	token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
 	token = token?[1]
 	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not token
 	db.redis.hget 'session:' + token, 'date', (err, res) ->
@@ -100,7 +100,7 @@ exports.optional = (req, res, next) ->
 		req.body ?= {}
 		next()
 	return cb() if req.clientId
-	token = req.headers.cookie?.match /accessToken=%22(.*)%22/
+	token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
 	token = token?[1]
 	return cb() if not token
 	db.redis.hget 'session:' + token, 'date', (err, res) ->

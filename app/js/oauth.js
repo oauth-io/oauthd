@@ -214,7 +214,7 @@
 				return;
 			providers_desc[provider] = true;
 			$.ajax({
-				url: config.oauthd_url + config.oauthd_api + '/providers/' + provider,
+				url: config.oauthd_base + config.oauthd_api + '/providers/' + provider,
 				data: {extend:true},
 				dataType: 'json'
 			}).done(function(data) {
