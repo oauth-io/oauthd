@@ -4,6 +4,7 @@ module.exports = {
 	base_api: "/api",						// api base path
 	port: 6284,
 	http_port: 6285,
+	// bind: "127.0.0.1",					// bind to an ip
 
 	debug: true,							// add stack trace & infos in errors
 
