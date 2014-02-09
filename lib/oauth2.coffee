@@ -94,7 +94,7 @@ class OAuth2 extends OAuthBase
 				options.form = query # or .json = qs for json post
 
 			# do request to access_token
-			request options, (e, r, body) ->
+			request options, (e, r, body) =>
 				return callback e if e
 				responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
 				return callback(responseParser.error) if responseParser.error
@@ -153,7 +153,7 @@ class OAuth2 extends OAuthBase
 			options.form = query # or .json = qs for json post
 
 		# request new token
-		request options, (e, r, body) ->
+		request options, (e, r, body) =>
 			return callback e if e
 			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'refresh token')
 			return callback(responseParser.error) if responseParser.error

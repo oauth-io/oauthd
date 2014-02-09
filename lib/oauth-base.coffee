@@ -15,6 +15,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 dbstates = require './db_states'
+db = require './db'
 
 class OAuthBase
 	constructor: (oauthv) ->
@@ -28,6 +29,7 @@ class OAuthBase
 
 	_replaceParam: (param, hard_params, keyset) ->
 		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
+			return db.generateUid() if val == "nonce"
 			return hard_params[val] || ""
 		return param.replace /\{(.*?)\}/g, (match, val) =>
 			return "" if ! @_params[val] || ! keyset[val]

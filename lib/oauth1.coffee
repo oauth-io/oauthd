@@ -156,7 +156,7 @@ class OAuth1 extends OAuthBase
 				options.qs = query
 
 			# do request to access_token
-			request options, (e, r, body) ->
+			request options, (e, r, body) =>
 				return callback(e) if e
 				responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
 				return callback(responseParser.error) if responseParser.error
