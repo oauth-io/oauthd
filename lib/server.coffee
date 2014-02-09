@@ -323,7 +323,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 				options.response_type = response_type
 				options.parameters = parameters
 				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-				oa = new oauth[state.oauthv]
+				oa = new oauth[oauthv]
 				oa.authorize provider, parameters, opts, cb
 		(authorize, cb) ->
 				return cb null, authorize.url if not req.oaio_uid

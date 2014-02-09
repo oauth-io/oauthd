@@ -89,7 +89,7 @@ class OAuth2 extends OAuthBase
 				url: @_replaceParam access_token.url, {}, parameters
 				method: access_token.method?.toUpperCase() || "POST"
 				followAllRedirects: true
-				encoding: true
+				encoding: null
 
 			options.headers = headers if Object.keys(headers).length
 			if options.method == "GET"

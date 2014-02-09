@@ -15,6 +15,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 dbstates = require './db_states'
+db = require './db'
 
 class OAuthBase
 	constructor: (oauthv) ->
