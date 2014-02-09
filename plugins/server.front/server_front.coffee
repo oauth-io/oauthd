@@ -23,7 +23,7 @@ addExtension = (req, res, next) ->
 	next()
 
 checkLogged = (req, res, next) ->
-	token = req.headers.cookie?.match /accessToken=%22(.*)%22/
+	token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
 	req.token = token?[1]
 	next()
 

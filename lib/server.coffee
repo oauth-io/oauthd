@@ -219,7 +219,7 @@ server.get config.base + '/', (req, res, next) ->
 			stateref = req.headers.referer.match /state=([^&$]+)/
 			stateid = stateref?[1]
 			return callback null, stateid if stateid
-		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 		if oaio_uid
 			db.redis.get 'cli:state:' + oaio_uid, callback
 	getState (err, stateid) ->
