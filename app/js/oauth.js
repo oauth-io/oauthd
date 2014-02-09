@@ -3,7 +3,8 @@
 	var config = {
 		oauthd_url: '{{auth_url}}',
 		oauthd_api: '{{api_url}}',
-		version: 'web-0.1.5'
+		version: 'web-0.1.5',
+		options: {}
 	};
 
 	if ( ! window.OAuth) {
@@ -20,7 +21,7 @@
 			};
 			document.getElementsByTagName("head")[0].appendChild(e);
 
-			var methods = ["initialize", "setOAuthdURL", "popup", "redirect", "callback", "http"];
+			var methods = ["initialize", "setOAuthdURL", "getVersion", "create", "popup", "redirect", "callback", "http"];
 			window.OAuth = {};
 			var push_method = function(method) {
 				window.OAuth[method] = function() {
@@ -130,6 +131,10 @@
 			data.data.provider = data.provider;
 
 		var res = data.data;
+
+		if (cacheEnabled(opts.cache) && res)
+			storeCache(data.provider, res);
+
 		var request = res.request;
 		delete res.request;
 		var tokens;
@@ -139,7 +144,7 @@
 			tokens = { oauth_token: res.oauth_token, oauth_token_secret: res.oauth_token_secret};
 
 		if ( ! request)
-			return opts.callback(null, res, request);
+			return opts.callback(null, res);
 
 		if (request.required)
 			for (var i in request.required)
@@ -158,6 +163,40 @@
 		return opts.callback(null, res);
 	}
 
+	function tryCache(provider, cache) {
+		if (cacheEnabled(cache)) {
+			cache = readCookie("oauthio_provider_" + provider);
+			if ( ! cache) return false;
+			cache = decodeURIComponent(cache);
+		}
+		if (typeof cache === 'string') {
+			try {
+				cache = JSON.parse(cache);
+			} catch (e) {
+				return false;
+			}
+		}
+		if (typeof cache === "object") {
+			var res = {};
+			for (var i in cache)
+				if (i !== 'request' && typeof cache[i] !== 'function')
+					res[i] = cache[i];
+			return OAuth.create(provider, res, cache.request);
+		}
+		return false;
+	}
+
+	function storeCache(provider, cache) {
+		console.log("store", provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in)
+		createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
+	}
+
+	function cacheEnabled(cache) {
+		if (typeof cache === 'undefined')
+			return config.options.cache;
+		return cache;
+	}
+
 	function buildOAuth($) {
 
 		var providers_desc = {};
@@ -168,7 +207,6 @@
 				delete providers_cb[provider];
 				for (var i in cbs)
 					cbs[i](e, r);
-				return
 			}
 		}
 		function fetchDescription(provider) {
@@ -202,8 +240,11 @@
 		}
 
 		window.OAuth = {
-			initialize: function(public_key) {
+			initialize: function(public_key, options) {
 				config.key = public_key;
+				if (options)
+					for (var i in options)
+						config.options[i] = options[i];
 			},
 			setOAuthdURL: function(url) {
 				config.oauthd_url = url;
@@ -213,20 +254,27 @@
 				return config.version;
 			},
 			create: function(provider, tokens, request) {
-				var make_res = function(method) {
-					return mkHttp(provider, tokens, request, method);
-				}
+				if ( ! tokens)
+					return tryCache(provider, true);
 
 				if (typeof request !== 'object')
 					fetchDescription(provider);
 
-				return {
-					get: make_res('GET'),
-					post: make_res('POST'),
-					put: make_res('PUT'),
-					patch: make_res('PATCH'),
-					del: make_res('DELETE')
-				};
+				var make_res = function(method) {
+					return mkHttp(provider, tokens, request, method);
+				}
+
+				var res = {};
+				for (var i in tokens)
+					res[i] = tokens[i];
+
+				res.get = make_res('GET');
+				res.post = make_res('POST');
+				res.put = make_res('PUT');
+				res.patch = make_res('PATCH');
+				res.del = make_res('DELETE');
+
+				return res;
 			},
 			popup: function(provider, opts, callback) {
 				var wnd, frm;
@@ -236,6 +284,13 @@
 					callback = opts;
 					opts = {};
 				}
+
+				if (cacheEnabled(opts.cache)) {
+					var res = tryCache(provider, opts.cache);
+					if (res)
+						return callback(null, res);
+				}
+
 				if ( ! opts.state) {
 					opts.state = create_hash();
 					opts.state_type = "client";
@@ -262,7 +317,7 @@
 				wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
 				wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
 
-				opts = {provider:provider};
+				opts = {provider:provider, cache:opts.cache};
 				function getMessage(e) {
 					if (e.origin !== config.oauthd_base)
 						return;
@@ -310,6 +365,15 @@
 					url = opts;
 					opts = {};
 				}
+				if (cacheEnabled(opts.cache)) {
+					var res = tryCache(provider, opts.cache);
+					if (res) {
+						url = getAbsUrl(url) + ((url.indexOf('#') === -1) ? '#' : '&') + 'oauthio=cache';
+						document.location.href = url;
+						document.location.reload();
+						return;
+					}
+				}
 				if ( ! opts.state) {
 					opts.state = create_hash();
 					opts.state_type = "client";
@@ -322,14 +386,29 @@
 					url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
 				document.location.href = url;
 			},
-			callback: function(provider, callback) {
+			callback: function(provider, opts, callback) {
+				if (arguments.length == 1) {
+					callback = provider;
+					provider = undefined;
+					opts = {};
+				}
+				if (arguments.length == 2) {
+					callback = opts;
+					opts = {};
+				}
+
+				if (cacheEnabled(opts.cache) || oauth_result === 'cache') {
+					if (oauth_result === 'cache' && (typeof provider !== 'string' || ! provider))
+						return callback(new Error("You must set a provider when using the cache"));
+					var res = tryCache(provider, opts.cache);
+					if (res)
+						return callback(null, res);
+				}
+
 				if ( ! oauth_result)
 					return;
 
-				if (arguments.length === 1)
-					return sendCallback({data:oauth_result, callback:provider});
-
-				return sendCallback({data:oauth_result, provider:provider, callback:callback});
+				sendCallback({data:oauth_result, provider:provider, cache:opts.cache, callback:callback});
 			},
 			http: function(opts) {
 				var options = {};
@@ -407,6 +486,9 @@
 						return $.ajax(options);
 					}
 				}
+			},
+			clearCache: function(provider) {
+				eraseCookie("oauthio_provider_" + provider);
 			}
 		};
 	}
@@ -416,10 +498,10 @@
 		return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
 	}
 
-	function createCookie(name, value) {
+	function createCookie(name, value, expires) {
 		eraseCookie(name);
 		var date = new Date();
-		date.setTime(date.getTime() + 600000); // +10 mins
+		date.setTime(date.getTime() + (expires*1000 || 600000)); // def: 10 mins
 		var expires = "; expires="+date.toGMTString();
 		document.cookie = name+"="+value+expires+"; path=/";
 	}
