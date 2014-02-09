@@ -36,7 +36,7 @@ module.exports = function(gruntConf) {
 		},
 	};
 
-	// gruntConf.nodemon.server.options.ignoredFiles.push(__dirname + "/app");
+	gruntConf.nodemon.server.options.ignoredFiles.push(__dirname + "/app");
 
 	gruntConf.less = gruntConf.less || {};
 	gruntConf.less['front-compile'] = { files: {} };
