@@ -1,22 +1,37 @@
 querystring = require 'querystring'
 check = require './check'
+zlib = require 'zlib'
 
 class OAuthResponseParser
 	constructor: (response, body, format, tokenType) ->
 		@_response = response
-		@_unparsedBody = body
+		@_undecodedBody = body
 		@_format = format || response.headers['content-type']
+		@_format = @_format.match(/^([^;]+)/)[0] # skip charset etc.
 		@_errorPrefix = 'Error during the \'' + tokenType + '\' step'
 
-		return @_setError 'HTTP status code: ' + response.statusCode if response.statusCode != 200
-		return @_setError 'Empty response' if not body
-
-		@_format = @_format.match(/^([^;]+)/)[0] # skip charset etc.
-		parseFunc = @_parse[@_format]
-		if parseFunc
-			@_parseBody parseFunc
+	decode: (callback) ->
+		if @_response.headers['content-encoding'] == 'gzip'
+			zlib.gunzip @_undecodedBody, callback
 		else
-			@_parseUnknownBody()
+			callback null, @_undecodedBody
+
+	parse: (callback) ->
+		@decode (e, r) =>
+			return callback e if e
+
+			@_unparsedBody = r.toString()
+			return callback @_setError 'HTTP status code: ' + @_response.statusCode if @_response.statusCode != 200 and not @_unparsedBody
+			return callback @_setError 'Empty response' if not @_unparsedBody
+
+			parseFunc = @_parse[@_format]
+			if parseFunc
+				@_parseBody parseFunc
+			else
+				@_parseUnknownBody()
+			return callback @error if @error
+			return callback @_setError 'HTTP status code: ' + @_response.statusCode if @_response.statusCode != 200
+			return callback null, @
 
 	_parse:
 		'application/json': (d) -> JSON.parse d
@@ -42,7 +57,8 @@ class OAuthResponseParser
 		@error = new check.Error @_errorPrefix + ' (' + message + ')'
 		if typeof @body == 'object' and Object.keys(@body).length
 			@error.body = @body
-		else
+		else if @_unparsedBody
 			@error.body = @_unparsedBody
+		return @error
 
 module.exports = OAuthResponseParser

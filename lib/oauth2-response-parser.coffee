@@ -22,16 +22,20 @@ errors_desc =
 class OAuth2ResponseParser extends OAuthResponseParser
 	constructor: (response, body, format, tokenType) ->
 		super response, body, format, tokenType
-		return if @error
 
-		if @body.error or @body.error_description
-			@_setError @body.error_description || errors_desc[@body.error] || 'Error in response'
-			delete @body
+	parse: (callback) ->
+		super (e, r) =>
+			if @body?.error or @body?.error_description
+				return callback @_setError @body.error_description || errors_desc[@body.error] || 'Error in response'
 
-		if not @body.access_token
-			return @_setError 'access_token not found'
+			return callback e if e
 
-		@access_token = @body.access_token
+			if not @body.access_token
+				return callback @_setError 'access_token not found'
+
+			@access_token = @body.access_token
+
+			callback null, @
 
 OAuth2ResponseParser.errors_desc = errors_desc
 

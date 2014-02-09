@@ -211,33 +211,44 @@ server.get config.base + '/', (req, res, next) ->
 		res.send 302
 		return next()
 	res.setHeader 'Content-Type', 'text/html'
-	stateid = req.params.state
-	if not stateid
+	getState = (callback) ->
+		return callback null, req.params.state if req.params.state
 		if req.headers.referer
 			stateref = req.headers.referer.match /state=([^&$]+)/
 			stateid = stateref?[1]
-		if not stateid
-			return next new check.Error 'state', 'must be present'
-	db.states.get stateid, (err, state) ->
+			return callback null, stateid if stateid
+		oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+		if oad_uid
+			db.redis.get 'cli:state:' + oad_uid, callback
+	getState (err, stateid) ->
 		return next err if err
-		return next new check.Error 'state', 'invalid or expired' if not state
-		callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
-		return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-		oa = new oauth[state.oauthv]
-		oa.access_token state, req, (e, r) ->
-			status = if e then 'error' else 'success'
+		return next new check.Error 'state', 'must be present' if not stateid
+		db.states.get stateid, (err, state) ->
+			return next err if err
+			return next new check.Error 'state', 'invalid or expired' if not state
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
+			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+			oa = new oauth[state.oauthv]
+			oa.access_token state, req, (e, r) ->
+				status = if e then 'error' else 'success'
 
-			plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
-			if not e
-				if state.options.response_type != 'token'
-					db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
-				if state.options.response_type == 'code'
-					r = {}
-				if state.options.response_type != 'token'
-					r.code = stateid
-				if state.options.response_type == 'token'
-					db.states.del stateid, (->)
-			callback e, r
+				plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
+				if not e
+					if state.options.response_type != 'token'
+						db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
+					if state.options.response_type == 'code'
+						r = {}
+					if state.options.response_type != 'token'
+						r.code = stateid
+					if state.options.response_type == 'token'
+						db.states.del stateid, (->)
+					oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+					if not oad_uid
+						oad_uid = db.generateUid()
+						d = new Date (new Date).getTime() + 30*24*3600*1000
+						res.setHeader 'Set-Cookie', 'oad_uid=%22' + oad_uid + '%22; Path=/; Expires=' + d.toGMTString()
+
+				callback e, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/auth/:provider', (req, res, next) ->
@@ -299,6 +310,13 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 			oa = new oauth[oauthv]
 			oa.authorize provider, parameters, opts, cb
+		(authorize, cb) ->
+			oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*)%22/)?[1]
+			return cb null, authorize.url if not oad_uid
+			db.redis.set 'cli:state:' + oad_uid, authorize.state, (err) ->
+				return cb err if err
+				db.redis.expire 'cli:state:' + oad_uid, 600
+				cb null, authorize.url
 	], (err, url) ->
 		return callback err if err
 		res.setHeader 'Location', url
