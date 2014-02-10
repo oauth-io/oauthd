@@ -27,7 +27,7 @@ module.exports =
 		"url":
 			description: "The base absolute url to use in sub-parts"
 			type: "string"
-		"description":
+		"desc":
 			description: "Description of the API provider"
 			type: "string"
 		"oauth1":
