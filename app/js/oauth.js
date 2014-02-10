@@ -3,7 +3,7 @@
 	var config = {
 		oauthd_url: '{{auth_url}}',
 		oauthd_api: '{{api_url}}',
-		version: 'web-0.1.5',
+		version: 'web-0.1.6',
 		options: {}
 	};
 
@@ -114,7 +114,7 @@
 
 		if (data.status === 'error' || data.status === 'fail') {
 			err = new Error(data.message);
-			if (data.data) err.body = data.data;
+			err.body = data.data;
 			return opts.callback(err);
 		}
 
@@ -277,7 +277,7 @@
 				return res;
 			},
 			popup: function(provider, opts, callback) {
-				var wnd, frm;
+				var wnd, frm, wndTimeout;
 				if ( ! config.key)
 					return callback(new Error('OAuth object must be initialized'));
 				if (arguments.length == 2) {
@@ -333,6 +333,10 @@
 					else if (document.detachEvent)
 						document.detachEvent("onmessage", getMessage);
 					opts.callback = function() {};
+					if (wndTimeout) {
+						clearTimeout(wndTimeout);
+						wndTimeout = undefined;
+					}
 					return callback(e,r);
 				};
 
@@ -353,9 +357,10 @@
 					document.body.appendChild(frm);
 				}
 
-				setTimeout(function() {
+				wndTimeout = setTimeout(function() {
 					opts.callback(new Error('Authorization timed out'));
-				}, 600 * 1000);
+					try { wnd.close(); } catch(e) {}
+				}, 1200 * 1000);
 
 				wnd = window.open(url, "Authorization", wnd_options);
 				if (wnd) wnd.focus();
@@ -501,7 +506,7 @@
 	function createCookie(name, value, expires) {
 		eraseCookie(name);
 		var date = new Date();
-		date.setTime(date.getTime() + (expires*1000 || 600000)); // def: 10 mins
+		date.setTime(date.getTime() + (expires || 1200) * 1000); // def: 20 mins
 		var expires = "; expires="+date.toGMTString();
 		document.cookie = name+"="+value+expires+"; path=/";
 	}
