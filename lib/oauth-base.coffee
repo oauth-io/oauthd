@@ -45,7 +45,7 @@ class OAuthBase
 			oauthv: @_oauthv,
 			origin: opts.origin,
 			options: opts.options,
-			expire: 600
+			expire: 1200
 		dbstates.add newStateData, callback
 
 module.exports = OAuthBase

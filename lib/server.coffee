@@ -190,7 +190,7 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 			view += 'function createCookie(name, value) {\n'
 			view += '	var date = new Date();\n'
-			view += '	date.setTime(date.getTime() + 600000);\n'
+			view += '	date.setTime(date.getTime() + 1200 * 1000);\n'
 			view += '	var expires = "; expires="+date.toGMTString();\n'
 			view += '	document.cookie = name+"="+value+expires+"; path=/";\n'
 			view += '}\n'
@@ -315,7 +315,7 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 			return cb null, authorize.url if not oad_uid
 			db.redis.set 'cli:state:' + oad_uid, authorize.state, (err) ->
 				return cb err if err
-				db.redis.expire 'cli:state:' + oad_uid, 600
+				db.redis.expire 'cli:state:' + oad_uid, 1200
 				cb null, authorize.url
 	], (err, url) ->
 		return callback err if err
