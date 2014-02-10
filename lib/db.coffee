@@ -23,6 +23,10 @@ exports.redis = redis.createClient config.redis.port, config.redis.host, config.
 exports.redis.auth(config.redis.password) if config.redis.password
 exports.redis.select(config.redis.database) if config.redis.database
 
+exports.redis.on 'error', (err) ->
+	exports.redis.last_error = 'Error while connecting to redis DB (' + err.message + ')'
+	console.error exports.redis.last_error
+
 exit.push 'Redis db', (callback) ->
 	try
 		exports.redis.quit() if exports.redis

@@ -16,9 +16,8 @@
 
 hooks.config.push ->
 
-	app.controller 'LogoutCtrl', ($location, UserService, MenuService) ->
-		UserService.logout()
-		$location.path '/'
+	app.controller 'LogoutCtrl', ($location, $rootScope) ->
+		document.location.reload()
 
 	app.controller 'ProviderCtrl', ($filter, $scope, $rootScope, ProviderService, $timeout) ->
 		ProviderService.list (json) ->

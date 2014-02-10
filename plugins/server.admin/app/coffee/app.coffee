@@ -14,6 +14,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+global_err = /[\\#&]err=([^&]*)/.exec(document.location.hash)
+if global_err
+	document.location.hash = document.location.hash.replace(/&?err=[^&]*/, '');
+	global_err = decodeURIComponent(global_err[1].replace(/\+/g, " "));
+
 app = angular.module 'oauth', ['ui.bootstrap', 'ngDragDrop', 'ui.select2', 'ngCookies']
 
 app.config([
@@ -28,6 +33,9 @@ app.config([
 		$routeProvider.when '',
 			templateUrl: '/templates/signin.html'
 			controller: 'SigninCtrl'
+		$routeProvider.when '/error',
+			templateUrl: '/templates/globalError.html'
+			controller: 'ErrorCtrl'
 
 		$routeProvider.otherwise redirectTo: '/admin'
 		hooks.configRoutes $routeProvider, $locationProvider if hooks?.configRoutes
@@ -101,60 +109,40 @@ if hooks?.config
 app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 	$rootScope.accessToken = $cookieStore.get 'accessToken'
 	return $rootScope.UserService = {
-		login: (user, success, error) ->
-			authorization = (user.name + ':' + user.pass).encodeBase64()
-
-			$http(
-				method: "POST"
-				url: "token"
-				data:
-					grant_type: "client_credentials"
-				headers:
-					Authorization: "Basic " + authorization
-			).success((data) ->
-				$rootScope.accessToken = data.access_token
-				$cookieStore.put 'accessToken', data.access_token
-
-				path = $rootScope.authRequired || '/key-manager'
-				delete $rootScope.authRequired
-				success path if success
-			).error(error)
-
 		isLogin: -> $cookieStore.get('accessToken')?
-
-		logout: ->
-			delete $rootScope.accessToken
-			$cookieStore.remove 'accessToken'
 	}
 
 app.factory 'MenuService', ($rootScope, $location) ->
 	$rootScope.selectedMenu = $location.path()
 	return changed: -> $rootScope.selectedMenu = $location.path()
 
-app.controller 'SigninCtrl', ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService) ->
+app.controller 'SigninCtrl', ($scope, $rootScope, $location, UserService, MenuService) ->
+	if $rootScope.global_err
+		document.location.reload()
+
 	MenuService.changed()
-	if UserService.isLogin() && hooks?.configRoutes
-		return $location.path '/key-manager'
+
+	if global_err
+		$scope.info =
+			status: 'error'
+			message: global_err
+
+	if UserService.isLogin()
+		if hooks?.configRoutes
+			return $location.path '/key-manager'
+		else
+			document.location.reload()
 	$scope.user = {}
 
 	$scope.userForm =
 		template: "/templates/userForm.html"
-		submit: ->
-			$scope.info =
-				status: ''
-				message: ''
 
-			user =
-				name: $('#name').val()
-				pass: $('#pass').val()
+app.controller 'ErrorCtrl', ($scope, $rootScope) ->
+	if not global_err
+		return $location.path '/'
 
-			#signin
-			UserService.login user, ((path)->
-				window.location.reload()
-			), (error) ->
-				return if not error
-				$scope.info =
-					status: 'error'
-					message: error?.error_description || 'Internal error'
+	$rootScope.global_err = global_err
 
-			return false
+	$scope.info =
+		status: 'error'
+		message: global_err

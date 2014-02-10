@@ -1,0 +1,21 @@
+<div class="container">
+	<div class="row">
+		<div class="col col-lg-6 col-offset-3">
+			<div class="well">
+				<h4 style="text-align: center">Admin interface</h4><br />
+				<div class="alert alert-danger" ng-show="info.status == 'error'">
+					{{info.message}}
+					<br/>
+					Please check config.local.js or run "oauthd config"
+				</div>
+					<div class="alert alert-info" ng-show="info.status == 'info'">
+					{{info.message}}
+				</div>
+				<div class="row">
+				<div class="col col-offset-4 col-lg-8">
+					<a href="{{adminurl}}">Go back to /admin</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
