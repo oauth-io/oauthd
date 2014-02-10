@@ -79,7 +79,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 							<div class="row">
 								<label class="col col-lg-4 control-label">error</label>
 								<div ng-hide="app.auth[keyProvider] != null" class="text-danger col col-lg-8" style="position: relative; top: 6px">Not defined</div>
-								<div ng-show="app.auth[keyProvider] != null" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].error|json}}</pre></div>
+								<div ng-show="app.auth[keyProvider] != null" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].error.message}} {{app.auth[keyProvider].error|json}}</pre></div>
 							</div>
 
 							<div class="row">
