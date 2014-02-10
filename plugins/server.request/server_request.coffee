@@ -40,8 +40,9 @@ exports.setup = (callback) ->
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 		urlinfos = Url.parse(ref)
 		if not urlinfos.hostname
-			return next new restify.InvalidHeaderError 'Missing origin or referer.'
-		origin = urlinfos.protocol + '//' + urlinfos.host
+			ref = origin = "http://localhost"
+		else
+			origin = urlinfos.protocol + '//' + urlinfos.host
 
 		async.parallel [
 			(callback) => @db.providers.getExtended req.params[0], callback
