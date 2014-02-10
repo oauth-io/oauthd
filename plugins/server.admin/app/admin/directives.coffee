@@ -31,7 +31,7 @@ hooks.config.push ->
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-body">
-				<img ng-src="{{lightbox.img}}" id="lightbox-img">
+				<img ng-src="{{baseurl}}/{{lightbox.img}}" id="lightbox-img">
 			</div>
 			<div class="modal-footer">
 				<p style="text-align: center" class="caption" id="lightbox-caption">{{lightbox.caption}}</p>

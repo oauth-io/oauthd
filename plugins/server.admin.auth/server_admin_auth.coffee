@@ -116,7 +116,7 @@ exports.setup = (callback) ->
 			if token
 				expireDate = new Date((new Date - 0) + _config.expire * 1000)
 				res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
-			res.setHeader 'Location', @config.host_url + @config.base
+			res.setHeader 'Location', @config.host_url + @config.base + "/admin/key-manager"
 			res.send 302
 			next()
 	callback()

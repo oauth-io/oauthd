@@ -20,13 +20,20 @@ app.config([
 	'$routeProvider'
 	'$locationProvider'
 	($routeProvider, $locationProvider) ->
-		$routeProvider.when '/',
-			templateUrl: 'templates/signin.html'
+		originalWhen = $routeProvider.when
+		$routeProvider.when = ->
+			arguments[0] = oauthdconfig.base + '/admin' + arguments[0]
+			arguments[1].templateUrl = oauthdconfig.base + arguments[1].templateUrl if arguments[1]?.templateUrl
+			originalWhen.apply($routeProvider, arguments)
+		$routeProvider.when '',
+			templateUrl: '/templates/signin.html'
 			controller: 'SigninCtrl'
 
-		$routeProvider.otherwise redirectTo: '/'
+		$routeProvider.otherwise redirectTo: '/admin'
 		hooks.configRoutes $routeProvider, $locationProvider if hooks?.configRoutes
-]).config ['$httpProvider', ($httpProvider) ->
+
+		$locationProvider.html5Mode true
+]).config(['$httpProvider', ($httpProvider) ->
 	interceptor = [
 		'$rootScope'
 		'$location'
@@ -73,7 +80,20 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]
+]).run ($rootScope, $location) ->
+	$rootScope.baseurl = oauthdconfig.base
+	$rootScope.adminurl = oauthdconfig.base + '/admin'
+	locationpath = $location.path
+	$location.path = ->
+		if arguments.length == 0
+			path = locationpath.call($location)
+			if path.substr(0, $rootScope.adminurl.length) == $rootScope.adminurl.length
+				path = path.substr($rootScope.adminurl.length)
+			return path
+		else
+			arguments[0] = '' if arguments[0] == '/'
+			return locationpath.call($location, $rootScope.adminurl + arguments[0])
+
 if hooks?.config
 	config() for config in hooks.config
 
@@ -118,7 +138,7 @@ app.controller 'SigninCtrl', ($scope, $rootScope, $timeout, $http, $location, Us
 	$scope.user = {}
 
 	$scope.userForm =
-		template: "templates/userForm.html"
+		template: "/templates/userForm.html"
 		submit: ->
 			$scope.info =
 				status: ''

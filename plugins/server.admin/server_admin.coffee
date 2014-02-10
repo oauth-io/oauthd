@@ -46,13 +46,16 @@ exports.setup = (callback) ->
 			req._path = req._path.substr(@config.base.length)
 		next()
 
-	@server.get @config.base + '/admin', @auth.optional, (req, res, next) =>
+	sendIndex = (req, res, next) =>
 		fs.readFile __dirname + '/app/index.html', 'utf8', (err, data) =>
 			res.setHeader 'Content-Type', 'text/html'
 			data = data.toString().replace /\{\{if admin\}\}([\s\S]*?)\{\{endif\}\}\n?/gm, if req.user then '$1' else ''
 			data = data.replace /\{\{jsconfig\}\}/g, "var oauthdconfig={host_url:\"#{@config.host_url}\",base:\"#{@config.base}\",base_api:\"#{@config.base_api}\"};"
+			data = data.replace /\{\{baseurl\}\}/g, "#{@config.base}"
 			res.end data
 			next()
+
+	@server.get @config.base + '/admin', @auth.optional, sendIndex
 
 	@server.get new RegExp('^' + @config.base + '\/(lib|css|js|img|templates)\/.*'), rmBasePath, restify.serveStatic
 		directory: __dirname + '/app'
@@ -68,5 +71,7 @@ exports.setup = (callback) ->
 			return next(e) if e
 			res.send apps:appkeys
 			next()
+
+	@server.get new RegExp('^' + @config.base + '\/admin\/.*'), rmBasePath, @auth.optional, sendIndex
 
 	callback()

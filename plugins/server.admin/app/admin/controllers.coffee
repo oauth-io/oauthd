@@ -57,10 +57,10 @@ hooks.config.push ->
 		$scope.authDomain = oauthdconfig.host_url
 		$scope.oauthdconfig = oauthdconfig;
 		$scope.createKeyProvider = 'facebook'
-		$scope.createKeyTemplate = "admin/templates/partials/create-key.html"
-		$scope.createAppTemplate = "admin/templates/partials/create-app.html"
-		$scope.providersTemplate = "admin/templates/partials/providers.html"
-		$scope.createKeyLastStepTemplate = "admin/templates/partials/create-key-laststep.html"
+		$scope.createKeyTemplate = "/templates/partials/create-key.html"
+		$scope.createAppTemplate = "/templates/partials/create-app.html"
+		$scope.providersTemplate = "/templates/partials/providers.html"
+		$scope.createKeyLastStepTemplate = "/templates/partials/create-key-laststep.html"
 		$scope.cancelCreateKey = ->
 			if $scope.createKeyStep <= 2
 				if $scope.isDropped and $scope.createKeyExists

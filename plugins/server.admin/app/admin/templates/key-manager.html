@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col col-lg-4" ng-controller="ProviderCtrl" ng-include src="adminurl + providersTemplate"></div>
 		<div class="col col-lg-8" ng-controller="AppCtrl">
 			<div ng-repeat="app in apps" class="panel" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
 				<div ng-hide="editMode == app.key" class="">
@@ -20,7 +20,7 @@
 						<div class="row panel-heading">
 							<h4 class="col col-offset-4">Edit</h4>
 						</div>
-						<div ng-include src="createAppTemplate"></div>
+						<div ng-include src="adminurl + createAppTemplate"></div>
 						<div class="row" style="margin-top: 20px">
 							<div class="col col-offset-4">
 								<button class="btn btn-primary" ng-click="editAppSubmit(app.key)">Save</button>
@@ -142,7 +142,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 					</div>
 				</div>
 			</div>
-			<a class="btn btn-default" style="cursor: pointer" href="#/app-create">Create a new application</a>
+			<a class="btn btn-default" style="cursor: pointer" href="{{adminurl}}/app-create">Create a new application</a>
 		</div>
 	</div>
 </div>
@@ -156,7 +156,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 					<span style="position: relative; top: 2px; left: 8px;">Configure {{createKeyProvider|capitalize}} - {{oauthType}}</span>
 				</h4>
 			</div>
-			<div class="modal-body" ng-include src="createKeyTemplate">
+			<div class="modal-body" ng-include src="adminurl + createKeyTemplate">
 			</div>
 			<div class="modal-footer">
 				<button class="btn btn-default" ng-click="cancelCreateKey()">{{createKeyCancel}}</button>

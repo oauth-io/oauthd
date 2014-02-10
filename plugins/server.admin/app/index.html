@@ -4,32 +4,32 @@
     <meta charset="UTF-8">
     <title>OAuth Daemon</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="lib/jquery/jquery2.js"></script>
-    <script src="lib/jquery-ui/jquery-ui.js"></script>
-    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>
-    <script src="lib/angular-cookies/angular-cookies.js"></script>
-    <script src="lib/sugar/sugar.min.js"></script>
-    <script src="lib/select2/select2.js"></script>
-    <script src="lib/bootstrap3/js/bootstrap.js"></script>
-    <script src="lib/angular-ui-select2/select2.js"></script>
-    <script src="lib/angular-drag-drop/angular-dragdrop.js"></script>
-    <script src="lib/angular-local-storage/localStorageModule.js"></script>
+    <script src="{{baseurl}}/lib/jquery/jquery2.js"></script>
+    <script src="{{baseurl}}/lib/jquery-ui/jquery-ui.js"></script>
+    <script src="{{baseurl}}/lib/angular/angular.js"></script>
+    <script src="{{baseurl}}/lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>
+    <script src="{{baseurl}}/lib/angular-cookies/angular-cookies.js"></script>
+    <script src="{{baseurl}}/lib/sugar/sugar.min.js"></script>
+    <script src="{{baseurl}}/lib/select2/select2.js"></script>
+    <script src="{{baseurl}}/lib/bootstrap3/js/bootstrap.js"></script>
+    <script src="{{baseurl}}/lib/angular-ui-select2/select2.js"></script>
+    <script src="{{baseurl}}/lib/angular-drag-drop/angular-dragdrop.js"></script>
+    <script src="{{baseurl}}/lib/angular-local-storage/localStorageModule.js"></script>
     <script>{{jsconfig}}</script>
 {{if admin}}
-    <script src="admin/js/admin.js"></script>
-    <script src="admin/js/filters.js"></script>
-    <script src="admin/js/directives.js"></script>
-    <script src="admin/js/controllers.js"></script>
-    <script src="admin/js/services.js"></script>
+    <script src="{{baseurl}}/admin/js/admin.js"></script>
+    <script src="{{baseurl}}/admin/js/filters.js"></script>
+    <script src="{{baseurl}}/admin/js/directives.js"></script>
+    <script src="{{baseurl}}/admin/js/controllers.js"></script>
+    <script src="{{baseurl}}/admin/js/services.js"></script>
 {{endif}}
-    <script src="js/app.js"></script>
-    <script src="download/latest/oauth.js"></script>
-    <link rel="stylesheet" href="lib/bootstrap3/css/bootstrap.css" type="text/css">
-    <link rel="stylesheet" href="css/main.css" type="text/css">
-    <link rel="stylesheet" href="lib/select2/select2.css" type="text/css"></script>
+    <script src="{{baseurl}}/js/app.js"></script>
+    <script src="{{baseurl}}/download/latest/oauth.js"></script>
+    <link rel="stylesheet" href="{{baseurl}}/lib/bootstrap3/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="{{baseurl}}/css/main.css" type="text/css">
+    <link rel="stylesheet" href="{{baseurl}}/lib/select2/select2.css" type="text/css"></script>
 
-    <link rel="icon" type="image/png" href="img/favicon.png" />
+    <link rel="icon" type="image/png" href="{{baseurl}}/img/favicon.png" />
     <link href='//fonts.googleapis.com/css?family=Yanone+Kaffeesatz' rel='stylesheet' type='text/css'>
 </head>
 <body>
@@ -42,8 +42,8 @@
           <span class="icon-bar"></span>
         </button>
         <!-- Be sure to leave the brand out there if you want it shown -->
-        <a class="navbar-brand" style="font-family: 'Yanone Kaffeesatz', sans-serif; font-size: 1.8em; color: #6d6c6c" href="#/">
-          <img class="pull-left" src="img/logo_v1.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" width="40">
+        <a class="navbar-brand" style="font-family: 'Yanone Kaffeesatz', sans-serif; font-size: 1.8em; color: #6d6c6c" href="{{baseurl}}/admin">
+          <img class="pull-left" src="{{baseurl}}/img/logo_v1.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" width="40">
           <span style="position: relative; top: -2px; left: 5px">OAuth Daemon</span>
         </a>
 
@@ -51,12 +51,12 @@
         <div class="nav-collapse collapse navbar-responsive-collapse">
           {{if admin}}
           <ul class="nav navbar-nav">
-            <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="#/key-manager">Key manager</a></li>
+            <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="{{baseurl}}/admin/key-manager">Key manager</a></li>
             <li ng-show="UserService.isLogin()"><a href="https://oauth.io/#/docs/oauthd">Documentation</a></li>
           </ul>
           {{endif}}
           <ul class="nav navbar-nav pull-right">
-            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="#/logout" style="cursor: pointer"><i tooltip-placement="bottom" tooltip="Sign out" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
+            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="{{baseurl}}/admin/logout" style="cursor: pointer"><i tooltip-placement="bottom" tooltip="Sign out" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
           </ul>
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
@@ -67,7 +67,7 @@
 
     <div class="container">
         <hr />
-        {{if admin}}<div style="font-size: 1.0em; margin-bottom: 20px" class="pull-right" ng-show="UserService.isLogin()"><a href="#/about">About</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#/license">License</a>&nbsp;&nbsp;&nbsp;&nbsp;</div>{{endif}}
+        {{if admin}}<div style="font-size: 1.0em; margin-bottom: 20px" class="pull-right" ng-show="UserService.isLogin()"><a href="{{baseurl}}/admin/about">About</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{{baseurl}}/admin/license">License</a>&nbsp;&nbsp;&nbsp;&nbsp;</div>{{endif}}
     </div>
 
 </body>

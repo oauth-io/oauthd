@@ -1,6 +1,6 @@
 <div>
 	<div ng-show="createKeyStep == 1">
-		<div class="col col-lg-6 col-offset-3" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col col-lg-6 col-offset-3" ng-controller="ProviderCtrl" ng-include src="adminurl + providersTemplate"></div>
 	</div>
 	<div ng-show="createKeyStep == 2">
 		<div class="row" style="margin-top: 5px">
@@ -35,6 +35,6 @@
 		<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
 	      {{error.message}}
 		</div>
-		<div ng-include src="createKeyLastStepTemplate"></div>
+		<div ng-include src="adminurl + createKeyLastStepTemplate"></div>
 	</div>
 </div>
