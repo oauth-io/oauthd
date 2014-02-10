@@ -287,7 +287,7 @@ hooks.config.push ->
 
 
 		$scope.editMode = false
-		$scope.appCreateTemplate = "admin/templates/partials/create-app.html"
+		$scope.appCreateTemplate = "/templates/partials/create-app.html"
 
 		$scope.createAppForm =
 			name: ""
@@ -329,6 +329,8 @@ hooks.config.push ->
 
 
 		$scope.createAppSubmit = ->
+
+			$scope.addDomain()
 
 			$rootScope.error =
 				state : false
