@@ -10,8 +10,8 @@ exports.setup = (callback) ->
 
 		@db.redis.sadd "apiratings:users", mail
 
-		res.setHeader 'access-control-allow-origin', 'http://apiratings.org'
-		res.setHeader 'access-control-allow-methods', 'POST'
+		res.setHeader 'Access-Control-Allow-Origin', 'http://apiratings.org'
+		res.setHeader 'Access-Control-Allow-Methods', 'POST'
 
 		res.send error:false
 		next()
@@ -20,10 +20,10 @@ exports.setup = (callback) ->
 		@db.redis.smembers "apiratings:users", @server.send(res, next)
 
 	@server.opts '/apiratings/signup', (req, res, next) =>
-		res.setHeader 'access-control-allow-origin', 'http://apiratings.org'
-		res.setHeader 'access-control-allow-methods', 'POST'
-		if req.headers['access-control-request-headers']
-			res.setHeader 'access-control-allow-headers', req.headers['access-control-request-headers']
+		res.setHeader 'Access-Control-Allow-Origin', 'http://apiratings.org'
+		res.setHeader 'Access-Control-Allow-Methods', 'POST'
+		if req.headers['Access-Control-Request-Headers']
+			res.setHeader 'Access-Control-Allow-Headers', req.headers['Access-Control-Request-Headers']
 		res.send 200
 		next false
 
