@@ -220,6 +220,7 @@ class OAuth1 extends OAuthBase
 			'accept-encoding':req.headers['accept-encoding']
 			'accept-language':req.headers['accept-language']
 			'content-type':req.headers['content-type']
+			'User-Agent': 'OAuth.io'
 		for name, value of oauthrequest.headers
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.headers[name] = param if param
