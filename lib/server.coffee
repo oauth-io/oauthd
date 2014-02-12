@@ -192,6 +192,7 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 		uaparser = new UAParser()
 		uaparser.setUA req.headers['user-agent']
 		browser = uaparser.getBrowser()
+		chromeext = data.origin.match(/chrome-extension:\/\/([^\/]+)/)
 		if browser.name.substr(0,2) == 'IE'
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 			view += 'function createCookie(name, value) {\n'
@@ -201,10 +202,13 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 			view += '	document.cookie = name+"="+value+expires+"; path=/";\n'
 			view += '}\n'
 			view += 'createCookie("oauthio_last",encodeURIComponent(msg));\n'
+		else if (chromeext)
+			view += '\tchrome.runtime.sendMessage("' + chromeext[1] + '", {data:msg});\n'
+			view += '\twindow.close();\n'
 		else
-			view += '\tvar opener = window.opener || window.parent.window.opener;\n'
-			view += '\tif (opener)\n'
-			view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
+			view += 'var opener = window.opener || window.parent.window.opener;\n'
+			view += 'if (opener)\n'
+			view += '\topener.postMessage(msg, "' + data.origin + '");\n'
 			view += '\twindow.close();\n'
 	view += '})();</script></head><body></body></html>'
 	res.send view
@@ -412,8 +416,8 @@ server.get config.base_api + '/providers', bootPathCache(), (req, res, next) ->
 
 # get a provider config
 server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res, next) ->
-	res.setHeader 'access-control-allow-origin', '*'
-	res.setHeader 'access-control-allow-methods', 'GET'
+	res.setHeader 'Access-Control-Allow-Origin', '*'
+	res.setHeader 'Access-Control-Allow-Methods', 'GET'
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
