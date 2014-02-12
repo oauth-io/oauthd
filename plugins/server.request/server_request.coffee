@@ -73,8 +73,8 @@ exports.setup = (callback) ->
 				return cb err if err
 
 				api_request.pipefilter = (response, dest) ->
-					dest.setHeader 'access-control-allow-origin', origin
-					dest.setHeader 'access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE'
+					dest.setHeader 'Access-Control-Allow-Origin', origin
+					dest.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
 				api_request.pipe(res)
 				api_request.once 'end', -> next false
 
@@ -86,10 +86,10 @@ exports.setup = (callback) ->
 			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 		origin = urlinfos.protocol + '//' + urlinfos.host
 
-		res.setHeader 'access-control-allow-origin', origin
-		res.setHeader 'access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE'
-		if req.headers['access-control-request-headers']
-			res.setHeader 'access-control-allow-headers', req.headers['access-control-request-headers']
+		res.setHeader 'Access-Control-Allow-Origin', origin
+		res.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
+		if req.headers['Access-Control-Request-Headers']
+			res.setHeader 'Access-Control-Allow-Headers', req.headers['Access-Control-Request-Headers']
 		res.cache maxAge: 120
 
 		res.send 200
