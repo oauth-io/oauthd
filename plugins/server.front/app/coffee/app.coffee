@@ -151,7 +151,7 @@ app.config([
 		$routeProvider.otherwise redirectTo: '/404'
 
 		$locationProvider.html5Mode true
-]).config ['$httpProvider', ($httpProvider) ->
+]).config(['$httpProvider', ($httpProvider) ->
 	interceptor = [
 		'$rootScope'
 		'$location'
@@ -202,5 +202,6 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]
+]).run ($rootScope, $location) ->
+	$rootScope.location = $location.path()
 hooks.config() if hooks?.config
