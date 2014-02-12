@@ -22,8 +22,8 @@ exports.setup = (callback) ->
 	@server.opts '/apiratings/signup', (req, res, next) =>
 		res.setHeader 'Access-Control-Allow-Origin', 'http://apiratings.org'
 		res.setHeader 'Access-Control-Allow-Methods', 'POST'
-		if req.headers['Access-Control-Request-Headers']
-			res.setHeader 'Access-Control-Allow-Headers', req.headers['Access-Control-Request-Headers']
+		if req.headers['access-control-request-headers']
+			res.setHeader 'Access-Control-Allow-Headers', req.headers['access-control-request-headers']
 		res.send 200
 		next false
 
