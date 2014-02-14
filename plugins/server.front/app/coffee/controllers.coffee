@@ -180,24 +180,85 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				callback err, success
 
 	me =
-		'facebook': '/me'
-		'twitter': '/1.1/account/verify_credentials.json'
-		'google_plus': ''
-		'linkedin': ''
-		'github': ''
-		'vk': ''
+		'facebook':
+			url: '/me'
+			name: 'name'
+			mail: 'email'
+		'twitter':
+			url: '/1.1/account/verify_credentials.json'
+			name: 'name'
+		'google_plus':
+			url: '/oauth2/v1/userinfo'
+			name: 'name'
+		'linkedin':
+			url: '/v1/people/~:(id,email-address,first-name,last-name,headline)?format=json'
+			name: ['firstName', 'lastName']
+			mail: 'emailAddress',
+			company: 'headline'
+		'github':
+			url: '/user'
+			name: 'name'
+			company: 'company'
+			mail: 'email'
+		'vk':
+			url: '/method/getProfiles'
+			name: ['first_name', 'last_name']
+			path: 'response/0'
 
 	$scope.socialSignin = (provider) ->
 		$scope.oauth provider, (err, res) ->
 			return false if err
-			res.get(me[provider]).done (data)->
-				alert 'hello ' + data.name
+			UserService.loginOAuth {
+				access_token: res.access_token
+				oauth_token: res.oauth_token
+				oauth_token_secret: res.oauth_token_secret
+			}, provider, ((path) ->
+				$location.path path
+				console.log path
+			), (error) ->
 
+	$scope.connected = false
 	$scope.socialSignup = (provider) ->
-		$scope.oauth provider, (err, res) ->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, (err, res) ->
 			return false if err
-			res.get(me[provider]).done (data)->
-				alert 'hello ' + data.name
+			res.get(me[provider].url).done (data)->
+				$scope.user.name = data[me[provider].name]
+				if me[provider].path
+					for eltname in me[provider].path.split '/'
+						data = data[eltname]
+				console.log data
+				if Array.isArray $scope.user.name
+					name = ''
+					for a in $scope.user.name
+						name += ' ' + data[a]
+					console.log name
+					$scope.user.name = name.trim()
+
+				$scope.user.mail = data[me[provider].mail]
+				$scope.user.company = data[me[provider].company]
+				$scope.connected = true
+				console.log res
+				$scope.social =
+					provider: provider
+					token: res.access_token
+					oauth_token: res.oauth_token
+					oauth_token_secret: res.oauth_token_secret
+				console.log $scope.social
+				$scope.$apply()
+
+	$scope.signinSubmit = ->
+
+	$scope.signupSubmit = ->
+		#verif field
+		console.log $scope.user, $scope.social
+		UserService.register $scope.user, $scope.social, ((data) ->
+			$scope.signupInfo =
+				status: 'success'
+		), (error) ->
+			$scope.signupInfo =
+				status: 'error'
+				message: error.message
 
 	$scope.userForm =
 		template: "/templates/partials/userForm.html"
@@ -221,8 +282,9 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					$(window).off()
 					$(document).off()
 					$location.ga_skip = true;
-					document.location.href = '/#' + path
-					document.location.reload()
+					$location.path path
+					# document.location.href = '/#' + path
+					# document.location.reload()
 				), (error) ->
 					$scope.info =
 						status: 'error'

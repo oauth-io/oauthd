@@ -51,11 +51,38 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				success path if success
 			).error(error)
 
+		loginOAuth: (tokens, provider, success, error) ->
+			api 'signin/oauth', ((data) ->
+				$rootScope.accessToken = data.data.access_token
+				$cookieStore.put 'accessToken', data.data.access_token
+
+				path = $rootScope.authRequired || '/key-manager'
+				success path if success
+			), error, data:
+				token: tokens.access_token
+				oauth_token: tokens.oauth_token
+				oauth_token_secret: tokens.oauth_token_secret
+				provider: provider
+
 		isLogin: -> $cookieStore.get('accessToken')?
 
-		register: (mail, success, error) ->
-			api 'users', success, error, data:
-				mail:mail
+		register: (user, social, success, error) ->
+			if social?.provider
+				api 'signup/oauth', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
+					provider:social.provider
+					token:social?.token
+					oauth_token:social?.oauth_token
+					oauth_token_secret:social?.oauth_token_secret
+			else
+				api 'users', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
 
 		me: (success, error) ->
 			api 'me', success, error

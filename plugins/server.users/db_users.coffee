@@ -10,8 +10,10 @@ Mailer = require '../../lib/mailer'
 {config,check,db} = shared = require '../shared'
 
 # register a new user
-exports.register = check mail:check.format.mail, (data, callback) ->
+exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback) ->
 	date_inscr = (new Date).getTime()
+	return callback new check.Error 'You need to give your name.' if not data.name
+
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
 		return callback new check.Error 'This email already exists !' if iduser
@@ -19,15 +21,29 @@ exports.register = check mail:check.format.mail, (data, callback) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
 			key = db.generateUid()
+
+			dynsalt = Math.floor(Math.random() * 9999999)
+			pass = db.generateHash data.pass + dynsalt
+
+
+			arr = ['mset', prefix+'mail', data.mail,
+				prefix+'key', key,
+				prefix+'validated', 0,
+				prefix+'pass', pass,
+				prefix+'salt', dynsalt
+				prefix+'date_inscr', date_inscr,
+				prefix+'name', data.name ]
+
+			if data.company
+				arr.push prefix + 'company'
+				arr.push data.company
+
 			db.redis.multi([
-				[ 'mset', prefix+'mail', data.mail,
-					prefix+'key', key,
-					prefix+'validated', 0,
-					prefix+'date_inscr', date_inscr ],
+				arr,
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				user = id:val, mail:data.mail, date_inscr:date_inscr, key:key
+				user = id:val, mail:data.mail, name: data.name, company: data.company, date_inscr:date_inscr, key:key
 				shared.emit 'user.register', user
 				return callback null, user
 
@@ -171,12 +187,24 @@ exports.isValidable = (data, callback) ->
 	iduser = data.id
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [prefix+'mail', prefix+'key', prefix+'validated', prefix+'pass', prefix+'mail_changed'], (err, replies) ->
-		return callback err if err
-		return callback null, is_validable: false if replies[3]? and not replies[4]? or not replies[3] and replies[4]?
-		return callback null, is_validable: false if replies[1] != key
+		user =
+			mail: replies[0]
+			key: replies[1]
+			validated: replies[2]
+			pass: replies[3]
+			mail_changed: replies[4]
 
-		if replies[3]? and replies[4]? # change email
-			return callback null, is_validable: false if replies[4].length == 0
+		console.log "validable"
+		return callback err if err
+		# return callback null, is_validable: false if user.pass? and not user.mail_changed? or not user.pass? and user.mail_changed?
+		console.log "pass1"
+		return callback null, is_validable: false if user.key != key
+		console.log "pass2"
+
+		if user.pass? and user.mail_changed? # change email
+			console.log "change email"
+			return callback null, is_validable: false if user.mail_changed.length == 0
+			console.log "pass3"
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
 				[ 'hset', 'u:mails', replies[4], iduser ],
@@ -186,10 +214,12 @@ exports.isValidable = (data, callback) ->
 					prefix+'key', '' ]
 			]).exec (err, res) ->
 				return callback err  if err
-				return callback null, is_updated: true, mail: replies[4], id: iduser
+				return callback null, is_updated: true, mail: user.mail_changed, id: iduser
 		else # validable but no password
-			return callback null, is_validable: false if replies[2] == '1'
-			return callback null, is_validable: true, mail: replies[0], id: iduser
+			console.log "validable"
+			return callback null, is_validable: false if user.validated == '1'
+			console.log "pass4"
+			return callback null, is_validable: true, mail: user.mail, id: iduser
 
 # validate user mail
 exports.validate = check pass:/^.{6,}$/, (data, callback) ->

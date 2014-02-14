@@ -13,23 +13,23 @@
 								<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal; color: #666">And never worry about OAuth again...</h5>
 							</div><br /><br />
 							<div style="clear: left;">
-					        	<h3 style="text-align: center; margin-bottom: 45px;">Sign up with your favorite network</h3>
-								<div ng-init="connect=true">
+					        	<h3 style="text-align: center; margin-bottom: 45px;" ng-hide="connected">Sign up with your favorite network</h3>
+								<div ng-init="connect=true" ng-hide="connected">
 									<div class="row">
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large twitter" data-provider="twitter">
+											<button class="btn btn-block btn-large twitter" data-provider="twitter" ng-click="socialSignup('twitter')">
 												<img src="/api/providers/twitter/logo" class="pull-left" style="margin-left: 25px">
 												Twitter
 											</button>
 										</div>
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large facebook" data-provider="facebook">
+											<button class="btn btn-block btn-large facebook" data-provider="facebook" ng-click="socialSignup('facebook')">
 												<img src="/api/providers/facebook/logo" class="pull-left" style="margin-left: 25px">
 												Facebook
 											</button>
 										</div>
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large google" data-provider="google_plus">
+											<button class="btn btn-block btn-large google" data-provider="google_plus" ng-click="socialSignup('google_plus')">
 												<img src="/api/providers/google_plus/logo" class="pull-left" style="margin-left: 25px">
 												Google Plus
 											</button>
@@ -37,26 +37,26 @@
 									</div>
 									<div class="row" style="margin-top: 15px">
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large linkedin" data-provider="linkedin">
+											<button class="btn btn-block btn-large linkedin" data-provider="linkedin" ng-click="socialSignup('linkedin')">
 												<img src="/api/providers/linkedin/logo" class="pull-left" style="margin-left: 25px">
 												Linkedin
 											</button>
 										</div>
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large github" data-provider="github">
+											<button class="btn btn-block btn-large github" data-provider="github" ng-click="socialSignup('github')">
 												<img src="/api/providers/github/logo" class="pull-left" style="margin-left: 25px">
 												Github
 											</button>
 										</div>
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large vk" data-provider="vk">
+											<button class="btn btn-block btn-large vk" data-provider="vk" ng-click="socialSignup('vk')">
 												<img src="/api/providers/vk/logo" class="pull-left" style="margin-left: 25px">
 												VK
 											</button>
 										</div>
 									</div>
 								</div>
-								<div class="ui divider horizontal" style="font-size: 1.3em; margin-top: 40px">
+								<div class="ui divider horizontal" style="font-size: 1.3em; margin-top: 40px" ng-hide="connected">
 									Or
 								</div>
 								<h3 style="text-align: center; margin: 45px 0;">Fill the following information</h3>
@@ -69,23 +69,26 @@
 								  	</div>
 								  	<div style="margin-bottom: 15px">
 										<label for="name" style="font-size: 1.3em">Name</label>
-										<input type="text" class="input" id="name" ng-model="user.name" name="name" required>
+										<input type="text" class="input" id="name" ng-model="user.name" name="name" required style="font-size: 1.3em">
 								  	</div>
 								  	<div style="margin-bottom: 15px">
 										<label for="mail" style="font-size: 1.3em">Email</label>
-										<input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required >
+										<input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required style="font-size: 1.3em">
 								  	</div>
 								  	<div style="margin-bottom: 15px">
 										<label for="pass" style="font-size: 1.3em">Password</label>
-										<input type="password" class="input" id="pass" ng-model="user.password" name="pass" required>
+										<input type="password" class="input" id="pass" ng-model="user.pass" name="pass" required style="font-size: 1.3em">
 								  	</div>
 								  	<div style="margin-bottom: 15px">
 										<label for="company" style="font-size: 1.3em">Company name <small style="color: #999; font-size: 0.9em">(optional)</small></label>
-										<input type="text" class="input" id="company" ng-model="user.company" name="company" placeholder="">
+										<input type="text" class="input" id="company" ng-model="user.company" name="company" placeholder="" style="font-size: 1.3em">
 								  	</div>
+									<div ng-show="social">
+										<img ng-src="/api/providers/{{social.provider}}/logo"> <span class="text-success" style="font-size: 1.3em;position:relative; left: 15px; top: 2px">Successful sync with {{social.provider}}</span>
+									</div>
 								  	<div style="margin-top: 30px">
 								  		<p style="font-size:1.3em; color: #666">By signing up, you agree to our <a href="/terms">Terms of service</a></p>
-										<button type="submit" style="" class="btn btn-large btn-primary">
+										<button type="submit" ng-click="signupSubmit()" style="" class="btn btn-large btn-primary">
 									  		<span style="font-size: 18px;">Sign up</span>
 										</button>
 								  	</div>
