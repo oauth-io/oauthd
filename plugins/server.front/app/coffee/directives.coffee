@@ -28,11 +28,12 @@ app.directive 'stubborn', ($rootScope, $timeout) ->
 
 	return def
 
-app.directive 'googleAnalytics', ($location, $window) ->
+app.directive 'googleAnalytics', ($location, $rootScope, $window) ->
 	return {
 		scope: true,
 		link: ($scope) ->
 			$scope.$on '$routeChangeSuccess', ->
+				$rootScope.location = $location.path()
 				if $location.ga_skip
 					$location.ga_skip = false
 					return

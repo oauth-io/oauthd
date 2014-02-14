@@ -2,7 +2,7 @@
 exports.setup = (callback) ->
 
 	@hooks['connect.auth'].push (req, res, next) =>
-		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 
 		if not oaio_uid
 			oaio_uid = @db.generateUid()
@@ -15,7 +15,7 @@ exports.setup = (callback) ->
 		next()
 
 	@hooks['connect.callback'].push (req, res, next) =>
-		req.oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		req.oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 		return next() if not req.oaio_uid
 		@db.redis.del 'oaio_uid:' + req.oaio_uid + ':new', (e, r) ->
 			return next e if e

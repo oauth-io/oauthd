@@ -23,7 +23,7 @@ addExtension = (req, res, next) ->
 	next()
 
 checkLogged = (req, res, next) ->
-	token = req.headers.cookie?.match /accessToken=%22(.*)%22/
+	token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
 	req.token = token?[1]
 	next()
 
@@ -85,6 +85,11 @@ exports.setup = (callback) ->
 				sendres()
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
+
+		@server.get '/home', (req, res, next) ->
+			res.setHeader 'Location', '/'
+			res.send 301
+			next()
 
 		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'

@@ -11,7 +11,7 @@ shared = require '../shared'
 request = require 'request'
 
 _config =
-	expire: 3600*5
+	expire: 3600*36
 
 hooks =
 	grantClientToken: (clientId, clientSecret, cb) ->
@@ -41,6 +41,7 @@ exports.needed = (req, res, next) ->
 	if not req.clientId
 		return next new restify.UnauthorizedError "You need authentication"
 	req.user = req.clientId
+	shared.db.redis.expire 'session:' + req.token, _config.expire
 	req.body ?= {}
 	if not req.params.key?
 		return next()
@@ -185,6 +186,7 @@ exports.setup = (callback) ->
 							@db.timelines.addUse target:'u:validate', (->)
 							return callback null, id:user.id, mail:req.body.email, validated:true
 
+
 	@server.post @config.base_api + '/signin/oauth', (req, res, next) =>
 		callback = @server.send res, next
 
@@ -216,7 +218,6 @@ exports.setup = (callback) ->
 						return callback err if err
 						@emit 'user.login', res
 						return callback null, access_token:token, expires_in:_config.expire
-
 	callback()
 
 

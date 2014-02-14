@@ -8,10 +8,6 @@ app.config([
 			templateUrl: '/templates/landing-new.html'
 			controller: 'IndexCtrl'
 
-		$routeProvider.when '/home',
-			templateUrl: '/templates/landing-new.html'
-			controller: 'LandingCtrl'
-
 		$routeProvider.when '/providers',
 			templateUrl: '/templates/providers.html'
 			controller: 'ProviderCtrl'
@@ -28,6 +24,7 @@ app.config([
 			templateUrl: '/templates/terms.html'
 			controller: 'TermsCtrl'
 			title: 'Terms of service'
+			desc: 'Webshell SAS provides OAuth.io and the services described here to provide an OAuth server to authenticate end user on third party sites.'
 
 		$routeProvider.when '/about',
 			templateUrl: '/templates/about.html'
@@ -54,6 +51,7 @@ app.config([
 			templateUrl: '/templates/help.html'
 			controller: 'HelpCtrl'
 			title: 'Support'
+			desc: 'Check out the documentation, faq, feebacks or blog. If you still have a question, you can contact the OAuth io support team'
 
 		$routeProvider.when '/pricing',
 			templateUrl: '/templates/pricing.html'
@@ -98,6 +96,7 @@ app.config([
 			templateUrl: '/templates/imprint.html'
 			controller: 'ImprintCtrl'
 			title: 'Informations'
+			desc: 'OAuth.io is a offered by Webshell SAS, 86 Rue de Paris, 91400 ORSAY. Phone: +33(0)614945903, email: team@webshell.io'
 
 		$routeProvider.when '/signin',
 			templateUrl: '/templates/signin.html'
@@ -152,7 +151,7 @@ app.config([
 		$routeProvider.otherwise redirectTo: '/404'
 
 		$locationProvider.html5Mode true
-]).config ['$httpProvider', ($httpProvider) ->
+]).config(['$httpProvider', ($httpProvider) ->
 	interceptor = [
 		'$rootScope'
 		'$location'
@@ -203,5 +202,6 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]
+]).run ($rootScope, $location) ->
+	$rootScope.location = $location.path()
 hooks.config() if hooks?.config
