@@ -52,7 +52,8 @@ exports.setup = (callback) ->
 			@emit 'request', provider:provider_name, key:oauthio.k
 
 			# let oauth modules do the request
-			oauth[oauthv].request provider, parameters, req, (err, options) ->
+			oa = new oauth[oauthv]
+			oa.request provider, parameters, req, (err, options) ->
 				return callback err if err
 				return callback null, options
 

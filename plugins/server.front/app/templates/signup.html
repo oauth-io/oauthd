@@ -29,9 +29,9 @@
 											</button>
 										</div>
 										<div class="col col-lg-4">
-											<button class="btn btn-block btn-large google" data-provider="google_plus" ng-click="socialSignup('google_plus')">
-												<img src="/api/providers/google_plus/logo" class="pull-left" style="margin-left: 25px">
-												Google Plus
+											<button class="btn btn-block btn-large github" data-provider="google" ng-click="socialSignup('google')">
+												<img src="/api/providers/google/logo" class="pull-left" style="margin-left: 25px">
+												Google
 											</button>
 										</div>
 									</div>
@@ -60,7 +60,7 @@
 									Or
 								</div>
 								<h3 style="text-align: center; margin: 45px 0;">Fill the following information</h3>
-								<form name="signup" class="form-vertical" ng-submit="userForm.submit()" method="POST" >
+								<form name="signup" class="form-vertical" method="POST" ng-submit="signupSubmit()">
 						  			<div class="alert alert-danger" ng-show="info.status == 'error'">
 										{{info.message}}
 						  			</div>
@@ -88,7 +88,7 @@
 									</div>
 								  	<div style="margin-top: 30px">
 								  		<p style="font-size:1.3em; color: #666">By signing up, you agree to our <a href="/terms">Terms of service</a></p>
-										<button type="submit" ng-click="signupSubmit()" style="" class="btn btn-large btn-primary">
+										<button type="submit" style="" class="btn btn-large btn-primary">
 									  		<span style="font-size: 18px;">Sign up</span>
 										</button>
 								  	</div>

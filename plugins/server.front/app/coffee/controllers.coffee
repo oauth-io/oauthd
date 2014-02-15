@@ -1,8 +1,6 @@
 
 LogoutCtrl = ($location, UserService, MenuService) ->
-	$location.ga_skip = true;
-	UserService.logout ->
-		$location.path '/'
+	document.location.reload()
 
 ###########################
 # Landing page Controller #
@@ -92,7 +90,7 @@ ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) 
 #################################
 # Validate account email + pass #
 #################################
-ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $location) ->
+ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserService, $location, $cookieStore) ->
 	#MenuService.changed()
 	#if UserService.isLogin()
 	#	$location.path '/key-manager'
@@ -103,47 +101,23 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 
 		if UserService.isLogin() and data.data.is_updated
 			$location.path '/account'
-		else if !UserService.isLogin() and data.data.is_validable
+		else if data.data.is_validable
 			# $location.path '/signin'
 			$scope.user =
 				id: $routeParams.id
 				key: $routeParams.key
 				mail: data.data.mail
-		else
-			$location.path '/signin'
+			UserService.validate $scope.user.id, $scope.user.key, ((data) ->
+				$timeout (->
+					$rootScope.accessToken = $cookieStore.get 'accessToken'
+					$location.path '/key-manager'
+					$scope.$apply()
+				), 5000
+			), (error) ->
+		else if not data.data.is_validable
+			$location.path '/404'
 	), (error) ->
 		$location.path '/404'
-
-	$scope.validateForm = () ->
-		$scope.error =
-			status: ''
-			message: ""
-
-		user =
-			id: $scope.user.id
-			key: $scope.user.key
-			pass: $('#pass').val()
-			pass2: $('#pass2').val()
-
-		if not user?.pass or not user?.pass2
-			return false
-
-		if user.pass == user.pass2
-			UserService.validate user.id, user.key, user.pass, ((data) ->
-				UserService.login {
-					mail: data.data.mail
-					pass: user.pass
-				}, (data) ->
-					$location.path('/key-manager')
-
-			), (error) ->
-				$scope.error =
-					status: 'error'
-					message: error
-		else
-			$scope.error =
-				status: 'error'
-				message: "Password1 != Password2"
 
 UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService) ->
 	MenuService.changed()
@@ -180,9 +154,10 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		'twitter':
 			url: '/1.1/account/verify_credentials.json'
 			name: 'name'
-		'google_plus':
+		'google':
 			url: '/oauth2/v1/userinfo'
 			name: 'name'
+			mail: 'email'
 		'linkedin':
 			url: '/v1/people/~:(id,email-address,first-name,last-name,headline)?format=json'
 			name: ['firstName', 'lastName']
@@ -206,8 +181,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				oauth_token: res.oauth_token
 				oauth_token_secret: res.oauth_token_secret
 			}, provider, ((path) ->
-				$location.path path
-				console.log path
+				$location.path '/key-manager'
 			), (error) ->
 
 	$scope.connected = false
@@ -216,18 +190,14 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		OAuth.popup provider, (err, res) ->
 			return false if err
 			res.get(me[provider].url).done (data)->
-				$scope.user.name = data[me[provider].name]
 				if me[provider].path
 					for eltname in me[provider].path.split '/'
 						data = data[eltname]
-				console.log data
-				if Array.isArray $scope.user.name
-					name = ''
-					for a in $scope.user.name
-						name += ' ' + data[a]
-					console.log name
-					$scope.user.name = name.trim()
-
+				if Array.isArray me[provider].name
+					name = (data[a] for a in me[provider].name).join ' '
+					$scope.user.name = name
+				else
+					$scope.user.name = data[me[provider].name]
 				$scope.user.mail = data[me[provider].mail]
 				$scope.user.company = data[me[provider].company]
 				$scope.connected = true

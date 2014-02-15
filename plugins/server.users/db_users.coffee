@@ -222,7 +222,7 @@ exports.isValidable = (data, callback) ->
 			return callback null, is_validable: true, mail: user.mail, id: iduser
 
 # validate user mail
-exports.validate = check pass:/^.{6,}$/, (data, callback) ->
+exports.validate = (data, callback) ->
 	dynsalt = Math.floor(Math.random()*9999999)
 	pass = db.generateHash data.pass + dynsalt
 	exports.isValidable {
@@ -234,9 +234,6 @@ exports.validate = check pass:/^.{6,}$/, (data, callback) ->
 		key = db.generateUid()
 		db.redis.mset [
 			prefix+'validated', 1,
-			prefix+'pass', pass,
-			prefix+'salt', dynsalt,
-			prefix+'key', key,
 			prefix+'date_validate', (new Date).getTime()
 		], (err) ->
 			return err if err

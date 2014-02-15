@@ -86,6 +86,12 @@ exports.setup = (callback) ->
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
 
+		@server.get '/logout', (req, res, next) =>
+			res.setHeader 'Set-Cookie', 'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
+			res.setHeader 'Location', '/'
+			res.send 302
+			next()
+
 		@server.get '/home', (req, res, next) ->
 			res.setHeader 'Location', '/'
 			res.send 301

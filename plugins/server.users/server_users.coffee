@@ -49,6 +49,7 @@ exports.setup = (callback) ->
 
 	# register an account
 	@server.post @config.base_api + '/users', (req, res, next) =>
+		req.body.mail = req.body.email
 		@db.users.register req.body, (e, r) =>
 			return next e if e
 			@userInvite r.id, (e) =>
@@ -61,12 +62,18 @@ exports.setup = (callback) ->
 		@db.users.validate {
 			key: req.params.key
 			id: req.params.id
-			pass: req.body.pass
 		}, (e, r) =>
 			return next(e) if e
 			@db.timelines.addUse target:'u:validate', (->)
-			res.send r
-			next()
+			prefix = 'u:' + req.params.id + ':'
+			@db.redis.get prefix + 'mail', (e, mail) =>
+				return next e if e
+				@auth.generateToken id:req.params.id, mail:mail, (e, token) =>
+					return next e if e
+					expireDate = new Date((new Date - 0) + @auth.config.expire * 1000)
+					res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
+					res.send r
+					next()
 
 	# get true/false if a user is validable
 	@server.get @config.base_api + "/users/:id/validate/:key", (req, res, next) =>

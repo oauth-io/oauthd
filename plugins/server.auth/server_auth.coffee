@@ -10,27 +10,30 @@ restifyOAuth2 = require 'restify-oauth2-oauthd'
 shared = require '../shared'
 request = require 'request'
 
-_config =
+exports.config = _config =
 	expire: 3600*36
 
 hooks =
 	grantClientToken: (clientId, clientSecret, cb) ->
 		shared.db.users.login clientId, clientSecret, (err, res) ->
 			return cb null, false if err
-			token = shared.db.generateUid clientId + ':' + clientSecret
-			(shared.db.redis.multi [
-				['hmset', 'session:' + token, 'id', res.id, 'mail', res.mail]
-				['expire', 'session:' + token, _config.expire]
-			]).exec (err, r) ->
-				return cb err if err
-				shared.emit 'user.login', res
-				return cb null, token
-
+			exports.generateToken id:res.id, mail:res.mail, cb
 	authenticateToken: (token, cb) ->
 		shared.db.redis.hgetall 'session:' + token, (err, res) ->
 			return cb err if err
 			return cb null, false if not res
 			return cb null, res
+
+exports.generateToken = (user, cb) ->
+	token = shared.db.generateUid user.id
+	(shared.db.redis.multi [
+		['hmset', 'session:' + token, 'id', user.id, 'mail', user.mail]
+		['expire', 'session:' + token, _config.expire]
+	]).exec (err, r) ->
+		return cb err if err
+		shared.emit 'user.login', user
+		return cb null, token
+
 
 exports.init = ->
 	restifyOAuth2.cc @server,
@@ -180,7 +183,6 @@ exports.setup = (callback) ->
 						@db.users.validate {
 							key: user.key
 							id: user.id
-							pass: req.body.pass
 						}, (err, r) =>
 							return callback err if err
 							@db.timelines.addUse target:'u:validate', (->)
@@ -188,7 +190,7 @@ exports.setup = (callback) ->
 
 
 	@server.post @config.base_api + '/signin/oauth', (req, res, next) =>
-		callback = @server.send res, next
+		cb = @server.send res, next
 
 		e = new @check.Error
 		e.check req.body,
@@ -196,28 +198,28 @@ exports.setup = (callback) ->
 			token:['string','none']
 			oauth_token:['string','none']
 			oauth_token_secret:['string','none']
-		return callback e if e.failed()
+		return cb e if e.failed()
 
 		provider = req.body.provider
 		if not getInfos[provider]
-			return callback new @check.Error 'Unsupported provider'
+			return cb new @check.Error 'Unsupported provider'
 
 		req.body.k = @config.loginKey
 		getInfos[provider] req.body, (err, infos) =>
-			return callback err if err
+			return cb err if err
 			@db.redis.hget 'sign:' + provider, infos.id, (err, user_id) =>
-				return callback err if err
-				return callback new @check.Error "this account is not linked to a user" if not user_id
+				return cb err if err
+				return cb new @check.Error "this account is not linked to a user" if not user_id
 				@db.users.get user_id, (err, user) =>
-					return callback err if err
+					return cb err if err
 					token = @db.generateUid()
 					(@db.redis.multi [
 						['hmset', 'session:' + token, 'id', user.profile.id, 'mail', user.profile.mail]
 						['expire', 'session:' + token, _config.expire]
 					]).exec (err, r) =>
-						return callback err if err
+						return cb err if err
 						@emit 'user.login', res
-						return callback null, access_token:token, expires_in:_config.expire
+						return cb null, access_token:token, expires_in:_config.expire
 	callback()
 
 

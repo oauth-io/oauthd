@@ -142,9 +142,8 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		isValidKey: (id, key, success, error) ->
 			api "users/" + id + "/keyValidity/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
 
-		validate: (id, key, pass, success, error) ->
-			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, data:
-				pass:pass
+		validate: (id, key, success, error) ->
+			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, method:'POST'
 
 		lostPassword: (mail, success, error) ->
 			api "users/lostpassword", success, error, data:mail:mail
@@ -154,12 +153,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				id: id
 				key: key
 				pass: pass
-
-		logout: (success) ->
-			delete $rootScope.accessToken
-			$cookieStore.remove 'accessToken'
-			if (success)
-				success()
 	}
 
 
