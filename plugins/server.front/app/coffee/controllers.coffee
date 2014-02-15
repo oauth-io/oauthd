@@ -124,6 +124,8 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 	if UserService.isLogin()
 		$location.path '/key-manager'
 
+	$('#socialConnect button').tooltip()
+	$scope.$apply()
 
 	if not $scope.info
 		if document.location.hash.match /^#err=./
