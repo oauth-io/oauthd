@@ -120,7 +120,7 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 	), (error) ->
 		$location.path '/404'
 
-UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService) ->
+UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService, $routeParams) ->
 	MenuService.changed()
 	if UserService.isLogin()
 		$location.path '/key-manager'
@@ -170,7 +170,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 
 	$scope.socialSignin = (provider) ->
 		OAuth.initialize window.loginKey
-		OAuth.popup provider, (err, res) ->
+		OAuth.popup provider, cache: true, (err, res) ->
 			return false if err
 			UserService.loginOAuth {
 				access_token: res.access_token
@@ -179,11 +179,14 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			}, provider, ((path) ->
 				$location.path '/key-manager'
 			), (error) ->
+				$scope.provider = provider
+				$('#error-social').modal('show')
+				return false
 
 	$scope.connected = false
 	$scope.socialSignup = (provider) ->
 		OAuth.initialize window.loginKey
-		OAuth.popup provider, (err, res) ->
+		OAuth.popup provider, cache: true, (err, res) ->
 			return false if err
 			res.get(me[provider].url).done (data)->
 				if me[provider].path
@@ -197,20 +200,21 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				$scope.user.mail = data[me[provider].mail]
 				$scope.user.company = data[me[provider].company]
 				$scope.connected = true
-				console.log res
 				$scope.social =
 					provider: provider
 					token: res.access_token
 					oauth_token: res.oauth_token
 					oauth_token_secret: res.oauth_token_secret
-				console.log $scope.social
 				$scope.$apply()
+
+	if $routeParams.provider
+		$scope.socialSignup $routeParams.provider
+		$('.modal-backdrop').hide()
 
 	$scope.signinSubmit = ->
 
 	$scope.signupSubmit = ->
 		#verif field
-		console.log $scope.user, $scope.social
 		UserService.register $scope.user, $scope.social, ((data) ->
 			$scope.signupInfo =
 				status: 'success'

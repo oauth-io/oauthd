@@ -108,6 +108,11 @@ app.config([
 			controller: 'UserFormCtrl'
 			title: 'Register'
 
+		$routeProvider.when '/signup/:provider',
+			templateUrl: '/templates/signup.html'
+			controller: 'UserFormCtrl'
+			title: 'Register'
+
 		$routeProvider.when '/account',
 			templateUrl: '/templates/user-profile.html'
 			controller: 'UserProfileCtrl'

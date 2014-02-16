@@ -109,3 +109,21 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="error-social" tabindex="-1" role="dialog" aria-labelledby="Error for social signin" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel"><img ng-src="/api/providers/{{provider}}/logo"> We couldn't find you!</h4>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 1.3em; text-align: center">Signup with {{provider}} in 30 seconds!</p>
+        <p style="text-align: center; margin: 15px 0 50px;"><a ng-href="/signup/{{provider}}" class="btn btn-lg btn-primary">Sign up with {{provider}}</a></p>
+        <p style="font-size: 1.3em; color: #AAA; text-align: center">If you already have an account, you can connect {{provider}} from your Account Settings page.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
