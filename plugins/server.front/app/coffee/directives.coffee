@@ -14,7 +14,7 @@ app.directive 'stubborn', ($rootScope, $timeout) ->
 				state = stubborn state if ! state.res?.length
 				lastres = state.res.shift();
 				if lastres.msg
-					$('#stubborn-steps').append('<tr style="font-size: 0.8em"><td><span class="badge badge-info">' + lastres.stepn + '</span></td><td> ' + lastres.msg + '</td></tr>')
+					$('#stubborn-steps').append('<tr style="font-size: 0.8em"><td><span class="badge badge-info">' + lastres.stepn + '</span></td><td style="padding-left: 15px"> ' + lastres.msg + '</td></tr>')
 					$('#stubborn-steps tr').last().hide().fadeIn();
 					$rootScope.timeouts.push $timeout getNext, 2500
 				if lastres.comment

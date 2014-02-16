@@ -1,3 +1,6 @@
+<style>
+.app .tooltip.top.in {font-size: 0.8em;}
+</style>
 <div class="container">
 	<div class="row" ng-show="limitReach()">
 		<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
@@ -5,35 +8,35 @@
 	<div class="row">
 		<div class="col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
 		<div class="col-lg-8" ng-controller="AppCtrl">
-			<div ng-repeat="app in apps" class="panel panel-default" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
+			<div ng-repeat="app in apps" class="app panel panel-primary" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
 				<div ng-hide="editMode == app.key" class="panel-heading">
-					<h4>
-						<small class="pull-right" style="">
-							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 1.1em">Edit app</a>
-							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 1.1em; margin-left: 15px">Remove app</a>
+					<h4 style="position: relative; top: -5px; font-weight: bold">
+						<small class="pull-right">
+							<a ng-click="editApp(app.key)" style="color: #CCC; cursor: pointer; font-size: 1.1em">Edit app</a>
+							<a ng-click="removeApp(app.key)" style="color: #CCC; cursor: pointer; font-size: 1.1em; margin-left: 15px">Remove app</a>
 						</small>
 						<span>{{app.name}}</span>
 					</h4>
-					<span  tooltip="Domains available">
-						<small class="small text-muted" style="margin-right: 10px; margin-top: -10px;" ng-repeat="domain in app.domains">{{domain}}</small>
+					<span tooltip="Available domains" style="color: #CCC">
+						<small class="small" style="margin-right: 10px; margin-top: -10px;" ng-repeat="domain in app.domains">{{domain}}</small>
 					</span>
 				</div>
 				<div ng-show="editMode == app.key" class="panel-heading">
-					<h4 style="text-align: center">Edit</h4>
+					<h4 style="text-align: center; font-size: 1.4em">Edit your application</h4>
 				</div>
 				<div ng-show="editMode == app.key" class="panel-body">
 					<div ng-include src="createAppTemplate" style="padding: 20px 40px;"></div>
 					<div class="row" style="margin-top: 5px;">
-						<div class="col-lg-offset-4" style=" padding: 10px 40px;">
-							<button class="btn btn-primary" ng-click="editAppSubmit(app.key)">Save</button>
-							<button style="margin-left: 15px" class="btn" ng-click="editAppCancel()">Cancel </button>
+						<div class="col-lg-offset-4" style="padding: 0px 20px;">
+							<button class="btn btn-primary btn-lg" ng-click="editAppSubmit(app.key)">Save</button>
+							<button style="margin-left: 15px" class="btn btn-lg" ng-click="editAppCancel()">Cancel </button>
 						</div>
 					</div>
 				</div>
-				<div class="panel-body">
-					<div style="padding: 0px 10px 20px; margin-top: 10px">
-						<h5><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
-						<h5>
+				<div class="panel-body" ng-hide="editMode == app.key">
+					<div style="padding: 0px 10px 20px; margin-top: 10px; font-size: 1.3em">
+						<h5 style="font-size: 1.0em"><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
+						<h5 style="font-size: 1.0em">
 							<i class="glyphicon glyphicon-hand-right"></i>
 							Secret key: <span style="color: green" class="app-public-secret" ng-show="app.secret">{{app.secret}}</span>
 							<a style="color:red;cursor:pointer" ng-show="app.secret" ng-click="displaySecret(app,false)">&lt;hide&gt;</a>
@@ -163,7 +166,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 					</div>
 				</div>
 			</div>
-			<a class="btn btn-default" style="cursor: pointer" href="/app-create">Create a new application</a>
+			<a class="btn btn-default btn-lg" style="cursor: pointer" href="/app-create">Create a new application</a>
 		</div>
 	</div>
 </div>
@@ -180,8 +183,8 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 			<div class="modal-body" ng-include src="createKeyTemplate">
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-default" ng-click="cancelCreateKey()">{{createKeyCancel}}</button>
-				<button ng-class="createKeyBtnClass" ng-click="createKeySubmit()">{{createKeyButton}}</button>
+				<button class="btn btn-default btn-lg" ng-click="cancelCreateKey()">{{createKeyCancel}}</button>
+				<button ng-class="createKeyBtnClass" class="btn-lg" ng-click="createKeySubmit()">{{createKeyButton}}</button>
 			</div>
 		</div>
 	</div>
