@@ -1758,6 +1758,8 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 		$scope.profile.state = $scope.profile.state || ""
 		$scope.profile.city = $scope.profile.city || ""
 		$scope.profile.phone = $scope.profile.phone || ""
+		$scope.profile.use_profile_for_billing = true
+		$scope.handleBillingAddress()
 	, (error) ->
 		console.log error
 
@@ -1792,13 +1794,13 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 			$("#BillingState").show()
 
 	$scope.handleBillingAddress = ->
-
 		if not $scope.profile.use_profile_for_billing
 			$scope.billing =
 				type: 'individual'
 		else
 			$scope.billing = $scope.profile
 			$scope.billing.use_profile_for_billing = true
+
 
 	$scope.process_billing = ->
 		fields =

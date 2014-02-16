@@ -20,7 +20,7 @@
 <li>2. the state is sent back and checked against the local one just before calling the callback of OAuth.popup / OAuth.callback</li>
 </ul>
 
-<img src="/img/client-side-flow.png" alt="browser flow" /><br/>
+<img class="img-responsive" src="/img/client-side-flow.png" alt="browser flow" /><br/>
 
 <h3>Understanding the oauth.io server-side flow</h3>
 
@@ -28,13 +28,13 @@
 <p>This permit to do not store any token on the browser so that it cannot be exploited with a XSS / CSRF vulnerability</p>
 <p>Moreover the state is no longer optional when calling OAuth.popup or OAuth.redirect: it must be generated from your server, and checked once the code is exchanged. This step is required to avoid any CSRF exploit.</p>
 
-<img src="/img/server-side-flow.png" alt="server flow" /><br/>
+<img class="img-responsive" src="/img/server-side-flow.png" alt="server flow" /><br/>
 
 <h3>Getting an access token server-side</h3>
 <p>You can configure your application to receive the access token on server side. This avoid to expose the token on client side when it is not required, and directly use the api calls on your server.</p>
 <p>To do so, first configure your providers to enable the server side option.</p>
 
-<img src="/img/server-side-options.png" alt="server options" /><br/>
+<img class="img-responsive" src="/img/server-side-options.png" alt="server options" /><br/>
 
 <p>You still can edit the provider's configuration if you already created it.</p>
 <br/>

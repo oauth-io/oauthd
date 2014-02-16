@@ -1,27 +1,27 @@
 <div class="container">
 	<div class="row" ng-show="noApp">
-		<div class="col col-lg-6 col-offset-3">
+		<div class="col-lg-6 col-lg-offset-3">
 			<div class="alert alert-info">
 				You have no application yet. Lets create one!
 			</div>
 		</div>
 	</div>
 	<div class="row" style="margin-bottom: 18px">
-		<div class="col col-lg-6 col-offset-3">
-			<h3 class="col col-lg-8 col-offset-4">
+		<div class="col-lg-6 col-lg-offset-3">
+			<h3 class="col-lg-8 col-lg-offset-4">
 				<i class="glyphicon glyphicon-hdd"></i> Create an application
 			</h3>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col col-lg-6 col-offset-3" ng-include src="appCreateTemplate">
+		<div class="col-lg-6 col-lg-offset-3" ng-include src="appCreateTemplate">
 		</div>
 	</div>
 	<div class="row"></div>
 	<div class="row" style="margin-top: 20px">
-		<div class="col col-lg-6 col-offset-3">
+		<div class="col-lg-6 col-lg-offset-3">
 			<div class="row">
-				<div class="col col-offset-4">
+				<div class="col-lg-offset-4">
 					<button class="btn btn-primary" ng-click="createAppSubmit()">Create</button>
 					<a class="btn btn-default" href="/key-manager">Cancel</a>
 				</div>

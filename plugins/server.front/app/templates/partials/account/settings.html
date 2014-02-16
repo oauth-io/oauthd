@@ -1,71 +1,73 @@
-<div>
-	<form class="form-horizontal" role="form">
-		<div class="row">
-			<h3 class="col col-offset-2 col-lg-10">Login information</h3>
-		</div>
-	  	<div class="row">
-			<label for="email-input" class="col col-sm-2 control-label">Email</label>
-			<div class="col col-sm-10">
-				<div class="input-group">
-			  		<input disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.email">
-			  		<span class="input-group-btn">
-						<button ng-hide="changeEmailState" ng-click="changeEmail()" type="button" class="btn btn-warning" style="border-radius:4px; border-top-left-radius:0; border-bottom-left-radius: 0"><i class="icon-plus icon-white"></i> Change your email</button>
-						<button ng-show="changeEmailState" ng-click="updateEmail()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Update your email</button>
-					</span>
+<div class="row">
+	<div class="col-lg-8 col-lg-offset-2">
+		<form class="form-horizontal" role="form">
+			<div class="row">
+				<h3 class="col-lg-offset-2 col-lg-10">Login information</h3>
+			</div>
+		  	<div class="row">
+				<label for="email-input" class="col-sm-2 control-label">Email</label>
+				<div class="col-sm-10">
+					<div class="input-group">
+				  		<input class="form-control" disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.email">
+				  		<span class="input-group-btn">
+							<button ng-hide="changeEmailState" ng-click="changeEmail()" type="button" class="btn btn-warning" style="border-radius:4px; border-top-left-radius:0; border-bottom-left-radius: 0"><i class="icon-plus icon-white"></i> Change your email</button>
+							<button ng-show="changeEmailState" ng-click="updateEmail()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Update your email</button>
+						</span>
+					</div>
+				</div>
+		  	</div>
+		  	<div class="row" ng-show="emailSent">
+		  		<div class="col-sm-10 col-lg-offset-2">
+		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{email}}</strong> to validate your new email address</div>
+		  		</div>
+		  	</div>
+			<div class="row" style="margin-top: 15px">
+				<label class="control-label col-sm-2" for="password-input">Password</label>
+				<div class="col-sm-10">
+					<div class="input-group">
+						<input class="form-control" disabled="disabled" type="password" placeholder="******" id="password-input" class="ng-pristine ng-valid">
+						<span class="input-group-btn">
+							<button ng-click="changePasswordButton()" type="button" class="btn btn-warning"><i class="icon-plus icon-white"></i> Change your password</button>
+						</span>
+					</div>
 				</div>
 			</div>
-	  	</div>
-	  	<div class="row" ng-show="emailSent">
-	  		<div class="col col-sm-10 col-offset-2">
-	  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{email}}</strong> to validate your new email address</div>
-	  		</div>
-	  	</div>
-		<div class="row">
-			<label class="control-label col col-sm-2" for="password-input">Password</label>
-			<div class="col col-sm-10">
-				<div class="input-group">
-					<input disabled="disabled" type="password" placeholder="******" id="password-input" class="ng-pristine ng-valid">
-					<span class="input-group-btn">
-						<button ng-click="changePasswordButton()" type="button" class="btn btn-warning"><i class="icon-plus icon-white"></i> Change your password</button>
-					</span>
+			<hr/>
+			<div class="row">
+				<h3 class="col-lg-offset-2 col-lg-10">General information</h3>
+			</div>
+		  	<div class="row" style="margin-top: 15px">
+				<label for="name-input" class="col-sm-2 control-label">Name</label>
+				<div class="col-sm-10">
+			  		<input class="form-control" type="text" id="name-input" placeholder="Name" ng-model="user.name">
+				</div>
+		  	</div>
+			<div class="row" style="margin-top: 15px">
+				<label for="location-input" class="col-sm-2 control-label">Location</label>
+				<div class="col-sm-10">
+			  		<input class="form-control" type="text" id="location-input" placeholder="Location" ng-model="user.location">
+				</div>
+		  	</div>
+		  	<div class="row" style="margin-top: 15px">
+				<label for="company-input" class="col-sm-2 control-label">Company</label>
+				<div class="col-sm-10">
+			  		<input class="form-control" type="text" id="company-input" placeholder="Company" ng-model="user.company">
+				</div>
+		  	</div>
+			<div class="row" style="margin-top: 15px">
+				<label class="control-label col-sm-2" for="website-input">Website</label>
+				<div class="col-sm-10">
+					<input class="form-control" type="text" placeholder="Your website" ng-model="user.website" id="website-input" name="website-input" required="">
 				</div>
 			</div>
-		</div>
-		<hr/>
-		<div class="row">
-			<h3 class="col col-offset-2 col-lg-10">General information</h3>
-		</div>
-	  	<div class="row">
-			<label for="name-input" class="col col-sm-2 control-label">Name</label>
-			<div class="col col-sm-10">
-		  		<input type="text" id="name-input" placeholder="Name" ng-model="user.name">
-			</div>
-	  	</div>
-		<div class="row">
-			<label for="location-input" class="col col-sm-2 control-label">Location</label>
-			<div class="col col-sm-10">
-		  		<input type="text" id="location-input" placeholder="Location" ng-model="user.location">
-			</div>
-	  	</div>
-	  	<div class="row">
-			<label for="company-input" class="col col-sm-2 control-label">Company</label>
-			<div class="col col-sm-10">
-		  		<input type="text" id="company-input" placeholder="Company" ng-model="user.company">
-			</div>
-	  	</div>
-		<div class="row">
-			<label class="control-label col col-sm-2" for="website-input">Website</label>
-			<div class="col col-sm-10">
-				<input type="text" placeholder="Your website" ng-model="user.website" id="website-input" name="website-input" required="">
-			</div>
-		</div>
-	  	<div class="row">
-			<div class="col col-offset-2  col-sm-2" style="padding-right: 5px">
-		  		<button ng-click="update()" type="submit" class="btn btn-block btn-primary">Save</button>
-			</div>
-	  		<div class="col col-sm-8" ng-show="updateDone" style="padding-left: 5px">
-	  			<div class="alert alert-info"><strong>Information updated!</strong></div>
-	  		</div>
-	  	</div>
-	</form>
+		  	<div class="row" style="margin-top: 15px">
+				<div class="col-lg-offset-2  col-sm-2" style="padding-right: 5px">
+			  		<button ng-click="update()" type="submit" class="btn btn-block btn-primary">Save</button>
+				</div>
+		  		<div class="col-sm-8" ng-show="updateDone" style="padding-left: 5px">
+		  			<div class="alert alert-info"><strong>Information updated!</strong></div>
+		  		</div>
+		  	</div>
+		</form>
+	</div>
 </div>

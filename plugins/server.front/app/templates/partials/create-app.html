@@ -1,17 +1,17 @@
 <div class="alert alert-danger"  ng-bind-html-unsafe="error.message" ng-show="error.state && error.type == 'CREATE_APP'">
 </div>
-<form ui-keypress="{13:'createAppSubmit($event)'}" name="create-app" class="form-horizontal">
+<form ui-keypress="{13:'createAppSubmit($event)'}" name="create-app">
 	<div class="row">
-		<label class="control-label col col-lg-4" for="createapp-name">Application name</label>
-		<div class="col col-lg-8">
-			<input type="text" placeholder="Name of your app" ng-model="createAppForm.name" id="createapp-name" name="createapp-name" required>
+		<label style="text-align: right" class="col-lg-4" for="createapp-name">Application name</label>
+		<div class="col-lg-8">
+			<input class="form-control" type="text" placeholder="Name of your app" ng-model="createAppForm.name" id="createapp-name" name="createapp-name" required>
 		</div>
 	</div>
-	<div class="row">
-	  	<label class="control-label col col-lg-4" for="createapp-domain">Domains available</label>
-	  	<div class="col col-lg-8">
+	<div class="row" style="margin-top: 15px">
+	  	<label style="text-align: right" class="control-label col-lg-4" for="createapp-domain">Domains available</label>
+	  	<div class="col-lg-8">
 	    	<div class="input-group">
-		    	<input type="text" placeholder="my-domain.com" ng-model="createAppForm.input" id="createapp-domain" name="createapp-domain">
+		    	<input class="form-control" type="text" placeholder="my-domain.com" ng-model="createAppForm.input" id="createapp-domain" name="createapp-domain">
 				<span class="input-group-btn">
 		    		<button ng-click="addDomain()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Add</button>
 		    	</span>

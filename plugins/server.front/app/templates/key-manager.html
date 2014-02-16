@@ -3,11 +3,11 @@
 		<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
 	</div>
 	<div class="row">
-		<div class="col col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
-		<div class="col col-lg-8" ng-controller="AppCtrl">
-			<div ng-repeat="app in apps" class="panel" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
-				<div ng-hide="editMode == app.key" class="">
-					<h4 class="name panel-heading">
+		<div class="col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col-lg-8" ng-controller="AppCtrl">
+			<div ng-repeat="app in apps" class="panel panel-default" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
+				<div ng-hide="editMode == app.key" class="panel-heading">
+					<h4>
 						<small class="pull-right" style="">
 							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 0.9em">Edit</a>
 							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 0.9em; margin-left: 15px">Remove</a>
@@ -18,59 +18,58 @@
 						<small class="small text-muted" style="margin-right: 10px; margin-top: -10px;" ng-repeat="domain in app.domains">{{domain}}</small>
 					</span>
 				</div>
-				<div ng-show="editMode == app.key">
-					<div class="container">
-						<div class="row panel-heading">
-							<h4 class="col col-offset-4">Edit</h4>
-						</div>
-						<div ng-include src="createAppTemplate"></div>
-						<div class="row" style="margin-top: 20px">
-							<div class="col col-offset-4">
-								<button class="btn btn-primary" ng-click="editAppSubmit(app.key)">Save</button>
-								<button class="btn" ng-click="editAppCancel()">Cancel </button>
-							</div>
+				<div ng-show="editMode == app.key" class="panel-heading">
+					<h4 style="text-align: center">Edit</h4>
+				</div>
+				<div ng-show="editMode == app.key" class="panel-body">
+					<div ng-include src="createAppTemplate" style="padding: 20px 40px;"></div>
+					<div class="row" style="margin-top: 5px;">
+						<div class="col-lg-offset-4" style=" padding: 10px 40px;">
+							<button class="btn btn-primary" ng-click="editAppSubmit(app.key)">Save</button>
+							<button style="margin-left: 15px" class="btn" ng-click="editAppCancel()">Cancel </button>
 						</div>
 					</div>
 				</div>
-				<div class="well" style="margin-top: 10px">
-					<h5><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
-					<h5>
-						<i class="glyphicon glyphicon-hand-right"></i>
-						Secret key: <span style="color: green" class="app-public-secret" ng-show="app.secret">{{app.secret}}</span>
-						<a style="color:red;cursor:pointer" ng-show="app.secret" ng-click="displaySecret(app,false)">&lt;hide&gt;</a>
-						<a style="color:red;cursor:pointer" ng-hide="app.secret" ng-click="displaySecret(app,true)">&lt;show&gt;</a>
-					</h5>
-					<span style="font-size: 0.9em">
-						<a ng-hide="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = true">Quick install</a>
-						<a ng-show="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = false">Hide quick install</a>&nbsp;&nbsp;&nbsp;&nbsp;
-						<a ng-click="resetKeys(app.key)" style="cursor: pointer;">Reset keys</a>
-					</span>
-					<div ng-show="showQuickInstall">
-						<hr />
-						<a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="position: relative; top: -10px" class="pull-right btn btn-small btn-success">Download oauth.js</a>
-						<p>In your HTML</p>
-						<pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre>
-						<p>Then initialize the SDK in your Javascript</p>
-						<pre>OAuth.initialize('<span class="text-success"><strong>{{app.key}}</strong></span>');</pre>
-					</div>
-				</div>
-				<div  class="panel" style="margin-bottom: 0; margin-top: -1px" ng-repeat="keyProvider in app.keysets" ng-mouseover="hoverItem = keyProvider" ng-mouseleave="hoverItem = null">
-					<button ng-click="tryAuth(keyProvider, app.key)" class="btn btn-small btn-primary pull-right" style="position:relative; top: -5px">Try auth</button>
-					<span class="pull-right" style="position :relative; top: -5px; left: -5px" ng-show="hoverItem == keyProvider"><button ng-click="keyClick(keyProvider, app)" class="btn btn-success btn-small">Details</button></span>
-					<div class="panel-header">
-						<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
-							<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo" alt="{{keyProvider}} logo">
-							<span style="position: relative; top: 2px">{{providers_name[keyProvider]|capitalize}}</span>
-						</a>
-					</div>
-					<div class="panel-info" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
-
-						<form id="appkey-{{app.key}}-{{keyProvider}}" class="form-horizontal" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
+				<div class="panel-body">
+					<div class="well" style="margin-top: 10px">
+						<h5><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
+						<h5>
+							<i class="glyphicon glyphicon-hand-right"></i>
+							Secret key: <span style="color: green" class="app-public-secret" ng-show="app.secret">{{app.secret}}</span>
+							<a style="color:red;cursor:pointer" ng-show="app.secret" ng-click="displaySecret(app,false)">&lt;hide&gt;</a>
+							<a style="color:red;cursor:pointer" ng-hide="app.secret" ng-click="displaySecret(app,true)">&lt;show&gt;</a>
+						</h5>
+						<span style="font-size: 0.9em">
+							<a ng-hide="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = true">Quick install</a>
+							<a ng-show="showQuickInstall" style="cursor: pointer;" ng-click="showQuickInstall = false">Hide quick install</a>&nbsp;&nbsp;&nbsp;&nbsp;
+							<a ng-click="resetKeys(app.key)" style="cursor: pointer;">Reset keys</a>
+						</span>
+						<div ng-show="showQuickInstall">
 							<hr />
-							<div class="row">
-								<label class="col col-lg-4 control-label">Sample</label>
-								<div class="text-danger col col-lg-8" style="position: relative; top: 6px">
-									<pre><span class="text-muted">//Using popup (option 1)</span>
+							<a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="position: relative; top: -10px" class="pull-right btn btn-small btn-success">Download oauth.js</a>
+							<p>In your HTML</p>
+							<pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre>
+							<p>Then initialize the SDK in your Javascript</p>
+							<pre>OAuth.initialize('<span class="text-success"><strong>{{app.key}}</strong></span>');</pre>
+						</div>
+					</div>
+					<div  class="panel" style="margin-bottom: 0; margin-top: -1px" ng-repeat="keyProvider in app.keysets" ng-mouseover="hoverItem = keyProvider" ng-mouseleave="hoverItem = null">
+						<button ng-click="tryAuth(keyProvider, app.key)" class="btn btn-primary pull-right" style="position:relative; top: -5px">Try auth</button>
+						<span class="pull-right" style="position :relative; top: -5px; left: -5px" ng-show="hoverItem == keyProvider"><button ng-click="keyClick(keyProvider, app)" class="btn btn-success btn-small">Details</button></span>
+						<div class="panel-header">
+							<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
+								<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo" alt="{{keyProvider}} logo">
+								<span style="position: relative; top: 2px">{{providers_name[keyProvider]|capitalize}}</span>
+							</a>
+						</div>
+						<div class="panel-info" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
+
+							<form id="appkey-{{app.key}}-{{keyProvider}}" class="form-horizontal" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
+								<hr />
+								<div class="row">
+									<label class="col-lg-4 control-label">Sample</label>
+									<div class="text-danger col-lg-8" style="position: relative; top: 6px">
+										<pre><span class="text-muted">//Using popup (option 1)</span>
 OAuth.popup('<span class="api-text">{{keyProvider.trim()}}</span>', function(<span class="err">error</span>, <strong>result</strong>) {
   <span class="text-muted">//handle error with <span class="err">error</span></span>
   <span class="text-muted">//use <strong style="color: #333">result.</strong><span class="access-token">access_token</span> in your API request</span>
@@ -78,71 +77,85 @@ OAuth.popup('<span class="api-text">{{keyProvider.trim()}}</span>', function(<sp
 
 <span class="text-muted">//Using redirection (option 2)</span>
 OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callback/url</strong>");</pre>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<label class="col col-lg-4 control-label">error</label>
-								<div ng-hide="app.auth[keyProvider] != null" class="text-danger col col-lg-8" style="position: relative; top: 6px">Not defined</div>
-								<div ng-show="app.auth[keyProvider] != null" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].error.message}} {{app.auth[keyProvider].error|json}}</pre></div>
-							</div>
+								<div class="row">
+									<label class="col-lg-4 control-label">error</label>
+									<div ng-hide="app.auth[keyProvider] != null" class="text-danger col-lg-8" style="position: relative; top: 6px">Not defined</div>
+									<div ng-show="app.auth[keyProvider] != null" class="text-danger col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].error.message}} {{app.auth[keyProvider].error|json}}</pre></div>
+								</div>
 
-							<div class="row">
-								<label class="col col-lg-4 control-label">result</label>
-								<div ng-hide="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px">Not defined</div>
-								<div ng-show="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].result|json}}</pre></div>
-							</div>
-							<hr />
-							<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
-	      									{{error.message}}
-							</div>
-							<div ng-show="app.editProvider[keyProvider]">
-								<div data-ng-switch on="app.keysField[keyProvider][field].cardinality" ng-repeat="(field, value) in app.keys[keyProvider]" style="margin: 0px 15px">
-									<div data-ng-switch-when="*" class="row">
-										<label class="col col-lg-4 control-label">{{field}}</label>
-										<div class="col col-lg-8">
-											<select name="{{field}}" multiple ui-select2="scopeSelect" data-ng-model="value">
-												<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
-								        	</select>
+								<div class="row">
+									<label class="col-lg-4 control-label">result</label>
+									<div ng-hide="app.auth[keyProvider]" class="text-danger col-lg-8" style="position: relative; top: 6px">Not defined</div>
+									<div ng-show="app.auth[keyProvider]" class="text-danger col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].result|json}}</pre></div>
+								</div>
+								<hr />
+								<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
+		      									{{error.message}}
+								</div>
+								<div ng-show="app.editProvider[keyProvider]">
+									<div data-ng-switch on="app.keysField[keyProvider][field].cardinality" ng-repeat="(field, value) in app.keys[keyProvider]" style="margin: 0px 15px">
+										<div data-ng-switch-when="*" class="form-group">
+											<label class="col-lg-4 control-label">{{field}}</label>
+											<div class="col-lg-8">
+												<select style="width:100%" name="{{field}}" multiple ui-select2="scopeSelect" data-ng-model="value">
+													<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+									        	</select>
+											</div>
+										</div>
+										<!--
+										<div data-ng-switch-when="1" class="row">
+											<label class="col-lg-4 control-label">{{field}}</label>
+											<div class="col-lg-8">select {{value}}</div>
+										</div>
+									-->
+										<div data-ng-switch-when="1" class="form-group">
+											<label class="col-lg-4 control-label">{{field}}</label>
+											<div class="col-lg-8">
+												<select style="width:100%" name="{{field}}" ui-select2="scopeSelect" data-ng-model="value">
+													<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+									        	</select>
+											</div>
+										</div>
+										<div data-ng-switch-default class="form-group">
+											<label class="col-lg-4 control-label">{{field}}</label>
+											<div class="col-lg-8 controls">
+												<input class="form-control" type="text" name="{{field}}" ng-model="value" />
+											</div>
 										</div>
 									</div>
-									<!--
-									<div data-ng-switch-when="1" class="row">
-										<label class="col col-lg-4 control-label">{{field}}</label>
-										<div class="col col-lg-8">select {{value}}</div>
-									</div>
-								-->
-									<div data-ng-switch-when="1" class="row">
-										<label class="col col-lg-4 control-label">{{field}}</label>
-										<div class="col col-lg-8">
-											<select name="{{field}}" ui-select2="scopeSelect" data-ng-model="value">
-												<option ng-repeat="(k,v) in app.keysField[keyProvider][field].values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
-								        	</select>
+									<label class="col-lg-4 control-label">Response type</label>
+									<div class="col-lg-8" style="margin-bottom: 15px">
+										<div class="radio">
+											<label>
+												<input type="radio" name="response_type" value="token" ng-model="app.response_type[keyProvider]" />
+												Client-side (token)
+											</label>
 										</div>
-									</div>
-									<div data-ng-switch-default class="row">
-										<label class="col col-lg-4 control-label">{{field}}</label>
-										<div class="col col-lg-8 controls">
-											<input type="text" name="{{field}}" ng-model="value" />
+										<div class="radio">
+											<label>
+												<input type="radio" name="response_type" value="code" ng-model="app.response_type[keyProvider]" />Server-side (code)
+											</label>
+										</div>
+										<div class="radio">
+											<label>
+												<input type="radio" name="response_type" value="both" ng-model="app.response_type[keyProvider]" />Both
+											</label>
 										</div>
 									</div>
 								</div>
-								<label class="col col-lg-4 control-label">Response type</label>
-								<div class="col col-lg-8" style="margin-bottom: 15px">
-									<input type="radio" name="response_type" value="token" ng-model="app.response_type[keyProvider]" />Client-side (token)
-									<input type="radio" name="response_type" value="code" ng-model="app.response_type[keyProvider]" />Server-side (code)
-									<input type="radio" name="response_type" value="both" ng-model="app.response_type[keyProvider]" />Both
+								<div class="row">
+									<div class="col-lg-8 col-lg-offset-4">
+										<button ng-hide="app.editProvider[keyProvider]" ng-click="app.editProvider = {}; app.editProvider[keyProvider] = true" class="btn btn-success">Edit</button>
+										<button ng-show="app.editProvider[keyProvider]" ng-click="editKeyset(app, keyProvider)" class="btn btn-success">Save</button>
+										<button ng-show="app.editProvider[keyProvider]" class="btn btn-danger" ng-click="app.editProvider = {}">Cancel</button>
+										<button ng-hide="app.editProvider[keyProvider]" class="btn btn-danger" ng-click="removeKeyset(app, keyProvider)">Remove this key</button>
+										<span class="text-success" ng-show="keySaved">saved!</span>
+									</div>
 								</div>
-							</div>
-							<div class="row">
-								<div class="col col-lg-8 col-offset-4">
-									<button ng-hide="app.editProvider[keyProvider]" ng-click="app.editProvider = {}; app.editProvider[keyProvider] = true" class="btn btn-success">Edit</button>
-									<button ng-show="app.editProvider[keyProvider]" ng-click="editKeyset(app, keyProvider)" class="btn btn-success">Save</button>
-									<button ng-show="app.editProvider[keyProvider]" class="btn btn-danger" ng-click="app.editProvider = {}">Cancel</button>
-									<button ng-hide="app.editProvider[keyProvider]" class="btn btn-danger" ng-click="removeKeyset(app, keyProvider)">Remove this key</button>
-									<span class="text-success" ng-show="keySaved">saved!</span>
-								</div>
-							</div>
-						</form>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>

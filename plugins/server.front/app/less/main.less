@@ -27,7 +27,7 @@ blockquote:before {
 }
 
 ul {
-	font-family: @fFamily;
+	font-family: @fFamily !important;
 }
 
 .navbar ul li.active {
@@ -37,15 +37,15 @@ ul {
 
 .navbar ul li.active a {
 	background-color: inherit!important;
-	padding-bottom: 5px;
+	padding-bottom: 10px;
 }
 
 h1, h3 {
-	font-family: @fFamily;
+	font-family: @fFamily !important;
 	font-weight: bold;
 }
 p {
-	font-family: @fFamily;
+	font-family: @fFamily !important;
 }
 ul {
 	list-style-type: none;
@@ -103,6 +103,12 @@ pre .comment {
 	-moz-box-shadow: 0 1px 4px rgba(0,0,0,.065);
 	box-shadow: 0 1px 4px rgba(0,0,0,.065);
 }
+.label {
+  font-size: 1.0em!important;
+}
+.panel-heading {
+  font-size: 1.3em!important;
+}
 
 .dashboard-sidenav > li:first-child > a {
 	-webkit-border-radius: 6px 6px 0 0;
@@ -122,11 +128,6 @@ pre .comment {
 	margin: 0 0 -1px;
 	padding: 8px 14px;
 	border: 1px solid #e5e5e5;
-}
-
-.social.btn {
-  background-color: #FFF;
-  color: #333;
 }
 
 #socialConnect .tooltip { font-size: 1.3em; }

@@ -5,10 +5,17 @@
     <title data-ng-bind="pageTitle">OAuth that just works.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{pageDesc}}">
+    <style>
+@font-face {
+font-family: "YanoneKLight";
+font-style:normal;
+src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
+}</style>
     <link rel="publisher" href="https://plus.google.com/114197621848884111231" />
     <link rel="canonical" href="https://oauth.io{{location}}" />
 
-    <link rel="stylesheet" href="/lib/bootstrap3/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/lib/bootstrap-3.1.1/css/bootstrap.css" type="text/css" />
+    <link rel="stylesheet" href="/lib/bootstrap-3.1.1/css/bootstrap-theme.css" type="text/css" />
     <link rel="stylesheet" href="/css/main.css" type="text/css" />
     <link rel="stylesheet" href="/lib/select2/select2.css" type="text/css" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
@@ -21,7 +28,7 @@
     <script src="/lib/sugar/sugar.min.js"></script>
     {{if logged}}<script src="/lib/chartjs/Chart.min.js"></script>{{endif}}
     <script src="/lib/select2/select2.js"></script>
-    <script src="/lib/bootstrap3/js/bootstrap.js"></script>
+    <script src="/lib/bootstrap-3.1.1/js/bootstrap.js"></script>
     <script src="/lib/angular-ui-select2/select2.js"></script>
     <!--<script src="/lib/selectize/js/selectize.js"></script>-->
     <script src="/lib/angular-drag-drop/angular-dragdrop.js"></script>
@@ -73,7 +80,7 @@
 </head>
 <body style="-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;">
     <div google-analytics></div>
-    <div class="navbar" style="background-color: transparent; font-size: 1.2em">
+    <div class="navbar navbar-default" style="background-color: transparent; font-size: 1.2em">
       <div class="container">
         <!-- .navbar-toggle is used as the toggle for collapsed navbar content -->
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -88,7 +95,7 @@
         </a>
 
         <!-- Place everything within .navbar-collapse to hide it until above 768px -->
-        <div class="nav-collapse collapse navbar-responsive-collapse">
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
 
           <ul class="nav navbar-nav">
           </ul>

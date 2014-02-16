@@ -27,67 +27,69 @@
       </h4>
     </div>
     <div id="collapseAuth" class="panel-collapse collapse in">
-      <div class="panel-body">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /auth/token
-		</div>
-		<p>Authenticate to oauth.io with <a href="http://tools.ietf.org/html/rfc6749#section-4.3">OAuth 2 client credentials.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> grant_type </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> Must be "client_credentials" </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> Authorization header </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> An HTTP Basic authentication, thus base64(login + ":" + password) with your login and password of your OAuth.io account. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+      	<div class="panel-body">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /auth/token
+				</div>
+				<div class="panel-body">
+					<p>Authenticate to oauth.io with <a href="http://tools.ietf.org/html/rfc6749#section-4.3">OAuth 2 client credentials.</a></p>
+					<table class="table">
+						<thead>
+							<th style="width:20%"></th>
+							<th style="width:80%"></th>
+						</thead>
+						<tbody class="table-hover">
+							<tr>
+								<td>
+									<strong> grant_type </strong>
+									<p class="text-danger" >Required</p>
+								</td>
+								<td>
+									<strong>string</strong>
+									<p> Must be "client_credentials" </p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<strong> Authorization header </strong>
+									<p class="text-danger" >Required</p>
+								</td>
+								<td>
+									<strong>string</strong>
+									<p> An HTTP Basic authentication, thus base64(login + ":" + password) with your login and password of your OAuth.io account. </p>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<p>Response example:</p>
+					<pre>{
 	"access_token": "KZMx0AExV6scnfR3EqcFb8ck6jY",
 	"token_type": "Bearer",
 	"expires_in": 18000
 }</pre>
-	</div>
-	</div></div>
-	</div>
-
-	<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseUser">
-          User
-        </a>
-      </h4>
-    </div>
-    <div id="collapseUser" class="panel-collapse collapse">
-      <div class="panel-body">
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/me
+				</div>
+			</div>
 		</div>
-		<p>Get informations about the authenticated user.</a></p>
-		<p>Response example:</p>
-		<pre>{
+	</div>
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+	      	<h4 class="panel-title">
+	        	<a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseUser">
+	          		User
+	        	</a>
+	      	</h4>
+	    </div>
+	    <div id="collapseUser" class="panel-collapse collapse">
+	      	<div class="panel-body">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/me
+					</div>
+					<div class="panel-body">
+						<p>Get informations about the authenticated user.</p>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": {
 		"id": "3492",
@@ -103,88 +105,91 @@
 		]
 	}
 }</pre>
-	</div>
-	</div></div>
-	</div>
-
-	<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseApps">
-          Apps
-        </a>
-      </h4>
-    </div>
-    <div id="collapseApps" class="panel-collapse collapse">
-      <div class="panel-body">
-
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps
+					</div>
+				</div>
+			</div>
 		</div>
-		<p>Create an application.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> name </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The new name of the application, 3 to 50 chars. </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> domains </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>array of strings</strong>
-						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+	</div>
+	<div class="panel panel-default">
+    	<div class="panel-heading">
+      		<h4 class="panel-title">
+        		<a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseApps">
+          			Apps
+        		</a>
+      		</h4>
+		</div>
+    	<div id="collapseApps" class="panel-collapse collapse">
+      		<div class="panel-body">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps
+					</div>
+					<div class="panel-body">
+						<p>Create an application.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> name </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The new name of the application, 3 to 50 chars. </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> domains </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>array of strings</strong>
+										<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": {
 		"name": "My test app",
 		"key": "171oqMx5yYMDMS2HR7JQJMoBHfI"
 	}
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}
-		</div>
-		<p>Get an app's details.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}
+					</div>
+					<div class="panel-body">
+						<p>Get an app's details.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": {
 		"name": "My renamed app",
@@ -200,141 +205,148 @@
 		]
 	}
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}
-		</div>
-		<p>Update an app's details.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> name </strong>
-						<p class="text-success" >Optional</p>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The new name of the application, 3 to 50 chars. </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> domains </strong>
-						<p class="text-success" >Optional</p>
-					</td>
-					<td>
-						<strong>array of strings</strong>
-						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}
+					</div>
+					<div class="panel-body">
+						<p>Update an app's details.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> name </strong>
+										<p class="text-success" >Optional</p>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The new name of the application, 3 to 50 chars. </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> domains </strong>
+										<p class="text-success" >Optional</p>
+									</td>
+									<td>
+										<strong>array of strings</strong>
+										<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
-
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}
-		</div>
-		<p>Delete an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+					</div>
+				</div>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}
+					</div>
+					<div class="panel-body">
+						<p>Delete an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/reset
-		</div>
-		<p>Reset an app's public and secret keys.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/reset
+					</div>
+					<div class="panel-body">
+						<p>Reset an app's public and secret keys.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": {
 		"key": "2-E1sctnaiCRjFlwOI8C3ptu2bU"
 	}
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/domains
-		</div>
-		<p>List valid domains for an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/domains
+					</div>
+					<div class="panel-body">
+						<p>List valid domains for an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": [
 		"https://example2.com:42/callback",
@@ -342,187 +354,197 @@
 		"example.com"
 	]
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains
-		</div>
-		<p>Update valid domains list for an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> domains </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>array of strings</strong>
-						<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains
+					</div>
+					<div class="panel-body">
+						<p>Update valid domains list for an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> domains </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>array of strings</strong>
+										<p> Array of valid urls scheme/domain/port/path. You can choose the url detail level to use. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains/{domain}
-		</div>
-		<p>Add a valid domain for an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> domain (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The url encoded domain name to add </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/domains/{domain}
+					</div>
+					<div class="panel-body">
+						<p>Add a valid domain for an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> domain (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The url encoded domain name to add </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/domains/{domain}
-		</div>
-		<p>Remove a valid domain for an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> domain (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The url encoded domain name to delete </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/domains/{domain}
+					</div>
+					<div class="panel-body">
+						<p>Remove a valid domain for an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> domain (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The url encoded domain name to delete </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets
-		</div>
-		<p>List keysets for an app.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets
+					</div>
+					<div class="panel-body">
+						<p>List keysets for an app.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": [
 		"facebook"
 	]
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets/{provider}
-		</div>
-		<p>Get a keyset for an app and a provider. Returns null if the keyset does not exists.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> provider (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The provider's name </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/apps/{key}/keysets/{provider}
+					</div>
+					<div class="panel-body">
+						<p>Get a keyset for an app and a provider. Returns null if the keyset does not exists.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> provider (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": {
 		"parameters": {
@@ -537,141 +559,148 @@
 		"response_type": "code"
 	}
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/keysets/{provider}
-		</div>
-		<p>Add or update a keyset for an app and a provider. If the keyset already exists, it will be replaced.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> provider (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The provider's name </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> response_type </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The response type can be "token" (client-side), "code" (server-side), or "both" </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> parameters </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>object</strong>
-						<p> The parameters of the keyset, according to the provider's configuration. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-warning">POST</span> /api/apps/{key}/keysets/{provider}
+					</div>
+					<div class="panel-body">
+						<p>Add or update a keyset for an app and a provider. If the keyset already exists, it will be replaced.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> provider (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> response_type </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The response type can be "token" (client-side), "code" (server-side), or "both" </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> parameters </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>object</strong>
+										<p> The parameters of the keyset, according to the provider's configuration. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/keysets/{provider}
-		</div>
-		<p>Remove a keyset from an app by provider's name.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> provider (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The provider's name of the keyset to delete </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-danger">DELETE</span> /api/apps/{key}/keysets/{provider}
+					</div>
+					<div class="panel-body">
+						<p>Remove a keyset from an app by provider's name.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> provider (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name of the keyset to delete </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
 	"status": "success",
 	"data": null
 }</pre>
-	</div>
-	</div></div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseProviders">
-          Providers
-        </a>
-      </h4>
-    </div>
-    <div id="collapseProviders" class="panel-collapse collapse">
-      <div class="panel-body">
+	    <div class="panel-heading">
+	      	<h4 class="panel-title">
+	        	<a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseProviders">
+	         		 Providers
+	       		</a>
+	      	</h4>
+	    </div>
+	    <div id="collapseProviders" class="panel-collapse collapse">
+	      	<div class="panel-body">
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers
-		</div>
-		<p>Get providers list.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> key (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The app's public key </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers
+					</div>
+					<div class="panel-body">
+						<p>Get providers list.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> key (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The app's public key </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre>{
     "status": "success",
     "data": [
         {
@@ -690,42 +719,44 @@
 
     ]
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}
-		</div>
-		<p>Get a provider's configuration.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> provider (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The provider's name </p>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<strong> extend </strong>
-						<p class="text-danger" >Required</p>
-					</td>
-					<td>
-						<strong>boolean</strong>
-						<p> Set to "true" to extend the configuration with default parameters. "false" by default. </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<pre ng-non-bindable>{
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}
+					</div>
+					<div class="panel-body">
+						<p>Get a provider's configuration.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> provider (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> extend </strong>
+										<p class="text-danger" >Required</p>
+									</td>
+									<td>
+										<strong>boolean</strong>
+										<p> Set to "true" to extend the configuration with default parameters. "false" by default. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<pre ng-non-bindable>{
     "status": "success",
     "data": {
         "url": "https://api.twitter.com/oauth",
@@ -748,8 +779,8 @@
         "provider": "twitter"
     }
 }</pre>
-		<p>Response example (extended):</p>
-		<pre ng-non-bindable>{
+						<p>Response example (extended):</p>
+						<pre ng-non-bindable>{
     "status": "success",
     "data": {
         "url": "https://api.twitter.com/oauth",
@@ -790,34 +821,37 @@
         "provider": "twitter"
     }
 }</pre>
-	</div>
+					</div>
+				</div>
 
-	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}/logo
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span> /api/providers/{provider}/logo
+					</div>
+					<div class="panel-body">
+						<p>Get a provider's logo. It returns a png image with MIME type image/png.</p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> provider (url) </strong>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>Response example:</p>
+						<img src="https://oauth.io/api/providers/facebook/logo" alt="facebook logo" />
+					</div>
+				</div>
+			</div>
 		</div>
-		<p>Get a provider's logo. It returns a png image with MIME type image/png.</a></p>
-		<table class="table">
-			<thead>
-				<th style="width:20%"></th>
-				<th style="width:80%"></th>
-			</thead>
-			<tbody class="table-hover">
-				<tr>
-					<td>
-						<strong> provider (url) </strong>
-					</td>
-					<td>
-						<strong>string</strong>
-						<p> The provider's name </p>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<p>Response example:</p>
-		<img src="https://oauth.io/api/providers/facebook/logo" alt="facebook logo" />
-	</div>
-	</div></div>
-
 	</div>
 </div>

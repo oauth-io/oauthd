@@ -1,13 +1,13 @@
 <div>
 	<div ng-show="createKeyStep == 1">
-		<div class="col col-lg-6 col-offset-3" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col-lg-6 col-lg-offset-3" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
 	</div>
 	<div ng-show="createKeyStep == 2">
 		<div class="row" style="margin-top: 5px">
-			<label class="col col-lg-4">Application</label>
-			<div class="col col-lg-8">
+			<label class="col-lg-4">Application</label>
+			<div class="col-lg-8">
 				<div ng-hide="isDropped" style="position: relative; top: -8px;">
-					<select id="app-apikey" ng-options="a.key as a.name for a in apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)"></select>
+					<select class="form-control" id="app-apikey" ng-options="a.key as a.name for a in apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)"></select>
 				</div>
 				<div ng-show="isDropped">
 					{{createKeyAppName}}
@@ -17,15 +17,15 @@
 		<hr />
 		<h5>Create an application on {{createKeyProvider|capitalize}} with the following callbacks :</h5>
 		<div ng-show="createKeyConfigImg">
-			<img ng-src="/api/providers/{{createKeyProvider}}/config.png">
+			<img class="img-responsive" ng-src="/api/providers/{{createKeyProvider}}/config.png">
 		</div><br />
 		<div class="row">
-			<label class="col col-lg-4">URL callback</label>
-			<div class="col col-lg-8">https://oauth.io/auth</div>
+			<label class="col-lg-4">URL callback</label>
+			<div class="col-lg-8">https://oauth.io/auth</div>
 		</div>
 		<div class="row">
-			<label class="col col-lg-4">Domain callback</label>
-			<div class="col col-lg-8">oauth.io</div>
+			<label class="col-lg-4">Domain callback</label>
+			<div class="col-lg-8">oauth.io</div>
 		</div>
 		<hr />
 		<h5 ng-show="createKeyHref.docs">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>

@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col col-lg-7">
+		<div class="col-lg-7">
       <!-- NAME -->
 			<div class="row">
 				<h5>Name</h5>
@@ -25,7 +25,7 @@
 			</div>
       <div class="row" style="margin-top: 30px;">
         <!-- REQUEST TOKEN -->
-        <div class="col col-lg-12" ng-hide="type == 'oauth2'">
+        <div class="col-lg-12" ng-hide="type == 'oauth2'">
           <h5 style="text-align: center">Request token</h5>
           <p>URL <span tooltip-placement="bottom" tooltip="Set the request_token URL. This URL should be in the provider's documentation"><i class="glyphicon glyphicon-info-sign"></i></span></p>
           <input type="text" ng-model="conf[type].request_token.url" placeholder="e.g. /request_token">
@@ -59,7 +59,7 @@
       </div>
       <div class="row">
         <!-- AUTHORIZE -->
-        <div class="col col-lg-6" style="background-color:#EFEFEF">
+        <div class="col-lg-6" style="background-color:#EFEFEF">
           <h5 style="text-align: center">Authorize</h5>
           <p>URL</p>
           <input type="text" ng-model="conf[type].authorize.url" placeholder="e.g. /authorize">
@@ -92,7 +92,7 @@
           <br>
         </div>
         <!-- ACCESS TOKEN -->
-        <div class="col col-lg-6">
+        <div class="col-lg-6">
           <h5 style="text-align: center">Access token</h5>
           <p>URL</p>
           <input type="text" ng-model="conf[type].access_token.url" placeholder="e.g. /access_token">
@@ -207,7 +207,7 @@
 
       </div>
 		</div>
-    <div class="col col-lg-5">
+    <div class="col-lg-5">
       <pre>{{conf|json}}</pre>
       <p style="line-height: 30px;">Load the configuration file of <span ng-repeat="p in providersDemo"> <button ng-click="loadConf(p)" class="btn btn-small"> {{p}} </button></span></p>
     </div>
