@@ -140,13 +140,6 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			status:''
 			message:''
 
-	$scope.oauth = (provider, callback) ->
-		OAuth.initialize window.loginKey
-		OAuth.popup provider, (err, success) ->
-			console.log err, success
-			if callback
-				callback err, success
-
 	me =
 		'facebook':
 			url: '/me'
@@ -175,7 +168,8 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			path: 'response/0'
 
 	$scope.socialSignin = (provider) ->
-		$scope.oauth provider, (err, res) ->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, (err, res) ->
 			return false if err
 			UserService.loginOAuth {
 				access_token: res.access_token
@@ -401,7 +395,18 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 	$scope.changeTab 'general'
 	$scope.loading = true
+	$scope.sync = {}
+	$scope.syncProvider = (provider)->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, (err, success) =>
+			return null if err
+			tokens =
+				token: success.access_token
+				oauth_token: success.oauth_token
+				oauth_token_secret: success.oauth_token_secret
 
+			UserService.sync provider, tokens, ->
+				$scope.sync[provider] = true
 
 	UserService.me (success) ->
 
@@ -433,6 +438,11 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				responseDelay: 48
 
 		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
+
+
+		UserService.getSync (providers) ->
+			$scope.sync = {}
+			$scope.sync[provider] = true for provider in providers.data
 
 		$scope.apps = []
 		$scope.totalUsers = 0

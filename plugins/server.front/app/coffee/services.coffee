@@ -100,6 +100,16 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		me: (success, error) ->
 			api 'me', success, error
 
+		getSync: (success, error) ->
+			api 'sync/oauth', success, error
+
+		sync: (provider, tokens, success, error) ->
+			api 'sync/oauth', success, error, data:
+				provider:provider
+				token:tokens?.token
+				oauth_token:tokens?.oauth_token
+				oauth_token_secret:tokens?.oauth_token_secret
+
 		getSubscriptions: (success, error) ->
 			api 'me/subscriptions', success, error
 

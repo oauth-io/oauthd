@@ -137,6 +137,37 @@ exports.setup = (callback) ->
 						return callback new @check.Error "something gone wrong with the api"
 					callback null, id:body.response[0].uid
 
+	@server.get @config.base_api + '/sync/oauth', exports.needed, (req, res, next) =>
+		@db.redis.hkeys "u:#{req.user.id}:sync", @server.send(res, next)
+
+	@server.post @config.base_api + '/sync/oauth', exports.needed, (req, res, next) =>
+		callback = @server.send res, next
+
+		e = new @check.Error
+		e.check req.body,
+			provider: 'string'
+			token:['string','none']
+			oauth_token:['string','none']
+			oauth_token_secret:['string','none']
+		return callback e if e.failed()
+
+		provider = req.body.provider
+		if not getInfos[provider]
+			return callback new @check.Error 'Unsupported provider'
+
+		req.body.k = @config.loginKey
+		getInfos[provider] req.body, (err, infos) =>
+			return callback err if err
+			@db.redis.hget 'sign:' + provider, infos.id, (err, existing_user) =>
+				return callback err if err
+				if existing_user
+					@db.redis.hdel 'sign:' + provider, infos.id
+					@db.redis.hdel "u:#{existing_user}:sync", provider
+				@db.redis.hset 'sign:' + provider, infos.id, req.user.id
+				@db.redis.hset "u:#{req.user.id}:sync", provider, infos.id
+				res.send @check.nullv
+				next()
+
 	@server.post @config.base_api + '/signup/oauth', (req, res, next) =>
 		callback = @server.send res, next
 
@@ -164,11 +195,10 @@ exports.setup = (callback) ->
 				return callback new @check.Error 'This account is already linked to another user' if existing_user
 				@db.users.register mail:req.body.email, pass: req.body.pass, name: req.body.name, company: req.body.company, (err, user) =>
 					return callback err if err
-					console.log user
-					console.log 'sign:' + provider, infos.id, user.id
-					@db.redis.hset 'sign:' + provider, infos.id, user.id
 
+					@db.redis.hset 'sign:' + provider, infos.id, user.id
 					prefix = "u:#{user.id}:"
+					@db.redis.hset prefix + ':sync', provider, infos.id
 					upd = [prefix + 'name', req.body.name]
 					if req.body.company
 						upd.push prefix + 'company'
@@ -203,7 +233,6 @@ exports.setup = (callback) ->
 		provider = req.body.provider
 		if not getInfos[provider]
 			return cb new @check.Error 'Unsupported provider'
-
 		req.body.k = @config.loginKey
 		getInfos[provider] req.body, (err, infos) =>
 			return cb err if err

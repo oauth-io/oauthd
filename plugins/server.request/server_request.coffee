@@ -67,8 +67,6 @@ exports.setup = (callback) ->
 			return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 
 		origin = null
-		console.log("referer", req.headers['referer'])
-		console.log("origin", req.headers['origin'])
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 		urlinfos = Url.parse(ref)
 		if not urlinfos.hostname
