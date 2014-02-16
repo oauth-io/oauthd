@@ -45,6 +45,10 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 	$rootScope.accessToken = $cookieStore.get 'accessToken'
 	api = apiRequest $http, $rootScope
 	return $rootScope.UserService = {
+		logout: ->
+			delete $rootScope.accessToken
+			$cookieStore.remove 'accessToken'
+
 		login: (user, success, error) ->
 			authorization = (user.mail + ':' + user.pass).encodeBase64()
 
