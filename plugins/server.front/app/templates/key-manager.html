@@ -46,9 +46,12 @@
 						</span>
 						<div ng-show="showQuickInstall">
 							<hr />
-							<a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="position: relative; top: -10px" class="pull-right btn btn-small btn-success">Download oauth.js</a>
 							<p>In your HTML</p>
-							<pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre>
+							<div class="row">
+								<div class="col-lg-10"><pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre></div>
+								<div class="col-lg-2"><a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="" class="pull-right btn btn-small btn-success">Download oauth.js</a></div>
+							</div>
+
 							<p>Then initialize the SDK in your Javascript</p>
 							<pre>OAuth.initialize('<span class="text-success"><strong>{{app.key}}</strong></span>');</pre>
 						</div>
