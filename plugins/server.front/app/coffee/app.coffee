@@ -119,7 +119,7 @@ app.config([
 			title: 'My account'
 
 		$routeProvider.when '/logout',
-			templateUrl: '/templates/landing.html'
+			templateUrl: '/templates/blank.html'
 			controller: 'LogoutCtrl'
 
 		$routeProvider.when '/key-manager',

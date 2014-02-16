@@ -48,6 +48,8 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		logout: ->
 			delete $rootScope.accessToken
 			$cookieStore.remove 'accessToken'
+			OAuth.clearCache(provider) for provider in ['google','facebook','twitter', 'vk', 'linkedin', 'github']
+			return false
 
 		login: (user, success, error) ->
 			authorization = (user.mail + ':' + user.pass).encodeBase64()
