@@ -9,8 +9,8 @@
 				<div ng-hide="editMode == app.key" class="panel-heading">
 					<h4>
 						<small class="pull-right" style="">
-							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 0.9em">Edit</a>
-							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 0.9em; margin-left: 15px">Remove</a>
+							<a ng-click="editApp(app.key)" style="cursor: pointer; font-size: 1.1em">Edit app</a>
+							<a ng-click="removeApp(app.key)" style="cursor: pointer; font-size: 1.1em; margin-left: 15px">Remove app</a>
 						</small>
 						<span>{{app.name}}</span>
 					</h4>
@@ -31,7 +31,7 @@
 					</div>
 				</div>
 				<div class="panel-body">
-					<div class="well" style="margin-top: 10px">
+					<div style="padding: 0px 10px 20px; margin-top: 10px">
 						<h5><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
 						<h5>
 							<i class="glyphicon glyphicon-hand-right"></i>
@@ -53,16 +53,17 @@
 							<pre>OAuth.initialize('<span class="text-success"><strong>{{app.key}}</strong></span>');</pre>
 						</div>
 					</div>
-					<div  class="panel" style="margin-bottom: 0; margin-top: -1px" ng-repeat="keyProvider in app.keysets" ng-mouseover="hoverItem = keyProvider" ng-mouseleave="hoverItem = null">
-						<button ng-click="tryAuth(keyProvider, app.key)" class="btn btn-primary pull-right" style="position:relative; top: -5px">Try auth</button>
-						<span class="pull-right" style="position :relative; top: -5px; left: -5px" ng-show="hoverItem == keyProvider"><button ng-click="keyClick(keyProvider, app)" class="btn btn-success btn-small">Details</button></span>
-						<div class="panel-header">
+					<div  class="panel panel-default" style="margin-bottom: 0; margin-top: -1px" ng-repeat="keyProvider in app.keysets" ng-mouseover="hoverItem = keyProvider" ng-mouseleave="hoverItem = null">
+
+						<div class="panel-heading">
+							<button ng-click="tryAuth(keyProvider, app.key)" class="btn btn-primary pull-right" style="position:relative; top: -5px">Try auth</button>
+							<span class="pull-right" style="position :relative; top: -5px; left: -5px" ng-show="hoverItem == keyProvider"><button ng-click="keyClick(keyProvider, app)" class="btn btn-success">Details</button></span>
 							<a ng-click="keyClick(keyProvider, app)" style="cursor: pointer;">
 								<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{keyProvider}}/logo" alt="{{keyProvider}} logo">
 								<span style="position: relative; top: 2px">{{providers_name[keyProvider]|capitalize}}</span>
 							</a>
 						</div>
-						<div class="panel-info" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
+						<div class="panel-body" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
 
 							<form id="appkey-{{app.key}}-{{keyProvider}}" class="form-horizontal" ng-show="app.keys[keyProvider] && app.showKeys == keyProvider">
 								<hr />
