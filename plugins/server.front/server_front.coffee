@@ -65,6 +65,10 @@ exports.setup = (callback) ->
 		console.error 'error', e if e
 
 		sendIndex = (req, res, next) ->
+			if req.headers.host == 'www.oauth.io'
+				res.setHeader 'Location', 'https://oauth.io'
+				res.send 301
+				return next()
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
