@@ -1,26 +1,61 @@
 {
 	"name": "Google Analytics",
-    "desc": "With Google Analytics, you can gather, view, and analyze data about your website traffic. By embedding the basic JavaScript snippet into your pages, you see which content gets the most visits, average page views and time on site for visits, which ads are driving the most visitors to your site, and more. The Google Analytics Data Export API lets develop client applications that download Analytics data in the form of Google Data API feeds. Your client application can use the Data Export API to request data from an existing Analytics profile for an authorized user, and refine the results of the request using query parameters. Currently, the Data Export API supports read-only access to your Google Analytics data. The current feeds in the Data Export API contain two general categories of Analytics data: Analytics accounts and website profiles; Analytics report data from a single profile.",
+	"desc": "With Google Analytics, you can gather, view, and analyze data about your website traffic. By embedding the basic JavaScript snippet into your pages, you see which content gets the most visits, average page views and time on site for visits, which ads are driving the most visitors to your site, and more. The Google Analytics Data Export API lets develop client applications that download Analytics data in the form of Google Data API feeds. Your client application can use the Data Export API to request data from an existing Analytics profile for an authorized user, and refine the results of the request using query parameters. Currently, the Data Export API supports read-only access to your Google Analytics data. The current feeds in the Data Export API contain two general categories of Analytics data: Analytics accounts and website profiles; Analytics report data from a single profile.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
-		"authorize": "/auth",
-		"access_token": "/token",
-		"request": "https://www.googleapis.com",
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com/",
 		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			},
 			"scope": {
 				"values": {
 					"https://www.googleapis.com/auth/analytics": "View and manage your Google Analytics data",
-					"https://www.googleapis.com/auth/analytics.readonly": "View your Google Analytics data"
+					"https://www.googleapis.com/auth/analytics.readonly": "View your Google Analytics data",
+					"https://www.googleapis.com/auth/analytics.edit": "Edit Google Analytics management entities",
+					"https://www.googleapis.com/auth/analytics.manage.users": "Manage Google Analytics Account users by email address",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome"
 				}
 			}
 		}
 	},
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
-		"docs": "http://code.google.com/more/",
+		"docs": "https://developers.google.com/analytics/",
 		"apps": "https://code.google.com/apis/console/",
 		"provider": "http://google.com/"
 	}

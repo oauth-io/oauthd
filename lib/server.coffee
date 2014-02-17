@@ -108,9 +108,48 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				return next e if e
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
-				oauth.oauth2.refresh keyset, provider, req.body.token, send(res,next)
+				oa = new oauth.oauth2
+				oa.refresh keyset, provider, req.body.token, send(res,next)
 
+# iframe injection for IE
+server.get config.base + '/iframe', (req, res, next) ->
+	res.setHeader 'Content-Type', 'text/html'
+	res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
+	e = new check.Error
+	e.check req.params, d:'string'
+	origin = check.escape req.params.d
+	return next e if e.failed()
+	content = '<!DOCTYPE html>\n'
+	content += '<html><head><script>(function() {\n'
 
+	content += 'function eraseCookie(name) {\n'
+	content += '	var date = new Date();\n'
+	content += '	date.setTime(date.getTime() - 86400000);\n'
+	content += '	document.cookie = name+"=; expires="+date.toGMTString()+"; path=/";\n'
+	content += '}\n'
+
+	content += 'function readCookie(name) {\n'
+	content += '	var nameEQ = name + "=";\n'
+	content += '	var ca = document.cookie.split(";");\n'
+	content += '	for(var i = 0; i < ca.length; i++) {\n'
+	content += '		var c = ca[i];\n'
+	content += '		while (c.charAt(0) === " ") c = c.substring(1,c.length);\n'
+	content += '		if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);\n'
+	content += '	}\n'
+	content += '	return null;\n'
+	content += '}\n'
+
+	content += 'var cookieCheckTimer = setInterval(function() {\n'
+	content += '	var results = readCookie("oauthio_last");\n'
+	content += '	if (!results) return;\n'
+	content += '	var msg = decodeURIComponent(results.replace(/\\+/g, " "));\n'
+	content += '	parent.postMessage(msg, "' + origin + '");\n'
+	content += '	eraseCookie("oauthio_last");\n'
+	content += '}, 1000);\n'
+
+	content += '})();</script></head><body></body></html>'
+	res.send content
+	next()
 
 # oauth: get access token from server
 server.post config.base + '/access_token', (req, res, next) ->
@@ -153,12 +192,23 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 		uaparser = new UAParser()
 		uaparser.setUA req.headers['user-agent']
 		browser = uaparser.getBrowser()
+		chromeext = data.origin.match(/chrome-extension:\/\/([^\/]+)/)
 		if browser.name.substr(0,2) == 'IE'
-			view += '\tdocument.title = "oauthio=" + encodeURIComponent(msg);\n'
+			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
+			view += 'function createCookie(name, value) {\n'
+			view += '	var date = new Date();\n'
+			view += '	date.setTime(date.getTime() + 1200 * 1000);\n'
+			view += '	var expires = "; expires="+date.toGMTString();\n'
+			view += '	document.cookie = name+"="+value+expires+"; path=/";\n'
+			view += '}\n'
+			view += 'createCookie("oauthio_last",encodeURIComponent(msg));\n'
+		else if (chromeext)
+			view += '\tchrome.runtime.sendMessage("' + chromeext[1] + '", {data:msg});\n'
+			view += '\twindow.close();\n'
 		else
-			view += '\tvar opener = window.opener || window.parent.window.opener;\n'
-			view += '\tif (opener)\n'
-			view += '\t\topener.postMessage(msg, "' + data.origin + '");\n'
+			view += 'var opener = window.opener || window.parent.window.opener;\n'
+			view += 'if (opener)\n'
+			view += '\topener.postMessage(msg, "' + data.origin + '");\n'
 			view += '\twindow.close();\n'
 	view += '})();</script></head><body></body></html>'
 	res.send view
@@ -173,7 +223,7 @@ server.get config.base + '/', (req, res, next) ->
 			stateref = req.headers.referer.match /state=([^&$]+)/
 			stateid = stateref?[1]
 			return callback null, stateid if stateid
-		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*)%22/)?[1]
+		oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 		if oaio_uid
 			db.redis.get 'cli:state:' + oaio_uid, callback
 	getState (err, stateid) ->
@@ -184,7 +234,8 @@ server.get config.base + '/', (req, res, next) ->
 			return next new check.Error 'state', 'invalid or expired' if not state
 			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-			oauth[state.oauthv].access_token state, req, (e, r) ->
+			oa = new oauth[state.oauthv]
+			oa.access_token state, req, (e, r) ->
 				status = if e then 'error' else 'success'
 				cmds = []
 				for hook in plugins.data.hooks['connect.auth']
@@ -276,12 +327,13 @@ server.get config.base + '/:provider', (req, res, next) ->
 				options.response_type = response_type
 				options.parameters = parameters
 				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-				oauth[oauthv].authorize provider, parameters, opts, cb
+				oa = new oauth[oauthv]
+				oa.authorize provider, parameters, opts, cb
 		(authorize, cb) ->
 				return cb null, authorize.url if not req.oaio_uid
 				db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
 					return cb err if err
-					db.redis.expire 'cli:state:' + req.oaio_uid, 600
+					db.redis.expire 'cli:state:' + req.oaio_uid, 1200
 					cb null, authorize.url
 	], (err, url) ->
 		return callback err if err
@@ -364,6 +416,8 @@ server.get config.base_api + '/providers', bootPathCache(), (req, res, next) ->
 
 # get a provider config
 server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res, next) ->
+	res.setHeader 'Access-Control-Allow-Origin', '*'
+	res.setHeader 'Access-Control-Allow-Methods', 'GET'
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
@@ -400,10 +454,14 @@ server.get config.base_api + '/providers/:provider/:file', bootPathCache(), ((re
 exports.listen = (callback) ->
 	# tell plugins to configure the server if needed
 	plugins.run 'setup', ->
-		server.listen config.port, (err) ->
+		listen_args = [config.port]
+		listen_args.push config.bind if config.bind
+		listen_args.push (err) ->
 			return callback err if err
 			#exit.push 'Http(s) server', (cb) -> server.close cb
 			#/!\ server.close = timeout if at least one connection /!\ wtf?
-			console.log '%s listening at %s', server.name, server.url
+			console.log '%s listening at %s for %s', server.name, server.url, config.host_url
 			plugins.data.emit 'server', null
 			callback null, server
+
+		server.listen.apply server, listen_args

@@ -1,20 +1,12 @@
-#IndexCtrl = ($scope, $location, UserService, MenuService)->
-	#$location.ga_skip = true;
-	# if $location.path() == '/'
-		# if UserService.isLogin()
-		# 	$location.path('/key-manager').replace()
-		# else
-			# $location.path('/home').replace()
 
 LogoutCtrl = ($location, UserService, MenuService) ->
-	$location.ga_skip = true;
-	UserService.logout ->
-		$location.path '/home'
+	UserService.logout()
+	document.location.reload()
 
 ###########################
 # Landing page Controller #
 ###########################
-IndexCtrl = LandingCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
+IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 	MenuService.changed()
 	# if UserService.isLogin()
 	# 	$location.path '/key-manager'
@@ -99,7 +91,7 @@ ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) 
 #################################
 # Validate account email + pass #
 #################################
-ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $location) ->
+ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserService, $location, $cookieStore) ->
 	#MenuService.changed()
 	#if UserService.isLogin()
 	#	$location.path '/key-manager'
@@ -110,52 +102,30 @@ ValidateCtrl = ($rootScope, $scope, $routeParams, MenuService, UserService, $loc
 
 		if UserService.isLogin() and data.data.is_updated
 			$location.path '/account'
-		else if !UserService.isLogin() and data.data.is_validable
+		else if data.data.is_validable
 			# $location.path '/signin'
 			$scope.user =
 				id: $routeParams.id
 				key: $routeParams.key
 				mail: data.data.mail
-		else
-			$location.path '/signin'
+			UserService.validate $scope.user.id, $scope.user.key, ((data) ->
+				$timeout (->
+					$rootScope.accessToken = $cookieStore.get 'accessToken'
+					$location.path '/key-manager'
+					$scope.$apply()
+				), 5000
+			), (error) ->
+		else if not data.data.is_validable
+			$location.path '/404'
 	), (error) ->
 		$location.path '/404'
 
-	$scope.validateForm = () ->
-		$scope.error =
-			status: ''
-			message: ""
-
-		user =
-			id: $scope.user.id
-			key: $scope.user.key
-			pass: $('#pass').val()
-			pass2: $('#pass2').val()
-
-		if not user?.pass or not user?.pass2
-			return false
-
-		if user.pass == user.pass2
-			UserService.validate user.id, user.key, user.pass, ((data) ->
-				UserService.login {
-					mail: data.data.mail
-					pass: user.pass
-				}, (data) ->
-					$location.path('/key-manager')
-
-			), (error) ->
-				$scope.error =
-					status: 'error'
-					message: error
-		else
-			$scope.error =
-				status: 'error'
-				message: "Password1 != Password2"
-
-UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService) ->
+UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService, $routeParams) ->
 	MenuService.changed()
 	if UserService.isLogin()
 		$location.path '/key-manager'
+
+	$('#socialConnect button').tooltip()
 
 	if not $scope.info
 		if document.location.hash.match /^#err=./
@@ -171,10 +141,87 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			status:''
 			message:''
 
-	$scope.oauth = (provider) ->
-		OAuth.initialize 'ZjsbIbKdkuw5fmEkBHDZfUqEadY'
-		OAuth.popup provider, (err, success) ->
-			console.log err, success
+	me =
+		'facebook':
+			url: '/me'
+			name: 'name'
+			mail: 'email'
+		'twitter':
+			url: '/1.1/account/verify_credentials.json'
+			name: 'name'
+		'google':
+			url: '/oauth2/v1/userinfo'
+			name: 'name'
+			mail: 'email'
+		'linkedin':
+			url: '/v1/people/~:(id,email-address,first-name,last-name,headline)?format=json'
+			name: ['firstName', 'lastName']
+			mail: 'emailAddress',
+			company: 'headline'
+		'github':
+			url: '/user'
+			name: 'name'
+			company: 'company'
+			mail: 'email'
+		'vk':
+			url: '/method/getProfiles'
+			name: ['first_name', 'last_name']
+			path: 'response/0'
+
+	$scope.socialSignin = (provider) ->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, cache: true, (err, res) ->
+			return false if err
+			UserService.loginOAuth {
+				access_token: res.access_token
+				oauth_token: res.oauth_token
+				oauth_token_secret: res.oauth_token_secret
+			}, provider, ((path) ->
+				$location.path '/key-manager'
+			), (error) ->
+				$scope.provider = provider
+				$('#error-social').modal('show')
+				return false
+
+	$scope.connected = false
+	$scope.socialSignup = (provider) ->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, cache: true, (err, res) ->
+			return false if err
+			res.get(me[provider].url).done (data)->
+				if me[provider].path
+					for eltname in me[provider].path.split '/'
+						data = data[eltname]
+				if Array.isArray me[provider].name
+					name = (data[a] for a in me[provider].name).join ' '
+					$scope.user.name = name
+				else
+					$scope.user.name = data[me[provider].name]
+				$scope.user.mail = data[me[provider].mail]
+				$scope.user.company = data[me[provider].company]
+				$scope.connected = true
+				$scope.social =
+					provider: provider
+					token: res.access_token
+					oauth_token: res.oauth_token
+					oauth_token_secret: res.oauth_token_secret
+				$scope.$apply()
+
+	if $routeParams.provider
+		$scope.socialSignup $routeParams.provider
+		$('.modal-backdrop').hide()
+
+	$scope.signinSubmit = ->
+
+	$scope.signupSubmit = ->
+		#verif field
+		UserService.register $scope.user, $scope.social, ((data) ->
+			$scope.signupInfo =
+				status: 'success'
+		), (error) ->
+			$scope.signupInfo =
+				status: 'error'
+				message: error.message
 
 	$scope.userForm =
 		template: "/templates/partials/userForm.html"
@@ -198,8 +245,9 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					$(window).off()
 					$(document).off()
 					$location.ga_skip = true;
-					console.log path
 					$location.path path
+					# document.location.href = '/#' + path
+					# document.location.reload()
 				), (error) ->
 					$scope.info =
 						status: 'error'
@@ -352,7 +400,18 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 	$scope.changeTab 'general'
 	$scope.loading = true
+	$scope.sync = {}
+	$scope.syncProvider = (provider)->
+		OAuth.initialize window.loginKey
+		OAuth.popup provider, (err, success) =>
+			return null if err
+			tokens =
+				token: success.access_token
+				oauth_token: success.oauth_token
+				oauth_token_secret: success.oauth_token_secret
 
+			UserService.sync provider, tokens, ->
+				$scope.sync[provider] = true
 
 	UserService.me (success) ->
 
@@ -384,6 +443,11 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				responseDelay: 48
 
 		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
+
+
+		UserService.getSync (providers) ->
+			$scope.sync = {}
+			$scope.sync[provider] = true for provider in providers.data
 
 		$scope.apps = []
 		$scope.totalUsers = 0
@@ -1848,6 +1912,8 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 		$scope.profile.state = $scope.profile.state || ""
 		$scope.profile.city = $scope.profile.city || ""
 		$scope.profile.phone = $scope.profile.phone || ""
+		$scope.profile.use_profile_for_billing = true
+		$scope.handleBillingAddress()
 	, (error) ->
 		console.log error
 
@@ -1882,13 +1948,13 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 			$("#BillingState").show()
 
 	$scope.handleBillingAddress = ->
-
 		if not $scope.profile.use_profile_for_billing
 			$scope.billing =
 				type: 'individual'
 		else
 			$scope.billing = $scope.profile
 			$scope.billing.use_profile_for_billing = true
+
 
 	$scope.process_billing = ->
 		fields =

@@ -90,6 +90,9 @@ hooks.config = ->
 			resetAllSecrets: (success, error) ->
 				api "adm/secrets/reset", success, error
 
+			getScope: (provider, success, error) ->
+				api "adm/scopes/update?provider=#{provider}", success, error
+
 			getCohort: (data, success, error) ->
 				url = "adm/scripts/appsbynewusers?start=#{data.start}"
 				url += "&end=#{data.end}" if data.end
@@ -375,6 +378,30 @@ hooks.config = ->
 				$scope.provider_ranking.name = $scope.providersDetails[$scope.providerQuery.name].provider
 				$scope.refreshProviderRanking()
 
+
+
+		#
+		# Scopes
+		#
+		$scope.scopeQuery = name:'*'
+		$scope.refreshScopes = ->
+			AdmService.getScope $scope.scopeQuery.name, (success) ->
+				$scope.scopeFiltered = []
+				for i of success.data[0]
+					$scope.scopeFiltered.push {
+						name: success.data[0][i]
+						score: success.data[1][i]
+						count: success.data[2][i]
+					}
+					$scope.scopePagination =
+						nbPerPage: 15
+						nbPages: Math.ceil($scope.scopeFiltered.length / 15)
+						current: 1
+						max: 5
+		$scope.refreshScopes()
+
+		$scope.scopeQueryChange = ->
+			$scope.refreshScopes()
 
 		#
 		# Apps

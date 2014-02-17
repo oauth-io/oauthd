@@ -14,6 +14,7 @@ $('#navTab a').click(function (e) {
 			<li ng-class="{active: tabShow == 'apps'}"><a ng-click="tabShow = 'apps'">Apps</a></li>
 			<li ng-class="{active: tabShow == 'providers'}"><a ng-click="tabShow = 'providers'">Providers</a></li>
 			<li ng-class="{active: tabShow == 'stats'}"><a ng-click="tabShow = 'stats'">Stats</a></li>
+			<li ng-class="{active: tabShow == 'scopes'}"><a ng-click="tabShow = 'scopes'">Scopes</a></li>
 			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
 			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
 			<li ng-class="{active: tabShow == 'payment'}"><a ng-click="tabShow = 'payment'">Payment</a></li>
@@ -24,7 +25,7 @@ $('#navTab a').click(function (e) {
 
 		<!-- home -->
 		<div ng-show="tabShow == 'home'">
-			<div class="col col-lg-4">
+			<div class="col-lg-4">
 				<h3>Force updates:</h3>
 				<form ng-submit="mailjetUpdate()">
 					<button class="col" type="submit">Force mailjet contacts update</button>
@@ -47,36 +48,36 @@ $('#navTab a').click(function (e) {
 					<button type="submit" class="btn btn-default">Cohort Analysis (what does "cohort" means?)</button>
 				</form>
 			</div>
-			<div class="col col-lg-12" id="cohort-row" ng-show="cohort">
+			<div class="col-lg-12" id="cohort-row" ng-show="cohort">
 				<div class="row">
-					<div class="col col-lg-2"><div class="well well-sm">Subscribe<br/>{{cohort.sum[0]}}</div></div>
-					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[0]}} %<br/>{{cohort.lag[0]}}</div>
-					<div class="col col-lg-2"><div class="well well-sm">Registration<br/>{{cohort.sum[1]}}</div></div>
-					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[1]}} %<br/>{{cohort.lag[1]}}</div>
-					<div class="col col-lg-2"><div class="well well-sm">Activation<br/>{{cohort.sum[2]}}</div></div>
-					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[2]}} %<br/>{{cohort.lag[2]}}</div>
+					<div class="col-lg-2"><div class="well well-sm">Subscribe<br/>{{cohort.sum[0]}}</div></div>
+					<div class="col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[0]}} %<br/>{{cohort.lag[0]}}</div>
+					<div class="col-lg-2"><div class="well well-sm">Registration<br/>{{cohort.sum[1]}}</div></div>
+					<div class="col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[1]}} %<br/>{{cohort.lag[1]}}</div>
+					<div class="col-lg-2"><div class="well well-sm">Activation<br/>{{cohort.sum[2]}}</div></div>
+					<div class="col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[2]}} %<br/>{{cohort.lag[2]}}</div>
 				</div>
 				<div class="row">
-					<div class="col col-lg-2"><div class="well well-sm">Development<br/>{{cohort.sum[3]}}</div></div>
-					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[3]}} %<br/>{{cohort.lag[3]}}</div>
-					<div class="col col-lg-2"><div class="well well-sm">Production<br/>{{cohort.sum[4]}}</div></div>
-					<div class="col col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[4]}} %<br/>{{cohort.lag[4]}}</div>
-					<div class="col col-lg-2"><div class="well well-sm">Consumer<br/>{{cohort.sum[5]}}</div></div>
+					<div class="col-lg-2"><div class="well well-sm">Development<br/>{{cohort.sum[3]}}</div></div>
+					<div class="col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[3]}} %<br/>{{cohort.lag[3]}}</div>
+					<div class="col-lg-2"><div class="well well-sm">Production<br/>{{cohort.sum[4]}}</div></div>
+					<div class="col-lg-2"><span class="glyphicon glyphicon-circle-arrow-right"></span><br/>{{cohort.conversion[4]}} %<br/>{{cohort.lag[4]}}</div>
+					<div class="col-lg-2"><div class="well well-sm">Consumer<br/>{{cohort.sum[5]}}</div></div>
 				</div>
 			</div>
 		</div>
 
 		<!-- users -->
 		<div ng-show="tabShow == 'users'">
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="row">
-					<div class="input-group col col-lg-12">
+					<div class="input-group col-lg-12">
 						<span class="input-group-addon">
 							<i class="glyphicon glyphicon-search"></i>
 						</span>
 						<input type="text" ng-model="query.email" ng-change="queryChange()" >
 					</div>
-					<div class="col col-lg-12">
+					<div class="col-lg-12">
 						<div class="alert alert-error" ng-show="info.status == 'error'">{{info.message}}</div>
 					</div>
 				</div>
@@ -117,7 +118,7 @@ $('#navTab a').click(function (e) {
 		<!-- stats -->
 		<div ng-show="tabShow == 'stats'">
 
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<form ng-submit="chartSubmit()">
 					<div class="row">
 						<input class="col" type="text" ng-model="chart.stat" value="users"/>
@@ -187,13 +188,13 @@ $('#navTab a').click(function (e) {
 		<!-- wishlist -->
 		<div ng-show="tabShow == 'wishlist'">
 
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
 			</div>
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 
 				<div class="row">
-					<div class="input-group col col-lg-12">
+					<div class="input-group col-lg-12">
 						<span class="input-group-addon">
 							<i class="glyphicon glyphicon-search"></i>
 						</span>
@@ -255,7 +256,7 @@ $('#navTab a').click(function (e) {
 
 			<div class="tab-content">
 				<div ng-show="pay_tabShow == 'plans'">
-					<div class="col col-lg-12">
+					<div class="col-lg-12">
 						<div class="alert alert-error" id="errors" ng-show="info.status">{{error}}</div>
 					</div>
 
@@ -374,10 +375,10 @@ $('#navTab a').click(function (e) {
 
 		<!-- rankings -->
 		<div ng-show="tabShow == 'rankings'">
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
 			</div>
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="navbar">
 					<ul class="nav navbar-nav">
 						<li class="dropdown">
@@ -416,7 +417,7 @@ $('#navTab a').click(function (e) {
 
 				</div>
 
-				<div class="col col-lg-8"><h3>{{ranking.target_names[ranking.target]}} ({{ranking.unit_names[ranking.unit]}})</h3></div>
+				<div class="col-lg-8"><h3>{{ranking.target_names[ranking.target]}} ({{ranking.unit_names[ranking.unit]}})</h3></div>
 
 				<table class="table table-striped">
 					<tr>
@@ -448,13 +449,13 @@ $('#navTab a').click(function (e) {
 
 		<!-- providers -->
 		<div ng-show="tabShow == 'providers'">
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
 			</div>
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="row">
-					<div class="col col-lg-1">Provider</div>
-					<div class="input-group col col-lg-11">
+					<div class="col-lg-1">Provider</div>
+					<div class="input-group col-lg-11">
 						<span class="input-group-addon">
 							<i class="glyphicon glyphicon-search"></i>
 						</span>
@@ -485,7 +486,7 @@ $('#navTab a').click(function (e) {
 
 				</div>
 
-				<div class="col col-lg-8"><h3>
+				<div class="col-lg-8"><h3>
 					<span>
 						<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{provider_ranking.name}}/logo">{{provider_ranking.name|capitalize}}
 					</span> - {{provider_ranking.target_names[provider_ranking.target]}} ({{ranking.unit_names[provider_ranking.unit]}})
@@ -510,15 +511,52 @@ $('#navTab a').click(function (e) {
 		</div>
 
 
-		<!-- apps -->
-		<div ng-show="tabShow == 'apps'">
-			<div class="col col-lg-12">
+		<!-- scopes -->
+		<div ng-show="tabShow == 'scopes'">
+			<div class="col-lg-12">
 				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
 			</div>
-			<div class="col col-lg-12">
+			<div class="col-lg-12">
 				<div class="row">
-					<div class="col col-lg-1">App's key</div>
-					<div class="input-group col col-lg-11">
+					<div class="col-lg-1">Scopes</div>
+					<div class="input-group col-lg-11">
+						<span class="input-group-addon">
+							<i class="glyphicon glyphicon-search"></i>
+						</span>
+						<input type="text" ng-model="scopeQuery.name" ng-change="scopeQueryChange()" value="*">
+					</div>
+				</div>
+
+				<table class="table table-striped">
+					<tr>
+						<th>Scope</th>
+						<th>% User failures</th>
+						<th>Count</th>
+					</tr>
+					<tr ng-repeat="scope in scopeFiltered | orderBy:['-score','+name'] | startFrom:(scopePagination.current-1)*scopePagination.nbPerPage | limitTo:scopePagination.nbPerPage">
+						<td>{{scope.name}}</td>
+						<td>{{scope.score / 100}} %</td>
+						<td>{{scope.count}}</td>
+					</tr>
+				</table>
+
+				<div class="row">
+					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="scopePagination.nbPages" current-page="scopePagination.current" max-size="scopePagination.max"></pagination>
+				</div>
+
+			</div>
+		</div>
+
+
+		<!-- apps -->
+		<div ng-show="tabShow == 'apps'">
+			<div class="col-lg-12">
+				<div class="alert alert-error" ng-show="info.status">{{info.message}}</div>
+			</div>
+			<div class="col-lg-12">
+				<div class="row">
+					<div class="col-lg-1">App's key</div>
+					<div class="input-group col-lg-11">
 						<span class="input-group-addon">
 							<i class="glyphicon glyphicon-search"></i>
 						</span>
@@ -526,8 +564,8 @@ $('#navTab a').click(function (e) {
 					</div>
 				</div>
 				<div class="row">
-					<div class="col col-lg-1">Provider</div>
-					<div class="input-group col col-lg-11">
+					<div class="col-lg-1">Provider</div>
+					<div class="input-group col-lg-11">
 						<span class="input-group-addon">
 							<i class="glyphicon glyphicon-search"></i>
 						</span>
@@ -558,7 +596,7 @@ $('#navTab a').click(function (e) {
 
 				</div>
 
-				<div class="col col-lg-8"><h3>
+				<div class="col-lg-8"><h3>
 					<span>
 						<img style="margin-right: 10px" class="pull-left" width="24" height="24" ng-src="/api/providers/{{app_ranking.name}}/logo">{{app_ranking.name|capitalize}}
 					</span> - {{app_ranking.target_names[app_ranking.target]}} ({{ranking.unit_names[app_ranking.unit]}})

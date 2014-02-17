@@ -2,7 +2,7 @@
   <div style="background-color: #cbe7f9; height: 20px"></div>
   <div style="padding: 25px 50px">
     <div class="row">
-      <div class="col col-lg-7">
+      <div class="col-lg-7">
         <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
             <h4 style="font-size: 1.1em">{{userForm.mode}}</h4><br />
             <h6>And worry about OAuth again...</h6>
@@ -28,7 +28,7 @@
             <small style="color:red" ng-show="signup.pass.$error.minlength">Please, 6 characters minimum</small>
           </div>
           <div class="row">
-            <div class="col col-lg-4" style="max-width: 100px; margin-top: 15px;">
+            <div class="col-lg-4" style="max-width: 100px; margin-top: 15px;">
               <button type="submit" class="btn btn-primary">
                 <span ng-show="userForm.mode == 'Lost password'">
                   Reset my password
@@ -56,7 +56,7 @@
           </div>
         </div>
       </div>
-      <div class="col col-lg-5">
+      <div class="col-lg-5">
         <h4 style="text-align: center">Or using social connect</h4>
 
         <div ng-show="userForm.mode == 'Sign in' || userForm.mode == 'Sign up'">

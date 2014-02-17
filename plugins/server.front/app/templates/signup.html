@@ -1,60 +1,115 @@
 <div class="container">
 	<div class="row" style="margin-top: 30px">
-		<div class="col col-lg-10 col-offset-1">
-			<div style="background-color: white; font-family: 'YanoneKRegular', Monaco, Menlo !important;">
-			  <div style="background-color: #cbe7f9; height: 20px"></div>
-			  <div style="padding: 25px 50px">
-			    <div class="row">
-			      <div class="col col-lg-4">
-					<object data="/img/logo.svg" style="position: relative; left: 25px; top: 30px" type="image/svg+xml">
-					  <img src="/img/logo.png" />
-					</object>
-			      </div>
-			      <div class="col col-lg-6">
-			        <div ng-hide="userForm.mode == 'Lost password'" style="font-size: 2.0em">
-			            <h4 style="font-size: 1.1em;">Sign up</h4>
-           				<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal">And never worry about OAuth again...</h6>
-			        </div><br /><br />
-			        <form name="signup" class="form-vertical" ng-submit="userForm.submit()" method="POST">
-			          <div class="alert alert-danger" ng-show="info.status == 'error'">
-			            {{info.message}}
-			          </div>
-			          <div class="alert alert-info" ng-show="info.status == 'info'">
-			            {{info.message}}
-			          </div>
-			          <div>
-			            <label for="mail" style="font-size: 1.3em">Email</label>
-			            <input type="email" class="input" id="mail" ng-model="user.mail" name="mail" required placeholder="Your email here...">
-			          </div>
-			          <div class="row">
-			            <button type="submit" style="position: relative; top: 15px; right: 15px" class="pull-right btn btn-primary">
-			              <span style="font-size: 18px;">Sign up</span>
-			            </button>
-			          </div>
-			        </form>
-			        <div class="alert alert-danger" ng-show="signup.status == 'error'">
-			          <strong>Oups!</strong> {{signup.message}}
-			        </div>
-			        <div ng-show="userForm.mode == 'Sign up'" style="margin-top: 30px">
-			          <div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
-			            <strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
-			          </div>
-			          <div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
-			            <strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
-			          </div>
-			        </div>
-			      </div>
-			    </div>
-			  </div>
-			  <div style="background-color: #cbe7f9; height: 20px"></div>
+		<div class="col-lg-8 col-lg-offset-2">
+			<div style="background-color: white;">
+			  	<div style="padding: 25px 50px">
+					<div class="row">
+				  		<div class="col-lg-10 col-lg-offset-1">
+							<object data="/img/logo.svg" style="float: left; position: relative; top: 17px;left: 10px; width: 60px; height: 60px;" type="image/svg+xml">
+					  			<img src="/img/logo.png" />
+							</object>
+							<div style="font-size: 2.0em; margin-left: 90px;">
+								<h4 style="font-size: 1.1em;">Sign up</h4>
+								<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal; color: #666">And never worry about OAuth again...</h5>
+							</div><br /><br />
+							<div style="clear: left;">
+					        	<h3 style="text-align: center; margin-bottom: 45px;" ng-hide="connected">Sign up with your favorite network</h3>
+								<div ng-init="connect=true" ng-hide="connected">
+									<div class="row">
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="twitter" ng-click="socialSignup('twitter')">
+												<img src="/api/providers/twitter/logo" class="pull-left" style="margin-left: 25px">
+												Twitter
+											</button>
+										</div>
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="facebook" ng-click="socialSignup('facebook')">
+												<img src="/api/providers/facebook/logo" class="pull-left" style="margin-left: 25px">
+												Facebook
+											</button>
+										</div>
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="google" ng-click="socialSignup('google')">
+												<img src="/api/providers/google/logo" class="pull-left" style="margin-left: 25px">
+												Google
+											</button>
+										</div>
+									</div>
+									<div class="row" style="margin-top: 15px">
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="linkedin" ng-click="socialSignup('linkedin')">
+												<img src="/api/providers/linkedin/logo" class="pull-left" style="margin-left: 25px">
+												Linkedin
+											</button>
+										</div>
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="github" ng-click="socialSignup('github')">
+												<img src="/api/providers/github/logo" class="pull-left" style="margin-left: 25px">
+												Github
+											</button>
+										</div>
+										<div class="col-md-4">
+											<button class="btn btn-block btn-lg github" data-provider="vk" ng-click="socialSignup('vk')">
+												<img src="/api/providers/vk/logo" class="pull-left" style="margin-left: 25px">
+												VK
+											</button>
+										</div>
+									</div>
+								</div>
+								<div class="ui divider horizontal" style="font-size: 1.3em; margin-top: 40px" ng-hide="connected">
+									Or
+								</div>
+								<h3 style="text-align: center; margin: 45px 0;">Fill the following information</h3>
+								<form role="form" name="signup" class="form-vertical" method="POST" ng-submit="signupSubmit()">
+						  			<div class="alert alert-danger" ng-show="info.status == 'error'">
+										{{info.message}}
+						  			</div>
+						  			<div class="alert alert-info" ng-show="info.status == 'info'">
+										{{info.message}}
+								  	</div>
+								  	<div style="margin-bottom: 15px" class="form-group">
+										<label for="name" style="font-size: 1.3em">Name</label>
+										<input type="text" class="form-control" id="name" ng-model="user.name" name="name" required style="font-size: 1.3em">
+								  	</div>
+								  	<div style="margin-bottom: 15px" class="form-group">
+										<label for="mail" style="font-size: 1.3em">Email</label>
+										<input type="email" class="form-control" id="mail" ng-model="user.mail" name="mail" required style="font-size: 1.3em">
+								  	</div>
+								  	<div style="margin-bottom: 15px" class="form-group">
+										<label for="pass" style="font-size: 1.3em">Password</label>
+										<input type="password" class="form-control" id="pass" ng-model="user.pass" name="pass" required style="font-size: 1.3em">
+								  	</div>
+								  	<div style="margin-bottom: 15px" class="form-group">
+										<label for="company" style="font-size: 1.3em">Company name <small style="color: #999; font-size: 0.9em">(optional)</small></label>
+										<input type="text" class="form-control" id="company" ng-model="user.company" name="company" placeholder="" style="font-size: 1.3em">
+								  	</div>
+									<div ng-show="social" class="form-group">
+										<img ng-src="/api/providers/{{social.provider}}/logo"> <span class="text-success" style="font-size: 1.3em;position:relative; left: 15px; top: 2px">Successful sync with {{social.provider}}</span>
+									</div>
+								  	<div style="margin-top: 30px" class="form-group">
+								  		<p style="font-size:1.3em; color: #666">By signing up, you agree to our <a href="/terms">Terms of service</a></p>
+										<button type="submit" style="" class="btn btn-lg btn-primary">
+									  		<span style="font-size: 18px;">Sign up</span>
+										</button>
+								  	</div>
+								</form>
+								<div class="alert alert-danger" ng-show="signup.status == 'error'">
+							  		<strong>Oups!</strong> {{signup.message}}
+								</div>
+								<div ng-show="userForm.mode == 'Sign up'" style="margin-top: 30px">
+							  		<div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+										<strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+							  		</div>
+								  	<div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
+										<strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
+								  	</div>
+								</div>
+								<p style="font-size: 1.2em; text-align: center"><a style="cursor: pointer;" href="/signin">Already have an account? <span style="text-decoration: underline">Log in</span></a></p>
+				  			</div>
+						</div>
+			  		</div>
+				</div>
 			</div>
-		</div>
-	</div>
-</div>
-<div class="container">
-	<div class="row">
-		<div class="col col-offset-1">
-			<p style="font-size: 1.2em;"><a style="cursor: pointer;" href="/signin">Already have an account? <span style="text-decoration: underline">Log in</span></a></p>
 		</div>
 	</div>
 </div>

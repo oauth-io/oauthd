@@ -1,3 +1,14 @@
+refreshSession = ($rootScope) ->
+	if $rootScope.accessToken
+		date = new Date()
+		date.setTime date.getTime() - 86400000
+		document.cookie = "accessToken=; expires="+date.toGMTString()+"; path=/"
+		date = new Date()
+		date.setTime date.getTime() + 3600*36*1000
+		expires = "; expires="+date.toGMTString()
+		document.cookie = "accessToken=%22"+$rootScope.accessToken+"%22"+expires+"; path=/"
+		return
+
 apiRequest = ($http, $rootScope) -> (url, success, error, opts) ->
 	opts ?= {}
 	opts.url = "/api/" + url
@@ -13,6 +24,7 @@ apiRequest = ($http, $rootScope) -> (url, success, error, opts) ->
 	req = $http(opts)
 	req.success(success) if success
 	req.error(error) if error
+	refreshSession $rootScope
 	return
 
 
@@ -33,6 +45,12 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 	$rootScope.accessToken = $cookieStore.get 'accessToken'
 	api = apiRequest $http, $rootScope
 	return $rootScope.UserService = {
+		logout: ->
+			delete $rootScope.accessToken
+			$cookieStore.remove 'accessToken'
+			OAuth.clearCache(provider) for provider in ['google','facebook','twitter', 'vk', 'linkedin', 'github']
+			return false
+
 		login: (user, success, error) ->
 			authorization = (user.mail + ':' + user.pass).encodeBase64()
 
@@ -46,19 +64,57 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 			).success((data) ->
 				$rootScope.accessToken = data.access_token
 				$cookieStore.put 'accessToken', data.access_token
+				refreshSession $rootScope
 
 				path = $rootScope.authRequired || '/key-manager'
 				success path if success
 			).error(error)
 
+		loginOAuth: (tokens, provider, success, error) ->
+			api 'signin/oauth', ((data) ->
+				$rootScope.accessToken = data.data.access_token
+				$cookieStore.put 'accessToken', data.data.access_token
+
+				path = $rootScope.authRequired || '/key-manager'
+				success path if success
+			), error, data:
+				token: tokens.access_token
+				oauth_token: tokens.oauth_token
+				oauth_token_secret: tokens.oauth_token_secret
+				provider: provider
+
 		isLogin: -> $cookieStore.get('accessToken')?
 
-		register: (mail, success, error) ->
-			api 'users', success, error, data:
-				mail:mail
+		register: (user, social, success, error) ->
+			if social?.provider
+				api 'signup/oauth', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
+					provider:social.provider
+					token:social?.token
+					oauth_token:social?.oauth_token
+					oauth_token_secret:social?.oauth_token_secret
+			else
+				api 'users', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
 
 		me: (success, error) ->
 			api 'me', success, error
+
+		getSync: (success, error) ->
+			api 'sync/oauth', success, error
+
+		sync: (provider, tokens, success, error) ->
+			api 'sync/oauth', success, error, data:
+				provider:provider
+				token:tokens?.token
+				oauth_token:tokens?.oauth_token
+				oauth_token_secret:tokens?.oauth_token_secret
 
 		getSubscriptions: (success, error) ->
 			api 'me/subscriptions', success, error
@@ -102,9 +158,8 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		isValidKey: (id, key, success, error) ->
 			api "users/" + id + "/keyValidity/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
 
-		validate: (id, key, pass, success, error) ->
-			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, data:
-				pass:pass
+		validate: (id, key, success, error) ->
+			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, method:'POST'
 
 		lostPassword: (mail, success, error) ->
 			api "users/lostpassword", success, error, data:mail:mail
@@ -114,12 +169,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				id: id
 				key: key
 				pass: pass
-
-		logout: (success) ->
-			delete $rootScope.accessToken
-			$cookieStore.remove 'accessToken'
-			if (success)
-				success()
 	}
 
 
@@ -130,7 +179,7 @@ app.factory 'MenuService', ($rootScope, $location) ->
 		p = $location.path()
 
 		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-			$('body').css('background-color', "#d8d8d8")
+			$('body').css('background-color', "#FFF")
 		else
 			$('body').css('background-color', '#FFF')
 

@@ -26,7 +26,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				<th class="plan first">
 					<img src="/img/your_plan.png" style="left:0px; top:0px;position:absolute;" ng-show="!current_plan && UserService.isLogin()"/>
 					<h3>Bootstrap</h3>
-					<h1>0$</h1>
+					<h1>$0</h1>
 					<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
 					<div ng-show="UserService.isLogin()" style="height:43px;"></div>
 					</p>
@@ -34,7 +34,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
 					<img src="/img/your_plan.png" style="left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.name"/>
 					<h3>{{plan.name|capitalize}}</h3>
-					<h1>{{plan.amount/100}}$</h1>
+					<h1>${{plan.amount/100}}</h1>
 					<p style="margin: 0 10px 15px">
 						<button ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
 						<button ng-show="plan.name == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
@@ -49,7 +49,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					</p>
 				</th>
 			</thead>
-			<tbody>
+			<tbody style="font-size: 1.3em">
 				<tr>
 					<td class="plan-label">Monthly Users</td>
 					<td>1 000</td>
@@ -69,7 +69,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					<td>-</td>
 				</tr>
 				<tr>
-					<td class="plan-label">Support response delay</td>
+					<td class="plan-label">Support</td>
 					<td>Email</td>
 					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.responseDelay}}</td>
 					<td>-</td>
@@ -84,11 +84,11 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 		<h1 style="margin-bottom: 30px; margin-top: -70px; text-align: center;">Any question? Contact us</h1>
 		<div class="container" style="margin-top: 55px; margin-bottom: 40px">
 			<div class="row">
-				<div class="col col-sm-5" style="text-align: right">
+				<div class="col-sm-5" style="text-align: right">
 					<img src="/img/team.png" style="height: 250px" alt="support team">
 				</div>
 
-				<div class="col col-sm-6 col-offset-1">
+				<div class="col-sm-6 col-lg-offset-1">
 					<p style="font-size: 2.0em">Still have some question?</p>
 					<p style="font-size: 2.0em">Our team is always up to answer you.</p>
 					<br />
