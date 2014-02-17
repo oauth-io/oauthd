@@ -11,6 +11,10 @@
 				"provider": "http://disqus.com/",
 				"docs": "http://disqus.com/api/docs/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "users/details"
+        }
 	}
 }

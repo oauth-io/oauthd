@@ -11,6 +11,10 @@
 				"provider": "https://angel.co",
 				"docs": "https://angel.co/api"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me"
+        }
 	}
 }

@@ -11,6 +11,10 @@
 				"provider": "https://asana.com",
 				"docs": "http://developer.asana.com/documentation"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/1.0/users/me"
+        }
 	}
 }

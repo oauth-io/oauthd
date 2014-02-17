@@ -11,6 +11,10 @@
 				"provider": "http://dailymile.com",
 				"docs": "http://www.dailymile.com/api/documentation"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/people/me.json"
+        }
 	}
 }

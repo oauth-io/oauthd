@@ -11,6 +11,10 @@
 				"provider": "https://www.box.com/",
 				"docs": "http://developers.box.com/docs/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/users/me"
+        }
 	}
 }

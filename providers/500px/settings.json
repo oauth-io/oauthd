@@ -11,6 +11,10 @@
 				"provider": "http://500px.com/",
 				"docs": "https://github.com/500px/api-documentation"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/users"
+        }
 	}
 }

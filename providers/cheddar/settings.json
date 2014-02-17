@@ -11,6 +11,10 @@
 				"provider": "https://cheddarapp.com/",
 				"docs": "https://cheddarapp.com/developer/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me"
+        }
 	}
 }

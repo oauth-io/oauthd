@@ -13,6 +13,10 @@
 				"provider": "https://facebook.com/",
 				"docs": "https://developers.facebook.com/docs/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me"
+        }
 	}
 }

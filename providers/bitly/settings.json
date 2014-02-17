@@ -12,6 +12,10 @@
 				"provider": "https://bitly.com/",
 				"docs": "http://dev.bitly.com/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v3/user/info"
+        }
 	}
 }
