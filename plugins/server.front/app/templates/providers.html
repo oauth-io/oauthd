@@ -4,17 +4,17 @@
 <small>see the <a href="/docs">documentation</a> for examples</small></h1>
 	</div>
 	<div class="row">
-		<div class="col col-lg-12">
+		<div class="col-lg-12">
 			<div class="input-group">
 				<span class="input-group-addon">
 					<i class="glyphicon glyphicon-search"></i>
 				</span>
-				<input type="text" class="search-provider" ng-model="query" ng-change="queryChange(query)" >
+				<input type="text" class="form-control search-provider" ng-model="query" ng-change="queryChange(query)" >
 			</div>
 		</div>
 	</div>
 	<div class="row">
-		<div class="col col-lg-12">
+		<div class="col-lg-12">
 			<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
 				<li ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers" ng-mouseover="hoverItem = provider" ng-mouseleave="hoverItem = null">
 					<a ng-href="/key-manager/{{provider}}" style="padding: 10px 20px">
@@ -26,7 +26,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col col-lg-12">
+		<div class="col-lg-12">
 			<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
 		</div>
 	</div>

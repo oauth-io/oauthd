@@ -1,38 +1,16 @@
 <div class="container">
   <div class="row">
-    <div class="col col-lg-6 col-offset-3">
+    <div class="col-lg-6 col-lg-offset-3">
       <div class="well">
         <div>
-            <h4 style="text-align: center">Welcome to OAuth.io beta</h4><br />
-            <p style="position: relative; top: -18px; color: #999; text-align: center">Last step: Setup your password to access your account.</p>
+            <h4 style="text-align: center; font-size: 1.5em">Welcome to OAuth.io beta</h4><br />
+            <p ng-hide="info.status == 'info'" style="font-size: 1.5em; position: relative; top: -18px; color: #999; text-align: center">Congratulation, your account is now verified!</p>
         </div>
-        <form name="signup" class="form-horizontal" ng-submit="validateForm()" method="POST">
-          <div class="alert alert-danger" ng-show="info.status == 'info'">
-            <strong>Oups!</strong> {{info.message}}
-          </div>
-          <input type="hidden" ng-model="user.id" name="id" value="{{user.id}}">
-          <input type="hidden" ng-model="user.key" name="key" value="{{user.key}}">
-          <div class="row">
-            <label class="control-label col col-lg-4" for="pass">Your password</label>
-            <div class="controls col col-lg-8">
-              <input type="password" class="input" ng-model="user.pass" id="pass" name="pass" ng-minlength="6" required>
-              <small style="color:red" ng-show="signup.pass.$error.minlength">6 characters minimum</small>
-            </div>
-          </div>
-          <div class="row">
-            <label class="control-label col col-lg-4" for="pass2">Confirm password</label>
-            <div class="controls col col-lg-8">
-              <input type="password" class="input" ng-model="user.pass2" id="pass2" name="pass2" ng-minlength="6" required>
-              <small style="color:red" ng-show="user.pass != user.pass2">Password does not match the confirm password</small>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col col-offset-4 col-lg-8">
-              <button type="submit" class="btn btn-primary">Access your account</button>
-            </div>
-          </div>
-        </form>
+        <div class="alert alert-danger" ng-show="info.status == 'info'">
+          <strong>Oups!</strong> {{info.message}}
+        </div>
+        <hr />
+        <p ng-hide="info.status == 'info'" style="font-size:1.4em;text-align: center">You will be redirect in 5 seconds</p>
       </div>
     </div>
   </div>

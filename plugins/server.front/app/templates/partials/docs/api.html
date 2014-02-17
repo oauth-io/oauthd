@@ -26,178 +26,183 @@
   "oauth_token_secret": "PtZ4ybpPky4nl...",
   "expires_in": 5113661 // optional, in seconds
 }</pre>
-    </p></li></ul>
+    </li></ul>
   </div>
   <div class="panel panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading" style="font-size: 1.3em">
       <span class="label label-info">Javascript</span> OAuth.initialize(publicKey, <em>[global options]</em>)
     </div>
-    <p>Initialize OAuth.js with your public key<br/></p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> publicKey </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the Public Key of your OAuth.io application</p>
-          </td>
-          <td>
-            <span class="api-example">YR0NNYEKlPti-OivdHhHA7FmME4</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> global options </strong>
-            <p class="text-success" >Optional</p>
-          </td>
-          <td>
-            <strong>object</strong>
-            <p>Contains the default options for OAuth behaviours.<br/>
-            	<ul>
-            		<li><strong>cache</strong>: Set to <strong>true</strong> to store the received tokens on the browser and avoid unnecessary authorizations. The default is to always redirect on the provider's authorization url and receive a fresh token. This option can be overrided at every calls of OAuth.popup or OAuth.redirect/callback.</li>
-            	</ul></p>
-          </td>
-          <td>
-            <span class="api-example">YR0NNYEKlPti-OivdHhHA7FmME4</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <hr>
-    <p><strong>Sample</strong></p>
-    <pre>OAuth.initialize('YR0NNYEKlPti-OivdHhHA7FmME4');</pre>
+    <div class="panel-body">
+      <p>Initialize OAuth.js with your public key<br/></p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> publicKey </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the Public Key of your OAuth.io application</p>
+            </td>
+            <td>
+              <span class="api-example">YR0NNYEKlPti-OivdHhHA7FmME4</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> global options </strong>
+              <p class="text-success" >Optional</p>
+            </td>
+            <td>
+              <strong>object</strong>
+              <p>Contains the default options for OAuth behaviours.<br/>
+              	<ul>
+              		<li><strong>cache</strong>: Set to <strong>true</strong> to store the received tokens on the browser and avoid unnecessary authorizations. The default is to always redirect on the provider's authorization url and receive a fresh token. This option can be overrided at every calls of OAuth.popup or OAuth.redirect/callback.</li>
+              	</ul></p>
+            </td>
+            <td>
+              <span class="api-example">YR0NNYEKlPti-OivdHhHA7FmME4</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><strong>Sample</strong></p>
+      <pre>OAuth.initialize('YR0NNYEKlPti-OivdHhHA7FmME4');</pre>
+    </div>
   </div>
   <div class="panel panel-primary">
-    <div class="panel-heading">
+    <div class="panel-heading" style="font-size: 1.3em">
       <span class="label label-info">Javascript</span> OAuth.redirect(provider, <em>[options]</em>, urlCallback)
     </div>
-    <p>Redirect the user to the <code>provider</code> login page, then, once user authenticated, he is redirected to <code>urlCallback</code> with the <code>accessToken</code> given in URL fragment.<br/></p>
-    <p>To get the token (or error) easily on <code>urlCallback</code>, you should use <code>OAuth.callback</code></p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> provider </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the provider which you want to connect </p>
-          </td>
-          <td>
-            <span class="api-example">facebook</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> options </strong>
-            <p class="text-success" >Optional (client-side)</p>
-            <p class="text-danger" >Required (server-side)</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Object containing specific options. This fields can apply:<br/>
-              <ul><li><strong>authorize</strong>: Pass additional parameters to the provider authorization page.</li>
-              <li><strong>state</strong>: Required for server-side authentication. Contains a state that will be receive when receiving token.</li>
-          	  <li><strong>cache</strong>: Set to <strong>true</strong> to try using the tokens stored on the browser from a previous OAuth.callback call. If the tokens are present, the user will be redirected to urlCallback without another authorization. Set to <strong>false</strong> to disable this behaviour.</li></ul>
-            </p>
-          </td>
-          <td>
-            <span class="api-example">{authorize:{display:"touch"}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> urlCallback </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the final URL to callback when users is authenticated (or declined authentication)</p>
-            <p> Absolute and relative URL are supported. </p>
-          </td>
-          <td>
-            <span class="api-example">/auth/callback</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <hr>
-    <p><strong>Sample</strong></p>
-    <pre>OAuth.redirect('stackoverflow', '/auth/callback');</pre>
+    <div class="panel-body">
+      <p>Redirect the user to the <code>provider</code> login page, then, once user authenticated, he is redirected to <code>urlCallback</code> with the <code>accessToken</code> given in URL fragment.<br/></p>
+      <p>To get the token (or error) easily on <code>urlCallback</code>, you should use <code>OAuth.callback</code></p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> provider </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the provider which you want to connect </p>
+            </td>
+            <td>
+              <span class="api-example">facebook</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> options </strong>
+              <p class="text-success" >Optional (client-side)</p>
+              <p class="text-danger" >Required (server-side)</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Object containing specific options. This fields can apply:<br/>
+                <ul><li><strong>authorize</strong>: Pass additional parameters to the provider authorization page.</li>
+                <li><strong>state</strong>: Required for server-side authentication. Contains a state that will be receive when receiving token.</li>
+            	  <li><strong>cache</strong>: Set to <strong>true</strong> to try using the tokens stored on the browser from a previous OAuth.callback call. If the tokens are present, the user will be redirected to urlCallback without another authorization. Set to <strong>false</strong> to disable this behaviour.</li></ul>
+              </p>
+            </td>
+            <td>
+              <span class="api-example">{authorize:{display:"touch"}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> urlCallback </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the final URL to callback when users is authenticated (or declined authentication)</p>
+              <p> Absolute and relative URL are supported. </p>
+            </td>
+            <td>
+              <span class="api-example">/auth/callback</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><strong>Sample</strong></p>
+      <pre>OAuth.redirect('stackoverflow', '/auth/callback');</pre>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> OAuth.callback(<em>[provider]</em>, <em>[options]</em>, callback)
     </div>
-    <p>Set a function called when a user come from an authentication dialog, to receive the token or error data.<br/></p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> provider </strong>
-            <p class="text-success" >Optional</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the provider which you want be notified on connection. If not present, the <code>callback</code> function will be called for any provider and the result will store an extra field <code>provider</code>. </p>
-          </td>
-          <td>
-            <span class="api-example">twitter</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> options </strong>
-            <p class="text-success" >Optional (client-side)</p>
-            <p class="text-danger" >Required (server-side)</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Object containing specific options. This fields can apply:<br/>
-          	  <ul><li><strong>cache</strong>: Set to <strong>true</strong> to store the received tokens on the browser and avoid unnecessary reauthorizations. Set to <strong>false</strong> to do not store the tokens.</li></ul>
-            </p>
-          </td>
-          <td>
-            <span class="api-example">{authorize:{display:"touch"}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> callback </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>function</strong>
-            <p>  Represents the callback function called once your user is authenticated (or declined authorization) </p>
-          </td>
-          <td>
-            <span class="api-example">function(err, result) { }</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <hr>
-    <p><strong>Sample</strong></p>
-    <pre>OAuth.callback('twitter', function(err, result) {
+    <div class="panel-body">
+      <p>Set a function called when a user come from an authentication dialog, to receive the token or error data.<br/></p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> provider </strong>
+              <p class="text-success" >Optional</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the provider which you want be notified on connection. If not present, the <code>callback</code> function will be called for any provider and the result will store an extra field <code>provider</code>. </p>
+            </td>
+            <td>
+              <span class="api-example">twitter</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> options </strong>
+              <p class="text-success" >Optional (client-side)</p>
+              <p class="text-danger" >Required (server-side)</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Object containing specific options. This fields can apply:<br/>
+            	  <ul><li><strong>cache</strong>: Set to <strong>true</strong> to store the received tokens on the browser and avoid unnecessary reauthorizations. Set to <strong>false</strong> to do not store the tokens.</li></ul>
+              </p>
+            </td>
+            <td>
+              <span class="api-example">{authorize:{display:"touch"}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> callback </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>function</strong>
+              <p>  Represents the callback function called once your user is authenticated (or declined authorization) </p>
+            </td>
+            <td>
+              <span class="api-example">function(err, result) { }</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><strong>Sample</strong></p>
+      <pre>OAuth.callback('twitter', function(err, result) {
   if (err) {
     console.log(err); // do something with error
     return;
@@ -205,69 +210,71 @@
 
   console.log(result); // do something with result
 });</pre>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> OAuth.popup(provider, <em>[options]</em>, callback)
     </div>
-    <p>Popup an authentication dialog for the selected provider, and callback a function with the results. <br/></p>
-    <p>If you are experiencing difficulties with blocked popups, there are strict ways to call them and you should check <a href="http://popuptest.com/goodpopups.html">these external examples</a>.</p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> provider </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the provider which you want to connect </p>
-          </td>
-          <td>
-            <span class="api-example">facebook</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> options </strong>
-            <p class="text-success" >Optional (client-side)</p>
-            <p class="text-danger" >Required (server-side)</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Object containing specific options. This fields can apply:<br/>
-              <ul><li><strong>authorize</strong>: Pass additional parameters to the provider authorization page.</li>
-              <li><strong>state</strong>: Required for server-side authentication. Contains a state that will be receive when receiving token.</li>
-          	  <li><strong>cache</strong>: Set to <strong>true</strong> to directly execute the callback if the tokens are already present in the browser's cache, else this will store the tokens to avoid further authorization popup. Set to <strong>false</strong> to disable this behaviour.</li></ul>
-            </p>
-          </td>
-          <td>
-            <span class="api-example">{authorize:{display:"touch"}}</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> callback </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>function</strong>
-            <p>  Represents the callback function called once your user is authenticated (or declined authorization) </p>
-          </td>
-          <td>
-            <span class="api-example">function(error, result) { }</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <hr>
-    <p><strong>Sample</strong></p>
-    <pre>OAuth.popup('facebook', function(error, result) {
+    <div class="panel-body">
+      <p>Popup an authentication dialog for the selected provider, and callback a function with the results. <br/></p>
+      <p>If you are experiencing difficulties with blocked popups, there are strict ways to call them and you should check <a href="http://popuptest.com/goodpopups.html">these external examples</a>.</p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> provider </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the provider which you want to connect </p>
+            </td>
+            <td>
+              <span class="api-example">facebook</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> options </strong>
+              <p class="text-success" >Optional (client-side)</p>
+              <p class="text-danger" >Required (server-side)</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Object containing specific options. This fields can apply:<br/>
+                <ul><li><strong>authorize</strong>: Pass additional parameters to the provider authorization page.</li>
+                <li><strong>state</strong>: Required for server-side authentication. Contains a state that will be receive when receiving token.</li>
+            	  <li><strong>cache</strong>: Set to <strong>true</strong> to directly execute the callback if the tokens are already present in the browser's cache, else this will store the tokens to avoid further authorization popup. Set to <strong>false</strong> to disable this behaviour.</li></ul>
+              </p>
+            </td>
+            <td>
+              <span class="api-example">{authorize:{display:"touch"}}</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> callback </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>function</strong>
+              <p>  Represents the callback function called once your user is authenticated (or declined authorization) </p>
+            </td>
+            <td>
+              <span class="api-example">function(error, result) { }</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><strong>Sample</strong></p>
+      <pre>OAuth.popup('facebook', function(error, result) {
   if (err) {
     console.log(err); // do something with error
     return;
@@ -275,82 +282,86 @@
 
   console.log(result); // do something with result
 });</pre>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> OAuth.create(provider, <em>[tokens]</em>, <em>[request description]</em>)
     </div>
-    <p>Creates an authorization result with the tokens and get/post/put/patch/delete methods from existing tokens.</p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> provider </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> The name of the provider </p>
-          </td>
-          <td>
-            <span class="api-example">facebook</span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> tokens </strong>
-            <p class="text-success" >Optional</p>
-          </td>
-          <td>
-            <strong>object</strong>
-            <p> Object containing the tokens. For OAuth 1.0[a], you must pass oauth_token and oauth_token_secret. For OAuth 2.0, you must pass access_token.</p>
-            <p> If the tokens are not present, this will try to fetch the tokens from the browser cache from a previous authorization with the cache option. If there are no tokens in cache, the function will reply false.</p>
-          </td>
-          <td>
-            <span class="api-example"><pre>{
+    <div class="panel-body">
+      <p>Creates an authorization result with the tokens and get/post/put/patch/delete methods from existing tokens.</p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> provider </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> The name of the provider </p>
+            </td>
+            <td>
+              <span class="api-example">facebook</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> tokens </strong>
+              <p class="text-success" >Optional</p>
+            </td>
+            <td>
+              <strong>object</strong>
+              <p> Object containing the tokens. For OAuth 1.0[a], you must pass oauth_token and oauth_token_secret. For OAuth 2.0, you must pass access_token.</p>
+              <p> If the tokens are not present, this will try to fetch the tokens from the browser cache from a previous authorization with the cache option. If there are no tokens in cache, the function will reply false.</p>
+            </td>
+            <td>
+              <span class="api-example"><pre>{
   oauth_token:"xxxx",
   oauth_token_secret:"yyyyy"
 }</pre></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> request description </strong>
-            <p class="text-success" >Optional</p>
-          </td>
-          <td>
-            <strong>object or boolean</strong>
-            <p> An authorized request description to apply to the API requests. You can fetch the description from /api/providers/[provider]?extend=true.</p>
-            <p> If set to <strong>true</strong>, this will call the oauth.io API to fetch the description before doing any provider's API call.</p>
-            <p> If not set, this will also fetch the description from the oauth.io API, but if the provider's API is called before the description is received, the request will be proxyfied by OAuth.io to inject the authorization informations.</p>
-          </td>
-          <td>
-            <span class="api-example"><pre ng-non-bindable>{
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> request description </strong>
+              <p class="text-success" >Optional</p>
+            </td>
+            <td>
+              <strong>object or boolean</strong>
+              <p> An authorized request description to apply to the API requests. You can fetch the description from /api/providers/[provider]?extend=true.</p>
+              <p> If set to <strong>true</strong>, this will call the oauth.io API to fetch the description before doing any provider's API call.</p>
+              <p> If not set, this will also fetch the description from the oauth.io API, but if the provider's API is called before the description is received, the request will be proxyfied by OAuth.io to inject the authorization informations.</p>
+            </td>
+            <td>
+              <span class="api-example"><pre ng-non-bindable>{
   "url":"https://graph.facebook.com",
   "cors":true,
   "query": {
     "access_token":"{{token}}"
   }
-}</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+}</pre></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> <em>[OAuth result]</em>.get|post|put|patch|del(<em>[$.ajax parameters]</em>)
     </div>
-    <p>You can do an authorized http call to the provider's API from the result of <code>OAuth.popup</code> or <code>OAuth.redirect</code>. This results contains the informations to inject the tokens in you API's requests. These methods take the same parameters and result the same than the <a href="http://api.jquery.com/jQuery.ajax/">jQuery's $.ajax method</a>. Moreover, the url can be absolute or relative to the default provider's API base url. The method's verb is set according the method's name.</p>
-    <p>If the authorization method of the provider is OAuth 1, the request will be proxified by oauth.io to inject the tokens without exposing your secret key. If it is OAuth 2, and the provider support CORS requests, the request is sent directly, using the API request description received beside the token.</p>
-    <hr>
-    <p><strong>Sample</strong></p>
-    <pre>OAuth.popup('facebook', function(error, result) {
+    <div class="panel-body">
+      <p>You can do an authorized http call to the provider's API from the result of <code>OAuth.popup</code> or <code>OAuth.redirect</code>. This results contains the informations to inject the tokens in you API's requests. These methods take the same parameters and result the same than the <a href="http://api.jquery.com/jQuery.ajax/">jQuery's $.ajax method</a>. Moreover, the url can be absolute or relative to the default provider's API base url. The method's verb is set according the method's name.</p>
+      <p>If the authorization method of the provider is OAuth 1, the request will be proxified by oauth.io to inject the tokens without exposing your secret key. If it is OAuth 2, and the provider support CORS requests, the request is sent directly, using the API request description received beside the token.</p>
+      <hr>
+      <p><strong>Sample</strong></p>
+      <pre>OAuth.popup('facebook', function(error, result) {
   if (err) {
     console.log(err); // do something with error
     return;
@@ -360,136 +371,147 @@
     console.log("Hello, ", res.name); // e.g. facebook account owner's name
   });
 });</pre>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> OAuth.clearCache(provider)
     </div>
-    <p>Clear the stored tokens on the browser for a provider, if any.</p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:40%"></th>
-        <th style="width:40%">Example</th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> provider </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> The name of the provider </p>
-          </td>
-          <td>
-            <span class="api-example">facebook</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="panel-body">
+      <p>Clear the stored tokens on the browser for a provider, if any.</p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:40%"></th>
+          <th style="width:40%">Example</th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> provider </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> The name of the provider </p>
+            </td>
+            <td>
+              <span class="api-example">facebook</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">Javascript</span> OAuth.getVersion()
     </div>
-    <p>Get the version string of the loaded javascript SDK. This is prefixed by the platform used:</p>
-    <ul><li><strong>web-[version]</strong> for the web versions.</li>
-    	<li><strong>phonegap-[version]</strong> for the phonegap versions.</li></ul></p>
+    <div class="panel-body">
+      <p>Get the version string of the loaded javascript SDK. This is prefixed by the platform used:</p>
+      <ul>
+        <li><strong>web-[version]</strong> for the web versions.</li>
+      	<li><strong>phonegap-[version]</strong> for the phonegap versions.</li>
+      </ul>
+    </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">HTTP POST</span> /auth/access_token
     </div>
-    <p>When doing a server-side authentication, this http request will exchange an authentication code for the final token(s). You will also receive the state passed in OAuth.popup or OAuth.redirect</p>
-    <p>If the provider allow it and your app configured to do so, you can receive a refresh_token.</p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:80%"></th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> code </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the code received in OAuth.popup or OAuth.callback. This code works only for oauth.io and cannot be used directly with any provider. </p>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> key </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the Public Key of your OAuth.io application </p>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> secret </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>function</strong>
-            <p> Represents the Secret Key of your OAuth.io application </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <hr>
-    <p><strong>Security consideration</strong></p>
-    <div class="alert alert-warning">
-      <i style="background-image: url(/lib/bootstrap/img/glyphicons-halflings.png);background-repeat: no-repeat;display: inline-block;background-position: -144px -120px;width: 14px;height: 14px;"></i>
-      When doing a server-side authentication, you may have noticed that the <strong>state</strong> parameter is required. The aim of this is to fill a server state per session to avoid a CSRF exploit. The state should be a random string generated on server side, passed to OAuth.popup or OAuth.redirect, and checked against the state received by <strong>/auth/access_token</strong>. Please check <a href="http://homakov.blogspot.fr/2012/07/saferweb-most-common-oauth2.html" target="_new">http://homakov.blogspot.fr/2012/07/saferweb-most-common-oauth2.html</a> to see the importance of this exploit.
+    <div class="panel-body">
+      <p>When doing a server-side authentication, this http request will exchange an authentication code for the final token(s). You will also receive the state passed in OAuth.popup or OAuth.redirect</p>
+      <p>If the provider allow it and your app configured to do so, you can receive a refresh_token.</p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:80%"></th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> code </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the code received in OAuth.popup or OAuth.callback. This code works only for oauth.io and cannot be used directly with any provider. </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> key </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the Public Key of your OAuth.io application </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> secret </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>function</strong>
+              <p> Represents the Secret Key of your OAuth.io application </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <p><strong>Security consideration</strong></p>
+      <div class="alert alert-warning">
+        <i style="background-image: url(/lib/bootstrap/img/glyphicons-halflings.png);background-repeat: no-repeat;display: inline-block;background-position: -144px -120px;width: 14px;height: 14px;"></i>
+        When doing a server-side authentication, you may have noticed that the <strong>state</strong> parameter is required. The aim of this is to fill a server state per session to avoid a CSRF exploit. The state should be a random string generated on server side, passed to OAuth.popup or OAuth.redirect, and checked against the state received by <strong>/auth/access_token</strong>. Please check <a href="http://homakov.blogspot.fr/2012/07/saferweb-most-common-oauth2.html" target="_new">http://homakov.blogspot.fr/2012/07/saferweb-most-common-oauth2.html</a> to see the importance of this exploit.
+      </div>
     </div>
   </div>
   <div class="panel panel-primary">
     <div class="panel-heading">
       <span class="label label-info">HTTP POST</span> /auth/refresh_token/{provider}
     </div>
-    <p>When doing a authentication in server-side mode, providers can pass you a <code>refresh_token</code>. You can use this long-live token to generate new tokens. This must be called only from your servers.</p>
-    <table class="table">
-      <thead>
-        <th style="width:20%"></th>
-        <th style="width:80%"></th>
-      </thead>
-      <tbody class="table-hover">
-        <tr>
-          <td>
-            <strong> token </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> The refresh_token </p>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> key </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>string</strong>
-            <p> Represents the Public Key of your OAuth.io application </p>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong> secret </strong>
-            <p class="text-danger" >Required</p>
-          </td>
-          <td>
-            <strong>function</strong>
-            <p> Represents the Secret Key of your OAuth.io application </p>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="panel-body">
+      <p>When doing a authentication in server-side mode, providers can pass you a <code>refresh_token</code>. You can use this long-live token to generate new tokens. This must be called only from your servers.</p>
+      <table class="table">
+        <thead>
+          <th style="width:20%"></th>
+          <th style="width:80%"></th>
+        </thead>
+        <tbody class="table-hover">
+          <tr>
+            <td>
+              <strong> token </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> The refresh_token </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> key </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>string</strong>
+              <p> Represents the Public Key of your OAuth.io application </p>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong> secret </strong>
+              <p class="text-danger" >Required</p>
+            </td>
+            <td>
+              <strong>function</strong>
+              <p> Represents the Secret Key of your OAuth.io application </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

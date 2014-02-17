@@ -199,7 +199,7 @@ class OAuth2 extends OAuthBase
 			followAllRedirects: true
 
 		# build url
-		options.url = decodeURIComponent(req.params[1])
+		options.url = req.apiUrl
 		if ! options.url.match(/^[a-z]{2,16}:\/\//)
 			if options.url[0] != '/'
 				options.url = '/' + options.url
@@ -229,6 +229,6 @@ class OAuth2 extends OAuthBase
 			options.body = req._body || req.body
 
 		# do request
-		callback null, request(options)
+		callback null, options
 
 module.exports = OAuth2

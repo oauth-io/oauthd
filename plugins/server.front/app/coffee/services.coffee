@@ -45,6 +45,12 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 	$rootScope.accessToken = $cookieStore.get 'accessToken'
 	api = apiRequest $http, $rootScope
 	return $rootScope.UserService = {
+		logout: ->
+			delete $rootScope.accessToken
+			$cookieStore.remove 'accessToken'
+			OAuth.clearCache(provider) for provider in ['google','facebook','twitter', 'vk', 'linkedin', 'github']
+			return false
+
 		login: (user, success, error) ->
 			authorization = (user.mail + ':' + user.pass).encodeBase64()
 
@@ -64,14 +70,51 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				success path if success
 			).error(error)
 
+		loginOAuth: (tokens, provider, success, error) ->
+			api 'signin/oauth', ((data) ->
+				$rootScope.accessToken = data.data.access_token
+				$cookieStore.put 'accessToken', data.data.access_token
+
+				path = $rootScope.authRequired || '/key-manager'
+				success path if success
+			), error, data:
+				token: tokens.access_token
+				oauth_token: tokens.oauth_token
+				oauth_token_secret: tokens.oauth_token_secret
+				provider: provider
+
 		isLogin: -> $cookieStore.get('accessToken')?
 
-		register: (mail, success, error) ->
-			api 'users', success, error, data:
-				mail:mail
+		register: (user, social, success, error) ->
+			if social?.provider
+				api 'signup/oauth', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
+					provider:social.provider
+					token:social?.token
+					oauth_token:social?.oauth_token
+					oauth_token_secret:social?.oauth_token_secret
+			else
+				api 'users', success, error, data:
+					email:user.mail
+					pass:user.pass
+					name:user.name
+					company:user.company
 
 		me: (success, error) ->
 			api 'me', success, error
+
+		getSync: (success, error) ->
+			api 'sync/oauth', success, error
+
+		sync: (provider, tokens, success, error) ->
+			api 'sync/oauth', success, error, data:
+				provider:provider
+				token:tokens?.token
+				oauth_token:tokens?.oauth_token
+				oauth_token_secret:tokens?.oauth_token_secret
 
 		getSubscriptions: (success, error) ->
 			api 'me/subscriptions', success, error
@@ -115,9 +158,8 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 		isValidKey: (id, key, success, error) ->
 			api "users/" + id + "/keyValidity/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
 
-		validate: (id, key, pass, success, error) ->
-			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, data:
-				pass:pass
+		validate: (id, key, success, error) ->
+			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error, method:'POST'
 
 		lostPassword: (mail, success, error) ->
 			api "users/lostpassword", success, error, data:mail:mail
@@ -127,12 +169,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				id: id
 				key: key
 				pass: pass
-
-		logout: (success) ->
-			delete $rootScope.accessToken
-			$cookieStore.remove 'accessToken'
-			if (success)
-				success()
 	}
 
 
@@ -143,7 +179,7 @@ app.factory 'MenuService', ($rootScope, $location) ->
 		p = $location.path()
 
 		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-			$('body').css('background-color', "#d8d8d8")
+			$('body').css('background-color', "#FFF")
 		else
 			$('body').css('background-color', '#FFF')
 

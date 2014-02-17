@@ -14,7 +14,7 @@ app.directive 'stubborn', ($rootScope, $timeout) ->
 				state = stubborn state if ! state.res?.length
 				lastres = state.res.shift();
 				if lastres.msg
-					$('#stubborn-steps').append('<tr style="font-size: 0.8em"><td><span class="badge badge-info">' + lastres.stepn + '</span></td><td> ' + lastres.msg + '</td></tr>')
+					$('#stubborn-steps').append('<tr style="font-size: 0.8em"><td><span class="badge badge-info">' + lastres.stepn + '</span></td><td style="padding-left: 15px"> ' + lastres.msg + '</td></tr>')
 					$('#stubborn-steps tr').last().hide().fadeIn();
 					$rootScope.timeouts.push $timeout getNext, 2500
 				if lastres.comment
@@ -61,7 +61,7 @@ app.directive 'lightbox', ($timeout) ->
 	<div class="modal-dialog">
 	    <div class="modal-content">
 	    	<div class="modal-body">
-				<img ng-src="{{lightbox.img}}" id="lightbox-img">
+				<img class="img-responsive" ng-src="{{lightbox.img}}" id="lightbox-img">
 			</div>
 			<div class="modal-footer">
 				<p style="text-align: center" class="caption" id="lightbox-caption">{{lightbox.caption}}</p>
