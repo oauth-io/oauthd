@@ -1,18 +1,22 @@
 {
-	"settings": {
-		"createApp": {
-			"url": "https://www.linkedin.com/secure/developer?newapp=",
-			"image": "config.png"
-		},
-		"copyingKey": {
-			"url": "https://www.linkedin.com/secure/developer",
-			"image": "keys.png"
-		},
-		"install": {
-			"href": {
-				"provider": "http://www.linkedin.com/",
-				"docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map"
-			}
-		}
-	}
+    "settings": {
+        "createApp": {
+            "url": "https://www.linkedin.com/secure/developer?newapp=",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://www.linkedin.com/secure/developer",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "http://www.linkedin.com/",
+                "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/1.1/account/verify_credentials.json"
+        }
+    }
 }

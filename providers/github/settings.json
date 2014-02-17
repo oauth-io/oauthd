@@ -13,6 +13,10 @@
 				"provider": "https://github.com/",
 				"docs": "http://developer.github.com/v3/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/user"
+        }
 	}
 }

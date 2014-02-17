@@ -11,6 +11,10 @@
 				"provider": "https://www.eventbrite.com/",
 				"docs": "http://developer.eventbrite.com/doc/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "user_get"
+        }
 	}
 }

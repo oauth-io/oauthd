@@ -13,6 +13,10 @@
 				"provider": "http://deviantart.com/",
 				"docs": "http://www.deviantart.com/developers/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/oauth2/user/whoami"
+        }
 	}
 }

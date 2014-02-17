@@ -11,6 +11,10 @@
 				"provider": "http://mailchimp.com/",
 				"docs": "http://apidocs.mailchimp.com/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/helper/account-details.json"
+        }
 	}
 }

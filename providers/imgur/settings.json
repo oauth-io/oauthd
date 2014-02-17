@@ -11,6 +11,10 @@
 				"provider": "http://imgur.com/",
 				"docs": "http://api.imgur.com/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/3/account/me"
+        }
 	}
 }

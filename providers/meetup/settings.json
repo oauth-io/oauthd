@@ -11,6 +11,10 @@
 				"provider": "http://www.meetup.com/",
 				"docs": "http://www.meetup.com/meetup_api/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/2/member/USERID"
+        }
 	}
 }

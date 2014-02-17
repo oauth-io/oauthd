@@ -13,6 +13,10 @@
 				"provider": "https://www.live.com/",
 				"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v5.0/me"
+        }
 	}
 }

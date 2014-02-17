@@ -13,6 +13,10 @@
 				"provider": "https://www.twitter.com/",
 				"docs": "https://dev.twitter.com/docs"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url" : "/account/verify_credentials"
+        }
 	}
 }

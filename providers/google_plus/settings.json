@@ -13,6 +13,10 @@
 				"provider": "http://google.com/",
 				"docs": "https://developers.google.com/+/api/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/plus/v1/people/me"
+        }
 	}
 }
