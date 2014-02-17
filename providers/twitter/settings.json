@@ -14,6 +14,12 @@
 				"provider": "https://www.twitter.com/",
 				"docs": "https://dev.twitter.com/docs"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url" : "/statuses/mentions_timeline",
+            "description" : "Returns the 20 most recent mentions for the authenticating user.",
+            "doc_url": "https://dev.twitter.com/docs/api/1.1/get/statuses/mentions_timeline"
+        }
 	}
 }

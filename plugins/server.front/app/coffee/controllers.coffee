@@ -890,6 +890,7 @@ ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderSer
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
 			$scope.providerConf = provider
 			$scope.settings = settings
+			$scope.sample = settings.data.settings.sample
 		), (error) ->
 	), (error) ->
 
