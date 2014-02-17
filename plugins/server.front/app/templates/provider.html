@@ -3,7 +3,7 @@
 		<h1 style="text-align:center"><img style="margin-left: 10px; position: relative; top: -5px; margin-right: 10px" width="24" height="24" ng-src="/api/providers/{{provider}}/logo"> <span style="font-size: 1.2em">{{providerConf.data.name}}</span></h1>
 	</div>
 	<div class="row" style="font-size: 1.3em; margin-bottom: 40px">
-		<div class="col col-lg-8 col-offset-2">
+		<div class="col-lg-8 col-lg-offset-2">
 			<div class="ui four large steps">
 				<a ng-href="/provider/{{provider}}" ng-class="{'active': state == 1, 'step': true}">Configure provider</a>
 				<a ng-href="/provider/{{provider}}/app" ng-class="{'active': state == 2, 'step': true}">Choose an app</a>
@@ -15,25 +15,4 @@
 		</div>
 	</div>
 	<div src="providerTemplate" ng-include></div>
-<!--<div class="row">
-	<div class="col col-lg-6">
-		<pre>{{providerConf|json}}</pre>
-	</div>
-	<div class="col col-lg-6">
-		<pre>{{settings|json}}</pre>
-	</div>
-</div> --><!--
-	<div class="row">
-		<div class="col col-lg-12">
-			<h1 class="text-center" style="margin-bottom: 50px; margin-top: 40px">Link this application to an OAuth.io application</h1>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col col-lg-8">
-			<div ng-include src="providerTemplate"></div>
-			<div ng-include src="addKeyTemplate"></div>
-		</div>
-		<div class="col col-lg-4">
-		</div>
-	</div>-->
 </div>

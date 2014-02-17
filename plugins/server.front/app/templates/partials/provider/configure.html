@@ -1,29 +1,29 @@
 <div class="row" style="">
-	<div class="col col-lg-6">
+	<div class="col-lg-6">
 		<p style="font-size: 1.3em">{{providerConf.data.desc}}</p>
 	</div>
-	<div class="col col-lg-6">
+	<div class="col-lg-6">
 		<div class="row">
-			<div class="col col-lg-6 text-center">
+			<div class="col-lg-6 text-center">
 				<div class="provider-block-feature">
 					<img src="/img/oauth-icon.png" style="height: 32px; width: 32px; position: relative; top: -3px" alt=""> OAuth{{oauthVersion}}
 				</div>
 			</div>
-			<div class="col col-lg-6 text-center">
+			<div class="col-lg-6 text-center">
 				<div class="provider-block-feature">
 					<i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77" ng-hide="cors"></i>
 					<i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green" ng-show="cors"></i>
 					<span style="position: relative; top: -6px">Cross domain</span>
 				</div>
 			</div>
-			<div class="col col-lg-6 text-center">
+			<div class="col-lg-6 text-center">
 				<div class="provider-block-feature">
 					<i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77" ng-hide="refresh"></i>
 					<i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green" ng-show="refresh"></i>
 					<span style="position: relative; top: -6px">Refresh token</span>
 				</div>
 			</div>
-			<div class="col col-lg-6 text-center">
+			<div class="col-lg-6 text-center">
 				<div class="provider-block-feature">
 					<i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77" ng-hide="revoke"></i>
 					<i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green" ng-show="revoke"></i>
@@ -36,23 +36,23 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col col-lg-12">
+	<div class="col-lg-12">
 		<h1 class="text-center" style="margin-bottom: 50px; margin-top: 40px">Create an application on {{providerConf.data.name}}</h1>
 	</div>
 </div>
 <div class="row">
-	<div class="col col-lg-6">
+	<div class="col-lg-6">
 		<p style="font-size: 1.2em" class="alert alert-info">You need to have an account on <a ng-href="{{settings.data.settings.install.href.provider}}">{{providerConf.data.name}}</a> to register a new application.</p>
 		<p style="font-size: 1.2em">Go on the {{providerConf.data.name}} developer platform and create a new application.</p>
 		<p style="font-size: 1.2em">Configure it as your need but you have to authorize the domain <code>oauth.io</code> and the URL callback <code>https://oauth.io/auth</code> in your app's settings.</p>
 		<p style="font-size: 1.2em" ng-show="settings.data.settings.createApp.text != null" ng-bind-html-unsafe="settings.data.settings.createApp.text"></p>
 	</div>
-	<div class="col col-lg-6">
-		<img ng-src="/api/providers/{{provider}}/{{settings.data.settings.createApp.image}}">
+	<div class="col-lg-6">
+		<img class="img-responsive" ng-src="/api/providers/{{provider}}/{{settings.data.settings.createApp.image}}">
 	</div>
 </div>
 <div class="row">
-	<div class="col col-lg-12">
-		<p class="text-center" style="margin-top: 50px"><a ng-href="/provider/{{provider}}/app" class="btn btn-large btn-primary">Next > Choose an app</a></p>
+	<div class="col-lg-12">
+		<p class="text-center" style="margin-top: 50px"><a ng-href="/provider/{{provider}}/app" class="btn btn-lg btn-primary">Next > Choose an app</a></p>
 	</div>
 </div>
