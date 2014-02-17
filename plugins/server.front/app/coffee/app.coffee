@@ -208,5 +208,11 @@ app.config([
 	]
 	$httpProvider.responseInterceptors.push interceptor
 ]).run ($rootScope, $location) ->
+	Stripe.setPublishableKey window.stripeKey
+	$rootScope.stripeCheckout = (token) ->
+		StripeCheckout.configure
+			key: window.stripeKey
+			image: '/img/logo_v2.png'
+			token: token
 	$rootScope.location = $location.path()
 hooks.config() if hooks?.config

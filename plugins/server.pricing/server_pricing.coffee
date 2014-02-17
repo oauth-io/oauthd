@@ -4,15 +4,20 @@
 # Copyright (c) 2013 thyb, bump
 # For private use only.
 
+plans = require './plans'
+
 exports.setup = (callback) ->
 
 	@db.pricing = require './db_pricing'
 
 	@server.get @config.base_api + '/plans', (req, res, next) =>
-		@db.pricing.getPublicOffers req.clientId, @server.send(res, next)
+		offers = []
+		for id,plan of plans
+			if id.split('_').length == 1
+				plan.apps = "Unlimited" if plan.apps == Infinity
+				offers.push plan
 
-	@server.get @config.base_api + '/plans/:name', (req, res, next) =>
-		@db.pricing.getOfferByName req.params.name.toLowerCase(), @server.send(res, next)
+		res.send offers:offers, current_offer: 'bootstrap'
 
 	@server.del @config.base_api + '/plan/unsubscribe', @auth.needed, (req, res, next) =>
 		@db.pricing.unsubscribe req.clientId, @server.send(res, next)

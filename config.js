@@ -31,7 +31,10 @@ module.exports = {
 			pass: "P@ssword0"
 		}
 	},
-
+	stripe: {
+		key: 'pk_test_gTkKx7egXlAZcKkhGyA1rdBI',
+		secret: 'sk_test_TpnUpjdaiJELeNi7sKiFmSA4'
+	},
 	paymill: {
 		secret_key: '923660828109fb1ca53c8e1b6916d94d',
 		public_key: '8a8394c340c4033a0140d9f61cfd3145'
@@ -85,7 +88,9 @@ module.exports = {
 		/* --- only for oauth.io --- */
 		'server.front'
 		/* ------------------------- */
-	]
+	],
+
+	vat: 20.0
 }
 if (require('fs').existsSync(__dirname + '/config.local.js')) {
 	var override = require('./config.local.js');

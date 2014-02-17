@@ -34,7 +34,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
 					<img src="/img/your_plan.png" style="left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.name"/>
 					<h3>{{plan.name|capitalize}}</h3>
-					<h1>${{plan.amount/100}}</h1>
+					<h1>${{plan.amount}}</h1>
 					<p style="margin: 0 10px 15px">
 						<button ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
 						<button ng-show="plan.name == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
@@ -53,25 +53,25 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				<tr>
 					<td class="plan-label">Monthly Users</td>
 					<td>1 000</td>
-					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbUsers|readableNumber}}</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.users|readableNumber}}</td>
 					<td>-</td>
 				</tr>
 				<tr>
 					<td class="plan-label">Applications</td>
 					<td>2</td>
-					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbApp}}</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.apps}}</td>
 					<td>-</td>
 				</tr>
 				<tr>
 					<td class="plan-label">OAuth provider</td>
 					<td>2</td>
-					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.nbProvider}}</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.providers}}</td>
 					<td>-</td>
 				</tr>
 				<tr>
 					<td class="plan-label">Support</td>
 					<td>Email</td>
-					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.responseDelay}}</td>
+					<td ng-repeat="plan in plans | orderBy:'+amount'">{{plan.support}}</td>
 					<td>-</td>
 				</tr>
 			</tbody>

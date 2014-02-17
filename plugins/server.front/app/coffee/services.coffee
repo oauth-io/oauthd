@@ -304,9 +304,6 @@ app.factory 'PricingService', ($rootScope, $http) ->
 		list: (success, error) ->
 			api 'plans', success, error
 
-		get: (name, success, error) ->
-			api "plans/#{name}", success, error
-
 		unsubscribe: (success, error) ->
 			api "plan/unsubscribe", success, error,
 				method : 'delete'
