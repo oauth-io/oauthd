@@ -26,6 +26,7 @@ UAParser = require 'ua-parser-js'
 
 config = require './config'
 db = require './db'
+dbproviders = require './db_providers'
 plugins = require './plugins'
 exit = require './exit'
 check = require './check'
@@ -106,8 +107,8 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				return next e if e
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
-				oa = new oauth.oauth2
-				oa.refresh keyset, provider, req.body.token, send(res,next)
+				oa = new oauth.oauth2(provider)
+				oa.refresh keyset, req.body.token, send(res,next)
 
 # iframe injection for IE
 server.get config.base + '/iframe', (req, res, next) ->
@@ -232,27 +233,29 @@ server.get config.base + '/', (req, res, next) ->
 			return next new check.Error 'state', 'invalid or expired' if not state
 			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-			oa = new oauth[state.oauthv]
-			oa.access_token state, req, (e, r) ->
-				status = if e then 'error' else 'success'
+			dbproviders.getExtended state.provider, (err, provider) ->
+				return callback err if err
+				oa = new oauth[state.oauthv](provider)
+				oa.access_token state, req, (e, r) ->
+					status = if e then 'error' else 'success'
 
-				plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
-				if not e
-					if state.options.response_type != 'token'
-						db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
-					if state.options.response_type == 'code'
-						r = {}
-					if state.options.response_type != 'token'
-						r.code = stateid
-					if state.options.response_type == 'token'
-						db.states.del stateid, (->)
-					oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
-					if not oad_uid
-						oad_uid = db.generateUid()
-						d = new Date (new Date).getTime() + 30*24*3600*1000
-						res.setHeader 'Set-Cookie', 'oad_uid=%22' + oad_uid + '%22; Path=/; Expires=' + d.toGMTString()
+					plugins.data.emit 'connect.callback', key:state.key, provider:state.provider, status:status
+					if not e
+						if state.options.response_type != 'token'
+							db.states.set stateid, token:JSON.stringify(r), step:1, (->) # assume the db is faster than ext http reqs
+						if state.options.response_type == 'code'
+							r = {}
+						if state.options.response_type != 'token'
+							r.code = stateid
+						if state.options.response_type == 'token'
+							db.states.del stateid, (->)
+						oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
+						if not oad_uid
+							oad_uid = db.generateUid()
+							d = new Date (new Date).getTime() + 30*24*3600*1000
+							res.setHeader 'Set-Cookie', 'oad_uid=%22' + oad_uid + '%22; Path=/; Expires=' + d.toGMTString()
 
-				callback e, r
+					callback e, r
 
 # oauth: popup or redirection to provider's authorization url
 server.get config.base + '/auth/:provider', (req, res, next) ->
@@ -312,8 +315,8 @@ server.get config.base + '/auth/:provider', (req, res, next) ->
 				return cb new check.Error 'You must provide a state when server-side auth'
 			options.response_type = response_type
 			opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-			oa = new oauth[oauthv]
-			oa.authorize provider, parameters, opts, cb
+			oa = new oauth[oauthv](provider)
+			oa.authorize parameters, opts, cb
 		(authorize, cb) ->
 			oad_uid = req.headers.cookie?.match(/oad_uid=%22(.*?)%22/)?[1]
 			return cb null, authorize.url if not oad_uid

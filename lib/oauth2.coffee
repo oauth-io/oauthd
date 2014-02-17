@@ -29,16 +29,16 @@ OAuth2ResponseParser = require './oauth2-response-parser'
 OAuthBase = require './oauth-base'
 
 class OAuth2 extends OAuthBase
-	constructor: ->
-		super 'oauth2'
+	constructor: (provider) ->
+		super 'oauth2', provider
 
-	authorize: (provider, parameters, opts, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
-		@_createState provider, opts, (err, state) =>
+	authorize: (parameters, opts, callback) ->
+		@_setParams @_provider.parameters
+		@_setParams @_provider.oauth2.parameters
+		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
 
-			authorize = provider.oauth2.authorize
+			authorize = @_provider.oauth2.authorize
 			query = {}
 			if typeof opts.options?.authorize == 'object'
 				query = opts.options.authorize
@@ -63,16 +63,13 @@ class OAuth2 extends OAuthBase
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
 		# get infos from state
-		async.parallel [
-			(callback) -> dbproviders.getExtended state.provider, callback
-			(callback) -> dbapps.getKeyset state.key, state.provider, callback
-		], (err, res) =>
+		dbapps.getKeyset state.key, state.provider, (err, keyset) =>
 			return callback err if err
-			[provider, {parameters,response_type}] = res
-			@_setParams provider.parameters
-			@_setParams provider.oauth2.parameters
+			parameters = keyset.parameters
+			@_setParams @_provider.parameters
+			@_setParams @_provider.oauth2.parameters
 
-			access_token = provider.oauth2.access_token
+			access_token = @_provider.oauth2.access_token
 			query = {}
 			for name, value of access_token.query
 				param = @_replaceParam value, code:req.params.code, state:state.id, callback:config.host_url+config.relbase, parameters
@@ -98,7 +95,7 @@ class OAuth2 extends OAuthBase
 			request options, (e, r, body) =>
 				return callback e if e
 				responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
-				responseParser.parse (err, response) ->
+				responseParser.parse (err, response) =>
 					return callback err if err
 
 					expire = response.body.expire
@@ -110,7 +107,7 @@ class OAuth2 extends OAuthBase
 						now = (new Date).getTime()
 						expire -= now if expire > now
 					requestclone = {}
-					requestclone[k] = v for k, v of provider.oauth2.request
+					requestclone[k] = v for k, v of @_provider.oauth2.request
 					for k, v of @_params
 						if v.scope == 'public'
 							requestclone.parameters ?= {}
@@ -119,21 +116,21 @@ class OAuth2 extends OAuthBase
 						access_token: response.access_token
 						token_type: response.body.token_type
 						expires_in: expire
-						base: provider.baseurl
+						base: @_provider.baseurl
 						request: requestclone
 					result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
 					for extra in (access_token.extra||[])
 						result[extra] = response.body[extra] if response.body[extra]
-					for extra in (provider.oauth2.authorize.extra||[])
+					for extra in (@_provider.oauth2.authorize.extra||[])
 						result[extra] = req.params[extra] if req.params[extra]
 					callback null, result
 
-	refresh: (keyset, provider, token, callback) ->
+	refresh: (keyset, token, callback) ->
 		parameters = keyset.parameters
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
+		@_setParams @_provider.parameters
+		@_setParams @_provider.oauth2.parameters
 
-		refresh = provider.oauth2.refresh
+		refresh = @_provider.oauth2.refresh
 		query = {}
 		for name, value of refresh.query
 			param = @_replaceParam value, refresh_token:token, parameters
@@ -176,9 +173,9 @@ class OAuth2 extends OAuthBase
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
 				callback null, result
 
-	request: (provider, parameters, req, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
+	request: (parameters, req, callback) ->
+		@_setParams @_provider.parameters
+		@_setParams @_provider.oauth2.parameters
 
 		if ! parameters.oauthio.token
 			if parameters.oauthio.access_token
@@ -186,7 +183,7 @@ class OAuth2 extends OAuthBase
 			else
 				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
-		oauthrequest = provider.oauth2.request
+		oauthrequest = @_provider.oauth2.request
 
 		options =
 			method: req.method
