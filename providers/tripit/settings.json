@@ -13,6 +13,10 @@
 				"provider": "http://www.tripit.com/",
 				"docs": "http://tripit.github.com/api/doc/v1/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": ""
+        }
 	}
 }

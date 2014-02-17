@@ -11,6 +11,10 @@
 				"provider": "https://www.wordpress.com/",
 				"docs": "http://developer.wordpress.com/docs/api/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/rest/v1/me"
+        }
 	}
 }

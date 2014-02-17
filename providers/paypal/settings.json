@@ -11,6 +11,10 @@
 				"provider": "https://www.paypal.com/",
 				"docs": "https://developer.paypal.com/docs"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/identity/openidconnect/userinfo/?{schema}"
+        }
 	}
 }

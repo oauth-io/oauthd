@@ -11,6 +11,10 @@
 				"provider": "https://stormz.me/",
 				"docs": "http://developer.stormz.me/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/user/me"
+        }
 	}
 }

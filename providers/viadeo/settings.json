@@ -11,6 +11,10 @@
 				"provider": "https://www.viadeo.com",
 				"docs": "http://dev.viadeo.com/documentation/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/user/USER_ID"
+        }
 	}
 }

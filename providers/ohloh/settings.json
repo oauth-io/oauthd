@@ -12,6 +12,10 @@
 				"provider": "https://www.ohloh.net/",
 				"docs": "http://meta.ohloh.net/reference/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/accounts/ACCOUNT_ID.xml"
+        }
 	}
 }

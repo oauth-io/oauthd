@@ -13,6 +13,10 @@
 				"provider": "https://www.yammer.com/",
 				"docs": "https://developer.yammer.com/restapi/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/v1/users/current.json"
+        }
 	}
 }

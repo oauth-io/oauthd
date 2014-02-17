@@ -12,6 +12,10 @@
 				"provider": "https://stackexchange.com/",
 				"docs": "https://api.stackexchange.com/docs"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/2.2/me"
+        }
 	}
 }
