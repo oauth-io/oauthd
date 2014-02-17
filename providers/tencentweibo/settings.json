@@ -11,6 +11,10 @@
 				"provider": "http://t.qq.com",
 				"docs": "http://wiki.open.t.qq.com/index.php/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/user/info"
+        }
 	}
 }

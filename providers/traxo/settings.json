@@ -11,6 +11,10 @@
 				"provider": "https://www.traxo.com",
 				"docs": "https://developer.traxo.com"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v2/me"
+        }
 	}
 }

@@ -11,6 +11,10 @@
 				"provider": "http://www.mixcloud.com",
 				"docs": "http://www.mixcloud.com/developers/documentation"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me/"
+        }
 	}
 }

@@ -11,6 +11,10 @@
 				"provider": "https://www.withings.com",
 				"docs": "https://oauth.withings.com/partner/add"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/user?action=getbyuserid&userid=29"
+        }
 	}
 }
