@@ -906,6 +906,9 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 			$scope.parameters = provider.data.oauth2?.parameters || provider.data.oauth1?.parameters || {}
 			$scope.settings = settings
 
+			for k,v of provider.data.parameters
+				$scope.parameters[k] = v
+
 			$http(
 				method: "GET"
 				url: '/api/providers/' + $scope.provider + '/keys.png'
