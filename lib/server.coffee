@@ -243,8 +243,9 @@ server.get config.base + '/', (req, res, next) ->
 				return callback err if err
 				provider = r[0]
 				parameters = r[1].parameters
+				response_type = r[1].response_type
 				oa = new oauth[state.oauthv](provider, parameters)
-				oa.access_token state, req, (e, r) ->
+				oa.access_token state, req, response_type, (e, r) ->
 					status = if e then 'error' else 'success'
 					cmds = []
 					for hook in plugins.data.hooks['connect.auth']

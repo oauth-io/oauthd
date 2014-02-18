@@ -50,7 +50,7 @@ class OAuth2 extends OAuthBase
 			url += "?" + querystring.stringify query
 			callback null, url:url, state:state.id
 
-	access_token: (state, req, callback) ->
+	access_token: (state, req, response_type, callback) ->
 		# manage errors in callback
 		if req.params.error || req.params.error_description
 			err = new check.Error
