@@ -16,6 +16,7 @@
 
 dbstates = require './db_states'
 db = require './db'
+querystring = require 'querystring'
 
 class OAuthBase
 	constructor: (oauthv, provider, parameters) ->
@@ -60,5 +61,10 @@ class OAuthBase
 			param = @_replaceParam placeholder, placeholderValues
 			query[parameterName] = param if param
 		return query
+
+	_buildAuthorizeUrl: (url, query, stateId) ->
+		url = @_replaceParam(url, {})
+		url += "?" + querystring.stringify(query)
+		return { url: url, state: stateId }
 
 module.exports = OAuthBase

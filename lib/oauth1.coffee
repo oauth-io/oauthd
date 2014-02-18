@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-querystring = require 'querystring'
 crypto = require 'crypto'
 
 async = require 'async'
@@ -71,16 +70,11 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			dbstates.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 				return callback err if err
-				callback null, @_generateRequestTokenAuthorizeUrl(state, opts, response)
-
-	_generateRequestTokenAuthorizeUrl: (state, opts, response) ->
-		configuration = @_provider.oauth1.authorize
-		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
-		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
-		query.oauth_token = response.oauth_token
-		url = @_replaceParam(configuration.url, {})
-		url += "?" + querystring.stringify(query)
-		return { url: url, state: state.id }
+				configuration = @_provider.oauth1.authorize
+				placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
+				query.oauth_token = response.oauth_token
+				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
