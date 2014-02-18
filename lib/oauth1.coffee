@@ -37,22 +37,17 @@ class OAuth1 extends OAuthBase
 			@_getRequestToken state, opts, callback
 
 	_getRequestToken: (state, opts, callback) ->
-		request_token = @_provider.oauth1.request_token
-		query = {}
-		if typeof opts.options?.request_token == 'object'
-			query = opts.options.request_token
-		hard_params = { state: state.id, callback: config.host_url + config.relbase }
-		for name, value of request_token.query
-			param = @_replaceParam value, hard_params
-			query[name] = param if param
+		configuration = @_provider.oauth1.request_token
+		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = {}
-		headers["Accept"] = @_short_formats[request_token.format] || request_token.format if request_token.format
-		for name, value of request_token.headers
-			param = @_replaceParam value, {}
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
+			param = @_replaceParam(value, {})
 			headers[name] = param if param
 		options =
-			url: request_token.url
-			method: request_token.method?.toUpperCase() || "POST"
+			url: configuration.url
+			method: configuration.method?.toUpperCase() || "POST"
 			encoding: null
 			oauth:
 				callback: query.oauth_callback
@@ -79,17 +74,12 @@ class OAuth1 extends OAuthBase
 				callback null, @_generateRequestTokenAuthorizeUrl(state, opts, response)
 
 	_generateRequestTokenAuthorizeUrl: (state, opts, response) ->
-		authorize = @_provider.oauth1.authorize
-		query = {}
-		if typeof opts.options?.authorize == 'object'
-			query = opts.options.authorize
-		hard_params = { state: state.id, callback: config.host_url + config.relbase }
-		for name, value of authorize.query
-			param = @_replaceParam value, hard_params
-			query[name] = param if param
+		configuration = @_provider.oauth1.authorize
+		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 		query.oauth_token = response.oauth_token
-		url = @_replaceParam authorize.url, {}
-		url += "?" + querystring.stringify query
+		url = @_replaceParam(configuration.url, {})
+		url += "?" + querystring.stringify(query)
 		return { url: url, state: state.id }
 
 	access_token: (state, req, response_type, callback) ->
@@ -111,22 +101,20 @@ class OAuth1 extends OAuthBase
 			err.check req.params, oauth_token:'string', oauth_verifier:'string'
 		return callback err if err.failed()
 
-		access_token = @_provider.oauth1.access_token
-		query = {}
-		hard_params = state:state.id, callback:config.host_url+config.relbase
+		configuration = @_provider.oauth1.access_token
+		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
 		for extra in (@_provider.oauth1.authorize.extra || [])
-			hard_params[extra] = req.params[extra] if req.params[extra]
-		for name, value of access_token.query
-			param = @_replaceParam value, hard_params
-			query[name] = param if param
+			placeholderValues[extra] = req.params[extra] if req.params[extra]
+		query = @_buildQuery(configuration.query, placeholderValues)
+
 		headers = {}
-		headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
-		for name, value of access_token.headers
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
 			param = @_replaceParam value, {}
 			headers[name] = param if param
 		options =
-			url: @_replaceParam access_token.url, hard_params
-			method: access_token.method?.toUpperCase() || "POST"
+			url: @_replaceParam configuration.url, placeholderValues
+			method: configuration.method?.toUpperCase() || "POST"
 			encoding: null
 			oauth:
 				callback: query.oauth_callback
@@ -172,7 +160,7 @@ class OAuth1 extends OAuthBase
 					oauth_token_secret: response.oauth_token_secret
 					expires_in: expire
 					request: requestclone
-				for extra in (access_token.extra||[])
+				for extra in (configuration.extra||[])
 					result[extra] = response.body[extra] if response.body[extra]
 				for extra in (@_provider.oauth1.authorize.extra||[])
 					result[extra] = req.params[extra] if req.params[extra]
@@ -197,11 +185,9 @@ class OAuth1 extends OAuthBase
 		options.url = @_replaceParam options.url, @_parameters.oauthio
 
 		# build query
-		options.qs = {}
-		options.qs[name] = value for name, value of req.query
-		for name, value of oauthrequest.query
-			param = @_replaceParam value, @_parameters.oauthio
-			options.qs[name] = param if param
+		presetQuery = {}
+		presetQuery[name] = value for name, value of req.query
+		options.qs = @_buildQuery(oauthrequest.query, @_parameters.oauthio, presetQuery)
 
 		options.oauth =
 			consumer_key: @_parameters.client_id
