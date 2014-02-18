@@ -14,8 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-querystring = require 'querystring'
-
 async = require 'async'
 request = require 'request'
 
@@ -41,9 +39,7 @@ class OAuth2 extends OAuthBase
 			configuration = @_provider.oauth2.authorize
 			placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
 			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
-			url = @_replaceParam(configuration.url, {})
-			url += "?" + querystring.stringify(query)
-			callback null, { url: url, state: state.id }
+			callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
 	access_token: (state, req, response_type, callback) ->
 		# manage errors in callback
