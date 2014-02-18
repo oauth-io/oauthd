@@ -40,8 +40,9 @@ class OAuth2 extends OAuthBase
 			query = {}
 			if typeof opts.options?.authorize == 'object'
 				query = opts.options.authorize
+			hard_params = { state: state.id, callback: config.host_url + config.relbase }
 			for name, value of authorize.query
-				param = @_replaceParam value, { state: state.id, callback: config.host_url + config.relbase }
+				param = @_replaceParam value, hard_params
 				query[name] = param if param
 			url = @_replaceParam authorize.url, {}
 			url += "?" + querystring.stringify query
@@ -62,8 +63,9 @@ class OAuth2 extends OAuthBase
 
 		access_token = @_provider.oauth2.access_token
 		query = {}
+		hard_params = { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
 		for name, value of access_token.query
-			param = @_replaceParam value, { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
+			param = @_replaceParam value, hard_params
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
@@ -119,8 +121,9 @@ class OAuth2 extends OAuthBase
 	refresh: (token, callback) ->
 		refresh = @_provider.oauth2.refresh
 		query = {}
+		hard_params = { refresh_token: token }
 		for name, value of refresh.query
-			param = @_replaceParam value, { refresh_token: token }
+			param = @_replaceParam value, hard_params
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[refresh.format] || refresh.format if refresh.format

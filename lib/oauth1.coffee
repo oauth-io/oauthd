@@ -41,8 +41,9 @@ class OAuth1 extends OAuthBase
 		query = {}
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
+		hard_params = { state: state.id, callback: config.host_url + config.relbase }
 		for name, value of request_token.query
-			param = @_replaceParam value, { state:state.id, callback:config.host_url + config.relbase }
+			param = @_replaceParam value, hard_params
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[request_token.format] || request_token.format if request_token.format
@@ -82,13 +83,14 @@ class OAuth1 extends OAuthBase
 		query = {}
 		if typeof opts.options?.authorize == 'object'
 			query = opts.options.authorize
+		hard_params = { state: state.id, callback: config.host_url + config.relbase }
 		for name, value of authorize.query
-			param = @_replaceParam value, { state:state.id, callback: config.host_url + config.relbase }
+			param = @_replaceParam value, hard_params
 			query[name] = param if param
 		query.oauth_token = response.oauth_token
 		url = @_replaceParam authorize.url, {}
 		url += "?" + querystring.stringify query
-		return url:url, state:state.id
+		return { url: url, state: state.id }
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
