@@ -900,6 +900,24 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 	), (error) ->
 		console.log "error", error
 
+	# createKey saves given keys for the app and provider.
+	$scope.createKey = ->
+		data = {}
+		conf = $scope.parameters
+		for field of conf
+			if not conf[field].value && (field != 'scope' && field != 'permissions' && field != 'perms') # pas propre
+				$rootScope.error.state = true
+				$rootScope.error.type = "CREATE_KEY"
+				$rootScope.error.message = "#{field} must be set"
+				break;
+			data[field] = conf[field].value
+
+		KeysetService.add $routeParams.app, $routeParams.provider, data, "both", ((keysetEntry) ->
+			$location.path '/provider/' + $routeParams.provider + '/app/' + $routeParams.app + '/samples'
+		), (error) ->
+			console.log "error", error
+	##
+
 	ProviderService.get $routeParams.provider, ((provider) ->
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
 			$scope.providerConf = provider
