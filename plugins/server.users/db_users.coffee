@@ -167,15 +167,7 @@ exports.updateAccount = (req, callback) ->
 		prefix + 'name', data.name,
 		prefix + 'location', data.location,
 		prefix + 'company', data.company,
-		prefix + 'website', data.website,
-		# prefix + 'addr_one', data.addr_one,
-		# prefix + 'addr_second', data.addr_second,
-		# prefix + 'city', data.city,
-		# prefix + 'zipcode', data.zipcode,
-		# prefix + 'country', data.country,
-		# prefix + 'country_code', data.country_code,
-		# prefix + 'state', data.state,
-		# prefix + 'phone', data.phone
+		prefix + 'website', data.website
 	], (err) ->
 		return callback err if err
 		user = id:user_id, name:data.name, company:data.company, website:data.website, location:data.location
@@ -194,17 +186,10 @@ exports.isValidable = (data, callback) ->
 			pass: replies[3]
 			mail_changed: replies[4]
 
-		console.log "validable"
 		return callback err if err
-		# return callback null, is_validable: false if user.pass? and not user.mail_changed? or not user.pass? and user.mail_changed?
-		console.log "pass1"
 		return callback null, is_validable: false if user.key != key
-		console.log "pass2"
-
 		if user.pass? and user.mail_changed? # change email
-			console.log "change email"
 			return callback null, is_validable: false if user.mail_changed.length == 0
-			console.log "pass3"
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
 				[ 'hset', 'u:mails', replies[4], iduser ],
@@ -216,9 +201,7 @@ exports.isValidable = (data, callback) ->
 				return callback err  if err
 				return callback null, is_updated: true, mail: user.mail_changed, id: iduser
 		else # validable but no password
-			console.log "validable"
 			return callback null, is_validable: false if user.validated == '1'
-			console.log "pass4"
 			return callback null, is_validable: true, mail: user.mail, id: iduser
 
 # validate user mail
@@ -402,48 +385,8 @@ exports.get = check 'int', (iduser, callback) ->
 
 		exports.getPlan iduser, (err, plan) ->
 			return callback err if err
-			exports.getBilling iduser, (err, billing) ->
-				return callback err if err
-				return callback null, profile: profile, plan: plan, billing: billing
+			return callback null, profile: profile, plan: plan
 
-# get user billing
-exports.getBilling = check 'int', (iduser, callback) ->
-
-	prefix_billing = 'u:' + iduser + ':billing:'
-	db.redis.mget [ prefix_billing + 'addr_one',
-		prefix_billing + 'addr_second',
-		prefix_billing + 'city',
-		prefix_billing + 'company',
-		prefix_billing + 'country_code',
-		prefix_billing + 'mail',
-		prefix_billing + 'name',
-		prefix_billing + 'phone',
-		prefix_billing + 'state',
-		prefix_billing + 'type',
-		prefix_billing + 'website',
-		prefix_billing + 'zipcode',
-		prefix_billing + 'vat',
-		prefix_billing + 'country' ]
-	, (err, replies) ->
-		return callback err if err
-		billing =
-		{
-			addr_one:  replies[0],
-			addr_second:  replies[1],
-			city: replies[2],
-			company: replies[3],
-			country_code: replies[4],
-			mail: replies[5],
-			name: replies[6],
-			phone: replies[7],
-			state: replies[8],
-			type: replies[9],
-			website: replies[10],
-			zipcode: replies[11],
-			vat: replies[12],
-			country: replies[13]
-		}
-		return callback null, billing
 
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
@@ -490,21 +433,18 @@ exports.getApps = check 'int', (iduser, callback) ->
 			return callback null, appkeys
 
 exports.getPlan = check 'int', (iduser, callback) ->
-	db.redis.hget ["pm:subscriptions:#{iduser}", "current_offer"], (err, offer_id) ->
+	db.redis.get "u:#{iduser}:current_plan", (err, plan_id) =>
 		return callback err if err
-		return callback null if not offer_id?
-		db.redis.hget ["pm:offers:offers_id", offer_id], (err, offer) ->
-			return callback err if err
-			prefix = "pm:offers:#{offer}"
-			db.redis.mget ["#{prefix}:name", "#{prefix}:nbConnection", "#{prefix}:nbApp", "#{prefix}:nbProvider", "#{prefix}:responseDelay", "#{prefix}:parent"], (err, replies) ->
-				return callback err if err
+		return callback null if not plan_id
+		plan = db.plans[plan_id]
+		plan_id = plan_id.substr 0, plan_id.length - 2  if plan_id.substr(plan_id.length - 2, 2) is 'fr'
 
-				replies[0] = replies[0].substr 0, replies[0].length - 2  if replies[0].substr(replies[0].length - 2, 2) is 'fr'
-				replies[1] = if replies[1] == "*" then "unlimited" else replies[1]
-				replies[2] = if replies[2] == "*" then "unlimited" else replies[2]
-				replies[3] = if replies[3] == "*" then "unlimited" else replies[3]
-
-				return callback null, name:replies[0], nbUsers:replies[1], nbApp:replies[2], nbProvider:replies[3], responseDelay:replies[4], parent: replies[5]
+		return callback null,
+			name:plan_id
+			nbUsers:plan.users
+			nbApp:plan.apps
+			nbProvider:plan.providers
+			responseDelay:plan.support
 
 exports.getAllSubscriptions = check 'int', (iduser, callback) ->
 	Clients = require '../server.payments/paymill_client'

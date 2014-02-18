@@ -420,9 +420,6 @@ getCustomer = (id, callback) ->
 		stripe.customers.retrieve stripeid, callback
 
 createCustomer = (data, callback) ->
-	plan = data.plan
-	if data.profile.country_code == 'FR'
-		plan += '_fr'
 	stripe.customers.create (
 		card: data.token.id
 		email: data.user.mail
@@ -433,6 +430,8 @@ createCustomer = (data, callback) ->
 		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
 
 exports.process = check profile:'object', token:'object', plan:'string', 'object', (data, user, callback) ->
+	if data.profile.country_code == 'FR'
+		data.plan += '_fr'
 	data.profile.id = user.id
 	data.user = user
 	async.waterfall [
@@ -440,6 +439,8 @@ exports.process = check profile:'object', token:'object', plan:'string', 'object
 		(id, cb) ->
 			return cb null, id if id
 			createCustomer data, cb
+		(res, cb) ->
+			db.redis.set "u:#{user.id}:current_plan", data.plan, cb
 	], (err) ->
 		return callback err if err
 		callback null

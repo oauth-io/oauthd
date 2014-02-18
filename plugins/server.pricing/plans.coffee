@@ -41,7 +41,7 @@ module.exports =
 		"amount": 99
 		"currency": "USD"
 		"users": 500000
-		"apps": Infinity
+		"apps": "unlimited"
 		"providers": 20
 		"support": "Priority email + chat"
 	"scalability_fr":
@@ -50,6 +50,6 @@ module.exports =
 		"amount": 118.8
 		"currency": "USD"
 		"users": 500000
-		"apps": Infinity
+		"apps": "unlimited"
 		"providers": 20
 		"support": "Priority email + chat"
