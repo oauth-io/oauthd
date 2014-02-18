@@ -44,9 +44,9 @@ class OAuth2 extends OAuthBase
 			if typeof opts.options?.authorize == 'object'
 				query = opts.options.authorize
 			for name, value of authorize.query
-				param = @_replaceParam value, { state: state.id, callback: config.host_url + config.relbase }, @_parameters
+				param = @_replaceParam value, { state: state.id, callback: config.host_url + config.relbase }
 				query[name] = param if param
-			url = @_replaceParam authorize.url, {}, @_parameters
+			url = @_replaceParam authorize.url, {}
 			url += "?" + querystring.stringify query
 			callback null, url:url, state:state.id
 
@@ -66,15 +66,15 @@ class OAuth2 extends OAuthBase
 		access_token = @_provider.oauth2.access_token
 		query = {}
 		for name, value of access_token.query
-			param = @_replaceParam value, { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }, @_parameters
+			param = @_replaceParam value, { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
 		for name, value of access_token.headers
-			param = @_replaceParam value, {}, @_parameters
+			param = @_replaceParam value, {}
 			headers[name] = param if param
 		options =
-			url: @_replaceParam access_token.url, {}, @_parameters
+			url: @_replaceParam access_token.url, {}
 			method: access_token.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 			encoding: null
@@ -124,15 +124,15 @@ class OAuth2 extends OAuthBase
 		refresh = @_provider.oauth2.refresh
 		query = {}
 		for name, value of refresh.query
-			param = @_replaceParam value, { refresh_token: token }, @_parameters
+			param = @_replaceParam value, { refresh_token: token }
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[refresh.format] || refresh.format if refresh.format
 		for name, value of refresh.headers
-			param = @_replaceParam value, { refresh_token: token }, @_parameters
+			param = @_replaceParam value, { refresh_token: token }
 			headers[name] = param if param
 		options =
-			url: @_replaceParam refresh.url, {}, @_parameters
+			url: @_replaceParam refresh.url, {}
 			method: refresh.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 			encoding: null
@@ -187,12 +187,12 @@ class OAuth2 extends OAuthBase
 			if options.url[0] != '/'
 				options.url = '/' + options.url
 			options.url = oauthrequest.url + options.url
-		options.url = @_replaceParam options.url, @_parameters.oauthio, @_parameters
+		options.url = @_replaceParam options.url, @_parameters.oauthio
 
 		# build query
 		options.qs = {}
 		for name, value of oauthrequest.query
-			param = @_replaceParam value, @_parameters.oauthio, @_parameters
+			param = @_replaceParam value, @_parameters.oauthio
 			options.qs[name] = param if param
 
 		# build headers
@@ -208,7 +208,7 @@ class OAuth2 extends OAuthBase
 				options.headers[k] = v
 
 		for name, value of oauthrequest.headers
-			param = @_replaceParam value, @_parameters.oauthio, @_parameters
+			param = @_replaceParam value, @_parameters.oauthio
 			options.headers[name] = param if param
 
 		# do request

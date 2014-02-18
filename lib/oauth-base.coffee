@@ -31,15 +31,15 @@ class OAuthBase
 		@_params[k] = v for k,v of parameters
 		return
 
-	_replaceParam: (param, hard_params, keyset) ->
+	_replaceParam: (param, hard_params) ->
 		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
 			return db.generateUid() if val == "nonce"
 			return hard_params[val] || ""
 		return param.replace /\{(.*?)\}/g, (match, val) =>
-			return "" if ! @_params[val] || ! keyset[val]
-			if Array.isArray(keyset[val])
-				return keyset[val].join @_params[val].separator || ","
-			return keyset[val]
+			return "" if ! @_params[val] || ! @_parameters[val]
+			if Array.isArray(@_parameters[val])
+				return @_parameters[val].join @_params[val].separator || ","
+			return @_parameters[val]
 
 	_createState: (provider, opts, callback) ->
 		newStateData =
