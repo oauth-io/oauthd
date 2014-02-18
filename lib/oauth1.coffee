@@ -90,7 +90,7 @@ class OAuth1 extends OAuthBase
 		url += "?" + querystring.stringify query
 		return url:url, state:state.id
 
-	access_token: (state, req, callback) ->
+	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
 			req.params.error_description ?= 'Authorization refused'
 
