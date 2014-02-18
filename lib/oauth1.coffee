@@ -35,8 +35,6 @@ class OAuth1 extends OAuthBase
 		super 'oauth1', provider
 
 	authorize: (parameters, opts, callback) ->
-		@_setParams @_provider.parameters
-		@_setParams @_provider.oauth1.parameters
 		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
 			@_getRequestToken state, parameters, opts, callback
@@ -117,8 +115,6 @@ class OAuth1 extends OAuthBase
 			else
 				err.check req.params, oauth_token:'string', oauth_verifier:'string'
 			return callback err if err.failed()
-			@_setParams @_provider.parameters
-			@_setParams @_provider.oauth1.parameters
 
 			access_token = @_provider.oauth1.access_token
 			query = {}
@@ -188,9 +184,6 @@ class OAuth1 extends OAuthBase
 					callback null, result
 
 	request: (parameters, req, callback) ->
-		@_setParams @_provider.parameters
-		@_setParams @_provider.oauth1.parameters
-
 		if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
 			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 

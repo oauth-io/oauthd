@@ -33,8 +33,6 @@ class OAuth2 extends OAuthBase
 		super 'oauth2', provider
 
 	authorize: (parameters, opts, callback) ->
-		@_setParams @_provider.parameters
-		@_setParams @_provider.oauth2.parameters
 		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
 
@@ -66,8 +64,6 @@ class OAuth2 extends OAuthBase
 		dbapps.getKeyset state.key, state.provider, (err, keyset) =>
 			return callback err if err
 			parameters = keyset.parameters
-			@_setParams @_provider.parameters
-			@_setParams @_provider.oauth2.parameters
 
 			access_token = @_provider.oauth2.access_token
 			query = {}
@@ -127,8 +123,6 @@ class OAuth2 extends OAuthBase
 
 	refresh: (keyset, token, callback) ->
 		parameters = keyset.parameters
-		@_setParams @_provider.parameters
-		@_setParams @_provider.oauth2.parameters
 
 		refresh = @_provider.oauth2.refresh
 		query = {}
@@ -174,9 +168,6 @@ class OAuth2 extends OAuthBase
 				callback null, result
 
 	request: (parameters, req, callback) ->
-		@_setParams @_provider.parameters
-		@_setParams @_provider.oauth2.parameters
-
 		if ! parameters.oauthio.token
 			if parameters.oauthio.access_token
 				parameters.oauthio.token = parameters.oauthio.access_token
