@@ -10,7 +10,7 @@ module.exports =
 		"support": "Priority email"
 	"startup_fr":
 		"id": "startup_fr"
-		"name": "Startup"
+		"name": "Startup FR"
 		"amount": 22.8
 		"currency": "USD"
 		"users": 5000
@@ -28,7 +28,7 @@ module.exports =
 		"support": "Priority email + chat"
 	"growth_fr":
 		"id": "growth_fr"
-		"name": "Growth"
+		"name": "Growth FR"
 		"amount": 58.8
 		"currency": "USD"
 		"users": 50000
@@ -46,7 +46,7 @@ module.exports =
 		"support": "Priority email + chat"
 	"scalability_fr":
 		"id": "scalability_fr"
-		"name": "Scalability"
+		"name": "Scalability FR"
 		"amount": 118.8
 		"currency": "USD"
 		"users": 500000

@@ -1503,7 +1503,7 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 		return "200 OK"
 
 
-PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PricingService, CartService) ->
+PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PricingService) ->
 
 	MenuService.changed()
 
@@ -1516,21 +1516,7 @@ PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PricingServi
 	, (error) ->
 		console.log error
 
-	if $location.path() == '/pricing/unsubscribe'
-		CartService.get (success) ->
-			$scope.cart = success.data
-		, (error) ->
-			console.log error
-
 	$scope.unsubscribe_confirm = (plan) ->
-
-		$("#unsubscribe_#{plan.id}").hide()
-
-		$("#loader_#{plan.id}").fadeIn 1000, ->
-			CartService.add plan, (success) ->
-				$location.path "/pricing/unsubscribe" if success
-			, (error) ->
-				console.log error
 
 	$scope.unsubscribe = ->
 
@@ -1554,7 +1540,7 @@ PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PricingServi
 			scope: $scope
 			resolve: ->
 
-PurchaseCtrl = (UserService, $scope, $rootScope) ->
+PurchaseCtrl = (UserService, $scope, $rootScope, PaymentService) ->
 	$.getJSON '/data/countries.json', (json) ->
 		$scope.countries = json
 		$scope.$apply()
@@ -1566,20 +1552,22 @@ PurchaseCtrl = (UserService, $scope, $rootScope) ->
 	), (error) ->
 		console.log "error", error
 
-
-
 	$scope.cancelSubscription = ->
 		$scope.purchaseModal.close()
 
 	$scope.confirmSubscription = ->
 		handler = $rootScope.stripeCheckout (token, args) ->
-			console.log 'checkout', token, args
+			PaymentService.process
+				token: token
+				plan: $scope.plan.id
+				profile: $scope.profile
 		handler.open
 			name: 'OAuth.io'
+			email: $scope.user.mail
 			description: $scope.plan.name + ' plan'
-			amount: $scope.plan.amount * 100
+			amount: (if $scope.profile.country_code == 'FR' then $scope.plan.total else $scope.plan.amount) * 100
 
-PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService, PaymentService, PricingService, MenuService, CartService) ->
+PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService, PaymentService, PricingService, MenuService) ->
 	MenuService.changed()
 
 	if not UserService.isLogin()
@@ -1614,15 +1602,6 @@ PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService,
 	, (error) ->
 		console.log error
 
-
-	if $location.path() == '/payment/customer' or $location.path() == '/payment/confirm'
-		CartService.get (success) ->
-			$scope.cart = success.data
-		, (error) ->
-			console.log error
-
-		PaymentService.getCurrentSubscription (success) ->
-			$scope.subscription = success.data
 
 	cc = ["AT","AD","AM","AZ","BA","BE","BG","DE","CY","HR","CZ","DK","EE","FI","FR","GR","HU","IS","IR","IT","KZ","LV","LI","LT","LU","MT","NL","NO","PL","PT","RO","SI","ES","TR","SE","GB"]
 

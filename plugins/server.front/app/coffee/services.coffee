@@ -272,31 +272,11 @@ app.factory 'KeysetService', ($rootScope, $http) ->
 app.factory 'PaymentService', ($rootScope, $http) ->
 	api = apiRequest $http, $rootScope
 	return {
-		process: (paymill, success, error) ->
+		process: (data, success, error) ->
 			api 'payment/process', success, error,
 				method:'POST'
-				data:
-					currency: paymill.currency
-					amount: paymill.amount
-					token: paymill.token
-					offer: paymill.offer
-		getCurrentSubscription: (success, error) ->
-			api 'subscription/get', success, error
+				data: data
 	}
-
-app.factory 'CartService', ($rootScope, $http) ->
-	api = apiRequest $http, $rootScope
-	return {
-		add: (plan, success, error) ->
-			api 'payment/cart/new', success, error,
-				method:'POST'
-				data:
-					plan: plan
-
-		get: (success, error) ->
-			api 'payment/cart/get', success, error
-	}
-
 
 app.factory 'PricingService', ($rootScope, $http) ->
 	api = apiRequest $http, $rootScope

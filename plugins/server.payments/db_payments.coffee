@@ -8,12 +8,19 @@
 #
 
 async = require 'async'
-restify = require 'restify'
 Mailer = require '../../lib/mailer'
-{ db, check, config } = shared = require '../shared'
+
+restify = require 'restify'
+
 PaymillBase = require './paymill_base'
 DbUser = require '../server.users/db_users'
 Payment = require '../server.payments/db_payments'
+
+{ db, check, config } = shared = require '../shared'
+
+
+stripe = require('stripe')(config.stripe.secret)
+
 
 exports.paddingLeft = (padding, value) ->
 	zeroes = "0"
@@ -261,7 +268,7 @@ exports.delCart = check 'int', (client_id, callback) ->
 		return callback null
 
 
-exports.process = (data, client, callback) ->
+exports.process2 = (data, client, callback) ->
 
 	client_id = client.id
 	client_email = client.mail
@@ -405,3 +412,34 @@ exports.getSubscription = (client_id, callback) ->
 		return callback err if err
 		return callback null, null  if not res?
 		return callback null, res.id
+
+getCustomer = (id, callback) ->
+	db.redis.get "u:#{id}:stripeid", (err, stripeid) ->
+		return callback err if err
+		return callback null, null if not stripeid
+		stripe.customers.retrieve stripeid, callback
+
+createCustomer = (data, callback) ->
+	plan = data.plan
+	if data.profile.country_code == 'FR'
+		plan += '_fr'
+	stripe.customers.create (
+		card: data.token.id
+		email: data.user.mail
+		metadata: data.profile
+		plan: plan
+	), (err, customer) ->
+		return callback err if err
+		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
+
+exports.process = check profile:'object', token:'object', plan:'string', 'object', (data, user, callback) ->
+	data.profile.id = user.id
+	data.user = user
+	async.waterfall [
+		(cb) -> getCustomer data.profile.id, cb
+		(id, cb) ->
+			return cb null, id if id
+			createCustomer data, cb
+	], (err) ->
+		return callback err if err
+		callback null
