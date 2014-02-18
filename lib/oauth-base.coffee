@@ -23,6 +23,8 @@ class OAuthBase
 		@_oauthv = oauthv
 		@_provider = provider
 		@_short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
+		@_setParams @_provider.parameters
+		@_setParams @_provider[oauthv].parameters
 
 	_setParams: (parameters) ->
 		@_params[k] = v for k,v of parameters
