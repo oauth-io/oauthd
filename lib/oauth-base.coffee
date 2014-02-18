@@ -14,7 +14,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-dbstates = require './db_states'
 db = require './db'
 querystring = require 'querystring'
 config = require './config'
@@ -53,7 +52,7 @@ class OAuthBase
 			origin: opts.origin,
 			options: opts.options,
 			expire: 1200
-		dbstates.add newStateData, callback
+		db.states.add newStateData, callback
 
 	_buildQuery : (configuration, placeholderValues, defaultParameters) ->
 		query = if (defaultParameters instanceof Object) then defaultParameters else {}
