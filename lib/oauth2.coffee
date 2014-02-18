@@ -29,10 +29,10 @@ OAuth2ResponseParser = require './oauth2-response-parser'
 OAuthBase = require './oauth-base'
 
 class OAuth2 extends OAuthBase
-	constructor: (provider) ->
-		super 'oauth2', provider
+	constructor: (provider, parameters) ->
+		super 'oauth2', provider, parameters
 
-	authorize: (parameters, opts, callback) ->
+	authorize: (opts, callback) ->
 		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
 
@@ -41,9 +41,9 @@ class OAuth2 extends OAuthBase
 			if typeof opts.options?.authorize == 'object'
 				query = opts.options.authorize
 			for name, value of authorize.query
-				param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
+				param = @_replaceParam value, { state: state.id, callback: config.host_url + config.relbase }, @_parameters
 				query[name] = param if param
-			url = @_replaceParam authorize.url, {}, parameters
+			url = @_replaceParam authorize.url, {}, @_parameters
 			url += "?" + querystring.stringify query
 			callback null, url:url, state:state.id
 
@@ -60,82 +60,75 @@ class OAuth2 extends OAuthBase
 			return callback err
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
-		# get infos from state
-		dbapps.getKeyset state.key, state.provider, (err, keyset) =>
-			return callback err if err
-			parameters = keyset.parameters
+		access_token = @_provider.oauth2.access_token
+		query = {}
+		for name, value of access_token.query
+			param = @_replaceParam value, { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }, @_parameters
+			query[name] = param if param
+		headers = {}
+		headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
+		for name, value of access_token.headers
+			param = @_replaceParam value, {}, @_parameters
+			headers[name] = param if param
+		options =
+			url: @_replaceParam access_token.url, {}, @_parameters
+			method: access_token.method?.toUpperCase() || "POST"
+			followAllRedirects: true
+			encoding: null
 
-			access_token = @_provider.oauth2.access_token
-			query = {}
-			for name, value of access_token.query
-				param = @_replaceParam value, code:req.params.code, state:state.id, callback:config.host_url+config.relbase, parameters
-				query[name] = param if param
-			headers = {}
-			headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
-			for name, value of access_token.headers
-				param = @_replaceParam value, {}, parameters
-				headers[name] = param if param
-			options =
-				url: @_replaceParam access_token.url, {}, parameters
-				method: access_token.method?.toUpperCase() || "POST"
-				followAllRedirects: true
-				encoding: null
+		options.headers = headers if Object.keys(headers).length
+		if options.method == "GET"
+			options.qs = query
+		else
+			options.form = query # or .json = qs for json post
 
-			options.headers = headers if Object.keys(headers).length
-			if options.method == "GET"
-				options.qs = query
-			else
-				options.form = query # or .json = qs for json post
+		# do request to access_token
+		request options, (e, r, body) =>
+			return callback e if e
+			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
+			responseParser.parse (err, response) =>
+				return callback err if err
 
-			# do request to access_token
-			request options, (e, r, body) =>
-				return callback e if e
-				responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
-				responseParser.parse (err, response) =>
-					return callback err if err
+				expire = response.body.expire
+				expire ?= response.body.expires
+				expire ?= response.body.expires_in
+				expire ?= response.body.expires_at
+				if expire
+					expire = parseInt expire
+					now = (new Date).getTime()
+					expire -= now if expire > now
+				requestclone = {}
+				requestclone[k] = v for k, v of @_provider.oauth2.request
+				for k, v of @_params
+					if v.scope == 'public'
+						requestclone.parameters ?= {}
+						requestclone.parameters[k] = @_parameters[k]
+				result =
+					access_token: response.access_token
+					token_type: response.body.token_type
+					expires_in: expire
+					base: @_provider.baseurl
+					request: requestclone
+				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
+				for extra in (access_token.extra||[])
+					result[extra] = response.body[extra] if response.body[extra]
+				for extra in (@_provider.oauth2.authorize.extra||[])
+					result[extra] = req.params[extra] if req.params[extra]
+				callback null, result
 
-					expire = response.body.expire
-					expire ?= response.body.expires
-					expire ?= response.body.expires_in
-					expire ?= response.body.expires_at
-					if expire
-						expire = parseInt expire
-						now = (new Date).getTime()
-						expire -= now if expire > now
-					requestclone = {}
-					requestclone[k] = v for k, v of @_provider.oauth2.request
-					for k, v of @_params
-						if v.scope == 'public'
-							requestclone.parameters ?= {}
-							requestclone.parameters[k] = parameters[k]
-					result =
-						access_token: response.access_token
-						token_type: response.body.token_type
-						expires_in: expire
-						base: @_provider.baseurl
-						request: requestclone
-					result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
-					for extra in (access_token.extra||[])
-						result[extra] = response.body[extra] if response.body[extra]
-					for extra in (@_provider.oauth2.authorize.extra||[])
-						result[extra] = req.params[extra] if req.params[extra]
-					callback null, result
-
-	refresh: (keyset, token, callback) ->
-		parameters = keyset.parameters
-
+	refresh: (token, callback) ->
 		refresh = @_provider.oauth2.refresh
 		query = {}
 		for name, value of refresh.query
-			param = @_replaceParam value, refresh_token:token, parameters
+			param = @_replaceParam value, { refresh_token: token }, @_parameters
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[refresh.format] || refresh.format if refresh.format
 		for name, value of refresh.headers
-			param = @_replaceParam value, refresh_token:token, parameters
+			param = @_replaceParam value, { refresh_token: token }, @_parameters
 			headers[name] = param if param
 		options =
-			url: @_replaceParam refresh.url, {}, parameters
+			url: @_replaceParam refresh.url, {}, @_parameters
 			method: refresh.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 
@@ -167,10 +160,10 @@ class OAuth2 extends OAuthBase
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
 				callback null, result
 
-	request: (parameters, req, callback) ->
-		if ! parameters.oauthio.token
-			if parameters.oauthio.access_token
-				parameters.oauthio.token = parameters.oauthio.access_token
+	request: (req, callback) ->
+		if ! @_parameters.oauthio.token
+			if @_parameters.oauthio.access_token
+				@_parameters.oauthio.token = @_parameters.oauthio.access_token
 			else
 				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
@@ -187,13 +180,13 @@ class OAuth2 extends OAuthBase
 			if options.url[0] != '/'
 				options.url = '/' + options.url
 			options.url = oauthrequest.url + options.url
-		options.url = @_replaceParam options.url, parameters.oauthio, parameters
+		options.url = @_replaceParam options.url, @_parameters.oauthio, @_parameters
 
 		# build query
 		options.qs = {}
 		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
-			param = @_replaceParam value, parameters.oauthio, parameters
+			param = @_replaceParam value, @_parameters.oauthio, @_parameters
 			options.qs[name] = param if param
 
 		# build headers
@@ -204,7 +197,7 @@ class OAuth2 extends OAuthBase
 			'content-type':req.headers['content-type']
 			'User-Agent': 'OAuth.io'
 		for name, value of oauthrequest.headers
-			param = @_replaceParam value, parameters.oauthio, parameters
+			param = @_replaceParam value, @_parameters.oauthio, @_parameters
 			options.headers[name] = param if param
 
 		# build body
