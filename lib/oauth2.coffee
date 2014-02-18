@@ -15,9 +15,7 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 request = require 'request'
-
 check = require './check'
-config = require './config'
 
 OAuth2ResponseParser = require './oauth2-response-parser'
 OAuthBase = require './oauth-base'
@@ -30,7 +28,7 @@ class OAuth2 extends OAuthBase
 		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
 			configuration = @_provider.oauth2.authorize
-			placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+			placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 			callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
@@ -48,7 +46,7 @@ class OAuth2 extends OAuthBase
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
 		configuration = @_provider.oauth2.access_token
-		placeholderValues = { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
+		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
 
 		headers = {}

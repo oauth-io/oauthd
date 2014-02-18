@@ -15,10 +15,8 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 request = require 'request'
-
 check = require './check'
 db = require './db'
-config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
 OAuthBase = require './oauth-base'
@@ -34,7 +32,7 @@ class OAuth1 extends OAuthBase
 
 	_getRequestToken: (state, opts, callback) ->
 		configuration = @_provider.oauth1.request_token
-		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = {}
 		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
@@ -68,7 +66,7 @@ class OAuth1 extends OAuthBase
 			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 				return callback err if err
 				configuration = @_provider.oauth1.authorize
-				placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 				query.oauth_token = response.oauth_token
 				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
@@ -93,7 +91,7 @@ class OAuth1 extends OAuthBase
 		return callback err if err.failed()
 
 		configuration = @_provider.oauth1.access_token
-		placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		for extra in (@_provider.oauth1.authorize.extra || [])
 			placeholderValues[extra] = req.params[extra] if req.params[extra]
 		query = @_buildQuery(configuration.query, placeholderValues)
