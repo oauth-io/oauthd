@@ -14,13 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-async = require 'async'
 request = require 'request'
 
 check = require './check'
-dbstates = require './db_states'
-dbproviders = require './db_providers'
-dbapps = require './db_apps'
 config = require './config'
 
 OAuth2ResponseParser = require './oauth2-response-parser'
