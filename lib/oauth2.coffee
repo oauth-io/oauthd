@@ -157,29 +157,9 @@ class OAuth2 extends OAuthBase
 			followAllRedirects: true
 			encoding: null
 
-		# build url
-		options.url = decodeURIComponent(req.params[1])
-		if ! options.url.match(/^[a-z]{2,16}:\/\//)
-			if options.url[0] != '/'
-				options.url = '/' + options.url
-			options.url = oauthrequest.url + options.url
-		options.url = @_replaceParam options.url, @_parameters.oauthio
-
-		# build query
-		presetQuery = {}
-		presetQuery[name] = value for name, value of req.query
-		options.qs = @_buildQuery(oauthrequest.query, @_parameters.oauthio, presetQuery)
-
-		# build headers
-		options.headers =
-			accept:req.headers.accept
-			'accept-encoding':req.headers['accept-encoding']
-			'accept-language':req.headers['accept-language']
-			'content-type':req.headers['content-type']
-			'User-Agent': 'OAuth.io'
-		for name, value of oauthrequest.headers
-			param = @_replaceParam value, @_parameters.oauthio
-			options.headers[name] = param if param
+		options.url = @_buildServerRequestUrl(req.params[1], oauthrequest.url)
+		options.qs = @_buildServerRequestQuery(req.query, oauthrequest.query)
+		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
 
 		# build body
 		if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
