@@ -34,5 +34,7 @@
 	<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
       {{error.message}}
 	</div>
-	<div ng-include src="createKeyLastStepTemplate"></div>
+    <div ng-show="createKeyStep == 3">
+        <div ng-include src="createKeyLastStepTemplate"></div>
+    </div>
 </div>
