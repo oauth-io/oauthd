@@ -900,6 +900,11 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 	), (error) ->
 		console.log "error", error
 
+	$scope.modifyType = (type) ->
+		$scope.createKeyType = type
+		
+
+
 	# createKey saves given keys for the app and provider.
 	$scope.createKey = ->
 		data = {}
@@ -911,8 +916,7 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 				$rootScope.error.message = "#{field} must be set"
 				break;
 			data[field] = conf[field].value
-
-		KeysetService.add $routeParams.app, $routeParams.provider, data, "both", ((keysetEntry) ->
+		KeysetService.add $routeParams.app, $routeParams.provider, data, $scope.createKeyType || 'both', ((keysetEntry) ->
 			$location.path '/provider/' + $routeParams.provider + '/app/' + $routeParams.app + '/samples'
 		), (error) ->
 			console.log "error", error
@@ -938,7 +942,7 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 
 			$scope.apikeyUpdate = false
 			KeysetService.get $routeParams.app, $routeParams.provider, ((json) ->
-				console.log $scope.parameters, json.data
+				$scope.createKeyType = json.data?.response_type
 				if json.data?
 					$scope.apikeyUpdate = true
 					for field of json.data.parameters
@@ -964,7 +968,6 @@ ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderSer
 	$scope.providerTemplate = '/templates/partials/provider/sample.html'
 
 	AppService.get $routeParams.app, ((app) =>
-		console.log app.data
 		delete app.data.secret
 		$scope.app = app.data
 		$scope.app.keysets.sort()
