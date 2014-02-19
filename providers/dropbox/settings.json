@@ -1,10 +1,12 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "https://www.dropbox.com/developers/apps/create"
+			"url": "https://www.dropbox.com/developers/apps/create",
+            "image": "config.png"
 		},
 		"copyingKey": {
-			"url": "https://www.dropbox.com/developers/apps"
+			"url": "https://www.dropbox.com/developers/apps",
+            "image": "keys.png"
 		},
 		"install": {
 			"href": {
