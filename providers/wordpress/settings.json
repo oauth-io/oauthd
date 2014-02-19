@@ -1,10 +1,12 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "https://developer.wordpress.com/apps/new/"
+			"url": "https://developer.wordpress.com/apps/new/",
+			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "https://developer.wordpress.com/apps/"
+			"url": "https://developer.wordpress.com/apps/",
+			"image": "keys.png"
 		},
 		"install": {
 			"href": {
