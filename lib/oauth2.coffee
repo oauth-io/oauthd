@@ -93,14 +93,12 @@ class OAuth2 extends OAuthBase
 				options.qs = query
 			else
 				options.form = query # or .json = qs for json post
-
 			# do request to access_token
 			request options, (e, r, body) =>
 				return callback e if e
 				responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
 				responseParser.parse (err, response) ->
 					return callback err if err
-
 					expire = response.body.expire
 					expire ?= response.body.expires
 					expire ?= response.body.expires_in
@@ -153,14 +151,12 @@ class OAuth2 extends OAuthBase
 			options.qs = query
 		else
 			options.form = query # or .json = qs for json post
-
 		# request new token
 		request options, (e, r, body) =>
 			return callback e if e
 			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'refresh token')
 			responseParser.parse (err, response) ->
 				return callback err if err
-
 				expire = response.body.expire
 				expire ?= response.body.expires
 				expire ?= response.body.expires_in
@@ -213,7 +209,7 @@ class OAuth2 extends OAuthBase
 			accept:req.headers.accept
 			'accept-encoding':req.headers['accept-encoding']
 			'accept-language':req.headers['accept-language']
-			'content-type':req.headers['content-type']
+			'content-type':req.headers['content-type'] or 'application/json'
 			'User-Agent': 'OAuth.io'
 		for name, value of oauthrequest.headers
 			param = @_replaceParam value, parameters.oauthio, parameters
