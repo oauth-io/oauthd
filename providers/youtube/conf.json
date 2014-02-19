@@ -1,6 +1,6 @@
 {
     "name": "YouTube",
-    "desc": "The Data API gives users programmatic access to the video and user information stored on YouTube. This can be used to personalize a web site or application with the user's existing information as well as perform actions like commenting on and rating videos. This RESTful API provides responses in XML format. \nThis integration can be used for a variety of uses such as developing a web application allowing users to upload video to YouTube, or a device or desktop application that brings the YouTube experience to a new platform.",
+    "desc": "The Data API gives users programmatic access to the video and user information stored on YouTube. This integration can be used for a variety of uses such as developing a web application allowing users to upload video to YouTube, or a device or desktop application that brings the YouTube experience to a new platform. This RESTful API provides responses in XML format. ",
     "url": "https://accounts.google.com/o/oauth2",
     "oauth2": {
         "authorize": {

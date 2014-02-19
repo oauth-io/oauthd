@@ -1,6 +1,6 @@
 {
 	"name": "Foursquare",
-    "desc": "Foursquare makes the real world easier to use. We build tools that help you keep up with friends, discover what’s nearby, save money and unlock deals. Whether you’re setting off on a trip around the world, coordinating a night out with friends, or trying to pick out the best dish at your local restaurant, foursquare is the perfect companion. The foursquare APIs grants access to the company's database of locations as well as information on venue check in's. The APIs are: The Core API, Real-time API, Merchant Platform, Venues Platform. The APIs are RESTful and support XML, JSON, JSONP.",
+	"desc": "Foursquare makes the real world easier to use. We build tools that help you keep up with friends, discover what’s nearby, save money and unlock deals. Whether you’re setting off on a trip around the world, coordinating a night out with friends, or trying to pick out the best dish at your local restaurant, foursquare is the perfect companion. The foursquare APIs grants access to the company's database of locations as well as information on venue check in's. The APIs are: The Core API, Real-time API, Merchant Platform, Venues Platform. The APIs are RESTful and support XML, JSON, JSONP.",
 	"url": "https://foursquare.com/oauth2",
 	"oauth2": {
 		"authorize": {

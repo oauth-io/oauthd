@@ -1,10 +1,12 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "https://api.23andme.com/apply"
+			"url": "https://api.23andme.com/apply",
+            "image": "config.png"
 		},
 		"copyingKey": {
-			"url": "https://api.23andme.com/dev"
+			"url": "https://api.23andme.com/dev",
+            "image": "keys.png"
 		},
 		"install": {
 			"href": {
