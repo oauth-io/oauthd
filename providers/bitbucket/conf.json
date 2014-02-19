@@ -1,7 +1,7 @@
 {
 	"name": "BitBucket",
-    "desc": "Bitbucket allows you to store all of your Git and Mercurial source code in one place with unlimited private repositories. Bitbucket includes issue tracking, wiki, and pull requests. Bitbucket aims to offer a suite of tools for effective management of code repositories for teams over any number of projects. The Bitbucket API provides programmatic access to Bitbucket's services, allowing users to manage group repository permissions, group memberships, invitations to other users and manage user privileges. Bitbucket's REST API operates solely over HTTPS, and can respond in either JSON or XML.",
-	"url": "https://bitbucket.org/api/1.0/oauth",
+    "desc": "Bitbucket allows you to store all of your Git and Mercurial source code in one place with unlimited private repositories. Bitbucket includes issue tracking, wiki, and pull requests. \nThe Bitbucket API provides programmatic access to Bitbucket's services, allowing users to manage group repository permissions, group memberships, invitations to other users and manage user privileges. Bitbucket's REST API operates solely over HTTPS, and can respond in either JSON or XML.",
+    "url": "https://bitbucket.org/api/1.0/oauth",
 	"oauth1": {
 		"request_token": "/request_token",
 		"authorize": "/authenticate",
