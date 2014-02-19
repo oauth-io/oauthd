@@ -6,7 +6,6 @@
 		"authorize": "/authorize",
 		"access_token": "/access_token",
 		"request": {
-			"url": "https://api.weibo.com/2",
 			"query": {
 				"access_token": "{{token}}"
 			},
