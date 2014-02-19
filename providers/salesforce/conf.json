@@ -1,7 +1,7 @@
 {
 	"name": "Salesforce",
-    "desc": "Salesforce.com API provides programmatic access to an organization�s information and allows developers to implement custom functionality. The worldwide leader in on-demand customer relationship management (CRM) services. More companies trust their vital customer and sales data to salesforce.com than any other on-demand CRM company in the world. The Apex platform and API extends Salesforce and the AppExchange is a directory of on-demand applications. The Force.com web services API allows users to create, retrieve, update or delete records, such as accounts, leads, and custom objects. With more than 20 different calls, the API also allows users to maintain passwords, perform searches, and much more.",
-	"url": "https://login.salesforce.com/services/oauth2",
+    "desc": "Salesforce.com API provides programmatic access to an organization’s information and allows developers to implement custom functionality. The Apex platform and API extends Salesforce and the AppExchange is a directory of on-demand applications. \nWith more than 20 different calls the web services API allows users to create, retrieve, update or delete records, such as accounts, leads, and custom objects, perform searches, and much more.",
+    "url": "https://login.salesforce.com/services/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": {
