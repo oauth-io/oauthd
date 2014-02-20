@@ -1,7 +1,8 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "https://www.ohloh.net/"
+			"url": "https://www.ohloh.net/",
+            "image": "config.png"
 		},
 		"copyingKey": {
 			"url": "https://www.ohloh.net/",
