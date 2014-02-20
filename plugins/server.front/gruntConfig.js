@@ -14,6 +14,12 @@ module.exports = function(gruntConf) {
 		],
 		tasks: ['less:front-compile']
 	};
+	gruntConf.watch['proxy'] = {
+		files: [
+			__dirname + '/proxy/coffee/{,*/}*.coffee'
+		],
+		tasks: ['coffee:compile-proxy']
+	};
 
 	gruntConf.coffee['front-compile'] = {
 		expand: true,
@@ -30,6 +36,16 @@ module.exports = function(gruntConf) {
 		cwd: __dirname + '/app/adm',
 		src: ['{,*/}*.coffee'],
 		dest: __dirname + '/app/adm/js',
+		ext: '.js',
+		options: {
+			bare: true
+		},
+	};
+	gruntConf.coffee['compile-proxy'] = {
+		expand: true,
+		cwd: __dirname + '/proxy/coffee',
+		src: ['{,*/}*.coffee'],
+		dest: __dirname + '/proxy/js',
 		ext: '.js',
 		options: {
 			bare: true
