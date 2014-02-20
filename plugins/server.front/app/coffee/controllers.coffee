@@ -927,6 +927,7 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 			$scope.providerConf = provider
 			$scope.parameters = provider.data.oauth2?.parameters || provider.data.oauth1?.parameters || {}
 			$scope.settings = settings
+			$scope.key_image = settings.data.settings.copyingKey.image
 
 			for k,v of provider.data.parameters
 				$scope.parameters[k] = v
@@ -1022,9 +1023,11 @@ ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppServic
 	$scope.state = 1
 
 	$scope.providerTemplate = '/templates/partials/provider/configure.html'
+	$scope.configuration_text_class = 'col-lg-6'
 
 	ProviderService.get $routeParams.provider, ((provider) ->
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.conf_image = settings.data.settings.createApp.image
 			$scope.providerConf = provider
 			$scope.settings = settings
 			$scope.provider = $routeParams.provider
