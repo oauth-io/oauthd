@@ -1,6 +1,6 @@
 {
 	"name": "Google Enterprise Audit",
-	"desc": "With the Google Apps Admin Audit API you can survey the activities of all of your account's administrators. The API gives details about changes to a key subset of your Google Apps services and features settings including settings for Calendar, Chat, your delegated administrators, Docs, domain configuration, Gmail, Groups, mobile settings, organization hierarchy, Sites, and user settings. In addition to the setting changes, the API returns specifics about the change activity itself, including the IP address used by the administrator. This API's functionality is a key building block for your Google Apps account's IT infrastructure.",
+	"desc": "With the Google Apps Admin Audit API you can survey the activities of all of your account's administrators. The API gives details about changes to a key subset of your Google Apps services and features settings including settings for Calendar, Chat, your delegated administrators, Docs, domain configuration, Gmail, Groups, mobile settings, organization hierarchy, Sites, and user settings. This API's functionality is a key building block for your Google Apps account's IT infrastructure.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": {
