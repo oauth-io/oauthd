@@ -9,6 +9,7 @@
 restify = require 'restify'
 fs = require 'fs'
 Url = require 'url'
+proxy = require './proxy/js'
 
 {db} = shared = require '../shared'
 
@@ -89,6 +90,9 @@ exports.setup = (callback) ->
 				sendres()
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
+
+		@server.get '/proxy', (req, res, next) ->
+			proxy(req, res, next);
 
 		@server.get '/logout', (req, res, next) =>
 			res.setHeader 'Set-Cookie', 'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
