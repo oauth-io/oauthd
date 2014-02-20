@@ -5,7 +5,8 @@
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.plurk.com/PlurkApp/"
+			"url": "http://www.plurk.com/PlurkApp/",
+			"image": "keys.png"
 		},
 		"install": {
 			"href": {
