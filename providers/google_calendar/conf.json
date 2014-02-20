@@ -1,6 +1,6 @@
 {
 	"name": "Google Calendar",
-	"desc": "The Calendar Data API lets users perform most of the operations a normal Google Calendar user can on the Google Calendar website. Google Calendar allows client applications to view and update calendar events in the form of Google data API, GData, feeds. The Calendar Data API lets users incorporate Calendar functionality into their own application or website. Users can edit calendars, create and delete events, query for events that match particular criteria, send invitations, and more. There are many possible uses for the Calendar data API. For example, users can create a web front end for a group calendar that uses Google Calendar as a back end. Or a public calendar can be generated for Google Calendar to display, based on a company event database. Or users can search relevant calendars to display a list of upcoming events on those calendars.",
+	"desc": "The Calendar Data API lets users perform most of the operations a normal Google Calendar user can on the Google Calendar website. Google Calendar allows client applications to view and update calendar events in the form of Google data API, GData, feeds. The Calendar Data API lets users incorporate Calendar functionality into their own application or website. Users can edit calendars, create and delete events, query for events that match particular criteria, send invitations, and more.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": {
