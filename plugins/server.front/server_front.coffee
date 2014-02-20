@@ -64,7 +64,7 @@ init = (callback) ->
 exports.setup = (callback) ->
 	init.call @, (e) =>
 		console.error 'error', e if e
-
+		
 		sendIndex = (req, res, next) ->
 			if req.headers.host == 'www.oauth.io'
 				res.setHeader 'Location', 'https://oauth.io'
