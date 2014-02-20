@@ -532,6 +532,15 @@ pre .comment {
 }
 .ui.four.steps > .step {
   width: 25%;
+  &:nth-last-child(2) {
+    width: 22%;
+  }
+
+  &.active {
+    &:nth-last-child(2) {
+      width: 25%;
+    }
+  }
 }
 .ui.five.steps > .step {
   width: 20%;
