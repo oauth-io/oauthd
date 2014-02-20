@@ -22,8 +22,8 @@
 		},
 		"request": "https://www.googleapis.com/",
 		"refresh": "/token",
-		"revoke": {
-			"url": "/revoke",
+		"revoke": 
+{			"url": "/revoke",
 			"method": "post",
 			"query": {
 				"token": "{{token}}"
