@@ -235,11 +235,6 @@ class OAuth1 extends OAuthBase
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.headers[name] = param if param
 
-		# build body
-		if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
-			options.body = req._body || req.body
-			delete options.body if typeof options.body == 'object'
-
 		# do request
 		callback null, request(options)
 
