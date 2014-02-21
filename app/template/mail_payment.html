@@ -71,9 +71,9 @@ border-width: 1px">
                   <td width="498">
                     <div style="color: black;">
 
-                      <p>Dear {{user.profile.name}},</p>
+                      <p>Dear {{customer.name}},</p>
                       <p>
-                       You have chosen the {{invoice.plan_name}} offer.
+                       You have chosen the {{invoice.plan.name}} offer.
                       </p>
                       <p>
                       For any questions about integration and following of your plan, you can email us directly at support@oauth.io.
@@ -88,52 +88,38 @@ border-width: 1px">
                       <hr>
 
                       <div style="margin-bottom:30px;overflow:hidden; border-width: 0px; border-style: solid; border-color:#000000;float:left;width:60%">
-                        <p class="other"><strong>Your information</strong> </p>
-                        <p style="line-height: 0.5;">{{user.profile.company}}</p>
-                        <p style="line-height: 0.5;">{{user.profile.name}}</p>
-                        <p style="line-height: 0.5;">{{user.profile.addr_one}}</p>
-                        <p style="line-height: 0.5;">{{user.profile.addr_second}}</p>
-                        <p style="line-height: 0.5;">{{user.profile.zipcode}}, {{user.profile.city}}</p>
-                        <p style="line-height: 0.5;">{{user.profile.country}}</p>
-                      </div>
-
-                      <div style="margin-bottom:30px;overflow:hidden; border-width: 0px; border-style: solid; border-color:#000000;float:left;width:60%">
                         <p class="other"><strong>Billing information</strong> </p>
-                        <p style="line-height: 0.5;">{{user.billing.company}}</p>
-                        <p style="line-height: 0.5;">{{user.billing.name}}</p>
-                        <p style="line-height: 0.5;">{{user.billing.addr_one}}</p>
-                        <p style="line-height: 0.5;">{{user.billing.addr_second}}</p>
-                        <p style="line-height: 0.5;">{{user.billing.zipcode}}, {{user.billing.city}}</p>
-                        <p style="line-height: 0.5;">{{user.billing.country}}</p>
+                        <% if (customer.type == "company") { %>
+                        <p style="line-height: 0.5;">{{customer.company}}</p>
+                        <p style="line-height: 0.5;">{{customer.name}}</p>
+                        <p style="line-height: 0.5;">{{(customer.addr_one || "").replace(/\n/g,"<br/>")}}</p>
+                        <p style="line-height: 0.5;">{{customer.zipcode}}, {{customer.city}}</p>
+                        <p style="line-height: 0.5;">{{customer.country}}</p>
+                        <% } else { %>
+                        <p style="line-height: 0.5;">{{customer.name}}</p>
+                        <p style="line-height: 0.5;">{{customer.country}}</p>
+                        <% } %>
                       </div>
 
                       <div style="margin-bottom:30px;overflow:hidden;float:left;width:100%">
+                      <p style="line-height: 0.5;">Reference : {{invoice.id}} </p>
                       <p style="line-height: 0.5;">Date : {{date}} </p>
-                      <p style="line-height: 0.5;">Payment date : {{invoice.date_invoice}} </p>
+                      <p style="line-height: 0.5;">Period : {{invoice.period_start}} to {{invoice.period_end}} </p>
                       <p style="line-height: 0.5;">Payment type : Credit Card </p>
                       </div>
                       <table BORDER="1"  cellpadding="10" style="border-color:#000000; border-collapse:collapse; width:100%" >
                         <caption> <strong>Invoice</strong> </caption>
                         <tr>
-                          <th style="background-color: #cbe7f9; color: #0074a2;"> Order number </th>
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Offer </th>
-                          <th style="background-color: #cbe7f9; color: #0074a2;"> Quantity </th>
                           <th style="background-color: #cbe7f9; color: #0074a2;"> Unit Price </th>
-                          <th style="background-color: #cbe7f9; color: #0074a2;"> Total </th>
                         </tr>
                         <tr>
-                         <td > {{invoice.num_order}} </td>
-                         <td > {{invoice.plan_name}} </td>
-                         <td > {{invoice.quantity}} </td>
-                         <td > ${{invoice.unit_price}} </td>
-                         <td > ${{invoice.unit_price}} </td>
+                         <td > {{invoice.plan.name}} </td>
+                         <td > {{invoice.amount / 100}} {{invoice.currency.toUpperCase()}} </td>
                         </tr>
                         <tr>
-                          <th>  </th>
-                          <th>  </th>
-                          <th>  </th>
                           <th style="background-color: #cbe7f9; color: #0074a2;" > Total DUE </th>
-                          <td>${{invoice.total}}</td>
+                          <td>{{invoice.amount / 100}} {{invoice.currency.toUpperCase()}}</td>
                         </tr>
                       </table>
 
@@ -168,8 +154,6 @@ border-width: 1px">
           <td align="left">
             <table cellspacing="0" cellpadding="0" border="0" align="center">
               <tr>
-                <td width="100%"><p style="font-family: Helvetica, sans-serif; font-size:12px;">You're receiving this email because you signed up to <a href="https://oauth.io/">OAuth.io</a></p> <p style="font-family: Helvetica, sans-serif; font-size:12px; font-weight:bold"></p></td>
-
         <td width="498">
 
      </td>
@@ -177,10 +161,7 @@ border-width: 1px">
 <a style="display:block; text-align:right;" href="https://oauth.io/contact-us/">  <img src="http://img11.hostingpics.net/pics/570548mail.png"></a></td>
  <td width="40"><a style="display:block; text-align:right" href="https://twitter.com/OAuth_io"> <img src="http://img4.hostingpics.net/pics/247422twitter.png"></a></td>
               </tr>
-
                   </div>
-
-
             </table>
           </td>
         </tr>

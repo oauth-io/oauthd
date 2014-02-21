@@ -11,6 +11,7 @@ async = require 'async'
 Mailer = require '../../lib/mailer'
 
 restify = require 'restify'
+countries = require './countries'
 
 PaymillBase = require './paymill_base'
 DbUser = require '../server.users/db_users'
@@ -431,13 +432,53 @@ createCustomer = (data, callback) ->
 		return callback err if err
 		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
 
+formatDate = (date) ->
+	months = ['January', 'February', 'March', 'April', 'May', 'June', 'Jully', 'August', 'September', 'October', 'November', 'December']
+	return months[date.getUTCMonth()] + " " + date.getUTCDate() + ", " + date.getUTCFullYear() + " UTC"
+
+sendInvoice = (data, callback) ->
+	lines = data.invoice.lines.data[0]
+	customer = data.customer.metadata
+
+	name_template = "mail_payment"
+	name_template += "_fr" if lines.plan.id.indexOf('_fr') != -1
+
+	lines.id = data.invoice.id.substr(3)
+	lines.period_start = formatDate(new Date lines.period.start * 1000)
+	lines.period_end = formatDate(new Date lines.period.end * 1000)
+
+	customer.country = countries[customer.country_code || "US"]
+
+	options =
+		templateName: name_template
+		templatePath: "./app/template/"
+		to:
+			email: data.customer.email
+		from:
+			name: 'OAuth.io'
+			email: 'team@oauth.io'
+		subject: 'OAuth.io - Your payment has been received'
+
+	mailer = new Mailer options,
+		date: formatDate(new Date)
+		customer: customer
+		invoice: lines
+
+	mailer.send (err, result) ->
+		return callback err if err
+		callback()
+
 exports.payment_succeeded = (data, callback) ->
 	console.log 'payment_succeeded', data
 	stripe.customers.retrieve data.customer, (err, customer) ->
 		return callback err if err
 		console.log '-> customer', customer
-		shared.emit 'user.pay', user:user, invoice:invoice
-		callback()
+		sendInvoice customer:customer, invoice:data, (err) ->
+			return callback err if err
+			db.users.get customer.metadata.id, (err, user) ->
+				return callback err if err
+				shared.emit 'user.pay', user:user, invoice:invoice
+				callback()
 
 exports.payment_failed = (data, callback) ->
 	console.log 'payment_failed'
