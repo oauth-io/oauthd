@@ -17,6 +17,7 @@
         "sample": {
             "method": "get",
             "url": "/user"
-        }
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/2hb6B/embedded/"
 	}
 }
