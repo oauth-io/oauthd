@@ -14,28 +14,34 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-dbstates = require './db_states'
 db = require './db'
+querystring = require 'querystring'
+config = require './config'
 
 class OAuthBase
-	constructor: (oauthv) ->
+	constructor: (oauthv, provider, parameters) ->
 		@_params = {}
 		@_oauthv = oauthv
+		@_provider = provider
+		@_parameters = parameters
 		@_short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
+		@_serverCallbackUrl = config.host_url + config.relbase
+		@_setParams @_provider.parameters
+		@_setParams @_provider[oauthv].parameters
 
 	_setParams: (parameters) ->
 		@_params[k] = v for k,v of parameters
 		return
 
-	_replaceParam: (param, hard_params, keyset) ->
+	_replaceParam: (param, hard_params) ->
 		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
 			return db.generateUid() if val == "nonce"
 			return hard_params[val] || ""
 		return param.replace /\{(.*?)\}/g, (match, val) =>
-			return "" if ! @_params[val] || ! keyset[val]
-			if Array.isArray(keyset[val])
-				return keyset[val].join @_params[val].separator || ","
-			return keyset[val]
+			return "" if ! @_params[val] || ! @_parameters[val]
+			if Array.isArray(@_parameters[val])
+				return @_parameters[val].join(@_params[val].separator || ",")
+			return @_parameters[val]
 
 	_createState: (provider, opts, callback) ->
 		newStateData =
@@ -46,6 +52,46 @@ class OAuthBase
 			origin: opts.origin,
 			options: opts.options,
 			expire: 1200
-		dbstates.add newStateData, callback
+		db.states.add newStateData, callback
+
+	_buildQuery : (configuration, placeholderValues, defaultParameters) ->
+		query = if (defaultParameters instanceof Object) then defaultParameters else {}
+		# replaces '{{placeholder1}}' in placeholders[parameterName]
+		# with matching placeholderValues's 'placeholder1' value
+		for parameterName, placeholder of configuration
+			param = @_replaceParam(placeholder, placeholderValues)
+			query[parameterName] = param if param
+		return query
+
+	_buildAuthorizeUrl: (url, query, stateId) ->
+		url = @_replaceParam(url, {})
+		url += "?" + querystring.stringify(query)
+		return { url: url, state: stateId }
+
+	_buildServerRequestUrl: (encodedURI, configurationUrl) ->
+		url = decodeURIComponent(encodedURI)
+		if ! url.match(/^[a-z]{2,16}:\/\//)
+			if url[0] != '/'
+				url = '/' + url
+			url = configurationUrl + url
+		return @_replaceParam(url, @_parameters.oauthio)
+
+	_buildServerRequestQuery: (query, configurationQuery) ->
+		presetQuery = {}
+		presetQuery[name] = value for name, value of query
+		return @_buildQuery(configurationQuery, @_parameters.oauthio, presetQuery)
+
+	_buildServerRequestHeaders: (reqHeaders, configurationHeaders) ->
+		headers = {
+			accept: reqHeaders.accept
+			'accept-encoding': reqHeaders['accept-encoding']
+			'accept-language': reqHeaders['accept-language']
+			'content-type': reqHeaders['content-type']
+			'User-Agent': 'OAuth.io'
+		}
+		for parameterName, placeholder of configurationHeaders
+			param = @_replaceParam(placeholder, @_parameters.oauthio)
+			headers[parameterName] = param if param
+		return headers
 
 module.exports = OAuthBase
