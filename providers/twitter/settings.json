@@ -18,6 +18,7 @@
         "sample": {
             "method": "get",
             "url" : "/account/verify_credentials"
-        }
+        },
+        "jsfiddle": "http://jsfiddle.net/thyb/kZExJ/embedded/"
 	}
 }
