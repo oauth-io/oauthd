@@ -13,6 +13,7 @@
 				"provider": "http://www.flickr.com/",
 				"docs": "http://www.flickr.com/services/api/"
 			}
-		}
+		},
+		"jsfiddle": "http://jsfiddle.net/thyb/8dHd4/embedded/"
 	}
 }
