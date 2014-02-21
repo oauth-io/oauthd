@@ -967,9 +967,10 @@ ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderSer
 	$scope.state = 4
 
 	$scope.providerTemplate = '/templates/partials/provider/sample.html'
-	$scope.loaded_fiddle = false
+	$scope.loaded_fiddle = true
 	$scope.loadedJsFiddle = ->
-		$scope.loaded_fiddle = true
+		$scope.loaded_fiddle = false
+		$scope.$apply()
 
 	AppService.get $routeParams.app, ((app) =>
 		delete app.data.secret
