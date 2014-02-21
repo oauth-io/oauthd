@@ -16,7 +16,8 @@
 		},
         "sample": {
             "method": "get",
-            "url": "/users/me/settings"
-        }
+            "url": "/plus/v1/people/me"
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/LMH5k/embedded/"
 	}
 }
