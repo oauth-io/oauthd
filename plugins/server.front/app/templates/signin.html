@@ -62,38 +62,26 @@
 			        			<h3 style="text-align: center; margin-bottom: 54px; font-weight: normal; font-size: 22px;">Connect with...</h3>
 								<div class="row" style="margin-top: -5px">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Twitter" class="btn btn-block btn-large text-center github" style="margin-top: 15px;" ng-click="socialSignin('twitter')">
-											<img src="/api/providers/twitter/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Twitter" style="margin-top: 15px;" ng-click="socialSignin('twitter')" class="img-responsive" src="/api/providers/twitter/logo-button.png">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Facebook" class="btn btn-block btn-large github text-center" style="margin-top: 15px;" ng-click="socialSignin('facebook')">
-											<img src="/api/providers/facebook/logo">
-										</button>
+										<img class="img-responsive" ng-click="socialSignin('facebook')" data-toggle="tooltip" data-placement="top" title="Facebook" src="/api/providers/facebook/logo-button.png" style="margin-top: 15px;">
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Google" class="btn btn-block btn-large github text-center" style="margin-top: 15px;" ng-click="socialSignin('google')">
-											<img src="/api/providers/google/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Google" class="img-responsive" src="/api/providers/google/logo-button.png" ng-click="socialSignin('google')" style="margin-top: 15px;">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Linkedin" class="btn btn-block btn-large github text-center" style="margin-top: 15px;" ng-click="socialSignin('linkedin')">
-											<img src="/api/providers/linkedin/logo">
-										</button>
+										<img class="img-responsive" data-toggle="tooltip" data-placement="top" title="Linkedin" src="/api/providers/linkedin/logo-button.png" ng-click="socialSignin('linkedin')" style="margin-top: 15px;">
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Github" class="btn btn-block btn-large github text-center" style="margin-top: 15px;" ng-click="socialSignin('github')">
-											<img src="/api/providers/github/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Github" src="/api/providers/github/logo-button.png" class="img-responsive" style="margin-top: 15px;" ng-click="socialSignin('github')">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="VK" class="btn btn-block btn-large github text-center" style="margin-top: 15px;" ng-click="socialSignin('vk')">
-											<img src="/api/providers/vk/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="VK" src="/api/providers/vk/logo-button.png" class="img-responsive" style="margin-top: 15px;" ng-click="socialSignin('vk')">
 									</div>
 								</div>
 							</div>
@@ -116,7 +104,7 @@
       <div class="modal-body">
         <p style="font-size: 1.3em; text-align: center">Signup with {{provider}} in 30 seconds!</p>
         <p style="text-align: center; margin: 15px 0 50px;"><a ng-href="/signup/{{provider}}" class="btn btn-lg btn-primary">Sign up with {{provider}}</a></p>
-        <p style="font-size: 1.3em; color: #AAA; text-align: center">If you already have an account, you can connect {{provider}} from your Account Settings page.</p>
+        <p style="font-size: 1.3em; color: #AAA; text-align: center">If you already have an account, you can link {{provider|capitalize}} to you account from your Settings page (in the Account menu).</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

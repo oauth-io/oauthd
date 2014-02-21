@@ -194,17 +194,12 @@ exports.isValidable = (data, callback) ->
 			pass: replies[3]
 			mail_changed: replies[4]
 
-		console.log "validable"
 		return callback err if err
 		# return callback null, is_validable: false if user.pass? and not user.mail_changed? or not user.pass? and user.mail_changed?
-		console.log "pass1"
 		return callback null, is_validable: false if user.key != key
-		console.log "pass2"
 
 		if user.pass? and user.mail_changed? # change email
-			console.log "change email"
 			return callback null, is_validable: false if user.mail_changed.length == 0
-			console.log "pass3"
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
 				[ 'hset', 'u:mails', replies[4], iduser ],
@@ -216,9 +211,7 @@ exports.isValidable = (data, callback) ->
 				return callback err  if err
 				return callback null, is_updated: true, mail: user.mail_changed, id: iduser
 		else # validable but no password
-			console.log "validable"
 			return callback null, is_validable: false if user.validated == '1'
-			console.log "pass4"
 			return callback null, is_validable: true, mail: user.mail, id: iduser
 
 # validate user mail

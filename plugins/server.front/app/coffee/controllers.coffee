@@ -125,7 +125,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 	if UserService.isLogin()
 		$location.path '/key-manager'
 
-	$('#socialConnect button').tooltip()
+	$('#socialConnect img').tooltip()
 
 	if not $scope.info
 		if document.location.hash.match /^#err=./
@@ -191,7 +191,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.canSignin = $scope.needEmail = $scope.success = false
 		UserService.signupOAuth $scope.user, $scope.social, ((data) ->
 			#console.log data.validated, not data.validated
-			$scope.notValidated = not data.validated
+			$scope.notValidated = not data.data.validated
 			$scope.success = true
 			$scope.loading = $scope.needEmail = false
 		), (error) ->
