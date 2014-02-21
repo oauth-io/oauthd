@@ -102,6 +102,25 @@ app.directive 'lightbox', ($timeout) ->
 						$('.modal-backdrop').remove()
 
 
+app.directive "fiddleIframe", ->
+	linkFn = (scope, element, attrs) ->
+		element.find("iframe").bind "load", (event) ->
+			console.log 'YOUGOU', scope.ngLoad
+			scope.ngLoad();
+	dir = 
+		restrict: "EA",
+		scope:
+			src: "@src"
+			height: "@height"
+			width: "@width"
+			scrolling: "@scrolling"
+			ngLoad: "="
+			allowFullScreen: '@allowfullscreen',
+		template: '<iframe class="frame" allowfullscreen="{{ allowfullscreen }}" height="{{height}}" width="{{width}}" frameborder="0" border="0" marginwidth="0" marginheight="0" scrolling="{{scrolling}}" src="{{src}}"></iframe>'
+		link: linkFn
+	return dir
+
+
 # app.directive 'paymentform', () ->
 # 	def =
 # 		restrict: 'E'

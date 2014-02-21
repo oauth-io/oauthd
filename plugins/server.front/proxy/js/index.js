@@ -5,11 +5,12 @@ url = require('url');
 request = require('request');
 
 transform_urls = function(data, host) {
-  data = data.replace(/src=[\"'](\/.+?)[\"']/g, 'src="' + '/proxy?url=' + host + '$1' + '"');
-  data = data.replace(/href=[\"'](\/.+?)[\"']/g, 'href="' + '/proxy?url=' + host + '$1' + '"');
-  data = data.replace(/src=[\"'](http:.+?)[\"']/g, 'src="' + '/proxy?url=' + '$1' + '"');
-  data = data.replace(/href=[\"'](http:.+?)[\"']/g, 'href="' + '/proxy?url=' + '$1' + '"');
-  data = data.replace(/[\"'](http:.+?)[\"']/g, '"' + '/proxy?url=' + '$1' + '"');
+  data = data.replace(/(script.+?src=[\"'])(\/.+?)([\"'])/g, '$1' + '/proxy?url=' + host + '$2' + '$3');
+  data = data.replace(/(link.+?href=[\"'])(\/.+?)([\"'])/g, '$1' + '/proxy?url=' + host + '$2' + '$3');
+  data = data.replace(/(script.+?src=[\"'])(http:.+?)([\"'])/g, '$1' + '/proxy?url=' + '$2' + '$3');
+  data = data.replace(/(link.+?href=[\"'])(http:.+?)([\"'])/g, '$1' + '/proxy?url=' + '$2' + '$3');
+  data = data.replace(/(a.+?href=[\"'])(\/.+?)([\"'])/g, '$1' + host + '$2' + '$3');
+  data = data.replace(/\ =\ [\"'](http:.+?)[\"']/g, ' = "' + '/proxy?url=' + '$1' + '"');
   return data;
 };
 
