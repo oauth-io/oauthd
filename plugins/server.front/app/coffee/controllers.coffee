@@ -226,7 +226,6 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				$scope.user.mail = data[me[provider].mail]
 				$scope.user.company = data[me[provider].company]
 
-				console.log $scope.user
 				$scope.social =
 					provider: provider
 					token: res.access_token
