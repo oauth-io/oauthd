@@ -16,7 +16,8 @@
         },
         "sample": {
             "method": "get",
-            "url": "/1.1/account/verify_credentials.json"
-        }
+            "url": "/v1/people/~"
+        },
+        "jsfiddle": "http://jsfiddle.net/thyb/Ar4xC/1/embedded/"
     }
 }

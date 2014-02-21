@@ -900,11 +900,37 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 	), (error) ->
 		console.log "error", error
 
+	$scope.modifyType = (type) ->
+		$scope.createKeyType = type
+		
+
+
+	# createKey saves given keys for the app and provider.
+	$scope.createKey = ->
+		data = {}
+		conf = $scope.parameters
+		for field of conf
+			if not conf[field].value && (field != 'scope' && field != 'permissions' && field != 'perms') # pas propre
+				$rootScope.error.state = true
+				$rootScope.error.type = "CREATE_KEY"
+				$rootScope.error.message = "#{field} must be set"
+				break;
+			data[field] = conf[field].value
+		KeysetService.add $routeParams.app, $routeParams.provider, data, $scope.createKeyType || 'both', ((keysetEntry) ->
+			$location.path '/provider/' + $routeParams.provider + '/app/' + $routeParams.app + '/samples'
+		), (error) ->
+			console.log "error", error
+	##
+
 	ProviderService.get $routeParams.provider, ((provider) ->
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
 			$scope.providerConf = provider
 			$scope.parameters = provider.data.oauth2?.parameters || provider.data.oauth1?.parameters || {}
 			$scope.settings = settings
+			$scope.key_image = settings.data.settings.copyingKey.image
+
+			for k,v of provider.data.parameters
+				$scope.parameters[k] = v
 
 			$http(
 				method: "GET"
@@ -917,7 +943,7 @@ ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, Pr
 
 			$scope.apikeyUpdate = false
 			KeysetService.get $routeParams.app, $routeParams.provider, ((json) ->
-				console.log $scope.parameters, json.data
+				$scope.createKeyType = json.data?.response_type
 				if json.data?
 					$scope.apikeyUpdate = true
 					for field of json.data.parameters
@@ -941,9 +967,11 @@ ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderSer
 	$scope.state = 4
 
 	$scope.providerTemplate = '/templates/partials/provider/sample.html'
+	$scope.loaded_fiddle = false
+	$scope.loadedJsFiddle = ->
+		$scope.loaded_fiddle = true
 
 	AppService.get $routeParams.app, ((app) =>
-		console.log app.data
 		delete app.data.secret
 		$scope.app = app.data
 		$scope.app.keysets.sort()
@@ -998,9 +1026,11 @@ ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppServic
 	$scope.state = 1
 
 	$scope.providerTemplate = '/templates/partials/provider/configure.html'
+	$scope.configuration_text_class = 'col-lg-6'
 
 	ProviderService.get $routeParams.provider, ((provider) ->
 		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.conf_image = settings.data.settings.createApp.image
 			$scope.providerConf = provider
 			$scope.settings = settings
 			$scope.provider = $routeParams.provider

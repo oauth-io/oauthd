@@ -532,6 +532,15 @@ pre .comment {
 }
 .ui.four.steps > .step {
   width: 25%;
+  &:nth-last-child(2) {
+    width:  calc(~'25% - 17px');
+  }
+
+  &.active {
+    &:nth-last-child(2) {
+      width: 25%;
+    }
+  }
 }
 .ui.five.steps > .step {
   width: 20%;
@@ -703,3 +712,5 @@ pre .comment {
   background-color: #405E7E;
   color: #FFFFFF;
 }
+
+@import "./provider-page";

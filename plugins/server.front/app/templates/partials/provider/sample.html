@@ -98,9 +98,13 @@
 	</div>
 </div>
 
-<div class="row">
-	<div class="col col-lg-12">
+<div class="row fiddle-container" ng-show="settings.data.settings.jsfiddle">
+	<div class="col col-lg-12" >
 		<h1>Full example</h1>
-		<iframe width="100%" height="300" src="http://jsfiddle.net/thyb/dqFcU/1/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+		<fiddle-iframe width="100%" height="300" ng-load="loadedJsFiddle" src="/proxy?url={{ settings.data.settings.jsfiddle }}" allowfullscreen="allowfullscreen" frameborder="0"></fiddle-iframe>
+	</div>
+	<div class="spinner_wrapper" ng-show="!loaded_fiddle">
+		<div class="spinner"></div>
+		Loading JSFiddle example
 	</div>
 </div>
