@@ -47,70 +47,6 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 				shared.emit 'user.register', user
 				return callback null, user
 
-exports.updateBilling = (req, callback) ->
-	profile = req.body.profile
-	billing = req.body.billing
-	user_id = req.user.id
-	profile_prefix = "u:#{user_id}:"
-	billing_prefix = "u:#{user_id}:billing:"
-	cmds = []
-
-	if profile?
-		cmds.push [ 'mset', profile_prefix + 'mail', db.emptyStrIfNull(profile.mail),
-			profile_prefix + 'name', db.emptyStrIfNull(profile.name),
-			profile_prefix + 'company', db.emptyStrIfNull(profile.company),
-			profile_prefix + 'website', db.emptyStrIfNull(profile.website),
-			profile_prefix + 'addr_one', db.emptyStrIfNull(profile.addr_one),
-			profile_prefix + 'addr_second', db.emptyStrIfNull(profile.addr_second),
-			profile_prefix + 'city', db.emptyStrIfNull(profile.city),
-			profile_prefix + 'zipcode', db.emptyStrIfNull(profile.zipcode),
-			profile_prefix + 'country_code', db.emptyStrIfNull(profile.country_code),
-			profile_prefix + 'country', db.emptyStrIfNull(profile.country),
-			profile_prefix + 'state', db.emptyStrIfNull(profile.state),
-			profile_prefix + 'phone', db.emptyStrIfNull(profile.phone),
-			profile_prefix + 'type', profile.type,
-			profile_prefix + 'vat_number', db.emptyStrIfNull(profile.vat_number),
-			profile_prefix + 'use_profile_for_billing', profile.use_profile_for_billing ]
-
-	if billing?
-		Payment = require '../server.payments/db_payments'
-		Payment.getCart user_id, (err, cart) ->
-			return callback err if err
-
-			cart_prefix = "pm:carts:#{user_id}:"
-			total = cart.unit_price * cart.quantity
-			if billing.country_code == "FR"
-				tva = 0.20
-				total_tva = Math.floor((total * tva) * 100) / 100
-				total += total_tva
-				total = Math.floor(total * 100) / 100
-			else
-				tva = 0
-				total_tva = 0
-
-			cmds.push [ 'mset', billing_prefix + 'mail', db.emptyStrIfNull(billing.mail),
-				billing_prefix + 'name', db.emptyStrIfNull(billing.name),
-				billing_prefix + 'company', db.emptyStrIfNull(billing.company),
-				billing_prefix + 'website', db.emptyStrIfNull(billing.website),
-				billing_prefix + 'addr_one', db.emptyStrIfNull(billing.addr_one),
-				billing_prefix + 'addr_second', db.emptyStrIfNull(billing.addr_second),
-				billing_prefix + 'city', db.emptyStrIfNull(billing.city),
-				billing_prefix + 'zipcode', db.emptyStrIfNull(billing.zipcode),
-				billing_prefix + 'country_code', db.emptyStrIfNull(billing.country_code),
-				billing_prefix + 'country', db.emptyStrIfNull(billing.country),
-				billing_prefix + 'state', db.emptyStrIfNull(billing.state),
-				billing_prefix + 'phone', db.emptyStrIfNull(billing.phone),
-				billing_prefix + 'type', billing.type,
-				billing_prefix + 'vat_number', db.emptyStrIfNull(billing.vat_number),
-
-				cart_prefix + 'VAT_percent', tva * 100,
-				cart_prefix + 'VAT', total_tva,
-				cart_prefix + 'total', total ]
-
-			db.redis.multi(cmds).exec (err) ->
-				return callback err if err
-				return callback null
-
 exports.cancelUpdateEmail = (req, callback) ->
 	user_id = req.user.id
 	prefix = "u:#{user_id}:"
@@ -341,19 +277,6 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'location',
 		prefix + 'company',
 		prefix + 'website',
-		prefix + 'addr_one',
-		prefix + 'addr_second',
-		prefix + 'company',
-		prefix + 'country_code',
-		prefix + 'name',
-		prefix + 'phone',
-		prefix + 'type',
-		prefix + 'zipcode',
-		prefix + 'city',
-		prefix + 'vat_number',
-		prefix + 'use_profile_for_billing',
-		prefix + 'state',
-		prefix + 'country',
 		prefix + 'mail_changed' ]
 	, (err, replies) ->
 		return callback err if err
@@ -365,20 +288,6 @@ exports.get = check 'int', (iduser, callback) ->
 			location: replies[3],
 			company: replies[4],
 			website: replies[5],
-			addr_one: replies[6],
-			addr_second: replies[7],
-			company: replies[8],
-			country_code: replies[9],
-			name: replies[10],
-			phone: replies[11],
-			type: replies[12],
-			zipcode: replies[13],
-			city : replies[14],
-			vat_number: replies[15],
-			use_profile_for_billing: replies[16] == "true" ? true : false
-			state : replies[17],
-			country : replies[18],
-			mail_changed: replies[19]
 
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'

@@ -144,14 +144,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 					current_password: pass,
 					new_password: new_pass
 
-
-		createBilling: (profile, billing, success, error) ->
-			api 'me/billing', success, error,
-				method: "POST",
-				data:
-					profile: profile
-					billing: billing
-
 		isValidable: (id, key, success, error) ->
 			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
 

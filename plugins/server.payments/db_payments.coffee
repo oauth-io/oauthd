@@ -413,6 +413,8 @@ exports.getSubscription = (client_id, callback) ->
 		return callback null, null  if not res?
 		return callback null, res.id
 
+# ---------------
+
 getCustomer = (id, callback) ->
 	db.redis.get "u:#{id}:stripeid", (err, stripeid) ->
 		return callback err if err
@@ -424,10 +426,22 @@ createCustomer = (data, callback) ->
 		card: data.token.id
 		email: data.user.mail
 		metadata: data.profile
-		plan: plan
+		plan: data.plan
 	), (err, customer) ->
 		return callback err if err
 		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
+
+exports.payment_succeeded = (data, callback) ->
+	console.log 'payment_succeeded', data
+	stripe.customers.retrieve data.customer, (err, customer) ->
+		return callback err if err
+		console.log '-> customer', customer
+		shared.emit 'user.pay', user:user, invoice:invoice
+		callback()
+
+exports.payment_failed = (data, callback) ->
+	console.log 'payment_failed'
+	callback()
 
 exports.process = check profile:'object', token:'object', plan:'string', 'object', (data, user, callback) ->
 	if data.profile.country_code == 'FR'
@@ -436,8 +450,8 @@ exports.process = check profile:'object', token:'object', plan:'string', 'object
 	data.user = user
 	async.waterfall [
 		(cb) -> getCustomer data.profile.id, cb
-		(id, cb) ->
-			return cb null, id if id
+		(customer, cb) ->
+			return cb null, customer if customer and not customer.deleted
 			createCustomer data, cb
 		(res, cb) ->
 			db.redis.set "u:#{user.id}:current_plan", data.plan, cb
