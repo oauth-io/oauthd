@@ -13,3 +13,4 @@ nohup.out
 config.local.js
 *.sublime-*
 /.idea/
+/private
