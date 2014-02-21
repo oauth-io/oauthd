@@ -24,7 +24,7 @@ oauth =
 	oauth1: require '../../lib/oauth1'
 	oauth2: require '../../lib/oauth2'
 
-exports.setup = (callback) ->
+exports.raw = ->
 
 	fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
@@ -105,6 +105,9 @@ exports.setup = (callback) ->
 			oa.request provider, parameters, req, (err, options) ->
 				return cb err if err
 				api_request = request options
+				#if req.headers['content-type']?.indexOf('multipart/form-data') != -1
+				delete req.headers
+				api_request = req.pipe(api_request)
 
 				api_request.pipefilter = (response, dest) ->
 					dest.setHeader 'Access-Control-Allow-Origin', origin
@@ -135,5 +138,3 @@ exports.setup = (callback) ->
 	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-
-	callback();
