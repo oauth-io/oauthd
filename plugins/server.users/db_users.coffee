@@ -16,7 +16,7 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
-		return callback new check.Error 'This email already exists !' if iduser
+		return callback new check.Error 'This email already exists' if iduser
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'

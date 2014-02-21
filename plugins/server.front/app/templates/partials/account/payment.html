@@ -1,9 +1,9 @@
-<div style="width:100%; text-align:center;">
+<div ng-show="loading" style="width:100%; text-align:center;">
 	<img src="/img/ajax-loader-pricing.gif" id="loader_subscriptions_list" style="margin-top:60px;"/>
 </div>
 
 <div id="subscriptions_content">
-	<p ng-show='subscriptions.length == 0'>
+	<p class="alert alert-info" ng-show='subscriptions.length == 0'>
 		No subscription yet
 	</p>
 	<table class="table" ng-show='subscriptions.length > 0'>

@@ -85,23 +85,22 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 
 		isLogin: -> $cookieStore.get('accessToken')?
 
-		register: (user, social, success, error) ->
-			if social?.provider
-				api 'signup/oauth', success, error, data:
-					email:user.mail
-					pass:user.pass
-					name:user.name
-					company:user.company
-					provider:social.provider
-					token:social?.token
-					oauth_token:social?.oauth_token
-					oauth_token_secret:social?.oauth_token_secret
-			else
-				api 'users', success, error, data:
-					email:user.mail
-					pass:user.pass
-					name:user.name
-					company:user.company
+		signupOAuth: (user, social, success, error) ->
+			api 'signup/oauth', success, error, data:
+				email:user.mail
+				name:user.name
+				company:user.company
+				provider:social.provider
+				token:social?.token
+				oauth_token:social?.oauth_token
+				oauth_token_secret:social?.oauth_token_secret
+
+		register: (user, success, error) ->
+			api 'users', success, error, data:
+				email:user.mail
+				pass:user.pass
+				name:user.name
+				company:user.company
 
 		me: (success, error) ->
 			api 'me', success, error

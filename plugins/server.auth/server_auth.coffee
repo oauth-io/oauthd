@@ -177,8 +177,7 @@ exports.setup = (callback) ->
 			token:['string','none']
 			oauth_token:['string','none']
 			oauth_token_secret:['string','none']
-			email:'string'
-			pass:'string'
+			email:['string','none']
 			name:'string'
 			company:['string','none']
 		return callback e if e.failed()
@@ -187,18 +186,21 @@ exports.setup = (callback) ->
 		if not getInfos[provider]
 			return callback new @check.Error 'Unsupported provider'
 
+		pass = @db.generateUid().substr 0, 8
+
 		req.body.k = @config.loginKey
 		getInfos[provider] req.body, (err, infos) =>
 			return callback err if err
 			@db.redis.hget 'sign:' + provider, infos.id, (err, existing_user) =>
 				return callback err if err
-				return callback new @check.Error 'This account is already linked to another user' if existing_user
-				@db.users.register mail:req.body.email, pass: req.body.pass, name: req.body.name, company: req.body.company, (err, user) =>
+				return callback new @check.Error 'This account is already linked to a user' if existing_user
+
+				@db.users.register mail:req.body.email, pass: pass, name: req.body.name, company: req.body.company, (err, user) =>
 					return callback err if err
 
 					@db.redis.hset 'sign:' + provider, infos.id, user.id
 					prefix = "u:#{user.id}:"
-					@db.redis.hset prefix + ':sync', provider, infos.id
+					@db.redis.hset prefix + 'sync', provider, infos.id
 					upd = [prefix + 'name', req.body.name]
 					if req.body.company
 						upd.push prefix + 'company'

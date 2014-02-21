@@ -167,7 +167,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			url: '/method/getProfiles'
 			name: ['first_name', 'last_name']
 			path: 'response/0'
-
+	$scope.hidePopup = -> $('.modal-backdrop').fadeOut 'fast'
 	$scope.socialSignin = (provider) ->
 		OAuth.initialize window.loginKey
 		OAuth.popup provider, cache: true, (err, res) ->
@@ -184,11 +184,37 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				return false
 
 	$scope.connected = false
+
+	$scope.finalize = ->
+		$scope.loading = true
+
+		$scope.canSignin = $scope.needEmail = $scope.success = false
+		UserService.signupOAuth $scope.user, $scope.social, ((data) ->
+			#console.log data.validated, not data.validated
+			$scope.notValidated = not data.validated
+			$scope.success = true
+			$scope.loading = $scope.needEmail = false
+		), (error) ->
+			if error.message == "This email already exists"
+				$scope.canSignin = $scope.success = false
+				$scope.emailMessage = 2
+				$scope.needEmail = true
+			else if error.message == "This account is already linked to a user"
+				$scope.canSignin = true
+				$scope.needEmail = $scope.success = false
+			else
+				$scope.canSignin = $scope.success = false
+				$scope.emailMessage = 1
+				$scope.needEmail = true
+			$scope.loading = false
+
 	$scope.socialSignup = (provider) ->
 		OAuth.initialize window.loginKey
+		$scope.provider = provider
 		OAuth.popup provider, cache: true, (err, res) ->
 			return false if err
 			res.get(me[provider].url).done (data)->
+
 				if me[provider].path
 					for eltname in me[provider].path.split '/'
 						data = data[eltname]
@@ -199,7 +225,8 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					$scope.user.name = data[me[provider].name]
 				$scope.user.mail = data[me[provider].mail]
 				$scope.user.company = data[me[provider].company]
-				$scope.connected = true
+
+				console.log $scope.user
 				$scope.social =
 					provider: provider
 					token: res.access_token
@@ -207,15 +234,28 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					oauth_token_secret: res.oauth_token_secret
 				$scope.$apply()
 
-	if $routeParams.provider
+				$('#signup-modal').modal('show')
+				$scope.finalize()
+					#check if user exists
+						#popup "connect me with {{provider}}"
+					#popup "email" if not email verified in data
+						#signup
+							#popup email if email already taken
+							#popup success -> Go to your dashboard (signin)
+
+	if $routeParams.provider and $location.path().substr(0, 7) == '/signup'
 		$scope.socialSignup $routeParams.provider
+		$('.modal-backdrop').hide()
+
+	if $routeParams.provider and $location.path().substr(0, 7) == '/signin'
+		$scope.socialSignin $routeParams.provider
 		$('.modal-backdrop').hide()
 
 	$scope.signinSubmit = ->
 
 	$scope.signupSubmit = ->
 		#verif field
-		UserService.register $scope.user, $scope.social, ((data) ->
+		UserService.register $scope.user, ((data) ->
 			$scope.signupInfo =
 				status: 'success'
 		), (error) ->
@@ -382,17 +422,14 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	 	$location.path '/'
 
 	$scope.changeTab = (tab) ->
-
 		if tab == 'payment'
-			$('#subscriptions_content').fadeOut(1000)
+			$scope.loading = true
 			$scope.subscriptions = null
 			UserService.getSubscriptions (success) ->
 				$scope.subscriptions = success.data.subscriptions
-				$('#loader_subscriptions_list').hide 0, ->
-					$('#subscriptions_content').fadeIn(1000)
+				$scope.loading = false
 			, (error) ->
-				$('#loader_subscriptions_list').hide 0, ->
-					$('#subscriptions_content').fadeIn(1000)
+				$scope.loading = false
 				console.log error
 
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
@@ -440,7 +477,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				nbUsers: 1000
 				nbApp: 2
 				nbProvider: 2
-				responseDelay: 48
 
 		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
 
@@ -469,7 +505,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 				$scope.keysets = $scope.keysets.unique()
 			), (error) ->
 				console.log error
-
 	, (error) ->
 		console.log error
 
