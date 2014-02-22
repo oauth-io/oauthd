@@ -72,6 +72,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 						return success() if success
 					AppService.loadApps me.data.apps, ->
 						if ++counter == me.data.apps.length
+							$rootScope.loading = false
 							success() if success
 				), error
 
@@ -274,7 +275,6 @@ app.factory 'AppService', ($http, $rootScope) ->
 			for i of apps
 				@loadApp apps[i], ((res) ->
 					if parseInt(i) + 1 == parseInt(apps.length)
-						$rootScope.loading = false
 						success() if success
 				), error
 

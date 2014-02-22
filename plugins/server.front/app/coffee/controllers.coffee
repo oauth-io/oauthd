@@ -402,8 +402,7 @@ generalAccountCtrl = ($rootScope, $scope, $timeout, UserService) ->
 			providersData[1].value = 0  if providersData[1].value < 0
 			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
-	$rootScope.$watch 'loading', (oldval, newval) ->
-		drawChart() if newval == false
+	$rootScope.$watch 'loading', (newval, oldval) -> drawChart() if newval == false
 
 SettingsCtrl = ($scope, UserService) ->
 
