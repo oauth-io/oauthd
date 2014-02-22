@@ -983,6 +983,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 				app = $rootScope.me.apps.find (n)->
 					n.key == key
 				app.key = data.data.key
+				app.secret = data.data.secret
 	#edit key in app
 	$scope.keySaved = false
 	$scope.editKeyset = (app, provider) ->

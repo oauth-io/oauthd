@@ -288,6 +288,7 @@ app.factory 'AppService', ($http, $rootScope) ->
 				app.data.response_type = {}
 				app.data.showKeys = false
 
+				app.data.secret = ""
 
 				$rootScope.me.keysets = [] if not $rootScope.me.keysets
 				$rootScope.me.keysets.add app.data.keysets
