@@ -212,6 +212,27 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]).run ($rootScope, $location) ->
+]).run ($rootScope, $location, UserService, NotificationService) ->
+	checkLimitation = ->
+		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
+		return false
+	checkValidated = ->
+		return true if $rootScope.me.profile.validated == "1"
+		return false
+	UserService.initialize ->
+		console.log $rootScope.me
+		if checkLimitation()
+			NotificationService.push
+				type: 'warning',
+				title: "Upgrade your plan",
+				content: 'you\'ve reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.'
+		if not checkValidated()
+			NotificationService.push
+				type: 'warning'
+				title: 'Email validation'
+				content: 'We\'ve sent you an email to validate your account. Please open the link inside this email to validate your account and use normaly oauth.io'
+		$('#notification').popover()
+	# $rootScope.$watch 'me', () ->
+		#localstorage
 	$rootScope.location = $location.path()
 hooks.config() if hooks?.config

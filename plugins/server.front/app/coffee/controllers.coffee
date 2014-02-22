@@ -353,20 +353,12 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.info.status = ''
 		$scope.signup.status = ''
 
-generalAccountCtrl = ($scope, $timeout, UserService) ->
+generalAccountCtrl = ($rootScope, $scope, $timeout, UserService) ->
 	connectionCtx = document.getElementById('connectionChart').getContext '2d'
 	appsCtx = document.getElementById('appsChart').getContext '2d'
 	providersCtx = document.getElementById('providersChart').getContext '2d'
 
 	drawChart = ->
-		if ! $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-				responseDelay: 48
-
 		getColor = (ratio)->
 			if ratio > 0.66
 				return '#F7464A'
@@ -376,42 +368,38 @@ generalAccountCtrl = ($scope, $timeout, UserService) ->
 				return '#3ebebd'
 
 		connectionData = [
-			value: $scope.totalUsers
-			color: getColor $scope.totalUsers / $scope.plan.nbUsers
+			value: $rootScope.me.totalUsers
+			color: getColor $rootScope.me.totalUsers / $rootScope.me.plan.nbUsers
 		,
-			value: $scope.plan.nbUsers - $scope.totalUsers
+			value: $rootScope.me.plan.nbUsers - $rootScope.me.totalUsers
 			color: '#EEEEEE'
 		]
 		connectionData[1].value = 0  if connectionData[1].value < 0
 		connectionChart = new Chart(connectionCtx).Doughnut(connectionData)
 
-		if $scope.plan.nbApp != 'unlimited'
+		if $rootScope.me.plan.nbApp != 'unlimited'
 			appsData = [
-				value: $scope.apps.length
-				color: getColor $scope.apps.length / $scope.plan.nbApp
+				value: $rootScope.me.apps.length
+				color: getColor $rootScope.me.apps.length / $rootScope.me.plan.nbApp
 			,
-				value: $scope.plan.nbApp - $scope.apps.length
+				value: $rootScope.me.plan.nbApp - $rootScope.me.apps.length
 				color: '#EEEEEE'
 			]
 			appsData[1].value = 0  if appsData[1].value < 0
 			appsChart = new Chart(appsCtx).Doughnut(appsData)
 
-		if $scope.plan.nbProvider != 'unlimited'
+		if $rootScope.me.plan.nbProvider != 'unlimited'
 			providersData = [
-				value: $scope.keysets.length
-				color: getColor $scope.keysets.length / $scope.plan.nbProvider
+				value: $rootScope.me.keysets.length
+				color: getColor $rootScope.me.keysets.length / $rootScope.me.plan.nbProvider
 			,
-				value: $scope.plan.nbProvider - $scope.keysets.length
+				value: $rootScope.me.plan.nbProvider - $rootScope.me.keysets.length
 				color: '#EEEEEE'
 			]
 			providersData[1].value = 0  if providersData[1].value < 0
 			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
-	$scope.$watch 'loading', (newVal, oldVal) ->
-		if newVal == false and oldVal == true
-			drawChart()
-
-	drawChart() if $scope.loading == false
+	drawChart()
 
 SettingsCtrl = ($scope, UserService) ->
 
@@ -435,7 +423,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		$scope.tab = tab
 
 	$scope.changeTab 'general'
-	$scope.loading = true
 	$scope.sync = {}
 	$scope.syncProvider = (provider)->
 		OAuth.initialize window.loginKey
@@ -449,67 +436,10 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			UserService.sync provider, tokens, ->
 				$scope.sync[provider] = true
 
-	UserService.me (success) ->
-
-		# for modal
-		$scope.user =
-			id : success.data.profile.id
-			name : success.data.profile.name
-			email : success.data.profile.mail
-			location : success.data.profile.location
-			company : success.data.profile.company
-			website : success.data.profile.website
-
-		# for label
-		$scope.id = success.data.profile.id
-		$scope.name = success.data.profile.name
-		$scope.email = success.data.profile.mail
-		$scope.location = success.data.profile.location
-		$scope.company = success.data.profile.company
-		$scope.website = success.data.profile.website
-		$scope.email_changed = success.data.profile.mail_changed
-		$scope.plan = success.data.plan
-
-		if not $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-
-		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
-
-
-		UserService.getSync (providers) ->
-			$scope.sync = {}
-			$scope.sync[provider] = true for provider in providers.data
-
-		$scope.apps = []
-		$scope.totalUsers = 0
-		$scope.keysets = []
-
-		for i of success.data.apps
-			AppService.get success.data.apps[i], ((app) ->
-
-				AppService.getTotalUsers app.data.key, (success2) ->
-					app.data.totalUsers = parseInt(success2.data) || 0
-					$scope.totalUsers += parseInt(success2.data) || 0
-					if parseInt(i) + 1 == parseInt(success.data.apps.length)
-						$scope.loading = false
-				, (error) ->
-					console.log error
-
-				$scope.apps.push app.data
-				$scope.keysets.add app.data.keysets if app.data.keysets != []
-				$scope.keysets = $scope.keysets.unique()
-			), (error) ->
-				console.log error
-	, (error) ->
-		console.log error
-
-	$scope.limitReach = ->
-		return true if $scope.apps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.keysets? >= $scope.plan?.nbProvider
-		return false
+	UserService.getSync (providers) ->
+		$scope.sync = {}
+		$scope.sync[provider] = true for provider in providers.data
+		$scope.user = $rootScope.me.profile
 
 	$scope.changeEmailState = false
 	$scope.emailSent = false
@@ -520,7 +450,7 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 
 	$scope.cancelEmailUpdate = ->
 		UserService.cancelUpdateEmail ((success) ->
-			$scope.email_changed = null
+			$rootScope.me.profile.email_changed = null
 		), (error) ->
 
 	$scope.changePasswordButton = ->
@@ -543,8 +473,8 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 		UserService.updateEmail $scope.user.email, ((success) ->
 			$('#email-input').attr('disabled', 'disabled')
 			$scope.changeEmailState = false
-			$scope.email_changed = $scope.user.email
-			$scope.user.email = $scope.email
+			$rootScope.me.profile.email_changed = $scope.user.email
+			$scope.user.email = $rootScope.me.profile.email
 		), (error) ->
 			if error.message is "Your email has not changed"
 				$('#email-input').attr('disabled', 'disabled')
@@ -554,12 +484,11 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	$scope.update = ->
 		$scope.updateDone = false
 		UserService.update $scope.user, (success) ->
-			$scope.id = success.data.id
-			$scope.name = success.data.name
+			$rootScope.me.profile.name = success.data.name
 			$scope.updateDone = true
-			$scope.location = success.data.location
-			$scope.company = success.data.company
-			$scope.website = success.data.website
+			$rootScope.me.profile.location = success.data.location
+			$rootScope.me.profile.company = success.data.company
+			$rootScope.me.profile.website = success.data.website
 		, (error) ->
 			$scope.error =
 				state : true
@@ -680,48 +609,6 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	if not UserService.isLogin()
 		$location.path '/signin'
 
-	$scope.limitReach = false
-	UserService.me (success) ->
-		$scope.plan = success.data.plan
-
-		if not $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-				responseDelay: 48
-
-		$scope.planApps = []
-		$scope.totalUsers = 0
-		$scope.planKeysets = []
-
-		for i of success.data.apps
-			AppService.get success.data.apps[i], ((app) ->
-
-				AppService.getTotalUsers app.data.key, (success2) ->
-					app.data.totalUsers = parseInt(success2.data) || 0
-					$scope.totalUsers += parseInt(success2.data) || 0
-					if parseInt(i) + 1 == parseInt(success.data.apps.length)
-						$scope.loading = false
-						if $routeParams.provider?.length > 3
-							$scope.keyFormOpen $routeParams.provider
-				, (error) ->
-					console.log error
-
-				$scope.planApps.push app.data
-				$scope.planKeysets.add app.data.keysets if app.data.keysets != []
-				$scope.planKeysets = $scope.planKeysets.unique()
-			), (error) ->
-				console.log error
-
-	, (error) ->
-		console.log error
-
-	$scope.limitReach = ->
-		return true if $scope.planApps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.planKeysets? >= $scope.plan?.nbProvider
-		return false
-
 	$rootScope.providers_name = {} if not $rootScope.providers_name
 	$scope.providers_name = $rootScope.providers_name
 	$scope.keySaved = false
@@ -786,7 +673,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 			if not $rootScope.error.state
 				KeysetService.add key, provider, data, response_type, ((keysetEntry) ->
 
-					app = $rootScope.apps.find (n) ->
+					app = $rootScope.me.apps.find (n) ->
 						return n.key == $scope.createKeyAppKey
 
 					# console.log $scope.apikeyUpdate
@@ -860,7 +747,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	$scope.keyFormOpen = (droppable, helper)->
 		if Object.isString droppable
 			name = droppable
-			key = $rootScope.apps[0].key
+			key = $rootScope.me.apps[0].key
 			$scope.isDropped = false
 		else
 			name = $('.provider-text', helper.draggable).attr('data-provider')
@@ -868,14 +755,12 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 			key = $(droppable.target).find('.app-public-key').text().trim()
 
 		ProviderService.get name, ((data) =>
-
 			$scope.$broadcast 'btShow'
 			$scope.createKeyProvider = name
 			$scope.createKeyAppKey = key
 			$scope.createKeyHref = data.data.href
-			a = $rootScope.apps.find (n) ->
+			a = $rootScope.me.apps.find (n) ->
 				return n.key == $scope.createKeyAppKey
-
 
 			$scope.createKeyAppName = a.name
 			$scope.createKeyStep = 2
@@ -930,52 +815,19 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 				o[pname] = this.value || ''
 		return o
 
-	loadApps = ->
-		n = $rootScope.apps.length
-		for i of $rootScope.apps
-			do (i, n) ->
-				AppService.get $rootScope.apps[i], ((app) =>
-					$scope.counter++
-					#console.log app.data
-					delete app.data.secret
-					$rootScope.apps[i] = app.data
-					$rootScope.apps[i].keysets.sort()
-					$rootScope.apps[i].keys = {}
-					$rootScope.apps[i].response_type = {}
-					$rootScope.apps[i].showKeys = false
-					$timeout (->
-						if $scope.counter == n
-							$scope.loaderApps = false
-					), 0
-				), (error) ->
-					console.log "error", error
-
 	createDefaultApp = ->
 		a =
 			name: "Default app"
 			domains: ["localhost"]
 
-		AppService.add a, ((data)->
-			$rootScope.apps = [data.data.key]
-			loadApps()
-		), (err) ->
-			console.log err
-
+		AppService.add a
 	# alert $location.path()
-	UserService.me ((me)->
-		$rootScope.apps = me.data.apps
-		n = $rootScope.apps.length
-		$rootScope.noApp = false
-		if n == 0
-			if $location.path() == '/key-manager'
-				# $location.path "/app-create"
-				createDefaultApp()
-			else
-				$rootScope.noApp = true
-		$scope.counter = 0
-		loadApps()
-	), (error) ->
-		console.log "error", error
+	#$rootScope.noApp = false
+	#if $rootScope.me.apps.length == 0
+	#	if $location.path() == '/key-manager'
+	#		createDefaultApp()
+	#	else
+	#		$rootScope.noApp = true
 
 
 	$scope.editMode = false
@@ -1112,9 +964,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.removeApp = (key)->
 		if confirm('Are you sure you want to remove this application? All API Keys stored will be lost forever!')
 			AppService.remove key, (->
-				$rootScope.apps.remove (n) ->
+				$rootScope.me.apps.remove (n) ->
 					return n['key'] == key
-				if $rootScope.apps.isEmpty()
+				if $rootScope.me.apps.isEmpty()
 					# $location.path "/app-create"
 					createDefaultApp()
 			), (error) ->

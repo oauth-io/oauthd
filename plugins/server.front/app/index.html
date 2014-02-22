@@ -28,7 +28,7 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
     <script src="/lib/jquery/jquery2.js"></script>
     <script src="/lib/jquery-ui/jquery-ui.js"></script>
     <script src="/lib/angular/angular.min.js"></script>
-    <script src="/lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.3.0.min.js"></script>
+    <script src="/lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js"></script>
     <script src="/lib/angular-cookies/angular-cookies.js"></script>
     <script src="/lib/sugar/sugar.min.js"></script>
     <script src="/lib/chartjs/Chart.min.js"></script>
@@ -112,14 +112,22 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
             {{if admin}}<li ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></li>{{endif}}
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
-            <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer"><i tooltip-placement="bottom" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-account"></i>Account</a></li>
-            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i tooltip-placement="bottom" tooltip="Sign out" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
+            <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer">Account</a></li>
+            <li ng-show="UserService.isLogin() && notifications.length > 0"><a id="notification" href="#" data-toggle="popover" data-placement="bottom" data-container="body"  data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
+            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
           </ul>
   <!--         <button style="position:relative; left: 15px; top: 4px;" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add a Key</button> -->
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
     </div><!-- /.navbar -->
-
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <pre>{{notifications|json}}
+{{me|json}}</pre>
+        </div>
+      </div>
+    </div>
     <did id="container">
       <div id="content" ng-view></div>
     </did>

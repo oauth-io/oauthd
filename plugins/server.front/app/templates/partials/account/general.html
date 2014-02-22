@@ -20,28 +20,28 @@
   }
 </style>
 <div ng-controller="generalAccountCtrl">
-  <div class="row" ng-show="limitReach()">
-    <div class="col-lg-12">
-      <p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p></div><br>
-  </div>
+<!--   <div class="row" ng-show="limitReach()">
+  <div class="col-lg-12">
+    <p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p></div><br>
+</div> -->
   <div class="row">
-    <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth', 'col-lg-4': plan.name == 'scalability', 'col-lg-offset-3': plan.name != 'scalability', 'col-lg-offset-4': plan.name == 'scalability'}" style="position: relative;">
+    <div ng-class="{'col':true,'col-lg-2':me.plan.name == 'Bootstrap' || me.plan.name == 'startup', 'col-lg-3': me.plan.name =='growth', 'col-lg-4': me.plan.name == 'scalability', 'col-lg-offset-3': me.plan.name != 'scalability', 'col-lg-offset-4': me.plan.name == 'scalability'}" style="position: relative;">
       <p class="text-center"><strong>Users</strong></p>
-      <p class="chart-label">{{totalUsers|readableNumber}} / {{plan.nbUsers|readableNumber}}</p>
+      <p class="chart-label">{{me.totalUsers|readableNumber}} / {{plan.nbUsers|readableNumber}}</p>
       <canvas id="connectionChart" width="400" height="400" class="chart"></canvas>
     </div>
-<!--     <div ng-class="{'col':true,'col-lg-6':plan.nbProvider != 'unlimited', 'col-lg-8':plan.nbProvider == 'unlimited'}" style="position: relative;" ng-show="plan.nbApp == 'unlimited'">
+<!--     <div ng-class="{'col':true,'col-lg-6':plan.nbProvider != 'unlimited', 'col-lg-8':plan.nbProvider == 'unlimited'}" style="position: relative;" ng-show="me.plan.nbApp == 'unlimited'">
   <p class="text-center"><strong>Timeline</strong></p>
   <canvas id="connectionTimeline" width="400" height="400" class="chart timeline"></canvas>
 </div> -->
-    <div class="col-lg-2" style="position: relative;" ng-hide="plan.nbApp == 'unlimited'">
+    <div class="col-lg-2" style="position: relative;" ng-hide="me.plan.nbApp == 'unlimited'">
       <p class="text-center"><strong>Apps</strong></p>
-      <p class="chart-label">{{apps.length}} / {{plan.nbApp}}</p>
+      <p class="chart-label">{{me.apps.length}} / {{me.plan.nbApp}}</p>
       <canvas id="appsChart" width="400" height="400" class="chart"></canvas>
     </div>
-    <div ng-class="{'col':true,'col-lg-2':plan.name == 'Bootstrap' || plan.name == 'startup', 'col-lg-3': plan.name =='growth'}" ng-hide="plan.nbProvider == 'unlimited'">
+    <div ng-class="{'col':true,'col-lg-2':me.plan.name == 'Bootstrap' || me.plan.name == 'startup', 'col-lg-3': me.plan.name =='growth'}" ng-hide="me.plan.nbProvider == 'unlimited'">
       <p class="text-center"><strong>Providers</strong></p>
-      <p class="chart-label">{{keysets.length}} / {{plan.nbProvider}}</p>
+      <p class="chart-label">{{me.keysets.length}} / {{me.plan.nbProvider}}</p>
       <canvas id="providersChart" width="400" height="400" class="chart"></canvas>
     </div>
   </div>
@@ -49,16 +49,16 @@
     <div class="col-lg-6">
       <div class="panel">
         <div class="panel-heading">
-          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{apps.length}}</span>Apps</h3>
+          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{me.apps.length}}</span>Apps</h3>
         </div>
-        <div ng-hide="apps.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't created any apps yet.</div>
-        <table ng-show="apps.length > 0" class="table" style="margin:0; padding:0">
+        <div ng-hide="me.apps.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't created any apps yet.</div>
+        <table ng-show="me.apps.length > 0" class="table" style="margin:0; padding:0">
           <thead>
             <th style="width: 80%">Name</th>
             <th style="text-align: center">Users</th>
           </thead>
           <tbody>
-            <tr ng-repeat="app in apps">
+            <tr ng-repeat="app in me.apps">
               <td>{{app.name|capitalize}}</td>
               <td style="text-align: center">
                 {{app.totalUsers}}
@@ -71,15 +71,15 @@
     <div class="col-lg-6">
       <div class="panel">
         <div class="panel-heading">
-          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{keysets.length}}</span>Providers</h3>
+          <h3 style="margin: 0"><span class="label label-info" style="position: relative; top : -3px; left: -6px">{{me.keysets.length}}</span>Providers</h3>
         </div>
-        <div ng-hide="keysets.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't set any providers yet.</div>
-        <table ng-show="keysets.length > 0" class="table" style="margin:0; padding:0">
+        <div ng-hide="me.keysets.length > 0" style="position: relative; top: 10px" class="alert alert-info">You haven't set any providers yet.</div>
+        <table ng-show="me.keysets.length > 0" class="table" style="margin:0; padding:0">
           <thead>
             <th style="width: 80%">Name</th>
           </thead>
           <tbody>
-            <tr ng-repeat="provider in keysets">
+            <tr ng-repeat="provider in me.keysets">
               <td><img ng-src="/api/providers/{{provider}}/logo" width="28" style="margin-right:10px;"/><span style="position: relative; top: 1px">{{provider|capitalize}}</span></td>
             </tr>
           </tbody>

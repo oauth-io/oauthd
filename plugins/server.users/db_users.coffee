@@ -364,7 +364,8 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'use_profile_for_billing',
 		prefix + 'state',
 		prefix + 'country',
-		prefix + 'mail_changed' ]
+		prefix + 'mail_changed',
+		prefix + 'validated' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -389,7 +390,7 @@ exports.get = check 'int', (iduser, callback) ->
 			state : replies[17],
 			country : replies[18],
 			mail_changed: replies[19]
-
+			validated: replies[20]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 
