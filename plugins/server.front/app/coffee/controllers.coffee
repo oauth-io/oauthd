@@ -109,6 +109,7 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 				key: $routeParams.key
 				mail: data.data.mail
 			UserService.validate $scope.user.id, $scope.user.key, ((data) ->
+				$rootScope.me.profile.validated = "1"
 				$timeout (->
 					$rootScope.accessToken = $cookieStore.get 'accessToken'
 					$location.path '/key-manager'
@@ -401,7 +402,8 @@ generalAccountCtrl = ($rootScope, $scope, $timeout, UserService) ->
 			providersData[1].value = 0  if providersData[1].value < 0
 			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
-	drawChart()
+	$rootScope.$watch 'loading', (oldval, newval) ->
+		drawChart() if newval == false
 
 SettingsCtrl = ($scope, UserService) ->
 
@@ -803,8 +805,6 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 		$location.path '/signin'
 
 
-	$scope.loaderApps = true
-
 	serializeObject = (form) ->
 		o = {}
 		a = form.serializeArray()
@@ -831,6 +831,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	#	else
 	#		$rootScope.noApp = true
 
+	$rootScope.$watch 'loading', (old, newV) ->
+		if newV == false && $location.path() == '/key-manager' and (not $rootScope.me.apps or $rootScope.me.apps.length == 0)
+			createDefaultApp()
 
 	$scope.editMode = false
 	$scope.appCreateTemplate = "/templates/partials/create-app.html"

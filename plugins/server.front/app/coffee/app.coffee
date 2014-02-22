@@ -212,34 +212,38 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]).run ($rootScope, $location, UserService, $modal, NotificationService) ->
+]).run ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
 	checkLimitation = ->
 		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 		return false
 	checkValidated = ->
-		return true if $rootScope.me.profile.validated == "1"
-		return false
-	UserService.initialize ->
-		console.log $rootScope.me
+		return false if $rootScope.me.profile.validated == "2"
+		return true
+
+	initializeNotification = ->
+		NotificationService.clear()
+		return false if not $rootScope.me
 		if checkLimitation()
 			NotificationService.push
 				type: 'warning',
-				title: "Upgrade your plan",
-				content: 'you\'ve reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.'
+				title: "Time to upgrade",
+				content: 'you\'ve reached the limit, to go further: <a href="/pricing">upgrade your plan</a>.'
 		if not checkValidated()
 			NotificationService.push
 				type: 'warning'
 				title: 'Email validation'
-				content: 'We\'ve sent you an email to validate your account. Please open the link inside this email to validate your account and use normaly oauth.io'
+				content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
 		$('#notification').popover()
 
+	UserService.initialize ->
+
 	$rootScope.openNotifications = ->
-		modalInstance = $modal.open {
+		$rootScope.notifModal = $modal.open {
 			templateUrl: '/templates/partials/notifications.html'
 			controller: NotificationCtrl
 		}
 
-	# $rootScope.$watch 'me', () ->
-		#localstorage
+	$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
+
 	$rootScope.location = $location.path()
 hooks.config() if hooks?.config

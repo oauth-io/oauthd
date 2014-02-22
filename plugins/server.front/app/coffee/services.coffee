@@ -53,6 +53,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 
 		initialize: (success, error) ->
 			if @isLogin()
+				$rootScope.loading = true
 				@me ((me) ->
 					$rootScope.me =
 						plan: me.data.plan
@@ -66,10 +67,11 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 							nbProvider: 2
 
 					counter = 0
+					if me.data.apps.length == 0
+						$rootScope.loading = false
+						return success() if success
 					AppService.loadApps me.data.apps, ->
-						console.log "success" + counter + '/' + me.data.apps.length
 						if ++counter == me.data.apps.length
-							console.log "success!"
 							success() if success
 				), error
 
@@ -201,6 +203,8 @@ app.factory 'NotificationService', ($rootScope) ->
 			$rootScope.notifications.push notif
 		list: () ->
 			return $rootScope.notifications
+		clear: () ->
+			$rootScope.notifications = []
 		open: () ->
 			modalInstance = $modal.open
 				templateUrl: '/templates/partials/notifications.html'
@@ -282,7 +286,9 @@ app.factory 'AppService', ($http, $rootScope) ->
 				app.data.response_type = {}
 				app.data.showKeys = false
 
-				$rootScope.me.keysets.add app.data.keysets if app.data.keysets != []
+
+				$rootScope.me.keysets = [] if not $rootScope.me.keysets
+				$rootScope.me.keysets.add app.data.keysets
 				$rootScope.me.keysets = $rootScope.me.keysets.unique()
 
 				@getTotalUsers app.data.key, (res) ->
