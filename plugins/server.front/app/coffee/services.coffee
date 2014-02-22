@@ -200,6 +200,8 @@ app.factory 'NotificationService', ($rootScope) ->
 	$rootScope.notifications = []
 	return {
 		push: (notif) ->
+			notif.pop = false
+			notif.href = '#' if not notif.href
 			$rootScope.notifications.push notif
 		list: () ->
 			return $rootScope.notifications

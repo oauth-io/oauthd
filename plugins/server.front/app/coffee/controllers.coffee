@@ -626,7 +626,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	$scope.cancelCreateKey = ->
 		if $scope.createKeyStep <= 2
 			if $scope.isDropped and $scope.createKeyExists
-				app = $rootScope.apps.find ((n) ->
+				app = $rootScope.me.apps.find ((n) ->
 					return n.key == $scope.createKeyAppKey
 				)
 				if app?.keysets?.length > 0
@@ -854,7 +854,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.tryAuth = (provider, key) ->
 		ProviderService.auth key, provider, (err, res) ->
 			$scope.$apply ->
-				app = $rootScope.apps.find (n) ->
+				app = $rootScope.me.apps.find (n) ->
 					return n.key == key
 
 				if app.showKeys != provider
@@ -928,7 +928,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			app.showKeys = false
 	#edit app
 	$scope.editApp = (key)->
-		app = $rootScope.apps.find (n) ->
+		app = $rootScope.me.apps.find (n) ->
 			return n['key'] == key
 
 		# console.log key
@@ -954,7 +954,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			return
 
 		AppService.edit key, $scope.createAppForm, (->
-			app = $rootScope.apps.find (n) ->
+			app = $rootScope.me.apps.find (n) ->
 				return n['key'] == key
 			app.domains = Array.create $scope.createAppForm.domains
 			app.name = $scope.createAppForm.name
@@ -981,7 +981,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.resetKeys = (key)->
 		if confirm 'Are you sure you want to reset your keys? You\'ll need to update the keys in your application.'
 			AppService.resetKey key, (data)->
-				app = $rootScope.apps.find (n)->
+				app = $rootScope.me.apps.find (n)->
 					n.key == key
 				app.key = data.data.key
 	#edit key in app

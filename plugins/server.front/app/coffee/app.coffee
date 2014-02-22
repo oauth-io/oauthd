@@ -225,12 +225,13 @@ app.config([
 		return false if not $rootScope.me
 		if checkLimitation()
 			NotificationService.push
-				type: 'warning',
+				type: 'upgrade',
+				href: '/pricing',
 				title: "Time to upgrade",
-				content: 'you\'ve reached the limit, to go further: <a href="/pricing">upgrade your plan</a>.'
+				content: 'You\'ve reached the limit. To go further: <a href="/pricing">upgrade your plan</a>.'
 		if not checkValidated()
 			NotificationService.push
-				type: 'warning'
+				type: 'validate'
 				title: 'Email validation'
 				content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
 		$('#notification').popover()

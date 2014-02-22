@@ -1,6 +1,9 @@
+<div class="modal-header">
+	<h4>Alert - notification <span class="badge" style="background-color: rgb(0, 121, 166)">{{notifications.length}}</span></h4>
+</div>
 <div class="modal-body">
 	<div class="list-group" style="margin-bottom: 0">
-		<a href="#" class="list-group-item" ng-repeat="notification in notifications">
+		<a ng-href="{{notification.href}}" ng-click="notifModal.close()" class="list-group-item" ng-repeat="notification in notifications">
 			<h4>{{notification.title}}</h4>
 			<p ng-bind-html-unsafe="notification.content"></p>
 		</a>
