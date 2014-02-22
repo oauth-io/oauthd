@@ -1,0 +1,12 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title">Notifications ({{notifications.length}} unread)</h4>
+</div>
+<div class="modal-body">
+	<div class="list-group">
+		<a href="#" class="list-group-item" ng-repeat="notification in notifications">
+			<h4>{{notification.title}}</h4>
+			<p ng-bind-html-unsafe="notification.content"></p>
+		</a>
+	</div>
+</div>

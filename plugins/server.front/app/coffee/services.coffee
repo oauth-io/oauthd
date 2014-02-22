@@ -201,6 +201,12 @@ app.factory 'NotificationService', ($rootScope) ->
 			$rootScope.notifications.push notif
 		list: () ->
 			return $rootScope.notifications
+		open: () ->
+			modalInstance = $modal.open
+				templateUrl: '/templates/partials/notifications.html'
+				controller: NotificationCtrl
+				resolve: {
+				}
 	}
 
 app.factory 'MenuService', ($rootScope, $location) ->

@@ -212,7 +212,7 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]).run ($rootScope, $location, UserService, NotificationService) ->
+]).run ($rootScope, $location, UserService, $modal, NotificationService) ->
 	checkLimitation = ->
 		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 		return false
@@ -232,6 +232,13 @@ app.config([
 				title: 'Email validation'
 				content: 'We\'ve sent you an email to validate your account. Please open the link inside this email to validate your account and use normaly oauth.io'
 		$('#notification').popover()
+
+	$rootScope.openNotifications = ->
+		modalInstance = $modal.open {
+			templateUrl: '/templates/partials/notifications.html'
+			controller: NotificationCtrl
+		}
+
 	# $rootScope.$watch 'me', () ->
 		#localstorage
 	$rootScope.location = $location.path()

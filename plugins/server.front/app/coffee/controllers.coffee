@@ -120,6 +120,9 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 	), (error) ->
 		$location.path '/404'
 
+NotificationCtrl = ($scope, NotificationService) ->
+	$scope.notifications = NotificationService.list()
+
 UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService, $routeParams) ->
 	MenuService.changed()
 	if UserService.isLogin()
@@ -343,7 +346,6 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.userForm.mode = "Sign in"
 		$scope.info.status = ''
 
-
 	#click switch button (signin / signup)
 	$scope.switchButton = ->
 		if $scope.userForm.mode == "Sign up"
@@ -528,14 +530,14 @@ ProviderCtrl = (MenuService, $filter, $scope, $rootScope, ProviderService, $time
 
 		$scope.pagination =
 			nbPerPage: 15
-			nbPages: Math.ceil($scope.providers.length / 15)
+			nbItems: $scope.providers.length
 			current: 1
 			max: 5
 
 		$scope.queryChange = (query)->
 			$timeout (->
 				$scope.filtered = $filter('filter')($scope.providers, query)
-				$scope.pagination.nbPages = Math.ceil($scope.filtered.length / $scope.pagination.nbPerPage)
+				$scope.pagination.nbItems = $scope.filtered.length
 				$scope.pagination.current = 1
 			), 0
 
@@ -549,7 +551,7 @@ WishlistCtrl = ($filter, $scope, WishlistService, $timeout, MenuService) ->
 
 		$scope.pagination =
 			nbPerPage: 15
-			nbPages: Math.ceil($scope.providers.length / 15)
+			nbItems: $scope.providers.length
 			current: 1
 			max: 5
 
@@ -557,7 +559,7 @@ WishlistCtrl = ($filter, $scope, WishlistService, $timeout, MenuService) ->
 
 			$timeout (->
 				$scope.filtered = $filter('filter')($scope.providers, query)
-				$scope.pagination.nbPages = Math.ceil($scope.filtered.length / $scope.pagination.nbPerPage)
+				$scope.pagination.nbItems = $scope.filtered.length
 				$scope.pagination.current = 1
 			), 0
 
