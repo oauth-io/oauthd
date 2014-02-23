@@ -11,7 +11,8 @@
         "install": {
             "href": {
                 "provider": "http://www.linkedin.com/",
-                "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map"
+                "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+                "apps": "https://www.linkedin.com/secure/developer"
             }
         },
         "sample": {
