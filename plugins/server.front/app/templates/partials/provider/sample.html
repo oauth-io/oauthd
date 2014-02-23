@@ -18,7 +18,7 @@
 </div>
 <div class="row">
 	<div class="col col-lg-6">
-		<p style="font-size: 1.3em">Download the Javascript SDK and, in your HTML, load the SDK using a <code>&lt;script&gt;</code> tag.<br /> You can use <a href="http://cdnjs.com/libraries/oauth-io/" target="_blank">cdnjs</a> to load fastly the lastest version of the SDK.</p>
+		<p style="font-size: 1.1em">Download the Javascript SDK and, in your HTML, load the SDK using a <code>&lt;script&gt;</code> tag.<br /> You can use <a href="http://cdnjs.com/libraries/oauth-io/" target="_blank">cdnjs</a> to load fastly the lastest version of the SDK.</p>
 
 	</div>
 	<div class="col col-lg-6">
@@ -27,9 +27,9 @@
 </div>
 <div class="row">
 	<div class="col col-lg-6">
-		<p style="font-size: 1.3em">Once the SDK loaded, you have to initialize it in your Javascript code. It's used to configure the SDK with your OAuth.io public key</p>
+		<p style="font-size: 1.1em">Once the SDK loaded, you have to initialize it in your Javascript code. It's used to configure the SDK with your OAuth.io public key</p>
 		<h1>Basic usage</h1>
-		<p style="font-size: 1.3em">You have 2 ways of authorizing your user:</p>
+		<p style="font-size: 1.1em">You have 2 ways of authorizing your user:</p>
 	</div>
 	<div class="col col-lg-6">
 		<pre>OAuth.initialize('{{app.key||"Your_Public_Key"}}')</pre>
@@ -37,7 +37,7 @@
 </div>
 <div class="row">
 	<div class="col col-lg-6">
-		<ul style="list-style-type: circle; font-size: 1.3em; margin-left: 20px">
+		<ul style="list-style-type: circle; font-size: 1.1em; margin-left: 20px">
 			<li><strong>Open a popup</strong> with the {{provider}} authorize form</li>
 		</ul>
 	</div>
@@ -56,7 +56,7 @@
 </div>
 <div class="row">
 	<div class="col col-lg-6">
-		<ul style="list-style-type: circle; font-size: 1.3em; margin-left: 20px">
+		<ul style="list-style-type: circle; font-size: 1.1em; margin-left: 20px">
 			<li><strong>Redirect the user</strong> to the {{provider}} authorize form</li>
 		</ul>
 
@@ -68,7 +68,7 @@
 
 <div class="row">
 	<div class="col col-lg-6">
-		<p style="font-size: 1.3em">In the redirect mode, you have to catch the response in your callback page using <code>OAuth.callback</code></p>
+		<p style="font-size: 1.1em">In the redirect mode, you have to catch the response in your callback page using <code>OAuth.callback</code></p>
 	</div>
 	<div class="col col-lg-6">
 		<pre>OAuth.callback('<span class="api-text">{{provider}}</span>', function(<span class="err">err</span>, <strong>result</strong>) {
@@ -84,13 +84,13 @@
 </div>
 <div class="row">
 	<div class="col col-lg-6">
-		<p style="font-size: 1.3em">Once your user authorized, in the callback function, you can easily make API calls without having to know what is an access_token. We've put in the SDK some methods to make your API call as simple as it should be.</p>
-		<p style="font-size: 1.3em">You can use <code>get()</code>, <code>post()</code>, <code>put()</code>, <code>delete()</code> and <code>patch()</code> to make your API calls. As the tokens are in the result of the authorization, we totaly abstract them by adding some high-level methods.</p>
+		<p style="font-size: 1.1em">Once your user authorized, in the callback function, you can easily make API calls without having to know what is an access_token. We've put in the SDK some methods to make your API call as simple as it should be.</p>
+		<p style="font-size: 1.1em">You can use <code>get()</code>, <code>post()</code>, <code>put()</code>, <code>delete()</code> and <code>patch()</code> to make your API calls. As the tokens are in the result of the authorization, we totaly abstract them by adding some high-level methods.</p>
 
-		<p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.docs">
-			<b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a> 
+		<p style="font-size: 1.1em" ng-show="settings.data.settings.install.href.docs">
+			<b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a>
 		</p>
-		<p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.apps">
+		<p style="font-size: 1.1em" ng-show="settings.data.settings.install.href.apps">
 			<b>{{ provider_name | capitalize }} apps page :</b> <a target="_blank" href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
 		</p>
 	</div>

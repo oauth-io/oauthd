@@ -198,7 +198,7 @@ exports.isValidable = (data, callback) ->
 		# return callback null, is_validable: false if user.pass? and not user.mail_changed? or not user.pass? and user.mail_changed?
 		return callback null, is_validable: false if user.key != key
 
-		if user.pass? and user.mail_changed? # change email
+		if user.mail_changed # change email
 			return callback null, is_validable: false if user.mail_changed.length == 0
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
@@ -206,6 +206,7 @@ exports.isValidable = (data, callback) ->
 				[ 'mset', prefix+'validated', 1,
 					prefix+'mail', replies[4],
 					prefix+'mail_changed', '',
+					prefix+'validated', '1'
 					prefix+'key', '' ]
 			]).exec (err, res) ->
 				return callback err  if err
@@ -364,7 +365,8 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'use_profile_for_billing',
 		prefix + 'state',
 		prefix + 'country',
-		prefix + 'mail_changed' ]
+		prefix + 'mail_changed',
+		prefix + 'validated' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -389,7 +391,7 @@ exports.get = check 'int', (iduser, callback) ->
 			state : replies[17],
 			country : replies[18],
 			mail_changed: replies[19]
-
+			validated: replies[20]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 

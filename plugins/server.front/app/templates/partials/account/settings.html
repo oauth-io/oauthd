@@ -8,7 +8,7 @@
 				<label for="email-input" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<div class="input-group">
-				  		<input class="form-control" disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.email">
+				  		<input class="form-control" disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.mail">
 				  		<span class="input-group-btn">
 							<button ng-hide="changeEmailState" ng-click="changeEmail()" type="button" class="btn btn-warning" style="border-radius:4px; border-top-left-radius:0; border-bottom-left-radius: 0"><i class="icon-plus icon-white"></i> Change your email</button>
 							<button ng-show="changeEmailState" ng-click="updateEmail()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Update your email</button>
@@ -16,9 +16,14 @@
 					</div>
 				</div>
 		  	</div>
-		  	<div class="row" ng-show="emailSent">
+		  	<div class="row" ng-show="me.profile.mail_changed" style="margin-top: 10px">
 		  		<div class="col-sm-10 col-lg-offset-2">
-		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{email}}</strong> to validate your new email address</div>
+		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{me.profile.mail_changed}}</strong> to validate your new email address</div>
+		  		</div>
+		  	</div>
+		  	<div class="row" ng-show="me.profile.validated == '2' && !me.profile.mail_changed" style="margin-top: 10px">
+		  		<div class="col-sm-10 col-lg-offset-2">
+		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{me.profile.mail}}</strong> to validate your account</div>
 		  		</div>
 		  	</div>
 			<div class="row" style="margin-top: 15px">
@@ -41,37 +46,37 @@
 					<div class="row">
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer"ng-click="syncProvider('twitter')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Twitter" src="/api/providers/twitter/logo-button.png">
-								<i ng-show="sync['twitter']" class="glyphicon glyphicon-ok" style="color: white; position: absolute; cursor: pointer; right: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+								<img  style="cursor: pointer"ng-click="syncProvider('twitter')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Twitter" src="/api/providers/twitter/logo-button.png">
+								<i ng-show="sync['twitter']" class="glyphicon glyphicon-ok" style="color: white; position: absolute; cursor: pointer; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer" ng-click="syncProvider('facebook')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Facebook" src="/api/providers/facebook/logo-button.png">
+								<img  style="cursor: pointer" ng-click="syncProvider('facebook')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Facebook" src="/api/providers/facebook/logo-button.png">
 								<i ng-show="sync['facebook']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer"ng-click="syncProvider('google')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Google" src="/api/providers/google/logo-button.png">
+								<img  style="cursor: pointer"ng-click="syncProvider('google')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Google" src="/api/providers/google/logo-button.png">
 								<i ng-show="sync['google']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer"ng-click="syncProvider('linkedin')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Linkedin" src="/api/providers/linkedin/logo-button.png">
+								<img  style="cursor: pointer"ng-click="syncProvider('linkedin')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Linkedin" src="/api/providers/linkedin/logo-button.png">
 								<i ng-show="sync['linkedin']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer"ng-click="syncProvider('github')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="Github" src="/api/providers/github/logo-button.png">
+								<img  style="cursor: pointer"ng-click="syncProvider('github')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Github" src="/api/providers/github/logo-button.png">
 								<i ng-show="sync['github']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>
 						<div class="col-lg-2">
 							<div style="position: relative">
-								<img  style="cursor: pointer"ng-click="syncProvider('vk')" class="img-responsive" data-toggle="tooltip" data-placement="top" title="VK" src="/api/providers/vk/logo-button.png">
+								<img  style="cursor: pointer"ng-click="syncProvider('vk')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="VK" src="/api/providers/vk/logo-button.png">
 								<i ng-show="sync['vk']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
 							</div>
 						</div>

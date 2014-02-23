@@ -1,7 +1,6 @@
 <div class="container">
 	<div class="row">
-		<h1 class="text-center" style="margin-bottom: 50px">OAuth.io supports the APIs listed below<br />
-<small>see the <a href="/docs">documentation</a> for examples</small></h1>
+		<h1 class="text-center" style="margin-bottom: 50px">OAuth.io supports the APIs listed below<br /></h1>
 	</div>
 	<div class="row">
 		<div class="col-lg-12">
@@ -25,9 +24,9 @@
 			</ul>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-lg-12" style="text-align: center">
-			<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
+    <div class="row" style="margin-top: 15px;">
+        <div class="col-lg-12" style="text-align: center">
+            <pagination max-size="8" total-items="pagination.nbItems" page="pagination.current" items-per-page="pagination.nbPerPage"></pagination>
 		</div>
 	</div>
 </div>

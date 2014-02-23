@@ -106,7 +106,7 @@ app.directive "fiddleIframe", ->
 	linkFn = (scope, element, attrs) ->
 		element.find("iframe").bind "load", (event) ->
 			scope.ngLoad();
-	dir = 
+	dir =
 		restrict: "EA",
 		scope:
 			src: "@src"
