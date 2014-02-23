@@ -93,6 +93,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 				refreshSession $rootScope
 
 				path = $rootScope.authRequired || '/key-manager'
+				@initialize()
 				success path if success
 			).error(error)
 
@@ -284,7 +285,7 @@ app.factory 'AppService', ($http, $rootScope) ->
 
 		loadApp: (key, success, error) ->
 			@get key, ((app) =>
-				console.log app.data
+				#console.log app.data
 
 				app.data.keysets?.sort()
 				app.data.keys = {}
