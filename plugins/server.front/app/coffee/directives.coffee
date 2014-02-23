@@ -105,7 +105,6 @@ app.directive 'lightbox', ($timeout) ->
 app.directive "fiddleIframe", ->
 	linkFn = (scope, element, attrs) ->
 		element.find("iframe").bind "load", (event) ->
-			console.log 'YOUGOU', scope.ngLoad
 			scope.ngLoad();
 	dir = 
 		restrict: "EA",
