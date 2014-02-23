@@ -1,21 +1,21 @@
 {
-	"name": "Linkedin",
-    "desc": "LinkedIn is the worlds largest business social networking hub. Launched in 2003, LinkedIn has millions of users and is implemented in over 200 countries. One purpose of the site is to allow registered users to maintain a list of contact details of people with whom they have some level of relationship, called Connections. Users can invite anyone (whether a site user or not) to become a connection. LinkedIn actually provides 2 APIs:\n-The JavaScript API is a rich client library enabling you to build dynamic applications in the web browser. Use OAuth 2 to easily authorize users via the \"Sign In with LinkedIn\" button, access LinkedIn data with native objects, and interact with Plugins.\n-The REST API provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them. Our query language lets you read data in XML and JSON at the granularity and aggregation that you choose. Use OAuth 1.0a to authorize users and begin making REST API calls using any programming language.",
-	"url": "https://api.linkedin.com/uas/oauth",
-	"oauth1": {
-		"request_token": "/requestToken",
-		"access_token": "/accessToken",
-		"authorize": {
-			"url": "/authenticate",
-			"query": {
-				"state": "{{state}}"
-			}
-		}
-	},
-	"href": {
-		"keys": "https://www.linkedin.com/secure/developer?newapp=",
-		"docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
-		"apps": "https://www.linkedin.com/secure/developer",
-		"provider": "http://www.linkedin.com/"
-	}
+    "name": "Linkedin",
+    "desc": "LinkedIn is the worlds largest business social networking hub. \n LinkedIn actually provides 2 APIs: The JavaScript API that is a rich client library enabling you to build dynamic applications in the web browser. And the REST API that provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
+    "url": "https://api.linkedin.com/uas/oauth",
+    "oauth1": {
+        "request_token": "/requestToken",
+        "access_token": "/accessToken",
+        "authorize": {
+            "url": "/authenticate",
+            "query": {
+                "state": "{{state}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://www.linkedin.com/secure/developer?newapp=",
+        "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+        "apps": "https://www.linkedin.com/secure/developer",
+        "provider": "http://www.linkedin.com/"
+    }
 }

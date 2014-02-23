@@ -12,6 +12,11 @@
 				"provider": "https://vk.com/",
 				"docs": "https://vk.com/dev/main"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/users.get?uid=USER_ID"
+        },
+        "jsfiddle": "http://jsfiddle.net/thyb/rXSjp/2/embedded/"
 	}
 }

@@ -13,6 +13,10 @@
 				"provider": "http://www.foursquare.com/",
 				"docs": "https://developer.foursquare.com/overview/"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v2/users/self"
+        }
 	}
 }

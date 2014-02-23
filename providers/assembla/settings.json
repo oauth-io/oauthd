@@ -13,6 +13,10 @@
 				"provider": "https://www.assembla.com/",
 				"docs": "http://api-doc.assembla.com/content/api_reference.html"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/user"
+        }
 	}
 }

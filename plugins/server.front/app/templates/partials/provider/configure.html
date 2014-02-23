@@ -1,0 +1,82 @@
+<div class="row" style="" >
+    <div class="col-lg-6" >
+        <p style="white-space: pre-line; font-size: 1.3em; word-wrap: break-word; text-align: justify;">{{ providerConf.data.desc }}</p>
+    </div >
+    <div class="col-lg-6" >
+        <div class="row" >
+            <div class="col-lg-6 text-center" >
+                <div class="provider-block-feature" >
+                    <img src="/img/oauth-icon.png" style="height: 32px; width: 32px; position: relative; top: -3px"
+                    alt="" > OAuth{{oauthVersion}}
+                </div >
+            </div >
+            <div class="col-lg-6 text-center" >
+                <div class="provider-block-feature" >
+                    <i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77"
+                    ng-hide="cors" ></i >
+                    <i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green" ng-show="cors" ></i >
+                    <span style="position: relative; top: -6px" >Cross domain</span >
+                </div >
+            </div >
+            <div class="col-lg-6 text-center" >
+                <div class="provider-block-feature" >
+                    <i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77"
+                    ng-hide="refresh" ></i >
+                    <i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green"
+                    ng-show="refresh" ></i >
+                    <span style="position: relative; top: -6px" >Refresh token</span >
+                </div >
+            </div >
+            <div class="col-lg-6 text-center" >
+                <div class="provider-block-feature" >
+                    <i class="glyphicon glyphicon-remove-circle" style="font-size: 25px;color: #FF6B77"
+                    ng-hide="revoke" ></i >
+                    <i class="glyphicon glyphicon-ok-circle" style="font-size: 25px;color: green"
+                    ng-show="revoke" ></i >
+                    <span style="position: relative; top: -6px" >
+                    Revoke access
+                    </span >
+                </div >
+            </div >
+        </div >
+    </div >
+</div >
+<div class="row" >
+    <div class="col-lg-12" >
+        <h1 class="text-center" style="margin-bottom: 50px; margin-top: 40px" >Create an application on
+        {{providerConf.data.name}}</h1 >
+    </div >
+</div >
+<div class="row" >
+    <div  class="ng-class: {true:'col-lg-6', false: 'col-lg-12'}[conf_image != undefined]" >
+        <div class="ng-class: {false: 'configuration-centered'}[conf_image != undefined]">
+            <p style="font-size: 1.2em" class="alert alert-info" >You need to have an account on <a
+            ng-href="{{settings.data.settings.install.href.provider}}" >{{providerConf.data.name}}</a > to register
+            a new application.</p >
+            <p style="font-size: 1.2em" >Go on the {{providerConf.data.name}} developer platform and create a new
+            application.</p >
+            <p style="font-size: 1.2em" >Configure it as your need but you have to authorize the domain
+            <code >oauth.io</code > and the URL callback <code >https://oauth.io/auth</code > in your app's settings.
+            </p >
+            <p style="font-size: 1.2em" ng-show="settings.data.settings.createApp.text != null"
+            ng-bind-html-unsafe="settings.data.settings.createApp.text" ></p >
+
+            <p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.docs">
+                <b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a> 
+            </p>
+            <p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.apps">
+                <b>{{ provider_name | capitalize }} apps page :</b> <a target="_blank" href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
+            </p>
+        </div>
+    </div >
+    <div class="col-lg-6" ng-show="settings.data.settings.createApp.image" >
+        <img class="img-responsive" ng-src="/api/providers/{{provider}}/{{settings.data.settings.createApp.image}}" >
+    </div >
+</div >
+<div class="row" >
+    <div class="col-lg-12" >
+        <p class="text-center" style="margin-top: 50px" ><a ng-href="/provider/{{provider}}/app"
+        class="btn btn-lg btn-primary" >Next > Choose an app</a >
+        </p >
+    </div >
+</div >

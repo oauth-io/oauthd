@@ -11,6 +11,10 @@
 				"provider": "http://yandex.ru/",
 				"docs": "http://api.yandex.ru/oauth/doc"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/me/"
+        }
 	}
 }

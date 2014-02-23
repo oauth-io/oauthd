@@ -13,6 +13,10 @@
 				"provider": "http://runkeeper.com/",
 				"docs": "http://developer.runkeeper.com/healthgraph/overview"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/user"
+        }
 	}
 }

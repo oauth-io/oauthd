@@ -197,6 +197,9 @@ app.factory 'ProviderService', ($http, $rootScope) ->
 		get: (name, success, error) ->
 			api 'providers/' + name + '?extend=true', success, error
 
+		getSettings: (name, success, error) ->
+			api 'providers/' + name + '/settings', success, error
+
 		auth: (appKey, provider, success)->
 			OAuth.initialize appKey
 			OAuth.popup provider, success

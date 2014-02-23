@@ -132,12 +132,32 @@ app.config([
 			controller: 'ApiKeyManagerCtrl'
 			title: 'Key manager'
 
-		$routeProvider.when '/key-manager/:provider',
-			templateUrl: '/templates/key-manager.html'
-			controller: 'ApiKeyManagerCtrl'
-			title: 'Key manager'
+		$routeProvider.when '/provider/:provider',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderPageCtrl'
+
+		$routeProvider.when '/provider/:provider/app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppKeyCtrl'
+
+		$routeProvider.when '/provider/:provider/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
 
 		$routeProvider.when '/app-create',
+			templateUrl: '/templates/app-create.html'
+			controller: 'AppCtrl'
+			title: 'App creation'
+
+		$routeProvider.when '/app-create/:provider',
 			templateUrl: '/templates/app-create.html'
 			controller: 'AppCtrl'
 			title: 'App creation'

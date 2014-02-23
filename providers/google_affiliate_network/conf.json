@@ -1,6 +1,6 @@
 {
 	"name": "Google Affiliate Network",
-	"desc": "The Google Affiliate Network is an affiliate marketing network. Advertisers use the network to increase online conversions and monetize their site traffic through the use of affiliate ads. With the API publishers have the ability to look up advertisers as well as access order and lead transactions. Advertisers have the ability to publisher data. Developers can access the data from the network and integrate it into their own systems. The API uses RESTful calls and responses are formatted in JSON.",
+	"desc": "The Google Affiliate Network is an affiliate marketing network. Advertisers use the network to increase online conversions and monetize their site traffic through the use of affiliate ads. With the API publishers have the ability to look up advertisers as well as access order and lead transactions. Advertisers have the ability to publisher data. The API uses RESTful calls and responses are formatted in JSON.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": {

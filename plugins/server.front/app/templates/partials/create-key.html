@@ -31,10 +31,10 @@
 		<h5 ng-show="createKeyHref.docs" style="font-size: 1.3em">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>
 		<h5 ng-show="createKeyHref.apps" style="font-size: 1.3em">{{createKeyProvider|capitalize}} apps page: <a href="{{createKeyHref.apps}}" target="_blank">{{createKeyHref.apps|trunc:35}}</a></h5>
 	</div>
-	<div ng-show="createKeyStep == 3">
-		<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
-	      {{error.message}}
-		</div>
-		<div ng-include src="createKeyLastStepTemplate"></div>
+	<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
+      {{error.message}}
 	</div>
+    <div ng-show="createKeyStep == 3">
+        <div ng-include src="createKeyLastStepTemplate"></div>
+    </div>
 </div>

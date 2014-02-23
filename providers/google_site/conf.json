@@ -1,6 +1,6 @@
 {
 	"name": "Google Site Verification",
-	"desc": "The Google Sites Data API lets developers access, publish, and modify content within a Google Site. The API is available to both Google Account and Google Apps users.\n\nHere are some of the things you can do with the API:\n\n* Retrieve, create, modify, move, and delete pages, comments, attachments, and other content.\n* Review the revision history across the Site.\n* Monitor all add, modify, and delete activity for a Site.\n* Upload/download attachments and files.\n* Create customized gadgets for your users.",
+	"desc": "The Google Sites Data API lets developers access, publish, and modify content within a Google Site. The API is available to both Google Account and Google Apps users. With this API, you can do things such as retrieving, creating, modifying, moving, and deleting pages, comments, attachments, and other content, reviewing the revision history across the Site,  monitoring all add, modify, and delete activity for a Site,  uploading/downloading attachments and files, and creating customized gadgets for your users.",
 	"url": "https://accounts.google.com/o/oauth2",
 	"oauth2": {
 		"authorize": {

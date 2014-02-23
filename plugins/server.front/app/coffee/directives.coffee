@@ -39,7 +39,15 @@ app.directive 'googleAnalytics', ($location, $rootScope, $window) ->
 					return
 				ga 'send', 'pageview', $location.path()
 				_cio.page $location.absUrl()
-	};
+	}
+
+app.directive 'selectize', ($timeout) ->
+    return {
+        restrict: 'A',
+        link: (scope, element, attrs) ->
+            $timeout ->
+                $(element).selectize scope.$eval(attrs.selectize)
+    }
 
 app.directive 'bootstrapModal', () ->
 	def =
@@ -92,6 +100,24 @@ app.directive 'lightbox', ($timeout) ->
 					if $scope.lightbox.show
 						$(tElement).modal('hide').find('.modal').hide()
 						$('.modal-backdrop').remove()
+
+
+app.directive "fiddleIframe", ->
+	linkFn = (scope, element, attrs) ->
+		element.find("iframe").bind "load", (event) ->
+			scope.ngLoad();
+	dir = 
+		restrict: "EA",
+		scope:
+			src: "@src"
+			height: "@height"
+			width: "@width"
+			scrolling: "@scrolling"
+			ngLoad: "="
+			allowFullScreen: '@allowfullscreen',
+		template: '<iframe class="frame" allowfullscreen="{{ allowfullscreen }}" height="{{height}}" width="{{width}}" frameborder="0" border="0" marginwidth="0" marginheight="0" scrolling="{{scrolling}}" src="{{src}}"></iframe>'
+		link: linkFn
+	return dir
 
 
 # app.directive 'paymentform', () ->
