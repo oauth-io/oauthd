@@ -152,6 +152,11 @@ app.config([
 			controller: 'AppCtrl'
 			title: 'App creation'
 
+		$routeProvider.when '/app-create/:provider',
+			templateUrl: '/templates/app-create.html'
+			controller: 'AppCtrl'
+			title: 'App creation'
+
 		$routeProvider.when '/validate/:id/:key',
 			templateUrl: '/templates/user-validate.html'
 			controller: 'ValidateCtrl'

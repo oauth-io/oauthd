@@ -1051,7 +1051,7 @@ ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppServic
 ##################
 # App controller #
 ##################
-AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
+AppCtrl = ($scope, $rootScope, $routeParams, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
 	if not UserService.isLogin()
 		$location.path '/signin'
 
@@ -1173,7 +1173,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			return
 
 		AppService.add $scope.createAppForm, (->
-			$location.path "/key-manager"
+			callback = "/key-manager"
+			callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
+			$location.path callback
 		), (error)->
 			# console.log error
 			$rootScope.error.state = true

@@ -11,7 +11,7 @@
 				<p class="list-group-item-text">{{app.domains.join(' ')}}</p>
 			</a>
 		</div>
-		<p class="text-center">Or<br /><br /><a href="/app-create" class="btn btn-lg btn-primary">Create an app</a></p>
+		<p class="text-center">Or<br /><br /><a ng-href="/app-create/{{provider}}" class="btn btn-lg btn-primary">Create an app</a></p>
 	</div>
 <!-- 	<select id="app-select" placeholder="Choose an OAuth.io app" ng-options="a.key as a.name for a in apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)">
 	</select>

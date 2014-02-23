@@ -19,3 +19,4 @@ plugins/server.front/app/templates/pricing.bak.html
 *.sublime-*
 newrelic_agent.log
 /.idea/
+/private
