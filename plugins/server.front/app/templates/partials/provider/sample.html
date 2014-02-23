@@ -88,10 +88,10 @@
 		<p style="font-size: 1.3em">You can use <code>get()</code>, <code>post()</code>, <code>put()</code>, <code>delete()</code> and <code>patch()</code> to make your API calls. As the tokens are in the result of the authorization, we totaly abstract them by adding some high-level methods.</p>
 
 		<p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.docs">
-			<b>{{ provider_name | capitalize }} documentation :</b> <a href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a> 
+			<b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a> 
 		</p>
 		<p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.apps">
-			<b>{{ provider_name | capitalize }} apps page :</b> <a href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
+			<b>{{ provider_name | capitalize }} apps page :</b> <a target="_blank" href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
 		</p>
 	</div>
 	<div class="col col-lg-6">

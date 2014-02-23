@@ -1044,6 +1044,7 @@ ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppServic
 			$scope.revoke = true if $scope.providerConf.data.oauth2?.revoke? or $scope.providerConf.data.oauth1?.revoke?
 			$scope.refresh = false
 			$scope.refresh = true if $scope.providerConf.data.oauth2?.refresh? or $scope.providerConf.data.oauth1?.refresh?
+			$scope.provider_name = settings.data.provider.replace /_/g, ' '
 		), (error) ->
 	), (error) ->
 

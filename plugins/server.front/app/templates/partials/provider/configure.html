@@ -60,6 +60,13 @@
             </p >
             <p style="font-size: 1.2em" ng-show="settings.data.settings.createApp.text != null"
             ng-bind-html-unsafe="settings.data.settings.createApp.text" ></p >
+
+            <p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.docs">
+                <b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a> 
+            </p>
+            <p style="font-size: 1.3em" ng-show="settings.data.settings.install.href.apps">
+                <b>{{ provider_name | capitalize }} apps page :</b> <a target="_blank" href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
+            </p>
         </div>
     </div >
     <div class="col-lg-6" ng-show="settings.data.settings.createApp.image" >
