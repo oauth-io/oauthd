@@ -87,7 +87,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 					grant_type: "client_credentials"
 				headers:
 					Authorization: "Basic " + authorization
-			).success((data) ->
+			).success((data) =>
 				$rootScope.accessToken = data.access_token
 				$cookieStore.put 'accessToken', data.access_token
 				refreshSession $rootScope
