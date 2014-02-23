@@ -984,6 +984,7 @@ ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderSer
 			$scope.providerConf = provider
 			$scope.settings = settings
 			$scope.sample = settings.data.settings.sample
+			$scope.provider_name = settings.data.provider.replace /_/g, ' '
 		), (error) ->
 	), (error) ->
 
