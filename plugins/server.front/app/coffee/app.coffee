@@ -26,9 +26,9 @@ define ["services/routeResolver"], ->
       route = routeResolverProvider.route
       $routeProvider.when("/testlapin", route.resolve("Testlapin"))
 
-      $routeProvider.when '/', route.resolve("IndexController", "/templates/landing-new.html")
+      $routeProvider.when '/', route.resolve("Index", "/templates/landing-new.html")
 
-      $routeProvider.when '/providers', route.resolve("IndexController", "/templates/providers.html", 'API Providers', 'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
+      $routeProvider.when '/providers', route.resolve("Index", "/templates/providers.html", 'API Providers', 'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
      
       $routeProvider.when '/wishlist',
         templateUrl: '/templates/wishlist.html'
