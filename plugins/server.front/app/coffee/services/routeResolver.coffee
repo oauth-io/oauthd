@@ -2,10 +2,10 @@ define [], ->
     services = angular.module 'routeResolverServices', []
     services.provider 'routeResolver', ->
         @$get = ->
-            this
+            @
         @routeConfig = (->
-            viewsDirectory = '/templates'
-            controllersDirectory = '/js/controllers'
+            viewsDirectory = '/templates/'
+            controllersDirectory = '/js/controllers/'
             setBaseDirectory = (viewsDir, controllersDir) ->
                 viewsDirectory = viewsDir
                 controllersDirectory = controllersDir
@@ -36,6 +36,7 @@ define [], ->
                 require dependencies, ->
                     defer.resolve()
                     $rootScope.$apply()
-                    defer.promise
-                resolve: resolve
+                defer.promise
+            resolve: resolve
         ) (@routeConfig)
+        return
