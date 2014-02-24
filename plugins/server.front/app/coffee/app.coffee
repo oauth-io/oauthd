@@ -2,7 +2,6 @@
 define ["services/routeResolver"], ->
   app = angular.module("oauth", [
     "routeResolverServices"
-    "ngRoute"
     "ui.bootstrap"
     "ngDragDrop"
     "ui.select2"

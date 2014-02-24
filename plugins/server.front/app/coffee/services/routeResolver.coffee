@@ -1,7 +1,7 @@
 define [], ->
     services = angular.module 'routeResolverServices', []
     services.provider 'routeResolver', ->
-        @get = ->
+        @$get = ->
             this
         @routeConfig = (->
             viewsDirectory = '/templates'
