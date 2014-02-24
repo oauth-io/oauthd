@@ -1,10 +1,8 @@
 # oauthd
 # http://oauth.io
 #
-# Copyright (c) 2013 thyb, bump
+# Copyright (c) 2013 Webshell
 # For private use only.
-#
-# Paymill NodeJS docs : https://github.com/komola/paymill-node
 #
 
 exports.setup = (callback) ->
@@ -14,17 +12,34 @@ exports.setup = (callback) ->
 		return callback()
 
 	@db.payments = require './db_payments'
+	@db.plans = require './plans'
 
 	@stripe_hook = (req, res, next) =>
 		callback = @server.send(res, next)
-		if req.body.type == 'invoice.payment_succeeded'
-			@db.payments.payment_succeeded req.body.data.object, callback
-		else
-			callback()
-
-	@server.post @config.base_api + '/payment/process', @auth.needed, (req, res, next) =>
-		@db.payments.process req.body, req.user, @server.send(res, next)
+		return callback() if not @db.payments.hooks[req.body.type]
+		@db.payments.hooks[req.body.type] req.body.data.object, callback
 
 	@server.post '/stripe_hook', (req, res, next) => @stripe_hook req, res, next
+
+	@server.post @config.base_api + '/payment/subscribe', @auth.needed, (req, res, next) =>
+		@db.payments.subscribe req.body, req.user, @server.send(res, next)
+
+	@server.del @config.base_api + '/payment/unsubscribe', @auth.needed, (req, res, next) =>
+		@db.payments.unsubscribe req.user, @server.send(res, next)
+
+	@server.get @config.base_api + '/plans', @auth.optional, (req, res, next) =>
+		offers = []
+		for id,plan of @db.plans
+			if id.split('_').length == 1
+				offers.push plan
+
+		if not req.user
+			res.send offers:offers, current_plan: null
+			return next()
+
+		@db.redis.get "u:#{req.user.id}:current_plan", (err, plan_id) ->
+			return next err if err
+			res.send offers: offers, current_plan: plan_id
+			return next()
 
 	callback()

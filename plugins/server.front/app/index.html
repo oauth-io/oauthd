@@ -69,7 +69,6 @@ src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
       window.stripeKey = "{{config.stripe.key}}"
       window.demoKey = "{{config.demoKey}}";
       window.loginKey = "{{config.loginKey}}";
-      {{if admin}}window.devShow = true;{{endif}}
 
       {{if logged}}
       _cio.identify({

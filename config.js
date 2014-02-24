@@ -75,7 +75,6 @@ module.exports = {
 		'server.payments',
 		'server.mailjet',
 		'server.wishlist',
-		'server.pricing',
 		'server.customer_io',
 		'server.cohort',
 		'server.apiratings',

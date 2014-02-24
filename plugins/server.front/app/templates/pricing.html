@@ -24,7 +24,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 			<thead>
 				<th></th>
 				<th class="plan first">
-					<img src="/img/your_plan.png" style="left:0px; top:0px;position:absolute;" ng-show="!current_plan && UserService.isLogin()"/>
+					<img src="/img/your_plan.png" style="left:0px; top:0px;position:relative;" ng-show="!current_plan && UserService.isLogin()"/>
 					<h3>Bootstrap</h3>
 					<h1>$0</h1>
 					<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
@@ -32,7 +32,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					</p>
 				</th>
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
-					<img src="/img/your_plan.png" style="left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.id"/>
+					<img src="/img/your_plan.png" style="left:0; top: 0; position: relative" ng-show="UserService.isLogin() && current_plan == plan.id"/>
 					<h3>{{plan.name|capitalize}}</h3>
 					<h1>${{plan.amount}}</h1>
 					<p style="margin: 0 10px 15px">

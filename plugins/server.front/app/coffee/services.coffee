@@ -116,9 +116,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				oauth_token:tokens?.oauth_token
 				oauth_token_secret:tokens?.oauth_token_secret
 
-		getSubscriptions: (success, error) ->
-			api 'me/subscriptions', success, error
-
 		update: (profile, success, error) ->
 			api 'me', success, error,
 				method: "PUT",
@@ -168,13 +165,7 @@ app.factory 'MenuService', ($rootScope, $location) ->
 	$rootScope.selectedMenu = $location.path()
 
 	return changed: ->
-		p = $location.path()
-
-		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-			$('body').css('background-color', "#FFF")
-		else
-			$('body').css('background-color', '#FFF')
-
+		$('body').css('background-color', '#FFF')
 		$('body > .navbar span, #footer').css('color', '#777777')
 		$('#wsh-powered').attr('src', '/img/webshell-logo.png')
 		$('body > .navbar li a').css('color', '#777777').css('font-weight', 'normal')
@@ -264,19 +255,15 @@ app.factory 'KeysetService', ($rootScope, $http) ->
 app.factory 'PaymentService', ($rootScope, $http) ->
 	api = apiRequest $http, $rootScope
 	return {
-		process: (data, success, error) ->
-			api 'payment/process', success, error,
+		subscribe: (data, success, error) ->
+			api 'payment/subscribe', success, error,
 				method:'POST'
 				data: data
-	}
-
-app.factory 'PricingService', ($rootScope, $http) ->
-	api = apiRequest $http, $rootScope
-	return {
-		list: (success, error) ->
-			api 'plans', success, error
 
 		unsubscribe: (success, error) ->
-			api "plan/unsubscribe", success, error,
-				method : 'delete'
+			api "payment/unsubscribe", success, error,
+				method:'DELETE'
+
+		list: (success, error) ->
+			api 'plans', success, error
 	}

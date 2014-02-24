@@ -382,19 +382,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	 	$location.path '/'
 
 	$scope.changeTab = (tab) ->
-
-		if tab == 'payment'
-			$('#subscriptions_content').fadeOut(1000)
-			$scope.subscriptions = null
-			UserService.getSubscriptions (success) ->
-				$scope.subscriptions = success.data.subscriptions
-				$('#loader_subscriptions_list').hide 0, ->
-					$('#subscriptions_content').fadeIn(1000)
-			, (error) ->
-				$('#loader_subscriptions_list').hide 0, ->
-					$('#subscriptions_content').fadeIn(1000)
-				console.log error
-
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
 		$scope.tab = tab
 
@@ -1503,31 +1490,24 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 		return "200 OK"
 
 
-PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PricingService) ->
+PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PaymentService) ->
 
 	MenuService.changed()
 
 	$scope.current_plan = null
-	$scope.devShow = window.devShow
 
-	PricingService.list (success) ->
+	PaymentService.list (success) ->
 		$scope.current_plan = success.data.current_plan
 		$scope.plans = success.data.offers
 	, (error) ->
 		console.log error
 
-	$scope.unsubscribe_confirm = (plan) ->
-
-	$scope.unsubscribe = ->
-
-		$('#bt-unsubscribe').hide 0, ->
-			$('#waiting-unsubscribe').fadeIn(1000)
-
-		PricingService.unsubscribe (success) ->
-			$scope.current_plan = null
-			$location.path "/pricing" if success
-		, (error) ->
-			console.log error
+	$scope.unsubscribe = (plan) ->
+		if confirm("Are you sure to unsubscribe from " + plan.name + " ?")
+			PaymentService.unsubscribe (success) ->
+				$scope.current_plan = null
+			, (error) ->
+				console.log error
 
 	$scope.subscribe = (plan) ->
 		$scope.plan = plan

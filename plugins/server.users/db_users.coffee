@@ -266,10 +266,6 @@ exports.updatePassword = (req, callback) ->
 
 # get a user by his id
 exports.get = check 'int', (iduser, callback) ->
-	Clients = require '../server.payments/paymill_client'
-	client = new Clients()
-	client.user_id = iduser
-
 	prefix = 'u:' + iduser + ':'
 	db.redis.mget [ prefix + 'mail',
 		prefix + 'date_inscr',
@@ -354,14 +350,6 @@ exports.getPlan = check 'int', (iduser, callback) ->
 			nbApp:plan.apps
 			nbProvider:plan.providers
 			responseDelay:plan.support
-
-exports.getAllSubscriptions = check 'int', (iduser, callback) ->
-	Clients = require '../server.payments/paymill_client'
-	client = new Clients()
-	client.user_id = iduser
-	client.getSubscriptions (err, subscriptions) ->
-	 	return callback err if err
-	 	return callback null, subscriptions:subscriptions
 
 # is an app owned by a user
 exports.hasApp = check 'int', check.format.key, (iduser, key, callback) ->

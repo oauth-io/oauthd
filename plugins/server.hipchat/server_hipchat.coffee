@@ -34,7 +34,7 @@ exports.setup = (callback) ->
 		hipchat room:@config.hipchat.room_support, message:data.body
 
 	@on 'user.pay', (data) =>
-		hipchat room:@config.hipchat.room_activities, message:data.user.profile.name + ' bought offer ' + data.invoice.plan_name + ' ($' + data.invoice.total + ') *shlingggggggggggg*'
+		hipchat room:@config.hipchat.room_activities, message:data.user.profile.name + ' bought offer ' + data.invoice.plan_name + ' ($' + (data.invoice.total / 100) + ') *shlingggggggggggg*'
 
 	if @config.hipchat.crash_monitor
 		exit.push 'crash monitor', (callback) =>
