@@ -196,6 +196,16 @@ define ["app"], (app) ->
 			
   app.register.controller "ApiKeyManagerCtrl", [
     "$scope"
+    "$routeParams"
+    "$timeout"
+    "$rootScope"
+    "$location"
+    "UserService"
+    "$http"
+    "MenuService"
+    "KeysetService"
+    "AppService"
+    "ProviderService"
     ApiKeyManagerCtrl
   ]
   return

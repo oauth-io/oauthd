@@ -63,7 +63,11 @@ define ["app"], (app) ->
 				message: error.message
 		
   app.register.controller "WishlistCtrl", [
+    "$filter"
     "$scope"
+    "WishlistService"
+    "$timeout"
+    "MenuService"
     WishlistCtrl
   ]
   return

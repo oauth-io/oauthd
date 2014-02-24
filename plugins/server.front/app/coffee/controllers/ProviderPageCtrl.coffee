@@ -31,6 +31,13 @@ define ["app"], (app) ->
 	
   app.register.controller "ProviderPageCtrl", [
     "$scope"
+    "MenuService"
+    "UserService"
+    "ProviderService"
+    "AppService"
+    "$timeout"
+    "$routeParams"
+    "$location"
     ProviderPageCtrl
   ]
   return

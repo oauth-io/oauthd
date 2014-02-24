@@ -33,6 +33,10 @@ define ["app"], (app) ->
 	
   app.register.controller "ProviderSampleCtrl", [
     "$scope"
+    "MenuService"
+    "$routeParams"
+    "AppService"
+    "ProviderService"
     ProviderSampleCtrl
   ]
   return

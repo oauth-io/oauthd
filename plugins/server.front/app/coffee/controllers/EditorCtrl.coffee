@@ -133,6 +133,8 @@ define ["app"], (app) ->
 	
   app.register.controller "EditorCtrl", [
     "$scope"
+    "MenuService"
+    "ProviderService"
     EditorCtrl
   ]
   return

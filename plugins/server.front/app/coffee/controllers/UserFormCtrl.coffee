@@ -234,6 +234,13 @@ define ["app"], (app) ->
 	
   app.register.controller "UserFormCtrl", [
     "$scope"
+    "$rootScope"
+    "$timeout"
+    "$http"
+    "$location"
+    "UserService"
+    "MenuService"
+    "$routeParams"
     UserFormCtrl
   ]
   return

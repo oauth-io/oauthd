@@ -141,7 +141,11 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 		return "200 OK"
 
   app.register.controller "InspectorCtrl", [
-    "$scope"
+    "UserService"
+    "ProviderService"
+    "AppService"
+    "KeysetService"
+    "OAuthIOService"
     InspectorCtrl
   ]
   return

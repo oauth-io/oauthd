@@ -44,6 +44,10 @@ define ["app"], (app) ->
 	
   app.register.controller "ResetPasswordCtrl", [
     "$scope"
+    "$routeParams"
+    "MenuService"
+    "UserService"
+    "$location"
     ResetPasswordCtrl
   ]
   return

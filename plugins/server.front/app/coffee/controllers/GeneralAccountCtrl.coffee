@@ -49,7 +49,10 @@ define ["app"], (app) ->
 		$rootScope.$watch 'loading', (newval, oldval) -> drawChart() if newval == false
 
 	app.register.controller "generalAccountCtrl", [
+		"$rootScope"
 		"$scope"
+		"$timeout"
+		"UserService"
 		generalAccountCtrl
 	]
 	return

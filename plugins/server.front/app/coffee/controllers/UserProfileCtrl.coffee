@@ -101,7 +101,14 @@ define ["app"], (app) ->
 			state : false
 	
   app.register.controller "UserProfileCtrl", [
+    "$rootScope"
     "$scope"
+    "$routeParams"
+    "$location"
+    "$timeout"
+    "MenuService"
+    "UserService"
+    "AppService"
     UserProfileCtrl
   ]
   return

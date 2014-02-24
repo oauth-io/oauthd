@@ -16,6 +16,10 @@ define ["app"], (app) ->
 	
   app.register.controller "DocsCtrl", [
     "$scope"
+    "UserService"
+    "MenuService"
+    "$routeParams"
+    "$location"
     DocsCtrl
   ]
   return

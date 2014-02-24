@@ -230,6 +230,14 @@ define ["app"], (app) ->
 				
   app.register.controller "AppCtrl", [
     "$scope"
+    "$rootScope"
+    "$routeParams"
+    "$location"
+    "UserService"
+    "$timeout"
+    "AppService"
+    "ProviderService"
+    "KeysetService"
     AppCtrl
   ]
   return

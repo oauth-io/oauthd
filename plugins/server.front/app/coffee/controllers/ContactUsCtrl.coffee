@@ -64,6 +64,9 @@ define ["app"], (app) ->
 	
   app.register.controller "ContactUsCtrl", [
     "$scope"
+    "$rootScope"
+    "OAuthIOService" 
+    "MenuService"
     ContactUsCtrl
   ]
   return

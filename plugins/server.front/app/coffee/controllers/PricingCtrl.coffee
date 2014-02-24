@@ -53,6 +53,11 @@ define ["app"], (app) ->
 
   app.register.controller "PricingCtrl", [
     "$scope"
+    "$location"
+    "MenuService"
+    "UserService"
+    "PricingService"
+    "CartService"
     PricingCtrl
   ]
   return

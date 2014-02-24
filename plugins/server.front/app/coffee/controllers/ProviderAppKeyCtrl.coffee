@@ -85,6 +85,15 @@ define ["app"], (app) ->
 	
   app.register.controller "ProviderAppKeyCtrl", [
     "$scope"
+    "$http"
+    "MenuService"
+    "UserService"
+    "KeysetService"
+    "ProviderService"
+    "AppService"
+    "$timeout"
+    "$routeParams"
+    "$location"
     ProviderAppKeyCtrl
   ]
   return

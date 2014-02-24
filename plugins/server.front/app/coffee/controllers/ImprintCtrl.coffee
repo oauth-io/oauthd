@@ -4,7 +4,7 @@ define ["app"], (app) ->
 		MenuService.changed()
 		
 	app.register.controller "ImprintCtrl", [
-		"$scope"
+		"MenuService"
 		ImprintCtrl
 	]
 	return

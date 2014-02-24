@@ -39,7 +39,14 @@ define ["app"], (app) ->
 		$location.path '/404'
 	
   app.register.controller "ValidateCtrl", [
+    "$rootScope"
+    "$timeout"
     "$scope"
+    "$routeParams"
+    "MenuService"
+    "UserService"
+    "$location"
+    "$cookieStore"
     ValidateCtrl
   ]
   return

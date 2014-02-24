@@ -5,7 +5,9 @@ define ["app"], (app) ->
 		document.location.reload()
 
 	app.register.controller "LogoutCtrl", [
-		"$scope"
+		"$location"
+		"UserService"
+		"MenuService"
 		LogoutCtrl
 	]
 	return

@@ -404,6 +404,15 @@ define ["app"], (app) ->
 			return params
 	app.register.controller "PaymentCtrl", [
 		"$scope"
+		"$rootScope"
+		"$location"
+		"$route"
+		"$routeParams"
+		"UserService"
+		"PaymentService"
+		"PricingService"
+		"MenuService"
+		"CartService"
 		PaymentCtrl
 	]
 	return

@@ -4,6 +4,7 @@ define ["app"], (app) ->
         $scope.notifications = NotificationService.list()
     app.register.controller "NotificationCtrl", [
         "$scope"
+        "NotificationService"
         NotificationCtrl
     ]
     return

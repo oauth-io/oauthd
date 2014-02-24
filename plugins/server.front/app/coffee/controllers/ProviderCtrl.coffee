@@ -41,7 +41,12 @@ define ["app"], (app) ->
 			), 0
 	
   app.register.controller "ProviderCtrl", [
+    "MenuService"
+    "$filter"
     "$scope"
+    "$rootScope"
+    "ProviderService"
+    "$timeout"
     ProviderCtrl
   ]
   return

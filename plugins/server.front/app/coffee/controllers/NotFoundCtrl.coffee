@@ -6,6 +6,9 @@ define ["app"], (app) ->
 
 	app.register.controller "NotFoundCtrl", [
 		"$scope"
+		"$routeParams"
+		"UserService"
+		"MenuService"
 		NotFoundCtrl
 	]
 	return
