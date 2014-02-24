@@ -4,7 +4,7 @@ define ["app"], (app) ->
     $scope.lapin = "Plop lapin"
     return
 
-  app.register.controller "TestlapinController", [
+  app.register.controller "TestlapinCtrl", [
     "$scope"
     TestlapinController
   ]
