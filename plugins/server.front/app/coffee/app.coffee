@@ -192,5 +192,12 @@ define ["services/routeResolver"], ->
         templateUrl: '/templates/404.html'
         controller: 'NotFoundCtrl'
         title: '404 not found'
+
+
+      require ['js/controllers/InspectorController.js'], ->
+        $('#InspectorCtrl').attr 'ng-controller', 'InspectorCtrl'
+
+
+
   ]
   app

@@ -4,7 +4,9 @@ define ["app"], (app) ->
 		MenuService.changed()
 	
 	app.register.controller "AboutCtrl", [
-		"$scope"
+		"$scope",
+        "UserService",
+        "MenuService"
 		AboutCtrl
 	]
 	return
