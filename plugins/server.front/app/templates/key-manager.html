@@ -6,8 +6,8 @@
 	<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
 </div> -->
 	<div class="row">
-		<div class="col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
-		<div class="col-lg-8" ng-controller="AppCtrl">
+		<div class="col-md-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col-md-8" ng-controller="AppCtrl">
 			<div ng-repeat="app in me.apps" class="app panel panel-primary" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
 				<div ng-hide="editMode == app.key" class="panel-heading">
 					<h4 style="position: relative; top: -5px; font-weight: bold">

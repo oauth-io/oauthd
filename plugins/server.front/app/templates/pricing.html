@@ -19,13 +19,13 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 
 <div class="container" id="pricing">
 	<div class="row" style="background-color: white; padding: 0px 15px">
-		<h1 style="text-align: center; margin-bottom: 50px; font-size: 40px">Pricing</h1>
+		<h1 style="text-align: center; margin-bottom: 50px;">Pricing</h1>
 		<table class="table">
 			<thead>
 				<th></th>
 				<th class="plan first">
 					<img src="/img/your_plan.png" style="left:0px; top:0px;position:absolute;" ng-show="!current_plan && UserService.isLogin()"/>
-					<h3>Bootstrap</h3>
+					<h2>Bootstrap</h2>
 					<h1>$0</h1>
 					<p ng-show="!UserService.isLogin()" style="margin: 0 10px 15px"><a href="/signup" class="btn btn-success btn-block">Sign up</a></p>
 					<div ng-show="UserService.isLogin()" style="height:43px;"></div>
@@ -33,7 +33,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				</th>
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
 					<img src="/img/your_plan.png" style="left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.name"/>
-					<h3>{{plan.name|capitalize}}</h3>
+					<h2>{{plan.name|capitalize}}</h2>
 					<h1>${{plan.amount/100}}</h1>
 					<p style="margin: 0 10px 15px">
 						<button ng-show="plan.name != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
@@ -42,7 +42,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					</p>
 				</th>
 				<th class="plan last">
-					<h3>Need more?</h3>
+					<h2>Need more?</h2>
 					<h1>-</h1>
 					<p style="margin: 0 10px 15px">
 						<a href="/contact-us" ng-click="subscribe(plan)" class="btn btn-success btn-block">Contact us</a>
@@ -77,7 +77,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 			</tbody>
 		</table>
 
-		<p style="font-size: 1.5em; margin-bottom: 50px;">For a commercial licence of <a href="https://github.com/oauth-io/oauthd">oauthd</a>, the opensource daemon of OAuth.io under AGPL license (<a href="https://github.com/oauth-io/oauthd">github.com/oauth-io/oauthd</a>), contact us at <a href="mailto:team@oauth.io">team@oauth.io</a></p>
+		<p style="font-size: 1.2em; margin-bottom: 95px;">For a commercial licence of <a href="https://github.com/oauth-io/oauthd">oauthd</a>, the opensource daemon of OAuth.io under AGPL license (<a href="https://github.com/oauth-io/oauthd">github.com/oauth-io/oauthd</a>), contact us at <a href="mailto:team@oauth.io">team@oauth.io</a></p>
 	</div>
 	<div class="row" style="background-color: #0074a2; color: white">
 		<p style="text-align: center;"><img src="/img/contact.png" style="position: relative; top: -70px" alt="phone"></p>
