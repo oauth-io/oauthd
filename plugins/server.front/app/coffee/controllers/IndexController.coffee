@@ -46,6 +46,7 @@ define ["app"], (app) ->
 
 	$scope.providerClick = (provider) ->
 		$scope.selectedProvider = provider
+	return
 
   app.register.controller "IndexCtrl", [
     "$scope"

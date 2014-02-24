@@ -37,7 +37,8 @@ define ["app"], (app) ->
 			$location.path '/404'
 	), (error) ->
 		$location.path '/404'
-
+	return
+	
   app.register.controller "ValidateCtrl", [
     "$scope"
     ValidateCtrl
