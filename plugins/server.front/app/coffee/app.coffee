@@ -24,7 +24,8 @@ define ["services/routeResolver"], ->
         service: $provide.service
 
       route = routeResolverProvider.route
-      $routeProvider.when("/testlapin", route.resolve("Testlapin"))
+      $routeProvider.when("/testlapin", 
+      route.resolve("Testlapin"))
 
       $routeProvider.when '/',
       route.resolve("Index", "/templates/landing-new.html")
@@ -39,170 +40,167 @@ define ["services/routeResolver"], ->
       route.resolve("Wishlist", 
                     "/templates/wishlist.html", 
                     'API wishlist', 
-                    'OAuth.io supports 100+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !'
+                    'OAuth.io supports 100+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !')
      
       $routeProvider.when '/terms',
       route.resolve("Terms", 
                     "/templates/terms.html", 
                     'Terms of service', 
-                    'Webshell SAS provides OAuth.io and the services described here to provide an OAuth server to authenticate end user on third party sites.'
+                    'Webshell SAS provides OAuth.io and the services described here to provide an OAuth server to authenticate end user on third party sites.')
   
       $routeProvider.when '/about',
-        templateUrl: '/templates/about.html'
-        controller: 'AboutCtrl'
-        title: 'About the team'
+      route.resolve("About", 
+                    "/templates/about.html", 
+                    'About the team')
 
       $routeProvider.when '/docs',
-        templateUrl: '/templates/docs.html'
-        controller: 'DocsCtrl'
-        title: 'Documentation'
-        desc: 'Integrate 100+ OAuth providers in minutes. Setup your keys, install oauth.js, and you are ready to play !'
+      route.resolve("Docs", 
+                    "/templates/docs.html", 
+                    'Documentation', 
+                    'Integrate 100+ OAuth providers in minutes. Setup your keys, install oauth.js, and you are ready to play !')
 
       $routeProvider.when '/faq',
-        templateUrl: '/templates/faq.html'
-        controller: 'DocsCtrl'
-        title: 'Frequently Asked Question'
+      route.resolve("Docs", 
+                    "/templates/faq.html", 
+                    'Frequently Asked Question')
 
       $routeProvider.when '/docs/:page',
-        templateUrl: '/templates/docs.html'
-        controller: 'DocsCtrl'
-        title: 'Documentation'
+      route.resolve("Docs", 
+                    "/templates/docs.html", 
+                    'Documentation')
 
       $routeProvider.when '/help',
-        templateUrl: '/templates/help.html'
-        controller: 'HelpCtrl'
-        title: 'Support'
-        desc: 'Check out the documentation, faq, feebacks or blog. If you still have a question, you can contact the OAuth io support team'
+      route.resolve("Help", 
+                    "/templates/help.html", 
+                    'Support', 
+                    'Check out the documentation, faq, feebacks or blog. If you still have a question, you can contact the OAuth io support team')
 
       $routeProvider.when '/pricing',
-        templateUrl: '/templates/pricing.html'
-        controller: 'PricingCtrl'
-        title: 'Pricing'
+      route.resolve("Pricing", 
+                    "/templates/pricing.html", 
+                    'Pricing')
 
       $routeProvider.when '/pricing/unsubscribe',
-        templateUrl: '/templates/unsubscribe-confirm.html'
-        controller: 'PricingCtrl'
+      route.resolve("Pricing", 
+                    "/templates/unsubscribe-confirm.html")
 
       $routeProvider.when '/payment/customer',
-        templateUrl: '/templates/payment.html'
-        controller: 'PaymentCtrl'
+      route.resolve("Payment",
+                    '/templates/payment.html')
 
       $routeProvider.when '/payment/confirm',
-        templateUrl: '/templates/payment-confirm.html'
-        controller: 'PaymentCtrl'
+      route.resolve("Payment", 
+                      "/templates/payment-confirm.html")
 
       $routeProvider.when '/payment/:name/success',
-        templateUrl: '/templates/successpayment.html'
-        controller: 'PaymentCtrl'
+      route.resolve("Payment", 
+                      "/templates/successpayment.html")
 
       $routeProvider.when '/editor',
-        templateUrl: '/templates/editor.html'
-        controller: 'EditorCtrl'
+      route.resolve("Editor", 
+                      "/templates/editor.html")
 
       $routeProvider.when '/contact-us',
-        templateUrl: '/templates/contact-us.html'
-        controller: 'ContactUsCtrl'
-        title: 'Contact us'
+      route.resolve("Contact", 
+                    "/templates/contact-us.html",
+                    "Contact us")
 
       $routeProvider.when '/features',
-        templateUrl: '/templates/features.html'
-        controller: 'FeaturesCtrl'
+      route.resolve("Features", 
+                    "/templates/features.html")
 
       $routeProvider.when '/feedback',
-        templateUrl: '/templates/feedback.html'
-        controller: 'HelpCtrl'
-        title: 'Feedbacks'
+      route.resolve("Help", 
+                    "/templates/feedback.html",
+                    "Feedbacks")
 
       $routeProvider.when '/imprint',
-        templateUrl: '/templates/imprint.html'
-        controller: 'ImprintCtrl'
-        title: 'Informations'
-        desc: 'OAuth.io is a offered by Webshell SAS, 86 Rue de Paris, 91400 ORSAY. Phone: +33(0)614945903, email: team@webshell.io'
-
+      route.resolve("Imprint", 
+                      "/templates/imprint.html", 
+                      'Informations', 
+                      'OAuth.io is a offered by Webshell SAS, 86 Rue de Paris, 91400 ORSAY. Phone: +33(0)614945903, email: team@webshell.io')
+    
       $routeProvider.when '/signin',
-        templateUrl: '/templates/signin.html'
-        controller: 'UserFormCtrl'
-        title: 'Sign in'
+      route.resolve("UserForm", 
+                    "/templates/signin.html",
+                    "Sign in")
 
       $routeProvider.when '/signin/:provider',
-        templateUrl: '/templates/signin.html'
-        controller: 'UserFormCtrl'
-        title: 'Sign in'
+      route.resolve("UserForm", 
+                    "/templates/signin.html",
+                    "Sign in")
 
       $routeProvider.when '/signup',
-        templateUrl: '/templates/signup.html'
-        controller: 'UserFormCtrl'
-        title: 'Register'
+      route.resolve("UserForm", 
+                    "/templates/signup.html",
+                    "Register")
 
       $routeProvider.when '/signup/:provider',
-        templateUrl: '/templates/signup.html'
-        controller: 'UserFormCtrl'
-        title: 'Register'
+      route.resolve("UserForm", 
+                    "/templates/signup.html",
+                    "Register")
 
       $routeProvider.when '/account',
-        templateUrl: '/templates/user-profile.html'
-        controller: 'UserProfileCtrl'
-        title: 'My account'
+      route.resolve("UserProfile", 
+                    "/templates/user-profile.html",
+                    "My account")
 
       $routeProvider.when '/logout',
-        templateUrl: '/templates/blank.html'
-        controller: 'LogoutCtrl'
+      route.resolve("Logout", 
+                    "/templates/blank.html")
 
       $routeProvider.when '/key-manager',
-        templateUrl: '/templates/key-manager.html'
-        controller: 'ApiKeyManagerCtrl'
-        title: 'Key manager'
+      route.resolve("ApiKeyManager", 
+                    "/templates/key-manager.html",
+                    "Key manager")
 
       $routeProvider.when '/provider/:provider',
-        templateUrl: '/templates/provider.html'
-        controller: 'ProviderPageCtrl'
+      route.resolve("ProviderPage", 
+                    "/templates/provider.html")
 
       $routeProvider.when '/provider/:provider/app',
-        templateUrl: '/templates/provider.html'
-        controller: 'ProviderAppCtrl'
+      route.resolve("ProviderApp", 
+                    "/templates/provider.html")
 
       $routeProvider.when '/provider/:provider/app/:app',
-        templateUrl: '/templates/provider.html'
-        controller: 'ProviderAppKeyCtrl'
+      route.resolve("ProviderAppKey", 
+                    "/templates/provider.html")
 
       $routeProvider.when '/provider/:provider/samples',
-        templateUrl: '/templates/provider.html'
-        controller: 'ProviderSampleCtrl'
+      route.resolve("ProviderSample", 
+                    "/templates/provider.html")
 
       $routeProvider.when '/provider/:provider/app/:app/samples',
-        templateUrl: '/templates/provider.html'
-        controller: 'ProviderSampleCtrl'
+      route.resolve("ProviderSample", 
+                    "/templates/provider.html") 
 
       $routeProvider.when '/app-create',
-        templateUrl: '/templates/app-create.html'
-        controller: 'AppCtrl'
-        title: 'App creation'
+      route.resolve("App", 
+                    "/templates/app-create.html",
+                    "App creation")
 
       $routeProvider.when '/app-create/:provider',
-        templateUrl: '/templates/app-create.html'
-        controller: 'AppCtrl'
-        title: 'App creation'
+      route.resolve("App", 
+                    "/templates/app-create.html",
+                    "App creation")
 
       $routeProvider.when '/validate/:id/:key',
-        templateUrl: '/templates/user-validate.html'
-        controller: 'ValidateCtrl'
-        title: 'Account validation'
+      route.resolve("Validate", 
+                    "/templates/user-validate.html",
+                    "Account validation")
 
       $routeProvider.when '/resetpassword/:id/:key',
-        templateUrl: '/templates/user-resetpassword.html'
-        controller: 'ResetPasswordCtrl'
-        title: 'Password reset'
+      route.resolve("ResetPassword", 
+                    "/templates/user-resetpassword.html",
+                    "Password reset")
 
       $routeProvider.when '/404',
-        templateUrl: '/templates/404.html'
-        controller: 'NotFoundCtrl'
-        title: '404 not found'
-
+      route.resolve("NotFound", 
+                    "/templates/404.html",
+                    "404 not found")
 
       require ['js/controllers/InspectorController.js'], ->
         $('#InspectorCtrl').attr 'ng-controller', 'InspectorCtrl'
-
-
 
   ]
   app

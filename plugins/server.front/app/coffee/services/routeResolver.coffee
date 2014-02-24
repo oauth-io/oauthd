@@ -21,8 +21,8 @@ define [], ->
         @route = ((routeConfig) ->
             resolve = (baseName, templateName, title, desc) ->
                 routeDef = {}
-                if templateName is "" or templateName is `undefined`
-                    routeDef.templateUrl = routeConfig.getViewsDirectory() + baseName + '.html'
+                if templateName is `undefined` or templateName is ""
+                    routeDef.templateUrl = routeConfig.getViewsDirectory() + baseName.toLowerCase() + '.html'
                 else
                     routeDef.templateUrl = templateName
                 routeDef.controller = baseName + 'Ctrl'
