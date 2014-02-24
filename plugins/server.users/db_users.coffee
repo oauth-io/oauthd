@@ -342,10 +342,11 @@ exports.getPlan = check 'int', (iduser, callback) ->
 		return callback err if err
 		return callback null if not plan_id
 		plan = db.plans[plan_id]
-		plan_id = plan_id.substr 0, plan_id.length - 2  if plan_id.substr(plan_id.length - 2, 2) is 'fr'
+		plan_id = plan_id.substr 0, plan_id.length - 3  if plan_id.substr(plan_id.length - 2, 2) is 'fr'
 
 		return callback null,
 			name:plan_id
+			displayName:plan.name
 			nbUsers:plan.users
 			nbApp:plan.apps
 			nbProvider:plan.providers

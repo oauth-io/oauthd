@@ -37,7 +37,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 					<h1>${{plan.amount}}</h1>
 					<p style="margin: 0 10px 15px">
 						<button ng-show="plan.id != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
-						<button ng-show="plan.id == current_plan && !processing" ng-click="unsubscribe_confirm(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
+						<button ng-show="plan.id == current_plan && !processing" ng-click="unsubscribe(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
 						<img src="/img/ajax-loader-pricing.gif" id="loader_{{plan.id}}" style="display:none;"/>
 					</p>
 				</th>

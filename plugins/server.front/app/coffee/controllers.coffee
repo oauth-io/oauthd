@@ -1537,7 +1537,7 @@ PurchaseCtrl = (UserService, $scope, $rootScope, PaymentService) ->
 
 	$scope.confirmSubscription = ->
 		handler = $rootScope.stripeCheckout (token, args) ->
-			PaymentService.process
+			PaymentService.subscribe
 				token: token
 				plan: $scope.plan.id
 				profile: $scope.profile

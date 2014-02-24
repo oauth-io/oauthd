@@ -9,6 +9,7 @@
 
 stripe = require('stripe')(config.stripe.secret)
 
+async = require 'async'
 restify = require 'restify'
 countries = require './countries'
 
@@ -51,7 +52,7 @@ fillInfos = (data_in, name, callback) ->
 	return callback null, data if not data_in.customer
 	stripe.customers.retrieve data_in.customer, (err, customer) ->
 		return callback err if err
-		return callback() if customer.deleted
+		return callback() if not customer or customer.deleted
 		data.customer = customer
 		db.users.get customer.metadata.id, (err, user) ->
 			return callback err if err
@@ -78,21 +79,22 @@ exports.hooks =
 			return callback err if err
 			return callback() if not data
 			shared.emit 'user.subscribe', data
-			db.redis.set "u:#{user.profile.id}:current_plan", subscription.plan.id, callback
+			db.redis.set "u:#{data.user.profile.id}:current_plan", subscription.plan.id, callback
 
 	'customer.subscription.updated': (subscription, callback) ->
 		fillInfos subscription, 'subscription', (err, data) ->
 			return callback err if err
 			return callback() if not data
 			shared.emit 'user.subscribe', data
-			db.redis.set "u:#{user.profile.id}:current_plan", subscription.plan.id, callback
+			db.redis.set "u:#{data.user.profile.id}:current_plan", subscription.plan.id, callback
 
 	'customer.subscription.deleted': (subscription, callback) ->
 		fillInfos subscription, 'subscription', (err, data) ->
 			return callback err if err
 			return callback() if not data
 			shared.emit 'user.unsubscribe', data
-			db.redis.del "u:#{user.profile.id}:current_plan", callback
+			db.redis.del "u:#{data.user.profile.id}:current_plan"
+			callback()
 
 
 exports.subscribe = check profile:'object', token:'object', plan:'string', 'object', (data, user, callback) ->
@@ -124,5 +126,5 @@ exports.unsubscribe = (user, callback) ->
 			return callback() if not subscriptions.data?[0]
 			stripe.customers.cancelSubscription customer.id, subscriptions.data[0].id, (err, confirmation) ->
 				return callback err if err
-				db.redis.del "u:#{user.profile.id}:current_plan"
+				db.redis.del "u:#{user.id}:current_plan"
 				callback()

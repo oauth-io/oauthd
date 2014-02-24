@@ -66,12 +66,12 @@ exports.setup = (callback) ->
 	@on 'user.pay.failed', (data) =>
 		sendEvent data.user.profile, 'user.pay.failed', invoice:data.invoice, customer:data.customer
 
-	@on 'user.subscribe', (user, offer) =>
-		updateUser user, offer_name: offer || "free"
+	@on 'user.subscribe', (data, offer) =>
+		updateUser data.user.profile, offer_name: offer || "free"
 
-	@on 'user.unsubscribe', (user) =>
-		updateUser user, offer_name: 'free'
-		sendEvent user, 'unsubscribe'
+	@on 'user.unsubscribe', (data) =>
+		updateUser data.user.profile, offer_name: 'free'
+		sendEvent data.user.profile, 'unsubscribe'
 
 	@on 'app.create', (req, app) =>
 		sendEvent req.user, 'app.create', app
