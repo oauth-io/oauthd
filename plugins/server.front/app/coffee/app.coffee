@@ -26,22 +26,27 @@ define ["services/routeResolver"], ->
       route = routeResolverProvider.route
       $routeProvider.when("/testlapin", route.resolve("Testlapin"))
 
-      $routeProvider.when '/', route.resolve("Index", "/templates/landing-new.html")
+      $routeProvider.when '/',
+      route.resolve("Index", "/templates/landing-new.html")
 
-      $routeProvider.when '/providers', route.resolve("Index", "/templates/providers.html", 'API Providers', 'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
+      $routeProvider.when '/providers',
+      route.resolve("Index", 
+                    "/templates/providers.html", 
+                    'API Providers', 
+                    'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
      
       $routeProvider.when '/wishlist',
-        templateUrl: '/templates/wishlist.html'
-        controller: 'WishlistCtrl'
-        title: 'API wishlist'
-        desc: 'OAuth.io supports 100+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !'
-
+      route.resolve("Wishlist", 
+                    "/templates/wishlist.html", 
+                    'API wishlist', 
+                    'OAuth.io supports 100+ API providers. Just vote for a provider in the wishlist or post a pull request on GitHub !'
+     
       $routeProvider.when '/terms',
-        templateUrl: '/templates/terms.html'
-        controller: 'TermsCtrl'
-        title: 'Terms of service'
-        desc: 'Webshell SAS provides OAuth.io and the services described here to provide an OAuth server to authenticate end user on third party sites.'
-
+      route.resolve("Terms", 
+                    "/templates/terms.html", 
+                    'Terms of service', 
+                    'Webshell SAS provides OAuth.io and the services described here to provide an OAuth server to authenticate end user on third party sites.'
+  
       $routeProvider.when '/about',
         templateUrl: '/templates/about.html'
         controller: 'AboutCtrl'

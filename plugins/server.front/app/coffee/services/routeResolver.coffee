@@ -25,14 +25,14 @@ define [], ->
                     routeDef.templateUrl = routeConfig.getViewsDirectory() + baseName + '.html'
                 else
                     routeDef.templateUrl = templateName
-                routeDef.controller = baseName + 'Controller'
+                routeDef.controller = baseName + 'Ctrl'
                 routeDef.title = title
                 routeDef.desc = desc
 
                 routeDef.resolve =
                     load: ['$q', '$rootScope',
                         ($q, $rootScope) ->
-                            dependencies = [routeConfig.getControllersDirectory() + baseName + 'Controller.js']
+                            dependencies = [routeConfig.getControllersDirectory() + baseName + 'Ctrl.js']
                             return resolveDependencies $q, $rootScope, dependencies
                     ]
                 return routeDef
