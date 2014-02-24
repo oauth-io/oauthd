@@ -41,7 +41,6 @@ define ["app"], (app) ->
 			$scope.error =
 				status: 'error'
 				message: "Password1 != Password2"
-	return
 	
   app.register.controller "ResetPasswordCtrl", [
     "$scope"

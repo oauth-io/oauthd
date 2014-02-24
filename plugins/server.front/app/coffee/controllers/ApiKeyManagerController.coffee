@@ -193,7 +193,6 @@ define ["app"], (app) ->
 				a.keysField[$scope.createKeyProvider][k] = v
 
 		), (error) ->
-	return
 			
   app.register.controller "ApiKeyManagerCtrl", [
     "$scope"

@@ -39,7 +39,6 @@ define ["app"], (app) ->
 				$scope.pagination.nbItems = $scope.filtered.length
 				$scope.pagination.current = 1
 			), 0
-	return
 	
   app.register.controller "ProviderCtrl", [
     "$scope"

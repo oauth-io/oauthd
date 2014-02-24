@@ -130,8 +130,6 @@ define ["app"], (app) ->
 		delete $scope.conf[type2]
 		delete $scope.conf[$scope.type].request_token if $scope.type == 'oauth2'
 		$scope.conf[$scope.type].request_token = "" if $scope.type == 'oauth1'
-
-	return
 	
   app.register.controller "EditorCtrl", [
     "$scope"

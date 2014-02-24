@@ -139,7 +139,6 @@ contact(from_email, from_name, object, body)   - Get in touch with our team\n
 \n
 You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 		return "200 OK"
-    return
 
   app.register.controller "InspectorCtrl", [
     "$scope"

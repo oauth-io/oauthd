@@ -13,7 +13,6 @@ define ["app"], (app) ->
 		$scope.docTemplate = "/templates/partials/docs/" + $routeParams.page + ".html"
 	else
 		$location.path '/404'
-	return
 	
   app.register.controller "DocsCtrl", [
     "$scope"

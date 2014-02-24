@@ -47,7 +47,6 @@ define ["app"], (app) ->
 			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
 	$rootScope.$watch 'loading', (newval, oldval) -> drawChart() if newval == false
-	return
 	
   app.register.controller "generalAccountCtrl", [
     "$scope"

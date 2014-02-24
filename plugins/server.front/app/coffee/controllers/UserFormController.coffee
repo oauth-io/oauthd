@@ -231,7 +231,6 @@ define ["app"], (app) ->
 			$scope.userForm.mode = "Sign up"
 		$scope.info.status = ''
 		$scope.signup.status = ''
-	return
 	
   app.register.controller "UserFormCtrl", [
     "$scope"

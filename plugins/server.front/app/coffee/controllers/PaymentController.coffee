@@ -402,7 +402,6 @@ define ["app"], (app) ->
 			amount: $scope.cart.total * 100
 
 		return params
-    return
 
   app.register.controller "PaymentCtrl", [
     "$scope"

@@ -2,10 +2,10 @@
 define ["app"], (app) ->
   TermsCtrl = (UserService, MenuService) ->
 	MenuService.changed()
-    return
 
   app.register.controller "TermsCtrl", [
-    "$scope"
+    "UserService",
+    "MenuService"
     TermsCtrl
   ]
   return

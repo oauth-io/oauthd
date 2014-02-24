@@ -50,7 +50,6 @@ define ["app"], (app) ->
 				$location.path "/payment/customer" if success
 			, (error) ->
 				console.log error
-    return
 
   app.register.controller "PricingCtrl", [
     "$scope"

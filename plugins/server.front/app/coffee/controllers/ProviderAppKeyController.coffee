@@ -82,7 +82,6 @@ define ["app"], (app) ->
 
 		), (error) ->
 	), (error) ->
-	return
 	
   app.register.controller "ProviderAppKeyCtrl", [
     "$scope"

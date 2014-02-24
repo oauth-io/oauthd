@@ -28,7 +28,6 @@ define ["app"], (app) ->
 			$scope.provider_name = settings.data.provider.replace /_/g, ' '
 		), (error) ->
 	), (error) ->
-	return
 	
   app.register.controller "ProviderPageCtrl", [
     "$scope"

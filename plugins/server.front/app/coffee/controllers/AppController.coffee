@@ -227,7 +227,6 @@ define ["app"], (app) ->
 				delete app.keys[provider]
 			), (error) ->
 				alert "error"
-	return
 				
   app.register.controller "AppCtrl", [
     "$scope"

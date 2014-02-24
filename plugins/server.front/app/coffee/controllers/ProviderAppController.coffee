@@ -30,7 +30,6 @@ define ["app"], (app) ->
 					$scope.apps[i].showKeys = false
 				), (error) ->
 					console.log "error", error
-	return
 	
   app.register.controller "ProviderAppCtrl", [
     "$scope"

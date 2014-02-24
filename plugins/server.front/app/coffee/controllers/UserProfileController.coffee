@@ -99,7 +99,6 @@ define ["app"], (app) ->
 	$scope.onDismiss = ->
 		$scope.error =
 			state : false
-	return
 	
   app.register.controller "UserProfileCtrl", [
     "$scope"

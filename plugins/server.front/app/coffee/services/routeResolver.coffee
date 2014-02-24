@@ -19,10 +19,15 @@ define [], ->
             getControllersDirectory: getControllersDirectory
             )()
         @route = ((routeConfig) ->
-            resolve = (baseName) ->
+            resolve = (baseName, templateName, title, desc) ->
                 routeDef = {}
-                routeDef.templateUrl = routeConfig.getViewsDirectory() + baseName + '.html'
+                if templateName is "" or templateName is `undefined`
+                    routeDef.templateUrl = routeConfig.getViewsDirectory() + baseName + '.html'
+                else
+                    routeDef.templateUrl = templateName
                 routeDef.controller = baseName + 'Controller'
+                routeDef.title = title
+                routeDef.desc = desc
 
                 routeDef.resolve =
                     load: ['$q', '$rootScope',

@@ -61,7 +61,6 @@ define ["app"], (app) ->
 			$rootScope.error.state = true
 			$rootScope.error.type = "SEND_MAIL"
 			$rootScope.error.message = "Service unavailable"
-	return
 	
   app.register.controller "ContactUsCtrl", [
     "$scope"

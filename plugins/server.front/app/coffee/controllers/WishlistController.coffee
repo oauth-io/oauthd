@@ -61,8 +61,7 @@ define ["app"], (app) ->
 			$scope.error =
 				state: true
 				message: error.message
-	return
-	
+		
   app.register.controller "WishlistCtrl", [
     "$scope"
     WishlistCtrl
