@@ -1,8 +1,7 @@
 define [
-	"app", 
 	'services/apiRequest'
-	], (app, apiRequest) ->
-		app.register.factory 'AppService', ($http, $rootScope) ->
+	], (apiRequest) ->
+		AppService = ($http, $rootScope) ->
 			api = apiRequest $http, $rootScope
 			return {
 				get: (key, success, error) ->
@@ -71,3 +70,4 @@ define [
 				# stats: (key, provider, success, error) ->
 				# 	api 'apps/' + key + '/stats', success, error
 			}
+		return ['$http', '$rootScope', AppService]

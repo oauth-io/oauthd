@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/UserService"
+	"app"
 	], (app) ->
 		generalAccountCtrl = ($rootScope, $scope, $timeout, UserService) ->
 			connectionCtx = document.getElementById('connectionChart').getContext '2d'

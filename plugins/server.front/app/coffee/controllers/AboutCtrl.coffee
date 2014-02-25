@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app", 
-	'services/UserService', 
+	"app",
 	'services/MenuService'
 	], (app) ->
 		AboutCtrl = (UserService, MenuService) ->

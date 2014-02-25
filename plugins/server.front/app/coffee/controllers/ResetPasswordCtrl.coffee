@@ -6,8 +6,7 @@
 "use strict"
 define [
 	"app",
-	"services/MenuService",
-	"services/UserService"
+	"services/MenuService"
 	], (app) ->
 		ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) ->
 			UserService.isValidKey $routeParams.id, $routeParams.key, ((data) ->

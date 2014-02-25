@@ -2,8 +2,9 @@
 define [
 	"filters/filters", 
 	"directives/directives", 
-	"services/routeResolver"
-	], (registerFilters, registerDirectives) ->
+	"services/routeResolver",
+	"services/servicesModule"
+	], (registerFilters, registerDirectives, routeResolver, registerServices) ->
 		app = angular.module("oauth", [
 			"routeResolverServices"
 			"ui.bootstrap"
@@ -27,11 +28,14 @@ define [
 					factory: $provide.factory
 					service: $provide.service
 
-				## This registers filters and directives prior to
+
+				## This registers services, filters and directives prior to
 				## other actions
+
+				registerServices app
 				registerFilters app
 				registerDirectives app
-				
+				console.log 'SERVICES LOADED : UserService, NotificationService'
 				
 				route = routeResolverProvider.route
 				
@@ -218,7 +222,7 @@ define [
 				$locationProvider.html5Mode true
 		]
 
-
+		
 		app.config(['$httpProvider', ($httpProvider) ->
 			interceptor = [
 				'$rootScope'
@@ -270,9 +274,9 @@ define [
 						return promise.then success, error
 			]
 			$httpProvider.responseInterceptors.push interceptor
-		])
-		
-		app.run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
+		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
+			
+			alert 'HELLO'
 			checkLimitation = ->
 				return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 				return false
@@ -309,4 +313,5 @@ define [
 			$rootScope.location = $location.path()
 		]
 		hooks.config() if hooks?.config
+		
 		app

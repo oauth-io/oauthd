@@ -1,7 +1,6 @@
 "use strict"
 define [
 	"app",
-	"services/UserService",
 	"services/MenuService"
 	], (app) ->
 		NotFoundCtrl = ($scope, $routeParams, UserService, MenuService) ->

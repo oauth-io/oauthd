@@ -1,7 +1,6 @@
 "use strict"
 define [
 	"app",
-	'services/UserService',
 	'services/ProviderService',
 	'services/AppService',
 	'services/KeysetService',

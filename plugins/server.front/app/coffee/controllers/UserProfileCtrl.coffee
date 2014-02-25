@@ -1,7 +1,6 @@
 "use strict"
 define [
 	"app",
-	"services/UserService",
 	"services/MenuService",
 	"services/AppService"
 	], (app) ->

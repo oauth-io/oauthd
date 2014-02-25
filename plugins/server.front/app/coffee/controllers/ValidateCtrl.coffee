@@ -6,8 +6,7 @@
 "use strict"
 define [
 	"app",
-	"services/MenuService",
-	"services/UserService"
+	"services/MenuService"
 	], (app) ->
 		ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserService, $location, $cookieStore) ->
 			#MenuService.changed()

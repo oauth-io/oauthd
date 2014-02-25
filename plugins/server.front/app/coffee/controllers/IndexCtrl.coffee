@@ -6,7 +6,6 @@
 
 define [
 	"app", 
-	'services/UserService', 
 	'services/MenuService'
 	], (app) ->
 	IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->

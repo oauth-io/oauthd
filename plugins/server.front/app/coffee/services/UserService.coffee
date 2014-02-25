@@ -4,7 +4,7 @@ define [
 	'services/NotificationService',
 	'services/AppService'
 	], (app, apiRequest) ->
-		app.register.factory 'UserService', ['$http', '$rootScope', '$cookieStore', 'NotificationService', 'AppService', ($http, $rootScope, $cookieStore, NotificationService, AppService) ->
+		UserService = ($http, $rootScope, $cookieStore, NotificationService, AppService) ->
 			$rootScope.accessToken = $cookieStore.get 'accessToken'
 			api = apiRequest $http, $rootScope
 			return $rootScope.UserService =
@@ -152,4 +152,4 @@ define [
 						id: id
 						key: key
 						pass: pass
-			]
+			return ['$http', '$rootScope', '$cookieStore', 'NotificationService', 'AppService', UserService]

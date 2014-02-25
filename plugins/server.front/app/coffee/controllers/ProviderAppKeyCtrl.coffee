@@ -2,7 +2,6 @@
 define [
 	"app",
 	"services/MenuService",
-	"services/UserService",
 	"services/KeysetService",
 	"services/ProviderService",
 	"services/AppService"

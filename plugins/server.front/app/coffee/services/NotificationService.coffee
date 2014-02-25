@@ -1,5 +1,5 @@
-define ["app"], (app) ->
-    app.register.factory 'NotificationService', ($rootScope) ->
+define [], () ->
+    NotificationService = ($rootScope) ->
         $rootScope.notifications = []
         return {
             push: (notif) ->
@@ -17,3 +17,4 @@ define ["app"], (app) ->
                     resolve: {
                     }
         }
+    return ['$rootScope', NotificationService]
