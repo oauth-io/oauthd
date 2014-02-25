@@ -1,5 +1,5 @@
-define ["app"], (app) ->
-	app.register.factory 'PaymentService', ($rootScope, $http) ->
+define [], () ->
+	PaymentService = ($rootScope, $http) ->
 		api = apiRequest $http, $rootScope
 		return {
 			process: (paymill, success, error) ->
@@ -13,3 +13,4 @@ define ["app"], (app) ->
 			getCurrentSubscription: (success, error) ->
 				api 'subscription/get', success, error
 		}
+	return ["$rootScope", "$http", PaymentService]

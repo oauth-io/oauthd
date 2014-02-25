@@ -1,8 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService",
-	"services/ProviderService"
+	"app"
 	], (app) ->
 		EditorCtrl = ($scope, MenuService, ProviderService) ->
 			MenuService.changed()

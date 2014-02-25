@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/NotificationService"
+	"app"
 	], (app) ->
 	    NotificationCtrl = ($scope, NotificationService) ->
 	        $scope.notifications = NotificationService.list()

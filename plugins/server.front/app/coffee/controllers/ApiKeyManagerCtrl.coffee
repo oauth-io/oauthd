@@ -6,10 +6,6 @@
 "use strict"
 define [
 	"app",
-	"services/MenuService",
-	"services/KeysetService",
-	"services/AppService",
-	"services/ProviderService",
 	"controllers/AppCtrl"
 	], (app) ->
 		ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->

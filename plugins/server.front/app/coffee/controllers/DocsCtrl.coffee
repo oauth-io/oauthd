@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		DocsCtrl = ($scope, UserService, MenuService, $routeParams, $location) ->
 			MenuService.changed()

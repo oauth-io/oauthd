@@ -1,8 +1,7 @@
 define [
-	"app",
 	"services/apiRequest"
-	], (app, apiRequest) ->
-	app.register.factory 'PricingService', ($rootScope, $http) ->
+	], (apiRequest) ->
+	PricingService = ($rootScope, $http) ->
 		api = apiRequest $http, $rootScope
 		return {
 			list: (success, error) ->
@@ -15,3 +14,4 @@ define [
 				api "plan/unsubscribe", success, error,
 					method : 'delete'
 		}
+	return ["$rootScope", "$http", PricingService]

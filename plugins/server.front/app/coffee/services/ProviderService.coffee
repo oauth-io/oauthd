@@ -1,8 +1,7 @@
 define [
-	"app",
 	"services/apiRequest"
-	], (app, apiRequest) ->
-		app.register.factory 'ProviderService', ($http, $rootScope) ->
+	], (apiRequest) ->
+		ProviderService = ($http, $rootScope) ->
 			api = apiRequest $http, $rootScope
 			return {
 				list: (success, error) ->
@@ -16,3 +15,4 @@ define [
 					OAuth.initialize appKey
 					OAuth.popup provider, success
 			}
+		return ["$http", "$rootScope", ProviderService]

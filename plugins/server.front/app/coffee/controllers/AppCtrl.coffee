@@ -4,10 +4,7 @@
 
 "use strict"
 define [
-	"app",
-	"services/AppService",
-	"services/ProviderService",
-	"services/KeysetService"
+	"app"
 	], (app) ->
 		AppCtrl = ($scope, $rootScope, $routeParams, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
 			if not UserService.isLogin()

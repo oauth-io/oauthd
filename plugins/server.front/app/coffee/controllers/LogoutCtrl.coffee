@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		LogoutCtrl = ($location, UserService, MenuService) ->
 			UserService.logout()

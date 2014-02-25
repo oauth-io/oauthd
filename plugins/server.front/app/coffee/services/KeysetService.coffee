@@ -1,8 +1,7 @@
 define [
-	"app",
 	"services/apiRequest"
-	], (app, apiRequest) ->
-		app.register.factory 'KeysetService', ($rootScope, $http) ->
+	], (apiRequest) ->
+		KeysetService = ($rootScope, $http) ->
 			api = apiRequest $http, $rootScope
 			return {
 				get: (app, provider, success, error) ->
@@ -19,3 +18,4 @@ define [
 				# stats: (app, provider, success, error) ->
 				# 	api 'apps/' + app + '/keysets/' + provider + '/stats', success, error
 			}
+		return ['$rootScope', '$http', KeysetService]

@@ -1,8 +1,7 @@
 define [
-	"app",
 	"services/apiRequest"
-	], (app, apiRequest) ->
-	app.register.factory 'CartService', ($rootScope, $http) ->
+	], (apiRequest) ->
+	CartService = ($rootScope, $http) ->
 		api = apiRequest $http, $rootScope
 		return {
 			add: (plan, success, error) ->
@@ -14,3 +13,4 @@ define [
 			get: (success, error) ->
 				api 'payment/cart/get', success, error
 		}
+	return ['$rootScope', '$http', CartService]

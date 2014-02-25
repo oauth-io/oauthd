@@ -1,8 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/OAuthIOService",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		ContactUsCtrl = ($scope, $rootScope, OAuthIOService, MenuService) ->
 			MenuService.changed()

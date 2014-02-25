@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		ImprintCtrl = (MenuService) ->
 			MenuService.changed()

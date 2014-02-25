@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		FeaturesCtrl = (UserService, MenuService) ->
 			MenuService.changed()

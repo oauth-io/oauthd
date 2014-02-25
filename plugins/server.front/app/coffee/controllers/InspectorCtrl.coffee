@@ -1,10 +1,6 @@
 "use strict"
 define [
-	"app",
-	'services/ProviderService',
-	'services/AppService',
-	'services/KeysetService',
-	'services/OAuthIOService'
+	"app"
 	], (app) ->
 		InspectorCtrl = (UserService, ProviderService, AppService, KeysetService, OAuthIOService) ->
 			alert 'hello'

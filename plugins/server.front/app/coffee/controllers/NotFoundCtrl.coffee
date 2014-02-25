@@ -1,7 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService"
+	"app"
 	], (app) ->
 		NotFoundCtrl = ($scope, $routeParams, UserService, MenuService) ->
 			MenuService.changed()

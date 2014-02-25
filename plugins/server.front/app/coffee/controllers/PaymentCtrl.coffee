@@ -1,10 +1,6 @@
 "use strict"
 define [
-	"app",
-	"services/MenuService",
-	"services/PaymentService",
-	"services/PricingService",
-	"services/CartService"
+	"app"
 	], (app) ->
 		PaymentCtrl = ($scope, $rootScope, $location, $route, $routeParams, UserService, PaymentService, PricingService, MenuService, CartService) ->
 			MenuService.changed()
