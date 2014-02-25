@@ -11,7 +11,6 @@ define [
 	"services/KeysetService",
 	"services/AppService",
 	"services/ProviderService",
-	"controllers/ProviderCtrl",
 	"controllers/AppCtrl"
 	], (app) ->
 		ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->
