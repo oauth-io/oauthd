@@ -32,7 +32,7 @@ define [
 				registerFilters app
 				registerDirectives app
 				
-
+				
 				route = routeResolverProvider.route
 				
 				$routeProvider.when("/testlapin", 
@@ -40,10 +40,11 @@ define [
 
 				##This registers all the routes 
 				$routeProvider.when '/',
-					route.resolve("Index", "/templates/landing-new.html")
+					route.resolve("Index", 
+						"/templates/landing-new.html")
 
 				$routeProvider.when '/providers',
-					route.resolve("Index", 
+					route.resolve("Provider", 
 						"/templates/providers.html", 
 						'API Providers', 
 						'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
@@ -210,11 +211,11 @@ define [
 					route.resolve("NotFound", 
 						"/templates/404.html",
 						"404 not found")
-				require ['controllers/InspectorController'], ->
-					$('#InspectorCtrl').attr 'ng-controller', 'InspectorCtrl'
+
+				
 				$locationProvider.html5Mode true
 					
 
-
+				
 		]
 		app
