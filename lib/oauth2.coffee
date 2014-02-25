@@ -199,7 +199,7 @@ class OAuth2 extends OAuthBase
 			followAllRedirects: true
 
 		# build url
-		options.url = req.apiUrl
+		options.url = req.apiUrl + "?" + req.query()
 		if ! options.url.match(/^[a-z]{2,16}:\/\//)
 			if options.url[0] != '/'
 				options.url = '/' + options.url
@@ -208,7 +208,6 @@ class OAuth2 extends OAuthBase
 
 		# build query
 		options.qs = {}
-		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.qs[name] = param if param
