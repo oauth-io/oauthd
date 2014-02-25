@@ -44,13 +44,13 @@ define [
 						$scope.pagination.current = 1
 					), 0
 			
-			app.register.controller "ProviderCtrl", [
-				"MenuService"
-				"$filter"
-				"$scope"
-				"$rootScope"
-				"ProviderService"
-				"$timeout"
-				ProviderCtrl
-			]
-			return
+		app.register.controller "ProviderCtrl", [
+			"MenuService"
+			"$filter"
+			"$scope"
+			"$rootScope"
+			"ProviderService"
+			"$timeout"
+			ProviderCtrl
+		]
+		return

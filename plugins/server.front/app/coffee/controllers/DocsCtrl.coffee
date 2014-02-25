@@ -2,7 +2,7 @@
 define [
 	"app",
 	"services/UserService",
-	"services/MenyService"
+	"services/MenuService"
 	], (app) ->
 		DocsCtrl = ($scope, UserService, MenuService, $routeParams, $location) ->
 			MenuService.changed()
