@@ -4,7 +4,11 @@
 # Landing page Controller #
 ###########################
 
-define ["app"], (app) ->
+define [
+	"app", 
+	'services/UserService', 
+	'services/MenuService'
+	], (app) ->
 	IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 		MenuService.changed()
 		# if UserService.isLogin()

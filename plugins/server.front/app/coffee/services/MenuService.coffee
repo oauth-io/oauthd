@@ -1,5 +1,5 @@
 define ["app"], (app) ->
-    app.register.factory 'MenuService', ($http, $rootScope) ->
+    app.register.factory 'MenuService', ($http, $rootScope, $location) ->
         $rootScope.selectedMenu = $location.path()
 
         return changed: ->

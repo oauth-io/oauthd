@@ -1,42 +1,47 @@
 "use strict"
-define ["app"], (app) ->
-  ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderService) ->
-	if not $routeParams.provider
-		$location.path '/providers'
+define [
+	"app",
+	"services/MenuService",
+	"services/AppService",
+	"services/ProviderService"
+	], (app) ->
+		ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderService) ->
+			if not $routeParams.provider
+				$location.path '/providers'
 
-	MenuService.changed()
-	$scope.provider = $routeParams.provider
-	$scope.state = 4
+			MenuService.changed()
+			$scope.provider = $routeParams.provider
+			$scope.state = 4
 
-	$scope.providerTemplate = '/templates/partials/provider/sample.html'
-	$scope.loaded_fiddle = true
-	$scope.loadedJsFiddle = ->
-		$scope.loaded_fiddle = false
-		$scope.$apply()
+			$scope.providerTemplate = '/templates/partials/provider/sample.html'
+			$scope.loaded_fiddle = true
+			$scope.loadedJsFiddle = ->
+				$scope.loaded_fiddle = false
+				$scope.$apply()
 
-	if $routeParams.app
-		AppService.get $routeParams.app, ((app) =>
-			delete app.data.secret
-			$scope.app = app.data
-			$scope.app.keysets.sort()
-		), (error) ->
-			console.log "error", error
+			if $routeParams.app
+				AppService.get $routeParams.app, ((app) =>
+					delete app.data.secret
+					$scope.app = app.data
+					$scope.app.keysets.sort()
+				), (error) ->
+					console.log "error", error
 
-	ProviderService.get $routeParams.provider, ((provider) ->
-		ProviderService.getSettings $routeParams.provider, ((settings) ->
-			$scope.providerConf = provider
-			$scope.settings = settings
-			$scope.sample = settings.data.settings.sample
-			$scope.provider_name = settings.data.provider.replace /_/g, ' '
-		), (error) ->
-	), (error) ->
-	
-  app.register.controller "ProviderSampleCtrl", [
-    "$scope"
-    "MenuService"
-    "$routeParams"
-    "AppService"
-    "ProviderService"
-    ProviderSampleCtrl
-  ]
-  return
+			ProviderService.get $routeParams.provider, ((provider) ->
+				ProviderService.getSettings $routeParams.provider, ((settings) ->
+					$scope.providerConf = provider
+					$scope.settings = settings
+					$scope.sample = settings.data.settings.sample
+					$scope.provider_name = settings.data.provider.replace /_/g, ' '
+				), (error) ->
+			), (error) ->
+			
+		app.register.controller "ProviderSampleCtrl", [
+			"$scope"
+			"MenuService"
+			"$routeParams"
+			"AppService"
+			"ProviderService"
+			ProviderSampleCtrl
+		]
+		return

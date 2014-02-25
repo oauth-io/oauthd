@@ -1,5 +1,12 @@
 "use strict"
-define ["app"], (app) ->
+define [
+	"app",
+	'services/UserService',
+	'services/ProviderService',
+	'services/AppService',
+	'services/KeysetService',
+	'services/OAuthIOService'
+	], (app) ->
   InspectorCtrl = (UserService, ProviderService, AppService, KeysetService, OAuthIOService) ->
 	console.log "------------------------------------------------------|\n
 | Hacker side - OAuth.io                              |\n

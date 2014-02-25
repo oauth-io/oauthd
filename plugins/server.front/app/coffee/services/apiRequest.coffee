@@ -1,5 +1,5 @@
 define ["app"], (app) ->
-    window.apiRequest = ($http, $rootScope) ->
+    apiRequest = ($http, $rootScope) ->
         (url, success, error, opts) ->
             opts ?= {}
             opts.url = "/api/" + url
