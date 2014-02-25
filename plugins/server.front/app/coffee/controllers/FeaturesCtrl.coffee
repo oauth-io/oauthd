@@ -2,7 +2,7 @@
 define [
 	"app",
 	"services/UserService",
-	"services/MenyService"
+	"services/MenuService"
 	], (app) ->
 		FeaturesCtrl = (UserService, MenuService) ->
 			MenuService.changed()

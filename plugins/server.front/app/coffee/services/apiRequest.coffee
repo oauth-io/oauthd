@@ -1,4 +1,7 @@
-define ["app"], (app) ->
+define [
+	"app",
+	"services/refreshSession"
+	], (app) ->
     apiRequest = ($http, $rootScope) ->
         (url, success, error, opts) ->
             opts ?= {}

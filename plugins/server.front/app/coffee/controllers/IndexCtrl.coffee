@@ -7,7 +7,8 @@
 define [
 	"app", 
 	'services/UserService', 
-	'services/MenuService'
+	'services/MenuService',
+	'controllers/ProviderCtrl'
 	], (app) ->
 	IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 		MenuService.changed()

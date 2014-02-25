@@ -1,12 +1,11 @@
 define [], () ->
 	registerFilters = (app) ->
-		app.filters_registered = true
-		app.filter 'toUpper', ->
+		app.register.filter 'toUpper', ->
 			return (input, scope) ->
 				if input
 					return input.toUpperCase()
 
-		app.filter 'capitalize', ->
+		app.register.filter 'capitalize', ->
 			return (input, scope) ->
 				if input
 					str = ''
@@ -16,7 +15,7 @@ define [], () ->
 					str = str.substring 0, str.length - 1
 					return str
 
-		app.filter 'trunc', ->
+		app.register.filter 'trunc', ->
 			return (input, chars) ->
 				return input if isNaN(chars)
 				return '' if chars <= 0
@@ -24,14 +23,14 @@ define [], () ->
 					return input.substring(0, chars).trim() + '...'
 				return input
 
-		app.filter 'startFrom', ->
+		app.register.filter 'startFrom', ->
 			return (input, start) ->
 				if input
 					start = +start
 					return input.slice(start)
 				return []
 
-		app.filter 'readableNumber', ->
+		app.register.filter 'readableNumber', ->
 			return (input, scope) ->
 				if input
 					return parseInt(input).format(0, ' ')

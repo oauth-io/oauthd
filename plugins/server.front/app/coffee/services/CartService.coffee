@@ -1,4 +1,7 @@
-define ["app"], (app) ->
+define [
+	"app",
+	"services/apiRequest"
+	], (app, apiRequest) ->
 	app.register.factory 'CartService', ($rootScope, $http) ->
 		api = apiRequest $http, $rootScope
 		return {

@@ -43,7 +43,7 @@ define [
 						$scope.pagination.nbItems = $scope.filtered.length
 						$scope.pagination.current = 1
 					), 0
-			
+		
 		app.register.controller "ProviderCtrl", [
 			"MenuService"
 			"$filter"
