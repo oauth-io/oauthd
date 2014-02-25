@@ -2,7 +2,8 @@
 define [
 	"app",
 	"services/MenuService",
-	"services/AppService"
+	"services/AppService",
+	"controllers/GeneralAccountCtrl"
 	], (app) ->
 		UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuService, UserService, AppService) ->
 			MenuService.changed()

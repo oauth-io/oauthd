@@ -1,4 +1,4 @@
-define ["app"], (app) ->
+define ["app", "services/apiRequest"], (app, apiRequest) ->
     app.register.factory 'WishlistService', ($http, $rootScope) ->
         api = apiRequest $http, $rootScope
         return {

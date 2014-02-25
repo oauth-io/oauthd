@@ -5,6 +5,7 @@ define [
 	"services/routeResolver",
 	"services/servicesModule"
 	], (registerFilters, registerDirectives, routeResolver, registerServices) ->
+		route = {}
 		app = angular.module("oauth", [
 			"routeResolverServices"
 			"ui.bootstrap"
@@ -35,7 +36,6 @@ define [
 				registerServices app
 				registerFilters app
 				registerDirectives app
-				console.log 'SERVICES LOADED : UserService, NotificationService'
 				
 				route = routeResolverProvider.route
 				
@@ -275,8 +275,6 @@ define [
 			]
 			$httpProvider.responseInterceptors.push interceptor
 		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
-			
-			alert 'HELLO'
 			checkLimitation = ->
 				return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 				return false
@@ -303,10 +301,9 @@ define [
 			UserService.initialize ->
 
 			$rootScope.openNotifications = ->
-				$rootScope.notifModal = $modal.open {
-					templateUrl: '/templates/partials/notifications.html'
-					controller: NotificationCtrl
-				}
+				$rootScope.notifModal = $modal.open route.resolve("Notification", 
+						"/templates/partials/notifications.html")
+				
 
 			$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
 
