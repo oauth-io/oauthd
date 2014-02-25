@@ -212,10 +212,101 @@ define [
 						"/templates/404.html",
 						"404 not found")
 
-				
-				$locationProvider.html5Mode true
-					
+				hooks.configRoutes $routeProvider, $locationProvider if hooks?.configRoutes
+				$routeProvider.otherwise redirectTo: '/404'
 
-				
+				$locationProvider.html5Mode true
 		]
+
+
+		app.config(['$httpProvider', ($httpProvider) ->
+			interceptor = [
+				'$rootScope'
+				'$location'
+				'$cookieStore'
+				'$q'
+				($rootScope, $location, $cookieStore, $q) ->
+
+					$rootScope.$on '$routeChangeSuccess', (event, current, previous) =>
+						$rootScope.pageTitle = 'OAuth.io - ' + (current.$$route?.title || 'OAuth that just works.')
+						$rootScope.pageDesc = (current.$$route?.desc || 'OAuth has never been this easy. Put only 3 lines of codes and you are done in less than 90 seconds !')
+
+					success = (response) ->
+
+						$rootScope.error =
+							state : false
+							message : ''
+							type : ''
+
+						return response
+
+					error = (response) ->
+
+						$rootScope.error =
+							state : false
+							message : ''
+							type : ''
+
+						if response.status == 401
+
+							if $cookieStore.get 'accessToken'
+								delete $rootScope.accessToken
+								$cookieStore.remove 'accessToken'
+
+							if $location.path() == "/signin"
+								$rootScope.error.state = true
+								$rootScope.error.message = "Email or password incorrect"
+
+							$rootScope.authRequired = $location.path()
+							$location.path('/signin').replace()
+							deferred = $q.defer()
+							return deferred.promise
+
+
+						# otherwise, default behaviour
+						return $q.reject response
+
+					return (promise) ->
+						return promise.then success, error
+			]
+			$httpProvider.responseInterceptors.push interceptor
+		])
+		
+		app.run ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
+			checkLimitation = ->
+				return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
+				return false
+			checkValidated = ->
+				return false if $rootScope.me.profile.validated == "2"
+				return true
+
+			initializeNotification = ->
+				NotificationService.clear()
+				return false if not $rootScope.me
+				if checkLimitation()
+					NotificationService.push
+						type: 'upgrade',
+						href: '/pricing',
+						title: "Time to upgrade",
+						content: 'You\'ve reached the limit. To go further: <a href="/pricing">upgrade your plan</a>.'
+				if not checkValidated()
+					NotificationService.push
+						type: 'validate'
+						title: 'Email validation'
+						content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
+				$('#notification').popover()
+
+			UserService.initialize ->
+
+			$rootScope.openNotifications = ->
+				$rootScope.notifModal = $modal.open {
+					templateUrl: '/templates/partials/notifications.html'
+					controller: NotificationCtrl
+				}
+
+			$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
+
+			$rootScope.location = $location.path()
+		hooks.config() if hooks?.config
+
 		app
