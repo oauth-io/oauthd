@@ -194,7 +194,9 @@ class OAuth2 extends OAuthBase
 			encoding: null
 
 		# build url
-		options.url = req.apiUrl + "?" + req.query()
+		options.url = req.apiUrl
+		if typeof req.query == 'function'
+			options.url += "?" + req.query()
 		if ! options.url.match(/^[a-z]{2,16}:\/\//)
 			if options.url[0] != '/'
 				options.url = '/' + options.url
