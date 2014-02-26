@@ -1,13 +1,10 @@
 "use strict"
-define [
-	"app"
-	], (app) ->
-		FeaturesCtrl = (UserService, MenuService) ->
-			MenuService.changed()
+define [], () ->
+	FeaturesCtrl = (UserService, MenuService) ->
+		MenuService.changed()
 
-		app.register.controller "FeaturesCtrl", [
-			"UserService"
-			"MenuService"
-			FeaturesCtrl
-		]
-		return
+	return [
+		'UserService', 
+		'MenuService', 
+		FeaturesCtrl
+	]

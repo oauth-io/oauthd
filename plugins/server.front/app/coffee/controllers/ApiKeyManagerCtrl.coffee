@@ -5,9 +5,8 @@
 
 "use strict"
 define [
-	"app",
 	"controllers/AppCtrl"
-	], (app) ->
+	], () ->
 		ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, UserService, $http, MenuService, KeysetService, AppService, ProviderService) ->
 			MenuService.changed()
 			if not UserService.isLogin()
@@ -196,19 +195,18 @@ define [
 						a.keysField[$scope.createKeyProvider][k] = v
 
 				), (error) ->
-					
-		app.register.controller "ApiKeyManagerCtrl", [
-			"$scope"
-			"$routeParams"
-			"$timeout"
-			"$rootScope"
-			"$location"
-			"UserService"
-			"$http"
-			"MenuService"
-			"KeysetService"
-			"AppService"
-			"ProviderService"
+
+		return [
+			'$scope', 
+			'$routeParams', 
+			'$timeout', 
+			'$rootScope', 
+			'$location', 
+			'UserService', 
+			'$http', 
+			'MenuService', 
+			'KeysetService', 
+			'AppService',
+			'ProviderService',
 			ApiKeyManagerCtrl
 		]
-		return

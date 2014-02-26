@@ -1,8 +1,7 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService"
-	], (app) ->
+	], () ->
 		UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService, $routeParams) ->
 			MenuService.changed()
 			if UserService.isLogin()
@@ -235,15 +234,14 @@ define [
 				$scope.info.status = ''
 				$scope.signup.status = ''
 			
-		app.register.controller "UserFormCtrl", [
-			"$scope"
-			"$rootScope"
-			"$timeout"
-			"$http"
-			"$location"
-			"UserService"
-			"MenuService"
-			"$routeParams"
+		return [
+			"$scope",
+			"$rootScope",
+			"$timeout",
+			"$http",
+			"$location",
+			"UserService",
+			"MenuService",
+			"$routeParams",
 			UserFormCtrl
 		]
-		return

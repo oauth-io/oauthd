@@ -27,7 +27,7 @@ define [
 	"controllers/ValidateCtrl",
 	"controllers/WishlistCtrl"
 	], (AboutCtrl, 
-		ApiKeyManagerCtrlm,
+		ApiKeyManagerCtrl,
 		AppCtrl,
 		ContactUsCtrl,
 		DocsCtrl,
@@ -52,10 +52,10 @@ define [
 		UserFormCtrl,
 		UserProfileCtrl,
 		ValidateCtrl,
-		WishlistCtr) ->
+		WishlistCtrl) ->
 			(app) ->
 				app.register.controller "AboutCtrl", AboutCtrl
-				app.register.controller "ApiKeyManagerCtrlm", ApiKeyManagerCtrl
+				app.register.controller "ApiKeyManagerCtrl", ApiKeyManagerCtrl
 				app.register.controller "AppCtrl", AppCtrl
 				app.register.controller "ContactUsCtrl", ContactUsCtrl
 				app.register.controller "DocsCtrl", DocsCtrl

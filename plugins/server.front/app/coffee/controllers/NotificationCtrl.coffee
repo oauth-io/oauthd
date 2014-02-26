@@ -1,12 +1,10 @@
 "use strict"
-define [
-	"app"
-	], (app) ->
-	    NotificationCtrl = ($scope, NotificationService) ->
-	        $scope.notifications = NotificationService.list()
-	    app.register.controller "NotificationCtrl", [
-	        "$scope"
-	        "NotificationService"
-	        NotificationCtrl
-	    ]
-	    return
+define [], () ->
+    NotificationCtrl = ($scope, NotificationService) ->
+        $scope.notifications = NotificationService.list()
+
+    return [
+    	"$scope",
+    	"NotificationService",
+    	NotificationCtrl
+    ]

@@ -1,10 +1,9 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService",
 	"services/PricingService",
 	"services/CartService"
-	], (app) ->
+	], () ->
 		PricingCtrl = ($scope, $location, MenuService, UserService, PricingService, CartService) ->
 
 			MenuService.changed()
@@ -56,13 +55,12 @@ define [
 					, (error) ->
 						console.log error
 
-		app.register.controller "PricingCtrl", [
-			"$scope"
-			"$location"
-			"MenuService"
-			"UserService"
-			"PricingService"
-			"CartService"
+		return [
+			"$scope",
+			"$location",
+			"MenuService",
+			"UserService",
+			"PricingService",
+			"CartService",
 			PricingCtrl
 		]
-		return

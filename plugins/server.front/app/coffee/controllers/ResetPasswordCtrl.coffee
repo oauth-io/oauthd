@@ -5,9 +5,8 @@
 
 "use strict"
 define [
-	"app",
 	"services/MenuService"
-	], (app) ->
+	], () ->
 		ResetPasswordCtrl = ($scope, $routeParams, MenuService, UserService, $location) ->
 			UserService.isValidKey $routeParams.id, $routeParams.key, ((data) ->
 				$location.path '/404' if not data.data.isValidKey
@@ -45,14 +44,11 @@ define [
 						status: 'error'
 						message: "Password1 != Password2"
 			
-		app.register.controller "ResetPasswordCtrl", [
-			"$scope"
-			"$routeParams"
-			"MenuService"
-			"UserService"
-			"$location"
+		return [
+			"$scope",
+			"$routeParams",
+			"MenuService",
+			"UserService",
+			"$location",
 			ResetPasswordCtrl
 		]
-		return
-
-

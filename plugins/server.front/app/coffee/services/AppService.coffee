@@ -44,7 +44,7 @@ define [
 
 				add: (app, success, error) ->
 					api 'apps', ((res) =>
-						console.log res.data
+						# console.log res.data
 						@loadApp res.data.key, success, error
 					), error, data:
 						name: app.name
