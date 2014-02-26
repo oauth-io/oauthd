@@ -1,10 +1,10 @@
 "use strict"
 define [], () ->
-    NotificationCtrl = ($scope, NotificationService) ->
-        $scope.notifications = NotificationService.list()
+	NotificationCtrl = ($scope, NotificationService) ->
+		$scope.notifications = NotificationService.list()
 
     return [
-    	"$scope",
+    	"$scope"
     	"NotificationService",
     	NotificationCtrl
     ]

@@ -1,4 +1,6 @@
-define [], () ->
+define [
+    "controllers/NotificationCtrl"
+    ], (NotificationCtrl) ->
     NotificationService = ($rootScope) ->
         $rootScope.notifications = []
         return {
