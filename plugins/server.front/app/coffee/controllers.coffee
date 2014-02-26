@@ -1571,7 +1571,7 @@ PurchaseCtrl = (UserService, $scope, $rootScope, PaymentService) ->
 			name: 'OAuth.io'
 			email: $scope.user.mail
 			description: $scope.plan.name + ' plan'
-			amount: $scope.plan.total
+			amount: $scope.plan.total * 100
 
 	$.getJSON '/data/countries.json', (json) ->
 		$scope.countries = json
