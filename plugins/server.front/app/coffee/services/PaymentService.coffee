@@ -1,4 +1,6 @@
-define [], () ->
+define [
+	'utilities/apiRequest'
+	], (apiRequest) ->
 	PaymentService = ($rootScope, $http) ->
 		api = apiRequest $http, $rootScope
 		return {

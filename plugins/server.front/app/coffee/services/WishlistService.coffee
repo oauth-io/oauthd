@@ -1,4 +1,7 @@
-define ["app", "services/apiRequest"], (app, apiRequest) ->
+define [
+	"app", 
+	"utilities/apiRequest"
+	], (app, apiRequest) ->
 	WishlistService = ($http, $rootScope) ->
 		api = apiRequest $http, $rootScope
 		return {

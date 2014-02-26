@@ -3,7 +3,7 @@ require.config
 
 require [
     'app',
-    'services/routeResolver'
+    'utilities/routeResolver'
 ], ->
     angular.bootstrap document, ['oauth']
     return

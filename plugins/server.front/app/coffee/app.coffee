@@ -2,8 +2,8 @@
 define [
 	"filters/filters",
 	"directives/directives",
-	"services/routeResolver",
-	"services/servicesModule"
+	"utilities/routeResolver",
+	"utilities/servicesModule"
 	], (registerFilters, registerDirectives, routeResolver, registerServices) ->
 		route = {}
 		app = angular.module("oauth", [

@@ -1,6 +1,7 @@
 define [
-	'services/apiRequest'
-	], (apiRequest) ->
+	'utilities/apiRequest',
+	'utilities/refreshSession'
+	], (apiRequest, refreshSession) ->
 		UserService = ($http, $rootScope, $cookieStore, NotificationService, AppService) ->
 			$rootScope.accessToken = $cookieStore.get 'accessToken'
 			api = apiRequest $http, $rootScope
@@ -149,4 +150,4 @@ define [
 						id: id
 						key: key
 						pass: pass
-			return ['$http', '$rootScope', '$cookieStore', 'NotificationService', 'AppService', UserService]
+		return ['$http', '$rootScope', '$cookieStore', 'NotificationService', 'AppService', UserService]

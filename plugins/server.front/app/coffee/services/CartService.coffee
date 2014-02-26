@@ -1,5 +1,5 @@
 define [
-	"services/apiRequest"
+	"utilities/apiRequest"
 	], (apiRequest) ->
 		CartService = ($rootScope, $http) ->
 			api = apiRequest $http, $rootScope
@@ -13,4 +13,4 @@ define [
 				get: (success, error) ->
 					api 'payment/cart/get', success, error
 			}
-	return ['$rootScope', '$http', CartService]
+		return ['$rootScope', '$http', CartService]

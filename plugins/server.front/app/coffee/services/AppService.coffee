@@ -1,5 +1,5 @@
 define [
-	'services/apiRequest'
+	'utilities/apiRequest'
 	], (apiRequest) ->
 		AppService = ($http, $rootScope) ->
 			api = apiRequest $http, $rootScope
