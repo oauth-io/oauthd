@@ -1,7 +1,7 @@
 "use strict"
 define [
-	"filters/filters", 
-	"directives/directives", 
+	"filters/filters",
+	"directives/directives",
 	"services/routeResolver",
 	"services/servicesModule"
 	], (registerFilters, registerDirectives, routeResolver, registerServices) ->
@@ -13,6 +13,7 @@ define [
 			"ui.select2"
 			"ngCookies"
 		])
+
 		app.config [
 			"$routeProvider"
 			"$locationProvider"
@@ -32,7 +33,6 @@ define [
 
 				## This registers services, filters and directives prior to
 				## other actions
-
 				registerServices app
 				registerFilters app
 				registerDirectives app
@@ -41,13 +41,13 @@ define [
 				
 				##This registers all the routes 
 				$routeProvider.when '/',
-					route.resolve("Index", 
+					route.resolve("Index",
 						"/templates/landing-new.html")
 
 				$routeProvider.when '/providers',
-					route.resolve("Provider", 
-						"/templates/providers.html", 
-						'API Providers', 
+					route.resolve("Provider",
+						"/templates/providers.html",
+						'API Providers',
 						'Integrate 100+ OAuth providers in minutes, whether they use OAuth 1.0, OAuth 2.0 or similar')
 			 
 				$routeProvider.when '/wishlist',
@@ -271,7 +271,7 @@ define [
 						return promise.then success, error
 			]
 			$httpProvider.responseInterceptors.push interceptor
-		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
+		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', 'InspectorService', ($rootScope, $location, UserService, $modal, NotificationService, $timeout, InspectorService) ->
 			checkLimitation = ->
 				return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 				return false
