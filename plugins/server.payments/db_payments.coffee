@@ -13,6 +13,17 @@ async = require 'async'
 restify = require 'restify'
 countries = require './countries'
 
+checkCouponPlan = (coupon, plan) ->
+	return true if not coupon
+	return false if coupon.length < 4
+	plan_shortcuts =
+		"st_": "startup"
+		"gw_": "growth"
+		"sc_": "scalability"
+	plan_limit = plan_shortcuts[coupon.substr(0,3)]
+	return false if plan_limit and plan.substr(0, plan_limit.length) != plan_limit
+	return true
+
 getCustomer = (id, callback) ->
 	db.redis.get "u:#{id}:stripeid", (err, stripeid) ->
 		return callback err if err
@@ -20,17 +31,24 @@ getCustomer = (id, callback) ->
 		stripe.customers.retrieve stripeid, callback
 
 createCustomer = (data, callback) ->
+	if not checkCouponPlan(data.coupon, data.plan)
+		return callback new check.Error 'This code is not available for this plan'
+
 	stripe.customers.create (
 		card: data.token.id
 		email: data.user.mail
 		metadata: data.profile
 		plan: data.plan
+		coupon: data.coupon
 		trial_end: Math.floor(new Date / 1000) + 15
 	), (err, customer) ->
 		return callback err if err
 		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
 
 updateSubscription = (data, callback) ->
+	if not checkCouponPlan(data.coupon, data.plan)
+		return callback new check.Error 'This code is not available for this plan'
+
 	stripe.customers.update data.stripeid,
 		card: data.token.id
 		email: data.user.mail
@@ -38,12 +56,13 @@ updateSubscription = (data, callback) ->
 
 	stripe.customers.listSubscriptions data.stripeid, (err, subscriptions) ->
 		return callback err if err
+		opts =
+			plan: data.plan
+			coupon: data.coupon
 		if subscriptions.data?[0]
-			stripe.customers.updateSubscription data.stripeid,
-				subscriptions.data[0].id,
-				plan: data.plan, callback
+			stripe.customers.updateSubscription data.stripeid, subscriptions.data[0].id, opts, callback
 		else
-			stripe.customers.createSubscription data.stripeid, plan: data.plan, callback
+			stripe.customers.createSubscription data.stripeid, opts, callback
 
 
 fillInfos = (data_in, name, callback) ->
@@ -97,7 +116,7 @@ exports.hooks =
 			callback()
 
 
-exports.subscribe = check profile:'object', token:'object', plan:'string', 'object', (data, user, callback) ->
+exports.subscribe = check profile:'object', coupon:['string','none'], token:'object', plan:'string', 'object', (data, user, callback) ->
 	if data.profile.country_code == 'FR'
 		data.plan += '_fr'
 	data.profile.id = user.id
@@ -128,3 +147,11 @@ exports.unsubscribe = (user, callback) ->
 				return callback err if err
 				db.redis.del "u:#{user.id}:current_plan"
 				callback()
+
+exports.getCoupon = check coupon:'string', plan:'string', (data, callback) ->
+	stripe.coupons.retrieve data.coupon, (err, coupon) ->
+		return callback err if err
+		return callback new check.Error 'Invalid coupon' if not coupon.valid
+		if not checkCouponPlan(data.coupon, data.plan)
+			return callback new check.Error 'This code is not available for this plan'
+		callback null, amount_off:coupon.amount_off, percent_off:coupon.percent_off, duration:coupon.duration, duration_in_months:coupon.duration_in_months

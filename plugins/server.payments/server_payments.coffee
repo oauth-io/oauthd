@@ -27,6 +27,9 @@ exports.setup = (callback) ->
 	@server.del @config.base_api + '/payment/unsubscribe', @auth.needed, (req, res, next) =>
 		@db.payments.unsubscribe req.user, @server.send(res, next)
 
+	@server.post @config.base_api + '/payment/coupon', @auth.needed, (req, res, next) =>
+		@db.payments.getCoupon req.body, @server.send(res, next)
+
 	@server.get @config.base_api + '/plans', @auth.optional, (req, res, next) =>
 		offers = []
 		for id,plan of @db.plans
@@ -39,6 +42,7 @@ exports.setup = (callback) ->
 
 		@db.redis.get "u:#{req.user.id}:current_plan", (err, plan_id) ->
 			return next err if err
+			plan_id = plan_id.split('_')[0] if plan_id
 			res.send offers: offers, current_plan: plan_id
 			return next()
 
