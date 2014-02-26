@@ -6,7 +6,7 @@ module.exports = function(gruntConf) {
 			__dirname + '/app/adm/{,*/}*.coffee',
 			__dirname + '/app/coffee/{,*/}*.coffee'
 		],
-		tasks: ['coffee:front-compile', 'coffee:front-compile-adm']
+		tasks: ['coffee:front-compile', 'coffee:front-compile-adm', 'requirejs']
 	};
 	gruntConf.watch['front-less'] = {
 		files: [
@@ -50,6 +50,18 @@ module.exports = function(gruntConf) {
 		options: {
 			bare: true
 		},
+	};
+
+	gruntConf.requirejs = {
+		compile: {
+			options: {
+				baseUrl: "./plugins/server.front/app/js",
+				paths: {},
+				name: "main",
+				out: "./plugins/server.front/app/js/main-built.js",
+				optimize: "none"
+			}
+		}
 	};
 
 	gruntConf.nodemon.server.options.ignoredFiles.push(__dirname + "/app");

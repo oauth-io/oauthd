@@ -13,7 +13,6 @@ define [
 			"ui.select2"
 			"ngCookies"
 		])
-
 		app.config [
 			"$routeProvider"
 			"$locationProvider"
