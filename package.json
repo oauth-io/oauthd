@@ -43,6 +43,7 @@
     "jayschema": "~0.2.0",
     "jsonlint": "~1.6.0",
     "prerender-node": "~0.1.15",
-    "ua-parser-js": "~0.6.2"
+    "ua-parser-js": "~0.6.2",
+    "grunt-contrib-requirejs": "~0.4.1"
   }
 }
