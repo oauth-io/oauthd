@@ -1,5 +1,5 @@
 define [
-	"services/AppService"
+	"services/AppService",
 	"services/UserService",
 	"services/NotificationService",
 	"services/CartService",
