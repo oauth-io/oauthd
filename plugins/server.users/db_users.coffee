@@ -16,7 +16,7 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 
 	db.redis.hget 'u:mails', data.mail, (err, iduser) ->
 		return callback err if err
-		return callback new check.Error 'This email already exists !' if iduser
+		return callback new check.Error 'This email already exists' if iduser
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
@@ -123,8 +123,10 @@ exports.isValidable = (data, callback) ->
 			mail_changed: replies[4]
 
 		return callback err if err
+		# return callback null, is_validable: false if user.pass? and not user.mail_changed? or not user.pass? and user.mail_changed?
 		return callback null, is_validable: false if user.key != key
-		if user.pass? and user.mail_changed? # change email
+
+		if user.mail_changed # change email
 			return callback null, is_validable: false if user.mail_changed.length == 0
 			db.redis.multi([
 				[ 'hdel', 'u:mails', replies[0] ],
@@ -132,6 +134,7 @@ exports.isValidable = (data, callback) ->
 				[ 'mset', prefix+'validated', 1,
 					prefix+'mail', replies[4],
 					prefix+'mail_changed', '',
+					prefix+'validated', '1'
 					prefix+'key', '' ]
 			]).exec (err, res) ->
 				return callback err  if err
@@ -273,7 +276,21 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'location',
 		prefix + 'company',
 		prefix + 'website',
-		prefix + 'mail_changed' ]
+		prefix + 'addr_one',
+		prefix + 'addr_second',
+		prefix + 'company',
+		prefix + 'country_code',
+		prefix + 'name',
+		prefix + 'phone',
+		prefix + 'type',
+		prefix + 'zipcode',
+		prefix + 'city',
+		prefix + 'vat_number',
+		prefix + 'use_profile_for_billing',
+		prefix + 'state',
+		prefix + 'country',
+		prefix + 'mail_changed',
+		prefix + 'validated' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -284,7 +301,21 @@ exports.get = check 'int', (iduser, callback) ->
 			location: replies[3],
 			company: replies[4],
 			website: replies[5],
-
+			addr_one: replies[6],
+			addr_second: replies[7],
+			company: replies[8],
+			country_code: replies[9],
+			name: replies[10],
+			phone: replies[11],
+			type: replies[12],
+			zipcode: replies[13],
+			city : replies[14],
+			vat_number: replies[15],
+			use_profile_for_billing: replies[16] == "true" ? true : false
+			state : replies[17],
+			country : replies[18],
+			mail_changed: replies[19]
+			validated: replies[20]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 

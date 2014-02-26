@@ -87,6 +87,11 @@ app.config([
 			controller: 'UserFormCtrl'
 			title: 'Sign in'
 
+		$routeProvider.when '/signin/:provider',
+			templateUrl: '/templates/signin.html'
+			controller: 'UserFormCtrl'
+			title: 'Sign in'
+
 		$routeProvider.when '/signup',
 			templateUrl: '/templates/signup.html'
 			controller: 'UserFormCtrl'
@@ -111,12 +116,32 @@ app.config([
 			controller: 'ApiKeyManagerCtrl'
 			title: 'Key manager'
 
-		$routeProvider.when '/key-manager/:provider',
-			templateUrl: '/templates/key-manager.html'
-			controller: 'ApiKeyManagerCtrl'
-			title: 'Key manager'
+		$routeProvider.when '/provider/:provider',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderPageCtrl'
+
+		$routeProvider.when '/provider/:provider/app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderAppKeyCtrl'
+
+		$routeProvider.when '/provider/:provider/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
+
+		$routeProvider.when '/provider/:provider/app/:app/samples',
+			templateUrl: '/templates/provider.html'
+			controller: 'ProviderSampleCtrl'
 
 		$routeProvider.when '/app-create',
+			templateUrl: '/templates/app-create.html'
+			controller: 'AppCtrl'
+			title: 'App creation'
+
+		$routeProvider.when '/app-create/:provider',
 			templateUrl: '/templates/app-create.html'
 			controller: 'AppCtrl'
 			title: 'App creation'
@@ -149,8 +174,8 @@ app.config([
 		($rootScope, $location, $cookieStore, $q) ->
 
 			$rootScope.$on '$routeChangeSuccess', (event, current, previous) =>
-				$rootScope.pageTitle = 'OAuth.io - ' + (current.$$route.title || 'OAuth that just works.')
-				$rootScope.pageDesc = (current.$$route.desc || 'OAuth has never been this easy. Put only 3 lines of codes and you are done in less than 90 seconds !')
+				$rootScope.pageTitle = 'OAuth.io - ' + (current.$$route?.title || 'OAuth that just works.')
+				$rootScope.pageDesc = (current.$$route?.desc || 'OAuth has never been this easy. Put only 3 lines of codes and you are done in less than 90 seconds !')
 
 			success = (response) ->
 
@@ -191,12 +216,46 @@ app.config([
 				return promise.then success, error
 	]
 	$httpProvider.responseInterceptors.push interceptor
-]).run ($rootScope, $location) ->
+]).run ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
 	Stripe.setPublishableKey window.stripeKey
 	$rootScope.stripeCheckout = (token) ->
 		StripeCheckout.configure
 			key: window.stripeKey
 			image: '/img/logo_v2.png'
 			token: token
+
+	checkLimitation = ->
+		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
+		return false
+	checkValidated = ->
+		return false if $rootScope.me.profile.validated == "2"
+		return true
+
+	initializeNotification = ->
+		NotificationService.clear()
+		return false if not $rootScope.me
+		if checkLimitation()
+			NotificationService.push
+				type: 'upgrade',
+				href: '/pricing',
+				title: "Time to upgrade",
+				content: 'You\'ve reached the limit. To go further: <a href="/pricing">upgrade your plan</a>.'
+		if not checkValidated()
+			NotificationService.push
+				type: 'validate'
+				title: 'Email validation'
+				content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
+		$('#notification').popover()
+
+	UserService.initialize ->
+
+	$rootScope.openNotifications = ->
+		$rootScope.notifModal = $modal.open {
+			templateUrl: '/templates/partials/notifications.html'
+			controller: NotificationCtrl
+		}
+
+	$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
+
 	$rootScope.location = $location.path()
 hooks.config() if hooks?.config

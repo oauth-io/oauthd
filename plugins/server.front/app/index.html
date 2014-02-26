@@ -10,6 +10,16 @@
 font-family: "YanoneKLight";
 font-style:normal;
 src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
+}
+@font-face {
+font-family: "YanoneKBold";
+font-style:normal;
+src: url('/lib/bootstrap-3.1.1/fonts/yanonekbold.ttf');
+}
+@font-face {
+font-family: "Century Gothic";
+font-style:normal;
+src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
 }</style>
     <link rel="publisher" href="https://plus.google.com/114197621848884111231" />
     <link rel="canonical" href="https://oauth.io{{location}}" />
@@ -31,7 +41,6 @@ src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
     <script src="/lib/select2/select2.js"></script>
     <script src="/lib/bootstrap-3.1.1/js/bootstrap.js"></script>
     <script src="/lib/angular-ui-select2/select2.js"></script>
-    <!--<script src="/lib/selectize/js/selectize.js"></script>-->
     <script src="/lib/angular-drag-drop/angular-dragdrop.js"></script>
     {{if admin}}<script src="/adm/js/adm.js"></script>{{endif}}
     <script src="/js/app.js"></script>
@@ -81,7 +90,7 @@ src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
 </head>
 <body style="-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;">
     <div google-analytics></div>
-    <div class="navbar navbar-default" style="background-color: transparent; font-size: 1.2em">
+    <div class="navbar navbar-default" style="background-color: transparent; font-size: 1.0em">
       <div class="container">
         <!-- .navbar-toggle is used as the toggle for collapsed navbar content -->
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -91,8 +100,7 @@ src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
         </button>
         <!-- Be sure to leave the brand out there if you want it shown -->
         <a class="navbar-brand" style="font-family: 'YanoneKLight', sans-serif; font-size: 1.8em; color: #6d6c6c" href="/">
-          <img class="pull-left" src="/img/logo.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" width="40" alt="OAuth.io logo">
-          <span style="position: relative; top: -2px; left: 5px"><strong>OAuth.io</strong></span>
+          <img class="pull-left" src="/img/logo_text.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" height="45" alt="OAuth.io logo">
         </a>
 
         <!-- Place everything within .navbar-collapse to hide it until above 768px -->
@@ -105,19 +113,26 @@ src: url('/lib/bootstrap-3.1.1/fonts/YanoneKLight.ttf');
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
 <!--             <li ng-class="{active: selectedMenu == '/features'}" ng-hide="UserService.isLogin()"><a href="/features">Features</a></li> -->
             <li ng-class="{active: selectedMenu.substr(0,5) == '/docs'}"><a href="/docs">Documentation</a></li>
-            <li ng-class="{active: selectedMenu.substr(0,5) == '/help' || selectedMenu.substr(0,4) == '/faq'}"><a href="/help">Help</a></li>
             <li style="margin-right: 20px" ng-class="{active: selectedMenu.substr(0,8) == '/pricing'}"><a href="/pricing">Pricing</a></li>
             {{if admin}}<li ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></li>{{endif}}
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
-            <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer"><i tooltip-placement="bottom" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-account"></i>Account</a></li>
-            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i tooltip-placement="bottom" tooltip="Sign out" style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
+            <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer">Account</a></li>
+            <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="#"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
+            <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
           </ul>
   <!--         <button style="position:relative; left: 15px; top: 4px;" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add a Key</button> -->
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
     </div><!-- /.navbar -->
-
+  <!--   <div class="container">
+   <div class="row">
+  <div class="col-lg-12">
+    <pre>{{notifications|json}}
+{{me|json}}</pre>
+  </div>
+</div>
+</div> -->
     <did id="container">
       <div id="content" ng-view></div>
     </did>

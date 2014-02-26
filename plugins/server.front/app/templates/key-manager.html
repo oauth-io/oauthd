@@ -2,13 +2,13 @@
 .app .tooltip.top.in {font-size: 0.8em;}
 </style>
 <div class="container">
-	<div class="row" ng-show="limitReach()">
-		<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
-	</div>
+<!-- 	<div class="row" ng-show="limitReach()">
+	<p class="alert" style="font-size: 1.2em">you've reached the limit of your plan, go further by <a href="/pricing">upgrading your plan</a>.</p>
+</div> -->
 	<div class="row">
-		<div class="col-lg-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
-		<div class="col-lg-8" ng-controller="AppCtrl">
-			<div ng-repeat="app in apps" class="app panel panel-primary" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
+		<div class="col-md-4" ng-controller="ProviderCtrl" ng-include src="providersTemplate"></div>
+		<div class="col-md-8" ng-controller="AppCtrl">
+			<div ng-repeat="app in me.apps" class="app panel panel-primary" data-drop="true" ng-model='app2' jqyoui-droppable="{multiple:true,onDrop:'keyFormOpen'}" class="oauth-app">
 				<div ng-hide="editMode == app.key" class="panel-heading">
 					<h4 style="position: relative; top: -5px; font-weight: bold">
 						<small class="pull-right">
@@ -22,7 +22,7 @@
 					</span>
 				</div>
 				<div ng-show="editMode == app.key" class="panel-heading">
-					<h4 style="text-align: center; font-size: 1.4em">Edit your application</h4>
+					<h4 style="text-align: center; font-size: 1.2em">Edit your application</h4>
 				</div>
 				<div ng-show="editMode == app.key" class="panel-body">
 					<div ng-include src="createAppTemplate" style="padding: 20px 40px;"></div>
@@ -34,7 +34,7 @@
 					</div>
 				</div>
 				<div class="panel-body" ng-hide="editMode == app.key">
-					<div style="padding: 0px 10px 20px; margin-top: 10px; font-size: 1.3em">
+					<div style="padding: 0px 10px 20px; margin-top: 10px; font-size: 1.1em">
 						<h5 style="font-size: 1.0em"><i class="glyphicon glyphicon-hand-right"></i> Public key: <span style="color: green" class="app-public-key">{{app.key}}</span></h5>
 						<h5 style="font-size: 1.0em">
 							<i class="glyphicon glyphicon-hand-right"></i>
@@ -51,8 +51,8 @@
 							<hr />
 							<p>In your HTML</p>
 							<div class="row">
-								<div class="col-lg-10"><pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre></div>
-								<div class="col-lg-2"><a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="" class="pull-right btn btn-small btn-success">Download oauth.js</a></div>
+								<div class="col-lg-9"><pre>&lt;script src="<strong>/path/to/oauth.js</strong>"&gt;&lt;/script&gt;</pre></div>
+								<div class="col-lg-3"><a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" style="" class="pull-right btn btn-block btn-success">Download oauth.js</a></div>
 							</div>
 
 							<p>Then initialize the SDK in your Javascript</p>

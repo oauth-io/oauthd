@@ -11,6 +11,10 @@
 				"provider": "https://vimeo.com/",
 				"docs": "http://developer.vimeo.com/apis"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/rest/v2?method=vimeo.people.getInfo"
+        }
 	}
 }

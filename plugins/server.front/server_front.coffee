@@ -9,6 +9,7 @@
 restify = require 'restify'
 fs = require 'fs'
 Url = require 'url'
+proxy = require './proxy/js'
 
 {db} = shared = require '../shared'
 
@@ -63,8 +64,12 @@ init = (callback) ->
 exports.setup = (callback) ->
 	init.call @, (e) =>
 		console.error 'error', e if e
-
+		
 		sendIndex = (req, res, next) ->
+			if req.headers.host == 'www.oauth.io'
+				res.setHeader 'Location', 'https://oauth.io'
+				res.send 301
+				return next()
 			res.setHeader 'Content-Type', 'text/html'
 			res.set 'Last-Modified', bootTime
 			data = cache.index
@@ -86,6 +91,9 @@ exports.setup = (callback) ->
 
 		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
 
+		@server.get '/proxy', (req, res, next) ->
+			proxy(req, res, next);
+
 		@server.get '/logout', (req, res, next) =>
 			res.setHeader 'Set-Cookie', 'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
 			res.setHeader 'Location', '/'
@@ -101,7 +109,7 @@ exports.setup = (callback) ->
 			directory: __dirname + '/app'
 			maxAge: 1
 
-		@server.get /^\/(robots.txt|sitemap.xml)/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(robots.txt|sitemap.xml|loaderio-66375ef31c0db14063ea59a1240b59be\.txt)/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 

@@ -44,6 +44,8 @@ server_options.formatters = formatters.formatters
 
 # create server
 server = restify.createServer server_options
+plugins.data.server = server
+plugins.runSync 'raw'
 
 server.use restify.authorizationParser()
 server.use restify.queryParser()
@@ -53,7 +55,6 @@ server.use (req, res, next) ->
 	next()
 
 # add server to shared plugins data and run init
-plugins.data.server = server
 plugins.runSync 'init'
 
 # little help

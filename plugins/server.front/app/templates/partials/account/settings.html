@@ -8,7 +8,7 @@
 				<label for="email-input" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<div class="input-group">
-				  		<input class="form-control" disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.email">
+				  		<input class="form-control" disabled="disabled" type="email" id="email-input" placeholder="Email" ng-model="user.mail">
 				  		<span class="input-group-btn">
 							<button ng-hide="changeEmailState" ng-click="changeEmail()" type="button" class="btn btn-warning" style="border-radius:4px; border-top-left-radius:0; border-bottom-left-radius: 0"><i class="icon-plus icon-white"></i> Change your email</button>
 							<button ng-show="changeEmailState" ng-click="updateEmail()" type="button" class="btn btn-success"><i class="icon-plus icon-white"></i> Update your email</button>
@@ -16,9 +16,14 @@
 					</div>
 				</div>
 		  	</div>
-		  	<div class="row" ng-show="emailSent">
+		  	<div class="row" ng-show="me.profile.mail_changed" style="margin-top: 10px">
 		  		<div class="col-sm-10 col-lg-offset-2">
-		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{email}}</strong> to validate your new email address</div>
+		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{me.profile.mail_changed}}</strong> to validate your new email address</div>
+		  		</div>
+		  	</div>
+		  	<div class="row" ng-show="me.profile.validated == '2' && !me.profile.mail_changed" style="margin-top: 10px">
+		  		<div class="col-sm-10 col-lg-offset-2">
+		  			<div class="alert alert-info"><strong>Heads up!</strong> An email has been sent to <strong>{{me.profile.mail}}</strong> to validate your account</div>
 		  		</div>
 		  	</div>
 			<div class="row" style="margin-top: 15px">
@@ -36,45 +41,44 @@
 			<div class="row">
 				<h3 class="col-lg-offset-2 col-lg-10">You are connected with</h3>
 			</div>
-
 			<div class="row" style="margin: 10px 0 40px">
 				<div class="col-lg-offset-2 col-lg-10">
 					<div class="row">
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="Twitter" class="btn btn-block btn-large text-center twitter" ng-click="syncProvider('twitter')">
-								<img src="/api/providers/twitter/logo">
-								<i ng-show="sync['twitter']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer"ng-click="syncProvider('twitter')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Twitter" src="/api/providers/twitter/logo-button.png">
+								<i ng-show="sync['twitter']" class="glyphicon glyphicon-ok" style="color: white; position: absolute; cursor: pointer; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="Facebook" class="btn btn-block btn-large facebook text-center" ng-click="syncProvider('facebook')">
-								<img src="/api/providers/facebook/logo">
-								<i ng-show="sync['facebook']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer" ng-click="syncProvider('facebook')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Facebook" src="/api/providers/facebook/logo-button.png">
+								<i ng-show="sync['facebook']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="Google" class="btn btn-block btn-large github text-center" ng-click="syncProvider('google')">
-								<img src="/api/providers/google/logo">
-								<i ng-show="sync['google']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer"ng-click="syncProvider('google')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Google" src="/api/providers/google/logo-button.png">
+								<i ng-show="sync['google']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="Linkedin" class="btn btn-block btn-large linkedin text-center" ng-click="syncProvider('linkedin')">
-								<img src="/api/providers/linkedin/logo">
-								<i ng-show="sync['linkedin']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer"ng-click="syncProvider('linkedin')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Linkedin" src="/api/providers/linkedin/logo-button.png">
+								<i ng-show="sync['linkedin']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="Github" class="btn btn-block btn-large github text-center" ng-click="syncProvider('github')">
-								<img src="/api/providers/github/logo">
-								<i ng-show="sync['github']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer"ng-click="syncProvider('github')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Github" src="/api/providers/github/logo-button.png">
+								<i ng-show="sync['github']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 						<div class="col-lg-2">
-							<button data-toggle="tooltip" data-placement="top" title="VK" class="btn btn-block btn-large vk text-center" ng-click="syncProvider('vk')">
-								<img src="/api/providers/vk/logo">
-								<i ng-show="sync['vk']" class="glyphicon glyphicon-ok" style="position: absolute; right: 18px; top: 23px; font-size: 18px; opacity: 0.7"></i>
-							</button>
+							<div style="position: relative">
+								<img  style="cursor: pointer"ng-click="syncProvider('vk')" class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="VK" src="/api/providers/vk/logo-button.png">
+								<i ng-show="sync['vk']" class="glyphicon glyphicon-ok" style="color: white; cursor: pointer; position: absolute; left: 5px; top: 5px; font-size: 25px; opacity: 0.7"></i>
+							</div>
 						</div>
 					</div>
 				</div>

@@ -11,6 +11,10 @@
 				"provider": "https://familysearch.com/",
 				"docs": "https://familysearch.org/developers"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url":  "/platform/users/current"
+        }
 	}
 }

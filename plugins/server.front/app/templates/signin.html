@@ -1,5 +1,5 @@
 <div class="container">
-	<div class="row" style="margin-top: 30px">
+	<div class="row">
 		<div class="col-lg-8 col-lg-offset-2">
 			<div style="background-color: white;">
 			  	<div style="padding: 25px 50px">
@@ -7,9 +7,9 @@
            				<h5 ng-hide="userForm.mode == 'Lost password'" style="text-align: center; font-size: 1.2em;"><img src="/img/logo.png" style="position: relative; top: 0px;left: -10px; width: 60px; height: 60px;">Log in</h5>
             			<h5 ng-show="userForm.mode == 'Lost password'" style="text-align: center; font-size: 1.2em;"><img src="/img/logo.png" style="position: relative; top: 0px;left: -10px; width: 60px; height: 60px;">Forgot my password</h5>
         			</div>
-	        		<div class="row" style="margin-top: 40px; height: 360px; position: relative">
+	        		<div class="row" style="margin-top: 40px; height: 305px; position: relative">
 						<div ng-class="{'col':true,'col-xs-8': true, 'col-xs-offset-2': userForm.mode == 'Lost password'}" style="padding-right: 50px">
-		        			<h3 ng-hide="userForm.mode == 'Lost password'" style="text-align: center; margin-bottom: 40px">Connect using your email/password</h3>
+		        			<h3 ng-hide="userForm.mode == 'Lost password'" style="text-align: center; font-weight: normal; font-size: 22px; margin-bottom: 40px">Connect using your email/password</h3>
 				        	<form role="form" ng-submit="userForm.submit()" method="POST">
 					          	<div class="alert alert-danger" ng-show="info.status == 'error'">
 					            	{{info.message}}
@@ -35,14 +35,11 @@
 					              		</button>
 				            		</div>
 				            		<div class="col-lg-8" style="text-align: right">
-										<a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; font-size: 1.3em;">Forgot my password</a></p>
-					              		<a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; font-size: 1.3em;">cancel</a>
-										<a style="cursor: pointer; display: block; font-size: 1.3em" href="/signup">You don't have an account? <span style="text-decoration: underline">Register</span></a>
 									</div>
-
-
 				          		</div>
-
+								<p style="margin-top: 15px"><a ng-show="userForm.mode == 'Sign in'" ng-click="lostPasswd()" style="display: block;cursor: pointer; font-size: 1.1em;">Forgot my password</a></p>
+			              		<p style="margin-top: 15px"><a ng-show="userForm.mode == 'Lost password'" ng-click="cancelLostPasswd()" style="cursor: pointer; font-size: 1.1em;">Cancel</a></p>
+								<p style="margin-top: 15px"><a style="cursor: pointer; display: block; font-size: 1.1em" href="/signup">You don't have an account? <span style="text-decoration: underline">Register</span></a></p>
 						        <div class="alert alert-danger" ng-show="signup.status == 'error'">
 						          	<strong>Oups!</strong> {{signup.message}}
 						        </div>
@@ -62,41 +59,29 @@
 						</div>
 	        			<div ng-hide="userForm.mode == 'Lost password'" id="socialConnect" class="col-xs-4" style="padding-left: 50px">
 			        		<div ng-show="connect" ng-init="connect=true; formDisplay=true">
-			        			<h3 style="text-align: center; margin-bottom: 54px;">Connect with...</h3>
-								<div class="row" style="margin-top: 10px">
+			        			<h3 style="text-align: center; margin-bottom: 54px; font-weight: normal; font-size: 22px;">Connect with...</h3>
+								<div class="row" style="margin-top: -5px">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Twitter" class="btn btn-block btn-large text-center github" ng-click="socialSignin('twitter')">
-											<img src="/api/providers/twitter/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Twitter" style="margin-top: 15px;" ng-click="socialSignin('twitter')" class="img-responsive img-rounded" src="/api/providers/twitter/logo-button.png">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Facebook" class="btn btn-block btn-large github text-center" ng-click="socialSignin('facebook')">
-											<img src="/api/providers/facebook/logo">
-										</button>
+										<img class="img-responsive img-rounded" ng-click="socialSignin('facebook')" data-toggle="tooltip" data-placement="top" title="Facebook" src="/api/providers/facebook/logo-button.png" style="margin-top: 15px;">
 									</div>
 								</div>
-								<div class="row" style="margin-top: 15px">
+								<div class="row">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Google" class="btn btn-block btn-large github text-center" ng-click="socialSignin('google')">
-											<img src="/api/providers/google/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Google" class="img-responsive img-rounded" src="/api/providers/google/logo-button.png" ng-click="socialSignin('google')" style="margin-top: 15px;">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Linkedin" class="btn btn-block btn-large github text-center" ng-click="socialSignin('linkedin')">
-											<img src="/api/providers/linkedin/logo">
-										</button>
+										<img class="img-responsive img-rounded" data-toggle="tooltip" data-placement="top" title="Linkedin" src="/api/providers/linkedin/logo-button.png" ng-click="socialSignin('linkedin')" style="margin-top: 15px;">
 									</div>
 								</div>
-								<div class="row" style="margin-top: 15px">
+								<div class="row">
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="Github" class="btn btn-block btn-large github text-center" ng-click="socialSignin('github')">
-											<img src="/api/providers/github/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="Github" src="/api/providers/github/logo-button.png" class="img-responsive img-rounded" style="margin-top: 15px;" ng-click="socialSignin('github')">
 									</div>
 									<div class="col-sm-6">
-										<button data-toggle="tooltip" data-placement="top" title="VK" class="btn btn-block btn-large github text-center" ng-click="socialSignin('vk')">
-											<img src="/api/providers/vk/logo">
-										</button>
+										<img data-toggle="tooltip" data-placement="top" title="VK" src="/api/providers/vk/logo-button.png" class="img-responsive img-rounded" style="margin-top: 15px;" ng-click="socialSignin('vk')">
 									</div>
 								</div>
 							</div>
@@ -109,7 +94,7 @@
 		</div>
 	</div>
 </div>
-<div class="modal fade" id="error-social" tabindex="-1" role="dialog" aria-labelledby="Error for social signin" aria-hidden="true">
+<div class="modal fade" id="error-social" tabindex="-1" role="dialog" aria-labelledby="Sign up" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -119,7 +104,7 @@
       <div class="modal-body">
         <p style="font-size: 1.3em; text-align: center">Signup with {{provider}} in 30 seconds!</p>
         <p style="text-align: center; margin: 15px 0 50px;"><a ng-href="/signup/{{provider}}" class="btn btn-lg btn-primary">Sign up with {{provider}}</a></p>
-        <p style="font-size: 1.3em; color: #AAA; text-align: center">If you already have an account, you can connect {{provider}} from your Account Settings page.</p>
+        <p style="font-size: 1.3em; color: #AAA; text-align: center">If you already have an account, you can link {{provider|capitalize}} to you account from your Settings page (in the Account menu).</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

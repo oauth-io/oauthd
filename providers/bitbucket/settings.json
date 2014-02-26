@@ -13,6 +13,10 @@
 				"provider": "https://bitbucket.org/",
 				"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/1.0/user"
+        }
 	}
 }

@@ -13,6 +13,10 @@
 				"provider": "http://gomiso.com/",
 				"docs": "http://gomiso.com/developers/endpoints"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/oauth/v1/users/show.json"
+        }
 	}
 }

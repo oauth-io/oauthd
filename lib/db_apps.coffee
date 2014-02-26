@@ -110,7 +110,7 @@ exports.resetKey = check check.format.key, (key, callback) ->
 			['hset', 'a:keys', newkey, idapp]
 		]).exec (err, r) ->
 			return callback err if err
-			callback null, key:newkey
+			callback null, key:newkey, secret:newsecret
 
 # remove an app
 exports.remove = check check.format.key, (key, callback) ->

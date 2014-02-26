@@ -13,6 +13,11 @@
 				"provider": "http://soundcloud.com",
 				"docs": "http://developers.soundcloud.com/docs/api/reference"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me.json"
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/dPNz3/embedded/"
 	}
 }

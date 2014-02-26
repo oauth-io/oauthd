@@ -200,6 +200,8 @@ class OAuth2 extends OAuthBase
 
 		# build url
 		options.url = req.apiUrl
+		if typeof req.query == 'function'
+			options.url += "?" + req.query()
 		if ! options.url.match(/^[a-z]{2,16}:\/\//)
 			if options.url[0] != '/'
 				options.url = '/' + options.url
@@ -208,7 +210,6 @@ class OAuth2 extends OAuthBase
 
 		# build query
 		options.qs = {}
-		options.qs[name] = value for name, value of req.query
 		for name, value of oauthrequest.query
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.qs[name] = param if param
@@ -223,10 +224,6 @@ class OAuth2 extends OAuthBase
 		for name, value of oauthrequest.headers
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.headers[name] = param if param
-
-		# build body
-		if req.method == "PATCH" || req.method == "POST" || req.method == "PUT"
-			options.body = req._body || req.body
 
 		# do request
 		callback null, options

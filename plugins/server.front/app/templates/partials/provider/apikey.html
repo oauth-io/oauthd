@@ -1,0 +1,75 @@
+<style>
+.security_choice {
+	cursor: pointer;
+	font-weight: normal;
+}
+</style>
+<div class="row">
+    <div class="ng-class:{true: 'col-lg-6', false: 'col-lg-12'}[key_image != unedefined]">
+        <div class="ng-class: {false: 'keys-centered'}[key_image != undefined]">
+            <form class="form-vertical">
+                <div class="row" style="margin-bottom: 30px">
+                    <div style="font-weight: bold" class="col-lg-8 col-lg-offset-4">
+                        Enter your API keys
+                    </div>
+                </div>
+                <div>
+                    <div data-ng-switch on="field.cardinality" ng-repeat="(name,field) in parameters" style="margin: 20px 0px 10px">
+                        <div data-ng-switch-when="*" class="row">
+                            <label style="text-align: right" class="col-lg-4 control-label">{{ name }}</label>
+                            <div class="col-lg-8 controls" style="position: relative; top: -10px">
+                                <select style="width: 100%" multiple ui-select2="scopeSelect" data-ng-model="field.value">
+                                    <option ng-repeat="(k,v) in field.values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div data-ng-switch-when="1" class="row">
+                            <label style="text-align: right" class="col-lg-4 control-label">{{ name }}</label>
+                            <div class="col-lg-8 controls" style="position: relative; top: -10px">
+                                <select style="width: 100%" ui-select2="scopeSelect" data-ng-model="field.value">
+                                    <option ng-repeat="(k,v) in field.values" value="{{k}}">&lt;strong&gt;{{k}}&lt;/strong&gt;&lt;br /&gt;{{v}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div data-ng-switch-default class="row">
+                            <label style="text-align: right" class="col-lg-4 control-label">{{ name }}</label>
+                            <div class="col-lg-8 controls" style="position: relative; top: -10px">
+                                <input class="form-control" type="text" data-ng-model="field.value" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-bottom: 15px;">
+                        <div class="col-lg-8 col-lg-offset-4">
+                            <a class="accordion-toggle"  href="javascript:void(0);" data-toggle="collapse" data-parent="#accordion-keys" ng-click="moreOptionShow = !moreOptionShow">
+                            Security options
+                            </a>
+                            <div ng-show="moreOptionShow == true">
+                                <label class="security_choice">
+                                	<input type="radio" value="token" ng-click="modifyType('token')" ng-model="createKeyType" />Client-side (token)
+                                </label>
+                                <label class="security_choice">
+                                	<input type="radio" value="code" ng-model="createKeyType" ng-click="modifyType('code')" />Server-side (code)
+                                </label>
+                                <label class="security_choice">
+                                	<input type="radio" value="both" ng-click="modifyType('both')" ng-model="createKeyType" />Both
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-8 col-lg-offset-4">
+                            <button class="btn btn-lg btn-primary" ng-click="createKey()">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-6" ng-show="key_image">
+        <div ng-show="createKeyKeysImg">
+            <img class="img-responsive" ng-src="/api/providers/{{provider}}/{{ settings.data.settings.copyingKey.image }}"><br /><br />
+        </div>
+    </div>
+</div>

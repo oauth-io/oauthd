@@ -101,6 +101,9 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 		$location.path '/404' if not data.data.is_validable and not data.data.is_updated
 
 		if UserService.isLogin() and data.data.is_updated
+			$rootScope.me.profile.mail = $rootScope.me.profile.mail_changed
+			$rootScope.me.profile.mail_changed = null
+			$rootScope.me.validated = '1'
 			$location.path '/account'
 		else if data.data.is_validable
 			# $location.path '/signin'
@@ -109,6 +112,7 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 				key: $routeParams.key
 				mail: data.data.mail
 			UserService.validate $scope.user.id, $scope.user.key, ((data) ->
+				$rootScope.me.profile.validated = "1"
 				$timeout (->
 					$rootScope.accessToken = $cookieStore.get 'accessToken'
 					$location.path '/key-manager'
@@ -120,12 +124,15 @@ ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserSer
 	), (error) ->
 		$location.path '/404'
 
+NotificationCtrl = ($scope, NotificationService) ->
+	$scope.notifications = NotificationService.list()
+
 UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, MenuService, $routeParams) ->
 	MenuService.changed()
 	if UserService.isLogin()
 		$location.path '/key-manager'
 
-	$('#socialConnect button').tooltip()
+	$('#socialConnect img').tooltip()
 
 	if not $scope.info
 		if document.location.hash.match /^#err=./
@@ -167,7 +174,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 			url: '/method/getProfiles'
 			name: ['first_name', 'last_name']
 			path: 'response/0'
-
+	$scope.hidePopup = -> $('.modal-backdrop').fadeOut 'fast'
 	$scope.socialSignin = (provider) ->
 		OAuth.initialize window.loginKey
 		OAuth.popup provider, cache: true, (err, res) ->
@@ -184,11 +191,37 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 				return false
 
 	$scope.connected = false
+
+	$scope.finalize = ->
+		$scope.loading = true
+
+		$scope.canSignin = $scope.needEmail = $scope.success = false
+		UserService.signupOAuth $scope.user, $scope.social, ((data) ->
+			#console.log data.validated, not data.validated
+			$scope.notValidated = not data.data.validated
+			$scope.success = true
+			$scope.loading = $scope.needEmail = false
+		), (error) ->
+			if error.message == "This email already exists"
+				$scope.canSignin = $scope.success = false
+				$scope.emailMessage = 2
+				$scope.needEmail = true
+			else if error.message == "This account is already linked to a user"
+				$scope.canSignin = true
+				$scope.needEmail = $scope.success = false
+			else
+				$scope.canSignin = $scope.success = false
+				$scope.emailMessage = 1
+				$scope.needEmail = true
+			$scope.loading = false
+
 	$scope.socialSignup = (provider) ->
 		OAuth.initialize window.loginKey
+		$scope.provider = provider
 		OAuth.popup provider, cache: true, (err, res) ->
 			return false if err
 			res.get(me[provider].url).done (data)->
+
 				if me[provider].path
 					for eltname in me[provider].path.split '/'
 						data = data[eltname]
@@ -199,7 +232,7 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					$scope.user.name = data[me[provider].name]
 				$scope.user.mail = data[me[provider].mail]
 				$scope.user.company = data[me[provider].company]
-				$scope.connected = true
+
 				$scope.social =
 					provider: provider
 					token: res.access_token
@@ -207,15 +240,28 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 					oauth_token_secret: res.oauth_token_secret
 				$scope.$apply()
 
-	if $routeParams.provider
+				$('#signup-modal').modal('show')
+				$scope.finalize()
+					#check if user exists
+						#popup "connect me with {{provider}}"
+					#popup "email" if not email verified in data
+						#signup
+							#popup email if email already taken
+							#popup success -> Go to your dashboard (signin)
+
+	if $routeParams.provider and $location.path().substr(0, 7) == '/signup'
 		$scope.socialSignup $routeParams.provider
+		$('.modal-backdrop').hide()
+
+	if $routeParams.provider and $location.path().substr(0, 7) == '/signin'
+		$scope.socialSignin $routeParams.provider
 		$('.modal-backdrop').hide()
 
 	$scope.signinSubmit = ->
 
 	$scope.signupSubmit = ->
 		#verif field
-		UserService.register $scope.user, $scope.social, ((data) ->
+		UserService.register $scope.user, ((data) ->
 			$scope.signupInfo =
 				status: 'success'
 		), (error) ->
@@ -304,7 +350,6 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.userForm.mode = "Sign in"
 		$scope.info.status = ''
 
-
 	#click switch button (signin / signup)
 	$scope.switchButton = ->
 		if $scope.userForm.mode == "Sign up"
@@ -314,20 +359,12 @@ UserFormCtrl = ($scope, $rootScope, $timeout, $http, $location, UserService, Men
 		$scope.info.status = ''
 		$scope.signup.status = ''
 
-generalAccountCtrl = ($scope, $timeout, UserService) ->
+generalAccountCtrl = ($rootScope, $scope, $timeout, UserService) ->
 	connectionCtx = document.getElementById('connectionChart').getContext '2d'
 	appsCtx = document.getElementById('appsChart').getContext '2d'
 	providersCtx = document.getElementById('providersChart').getContext '2d'
 
 	drawChart = ->
-		if ! $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-				responseDelay: 48
-
 		getColor = (ratio)->
 			if ratio > 0.66
 				return '#F7464A'
@@ -337,42 +374,38 @@ generalAccountCtrl = ($scope, $timeout, UserService) ->
 				return '#3ebebd'
 
 		connectionData = [
-			value: $scope.totalUsers
-			color: getColor $scope.totalUsers / $scope.plan.nbUsers
+			value: $rootScope.me.totalUsers
+			color: getColor $rootScope.me.totalUsers / $rootScope.me.plan.nbUsers
 		,
-			value: $scope.plan.nbUsers - $scope.totalUsers
+			value: $rootScope.me.plan.nbUsers - $rootScope.me.totalUsers
 			color: '#EEEEEE'
 		]
 		connectionData[1].value = 0  if connectionData[1].value < 0
 		connectionChart = new Chart(connectionCtx).Doughnut(connectionData)
 
-		if $scope.plan.nbApp != 'unlimited'
+		if $rootScope.me.plan.nbApp != 'unlimited'
 			appsData = [
-				value: $scope.apps.length
-				color: getColor $scope.apps.length / $scope.plan.nbApp
+				value: $rootScope.me.apps.length
+				color: getColor $rootScope.me.apps.length / $rootScope.me.plan.nbApp
 			,
-				value: $scope.plan.nbApp - $scope.apps.length
+				value: $rootScope.me.plan.nbApp - $rootScope.me.apps.length
 				color: '#EEEEEE'
 			]
 			appsData[1].value = 0  if appsData[1].value < 0
 			appsChart = new Chart(appsCtx).Doughnut(appsData)
 
-		if $scope.plan.nbProvider != 'unlimited'
+		if $rootScope.me.plan.nbProvider != 'unlimited'
 			providersData = [
-				value: $scope.keysets.length
-				color: getColor $scope.keysets.length / $scope.plan.nbProvider
+				value: $rootScope.me.keysets.length
+				color: getColor $rootScope.me.keysets.length / $rootScope.me.plan.nbProvider
 			,
-				value: $scope.plan.nbProvider - $scope.keysets.length
+				value: $rootScope.me.plan.nbProvider - $rootScope.me.keysets.length
 				color: '#EEEEEE'
 			]
 			providersData[1].value = 0  if providersData[1].value < 0
 			providersChart = new Chart(providersCtx).Doughnut(providersData)
 
-	$scope.$watch 'loading', (newVal, oldVal) ->
-		if newVal == false and oldVal == true
-			drawChart()
-
-	drawChart() if $scope.loading == false
+	$rootScope.$watch 'loading', (newval, oldval) -> drawChart() if newval == false
 
 SettingsCtrl = ($scope, UserService) ->
 
@@ -382,11 +415,20 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	 	$location.path '/'
 
 	$scope.changeTab = (tab) ->
+###		if tab == 'payment'
+			$scope.loading = true
+			$scope.subscriptions = null
+			UserService.getSubscriptions (success) ->
+				$scope.subscriptions = success.data.subscriptions
+				$scope.loading = false
+			, (error) ->
+				$scope.loading = false
+				console.log error
+###
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
 		$scope.tab = tab
 
 	$scope.changeTab 'general'
-	$scope.loading = true
 	$scope.sync = {}
 	$scope.syncProvider = (provider)->
 		OAuth.initialize window.loginKey
@@ -400,80 +442,22 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			UserService.sync provider, tokens, ->
 				$scope.sync[provider] = true
 
-	UserService.me (success) ->
-
-		# for modal
-		$scope.user =
-			id : success.data.profile.id
-			name : success.data.profile.name
-			email : success.data.profile.mail
-			location : success.data.profile.location
-			company : success.data.profile.company
-			website : success.data.profile.website
-
-		# for label
-		$scope.id = success.data.profile.id
-		$scope.name = success.data.profile.name
-		$scope.email = success.data.profile.mail
-		$scope.location = success.data.profile.location
-		$scope.company = success.data.profile.company
-		$scope.website = success.data.profile.website
-		$scope.email_changed = success.data.profile.mail_changed
-		$scope.plan = success.data.plan
-
-		if not $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-				responseDelay: 48
-
-		#$scope.plan.name = $scope.plan.name.substr 0, $scope.plan.name.length - 2  if $scope.plan.name.substr($scope.plan.name.length - 2, 2) is 'fr'
-
-
-		UserService.getSync (providers) ->
-			$scope.sync = {}
-			$scope.sync[provider] = true for provider in providers.data
-
-		$scope.apps = []
-		$scope.totalUsers = 0
-		$scope.keysets = []
-
-		for i of success.data.apps
-			AppService.get success.data.apps[i], ((app) ->
-
-				AppService.getTotalUsers app.data.key, (success2) ->
-					app.data.totalUsers = parseInt(success2.data) || 0
-					$scope.totalUsers += parseInt(success2.data) || 0
-					if parseInt(i) + 1 == parseInt(success.data.apps.length)
-						$scope.loading = false
-				, (error) ->
-					console.log error
-
-				$scope.apps.push app.data
-				$scope.keysets.add app.data.keysets if app.data.keysets != []
-				$scope.keysets = $scope.keysets.unique()
-			), (error) ->
-				console.log error
-
-	, (error) ->
-		console.log error
-
-	$scope.limitReach = ->
-		return true if $scope.apps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.keysets? >= $scope.plan?.nbProvider
-		return false
+	UserService.getSync (providers) ->
+		$scope.sync = {}
+		$scope.sync[provider] = true for provider in providers.data
+		$scope.user = $rootScope.me.profile
 
 	$scope.changeEmailState = false
 	$scope.emailSent = false
 	$scope.updateDone = false
+
 	$scope.changeEmail = ->
 		$scope.changeEmailState = true
 		$('#email-input').removeAttr('disabled')
 
 	$scope.cancelEmailUpdate = ->
 		UserService.cancelUpdateEmail ((success) ->
-			$scope.email_changed = null
+			$rootScope.me.profile.email_changed = null
 		), (error) ->
 
 	$scope.changePasswordButton = ->
@@ -492,12 +476,16 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 			$scope.errorPassword =
 				status: "fail"
 
+	$rootScope.$watch 'loading', (newval) ->
+		if newval == false
+			$scope.user = Object.clone $rootScope.me.profile
+
 	$scope.updateEmail = ->
-		UserService.updateEmail $scope.user.email, ((success) ->
+		UserService.updateEmail $scope.user.mail, ((success) ->
 			$('#email-input').attr('disabled', 'disabled')
 			$scope.changeEmailState = false
-			$scope.email_changed = $scope.user.email
-			$scope.user.email = $scope.email
+			$rootScope.me.profile.mail_changed = $scope.user.mail
+			$scope.user.mail = $rootScope.me.profile.mail
 		), (error) ->
 			if error.message is "Your email has not changed"
 				$('#email-input').attr('disabled', 'disabled')
@@ -507,12 +495,11 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	$scope.update = ->
 		$scope.updateDone = false
 		UserService.update $scope.user, (success) ->
-			$scope.id = success.data.id
-			$scope.name = success.data.name
+			$rootScope.me.profile.name = success.data.name
 			$scope.updateDone = true
-			$scope.location = success.data.location
-			$scope.company = success.data.company
-			$scope.website = success.data.website
+			$rootScope.me.profile.location = success.data.location
+			$rootScope.me.profile.company = success.data.company
+			$rootScope.me.profile.website = success.data.website
 		, (error) ->
 			$scope.error =
 				state : true
@@ -559,7 +546,7 @@ ProviderCtrl = (MenuService, $filter, $scope, $rootScope, ProviderService, $time
 		$scope.queryChange = (query)->
 			$timeout (->
 				$scope.filtered = $filter('filter')($scope.providers, query)
-				$scope.pagination.nbPages = Math.ceil($scope.filtered.length / $scope.pagination.nbPerPage)
+				$scope.pagination.nbItems = $scope.filtered.length
 				$scope.pagination.current = 1
 			), 0
 
@@ -634,48 +621,6 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	if not UserService.isLogin()
 		$location.path '/signin'
 
-	$scope.limitReach = false
-	UserService.me (success) ->
-		$scope.plan = success.data.plan
-
-		if not $scope.plan
-			$scope.plan =
-				name: "Bootstrap"
-				nbUsers: 1000
-				nbApp: 2
-				nbProvider: 2
-				responseDelay: 48
-
-		$scope.planApps = []
-		$scope.totalUsers = 0
-		$scope.planKeysets = []
-
-		for i of success.data.apps
-			AppService.get success.data.apps[i], ((app) ->
-
-				AppService.getTotalUsers app.data.key, (success2) ->
-					app.data.totalUsers = parseInt(success2.data) || 0
-					$scope.totalUsers += parseInt(success2.data) || 0
-					if parseInt(i) + 1 == parseInt(success.data.apps.length)
-						$scope.loading = false
-						if $routeParams.provider?.length > 3
-							$scope.keyFormOpen $routeParams.provider
-				, (error) ->
-					console.log error
-
-				$scope.planApps.push app.data
-				$scope.planKeysets.add app.data.keysets if app.data.keysets != []
-				$scope.planKeysets = $scope.planKeysets.unique()
-			), (error) ->
-				console.log error
-
-	, (error) ->
-		console.log error
-
-	$scope.limitReach = ->
-		return true if $scope.planApps?.length >= $scope.plan?.nbApp or $scope.totalUsers? >= $scope.plan?.nbUsers or $scope.planKeysets? >= $scope.plan?.nbProvider
-		return false
-
 	$rootScope.providers_name = {} if not $rootScope.providers_name
 	$scope.providers_name = $rootScope.providers_name
 	$scope.keySaved = false
@@ -689,7 +634,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	$scope.cancelCreateKey = ->
 		if $scope.createKeyStep <= 2
 			if $scope.isDropped and $scope.createKeyExists
-				app = $rootScope.apps.find ((n) ->
+				app = $rootScope.me.apps.find ((n) ->
 					return n.key == $scope.createKeyAppKey
 				)
 				if app?.keysets?.length > 0
@@ -740,7 +685,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 			if not $rootScope.error.state
 				KeysetService.add key, provider, data, response_type, ((keysetEntry) ->
 
-					app = $rootScope.apps.find (n) ->
+					app = $rootScope.me.apps.find (n) ->
 						return n.key == $scope.createKeyAppKey
 
 					# console.log $scope.apikeyUpdate
@@ -814,7 +759,7 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 	$scope.keyFormOpen = (droppable, helper)->
 		if Object.isString droppable
 			name = droppable
-			key = $rootScope.apps[0].key
+			key = $rootScope.me.apps[0].key
 			$scope.isDropped = false
 		else
 			name = $('.provider-text', helper.draggable).attr('data-provider')
@@ -822,14 +767,12 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 			key = $(droppable.target).find('.app-public-key').text().trim()
 
 		ProviderService.get name, ((data) =>
-
 			$scope.$broadcast 'btShow'
 			$scope.createKeyProvider = name
 			$scope.createKeyAppKey = key
 			$scope.createKeyHref = data.data.href
-			a = $rootScope.apps.find (n) ->
+			a = $rootScope.me.apps.find (n) ->
 				return n.key == $scope.createKeyAppKey
-
 
 			$scope.createKeyAppName = a.name
 			$scope.createKeyStep = 2
@@ -862,15 +805,188 @@ ApiKeyManagerCtrl = ($scope, $routeParams, $timeout, $rootScope, $location, User
 
 		), (error) ->
 
+
+ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, ProviderService, AppService, $timeout, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+	if not $routeParams.app
+		$location.path '/providers/' + $routeParams.provider + '/app'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 3
+
+	$scope.providerTemplate = '/templates/partials/provider/apikey.html'
+
+
+	$scope.scopeSelect =
+		escapeMarkup: (m) ->
+			return m
+
+
+	AppService.get $routeParams.app, ((app) =>
+		delete app.data.secret
+		$scope.app = app.data
+		$scope.app.keysets.sort()
+	), (error) ->
+		console.log "error", error
+
+	$scope.modifyType = (type) ->
+		$scope.createKeyType = type
+		
+
+
+	# createKey saves given keys for the app and provider.
+	$scope.createKey = ->
+		data = {}
+		conf = $scope.parameters
+		for field of conf
+			if not conf[field].value && (field != 'scope' && field != 'permissions' && field != 'perms') # pas propre
+				$rootScope.error.state = true
+				$rootScope.error.type = "CREATE_KEY"
+				$rootScope.error.message = "#{field} must be set"
+				break;
+			data[field] = conf[field].value
+		KeysetService.add $routeParams.app, $routeParams.provider, data, $scope.createKeyType || 'both', ((keysetEntry) ->
+			$location.path '/provider/' + $routeParams.provider + '/app/' + $routeParams.app + '/samples'
+		), (error) ->
+			console.log "error", error
+	##
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.providerConf = provider
+			$scope.parameters = provider.data.oauth2?.parameters || provider.data.oauth1?.parameters || {}
+			$scope.settings = settings
+			$scope.key_image = settings.data.settings.copyingKey.image
+
+			for k,v of provider.data.parameters
+				$scope.parameters[k] = v
+
+			$http(
+				method: "GET"
+				url: '/api/providers/' + $scope.provider + '/keys.png'
+			).success(->
+				$scope.createKeyKeysImg = true
+			).error(->
+				$scope.createKeyKeysImg = false
+			)
+
+			$scope.apikeyUpdate = false
+			KeysetService.get $routeParams.app, $routeParams.provider, ((json) ->
+				$scope.createKeyType = json.data?.response_type
+				if json.data?
+					$scope.apikeyUpdate = true
+					for field of json.data.parameters
+						if not $scope.parameters[field]?
+							$scope.parameters[field] = {}
+						$scope.parameters[field].value = json.data.parameters[field]
+				else
+					for field in $scope.parameters
+						field.value = ""
+			), (error) ->
+
+		), (error) ->
+	), (error) ->
+
+ProviderSampleCtrl = ($scope, MenuService, $routeParams, AppService, ProviderService) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 4
+
+	$scope.providerTemplate = '/templates/partials/provider/sample.html'
+	$scope.loaded_fiddle = true
+	$scope.loadedJsFiddle = ->
+		$scope.loaded_fiddle = false
+		$scope.$apply()
+
+	if $routeParams.app
+		AppService.get $routeParams.app, ((app) =>
+			delete app.data.secret
+			$scope.app = app.data
+			$scope.app.keysets.sort()
+		), (error) ->
+			console.log "error", error
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.providerConf = provider
+			$scope.settings = settings
+			$scope.sample = settings.data.settings.sample
+			$scope.provider_name = settings.data.provider.replace /_/g, ' '
+		), (error) ->
+	), (error) ->
+
+ProviderAppCtrl = ($scope, MenuService, UserService, ProviderService, AppService, $timeout, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 2
+
+	$scope.providerTemplate = '/templates/partials/provider/app.html'
+	counter = 0
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		$scope.providerConf = provider
+	), (error) ->
+
+	UserService.me (success) ->
+		$scope.apps = success.data.apps
+		for i of success.data.apps
+			do (i) ->
+				AppService.get $scope.apps[i], ((app) =>
+					#console.log app.data
+					delete app.data.secret
+					$scope.createKeyAppKey = app.data.key if counter == 1
+					$scope.apps[i] = app.data
+					$scope.apps[i].keysets.sort()
+					$scope.apps[i].keys = {}
+					$scope.apps[i].response_type = {}
+					$scope.apps[i].showKeys = false
+				), (error) ->
+					console.log "error", error
+
+ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppService, $timeout, $routeParams, $location) ->
+	if not $routeParams.provider
+		$location.path '/providers'
+
+	MenuService.changed()
+	$scope.provider = $routeParams.provider
+	$scope.state = 1
+
+	$scope.providerTemplate = '/templates/partials/provider/configure.html'
+	$scope.configuration_text_class = 'col-lg-6'
+
+	ProviderService.get $routeParams.provider, ((provider) ->
+		ProviderService.getSettings $routeParams.provider, ((settings) ->
+			$scope.conf_image = settings.data.settings.createApp.image
+			$scope.providerConf = provider
+			$scope.settings = settings
+			$scope.provider = $routeParams.provider
+			$scope.oauthVersion = 2
+			$scope.oauthVersion = 1 if typeof $scope.providerConf.data.oauth1 != 'undefined'
+			$scope.cors = false
+			$scope.cors = true if $scope.providerConf.data.oauth2?.request?.cors
+			$scope.revoke = false
+			$scope.revoke = true if $scope.providerConf.data.oauth2?.revoke? or $scope.providerConf.data.oauth1?.revoke?
+			$scope.refresh = false
+			$scope.refresh = true if $scope.providerConf.data.oauth2?.refresh? or $scope.providerConf.data.oauth1?.refresh?
+			$scope.provider_name = settings.data.provider.replace /_/g, ' '
+		), (error) ->
+	), (error) ->
+
+
 ##################
 # App controller #
 ##################
-AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
+AppCtrl = ($scope, $rootScope, $routeParams, $location, UserService, $timeout, AppService, ProviderService, KeysetService) ->
 	if not UserService.isLogin()
 		$location.path '/signin'
-
-
-	$scope.loaderApps = true
 
 	serializeObject = (form) ->
 		o = {}
@@ -884,53 +1000,19 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 				o[pname] = this.value || ''
 		return o
 
-	loadApps = ->
-		n = $rootScope.apps.length
-		for i of $rootScope.apps
-			do (i, n) ->
-				AppService.get $rootScope.apps[i], ((app) =>
-					$scope.counter++
-					#console.log app.data
-					delete app.data.secret
-					$rootScope.apps[i] = app.data
-					$rootScope.apps[i].keysets.sort()
-					$rootScope.apps[i].keys = {}
-					$rootScope.apps[i].response_type = {}
-					$rootScope.apps[i].showKeys = false
-					$timeout (->
-						if $scope.counter == n
-							$scope.loaderApps = false
-					), 0
-				), (error) ->
-					console.log "error", error
-
 	createDefaultApp = ->
 		a =
 			name: "Default app"
 			domains: ["localhost"]
 
-		AppService.add a, ((data)->
-			$rootScope.apps = [data.data.key]
-			loadApps()
-		), (err) ->
-			console.log err
+		AppService.add a
 
-	# alert $location.path()
-	UserService.me ((me)->
-		$rootScope.apps = me.data.apps
-		n = $rootScope.apps.length
-		$rootScope.noApp = false
-		if n == 0
-			if $location.path() == '/key-manager'
-				# $location.path "/app-create"
-				createDefaultApp()
-			else
-				$rootScope.noApp = true
-		$scope.counter = 0
-		loadApps()
-	), (error) ->
-		console.log "error", error
-
+	$scope.callback = '/key-manager'
+	$rootScope.$watch 'loading', (newV, old) ->
+		if newV == false && $location.path() == '/key-manager' and (not $rootScope.me.apps or $rootScope.me.apps.length == 0)
+			createDefaultApp()
+		if newV == false && $location.path().substr(0, 11) == '/app-create'
+			$scope.callback = '/provider/' + $routeParams.provider + '/app'
 
 	$scope.editMode = false
 	$scope.appCreateTemplate = "/templates/partials/create-app.html"
@@ -951,7 +1033,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.tryAuth = (provider, key) ->
 		ProviderService.auth key, provider, (err, res) ->
 			$scope.$apply ->
-				app = $rootScope.apps.find (n) ->
+				app = $rootScope.me.apps.find (n) ->
 					return n.key == key
 
 				if app.showKeys != provider
@@ -989,7 +1071,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			return
 
 		AppService.add $scope.createAppForm, (->
-			$location.path "/key-manager"
+			callback = "/key-manager"
+			callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
+			$location.path callback
 		), (error)->
 			# console.log error
 			$rootScope.error.state = true
@@ -1025,7 +1109,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			app.showKeys = false
 	#edit app
 	$scope.editApp = (key)->
-		app = $rootScope.apps.find (n) ->
+		app = $rootScope.me.apps.find (n) ->
 			return n['key'] == key
 
 		# console.log key
@@ -1051,7 +1135,7 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 			return
 
 		AppService.edit key, $scope.createAppForm, (->
-			app = $rootScope.apps.find (n) ->
+			app = $rootScope.me.apps.find (n) ->
 				return n['key'] == key
 			app.domains = Array.create $scope.createAppForm.domains
 			app.name = $scope.createAppForm.name
@@ -1066,9 +1150,9 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.removeApp = (key)->
 		if confirm('Are you sure you want to remove this application? All API Keys stored will be lost forever!')
 			AppService.remove key, (->
-				$rootScope.apps.remove (n) ->
+				$rootScope.me.apps.remove (n) ->
 					return n['key'] == key
-				if $rootScope.apps.isEmpty()
+				if $rootScope.me.apps.isEmpty()
 					# $location.path "/app-create"
 					createDefaultApp()
 			), (error) ->
@@ -1078,9 +1162,10 @@ AppCtrl = ($scope, $rootScope, $location, UserService, $timeout, AppService, Pro
 	$scope.resetKeys = (key)->
 		if confirm 'Are you sure you want to reset your keys? You\'ll need to update the keys in your application.'
 			AppService.resetKey key, (data)->
-				app = $rootScope.apps.find (n)->
+				app = $rootScope.me.apps.find (n)->
 					n.key == key
 				app.key = data.data.key
+				app.secret = data.data.secret
 	#edit key in app
 	$scope.keySaved = false
 	$scope.editKeyset = (app, provider) ->

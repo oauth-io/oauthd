@@ -7,7 +7,7 @@
 			<label class="col-lg-4" style="font-size: 1.3em">Application</label>
 			<div class="col-lg-8">
 				<div ng-hide="isDropped" style="position: relative; top: -8px;">
-					<select class="form-control" id="app-apikey" ng-options="a.key as a.name for a in apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)" style="font-size: 1.1em"></select>
+					<select class="form-control" id="app-apikey" ng-options="a.key as a.name for a in me.apps" ng-model="createKeyAppKey" ng-change="updateAppKey(createKeyAppKey)" style="font-size: 1.1em"></select>
 				</div>
 				<div ng-show="isDropped" style="font-size: 1.3em">
 					{{createKeyAppName}}
@@ -31,10 +31,10 @@
 		<h5 ng-show="createKeyHref.docs" style="font-size: 1.3em">{{createKeyProvider|capitalize}} documentation: <a href="{{createKeyHref.docs}}" target="_blank">{{createKeyHref.docs|trunc:35}}</a></h5>
 		<h5 ng-show="createKeyHref.apps" style="font-size: 1.3em">{{createKeyProvider|capitalize}} apps page: <a href="{{createKeyHref.apps}}" target="_blank">{{createKeyHref.apps|trunc:35}}</a></h5>
 	</div>
-	<div ng-show="createKeyStep == 3">
-		<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
-	      {{error.message}}
-		</div>
-		<div ng-include src="createKeyLastStepTemplate"></div>
+	<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
+      {{error.message}}
 	</div>
+    <div ng-show="createKeyStep == 3">
+        <div ng-include src="createKeyLastStepTemplate"></div>
+    </div>
 </div>

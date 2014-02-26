@@ -13,6 +13,10 @@
 				"provider": "http://www.salesforce.com/",
 				"docs": "http://www.salesforce.com/us/developer/docs/api_rest/index.htm"
 			}
-		}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/id/ORG_ID/USER_ID"
+        }
 	}
 }

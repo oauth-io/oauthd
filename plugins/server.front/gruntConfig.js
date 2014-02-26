@@ -14,6 +14,12 @@ module.exports = function(gruntConf) {
 		],
 		tasks: ['less:front-compile']
 	};
+	gruntConf.watch['proxy'] = {
+		files: [
+			__dirname + '/proxy/coffee/{,*/}*.coffee'
+		],
+		tasks: ['coffee:compile-proxy']
+	};
 
 	gruntConf.coffee['front-compile'] = {
 		expand: true,
@@ -35,12 +41,23 @@ module.exports = function(gruntConf) {
 			bare: true
 		},
 	};
+	gruntConf.coffee['compile-proxy'] = {
+		expand: true,
+		cwd: __dirname + '/proxy/coffee',
+		src: ['{,*/}*.coffee'],
+		dest: __dirname + '/proxy/js',
+		ext: '.js',
+		options: {
+			bare: true
+		},
+	};
 
 	gruntConf.nodemon.server.options.ignoredFiles.push(__dirname + "/app");
 
 	gruntConf.less = gruntConf.less || {};
 	gruntConf.less['front-compile'] = { files: {} };
 	gruntConf.less['front-compile'].files[__dirname + "/app/css/main.css"] = __dirname + "/app/less/main.less"
+	gruntConf.less['front-compile'].files[__dirname + "/app/css/provider-page.css"] = __dirname + "/app/less/provider-page.less"
 
 	return function() {
 		this.loadNpmTasks('grunt-contrib-less');

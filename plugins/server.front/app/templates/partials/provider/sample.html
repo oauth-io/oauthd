@@ -1,0 +1,117 @@
+<div class="row">
+	<div class="col col-lg-6">
+		<h1>Installation & initialization</h1>
+
+		<p>
+		  	<div class="btn-group">
+			  	<a href="https://oauth.io/auth/download/latest/oauth.js" target="_blank" class="btn btn-large btn-success">Download OAuth.js (2.2kb)</a>
+			  	<button type="button" class="btn btn-large btn-success dropdown-toggle" data-toggle="dropdown">
+				    <span class="caret"></span>
+				</button>
+		  		<ul class="dropdown-menu">
+					<li><a style="font-size: 1.4em" target="_blank" href="https://oauth.io//auth/download/latest/oauth.min.js">Download OAuth.js - minified (1.4k)</a></li>
+				</ul>
+			</div>
+			<a href="https://github.com/oauth-io/oauth-js" style="margin-left: 15px"><img src="/api/providers/github/logo" alt="github logo"></a>
+		</p>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<p style="font-size: 1.1em">Download the Javascript SDK and, in your HTML, load the SDK using a <code>&lt;script&gt;</code> tag.<br /> You can use <a href="http://cdnjs.com/libraries/oauth-io/" target="_blank">cdnjs</a> to load fastly the lastest version of the SDK.</p>
+
+	</div>
+	<div class="col col-lg-6">
+		<pre>&lt;script type="text/javascript" src="/path/to/oauth.js"&gt;</pre>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<p style="font-size: 1.1em">Once the SDK loaded, you have to initialize it in your Javascript code. It's used to configure the SDK with your OAuth.io public key</p>
+		<h1>Basic usage</h1>
+		<p style="font-size: 1.1em">You have 2 ways of authorizing your user:</p>
+	</div>
+	<div class="col col-lg-6">
+		<pre>OAuth.initialize('{{app.key||"Your_Public_Key"}}')</pre>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<ul style="list-style-type: circle; font-size: 1.1em; margin-left: 20px">
+			<li><strong>Open a popup</strong> with the {{provider}} authorize form</li>
+		</ul>
+	</div>
+	<div class="col col-lg-6">
+		<pre>OAuth.popup('<span class="api-text">{{provider}}</span>', function(<span class="err">err</span>, <strong>result</strong>) {
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// use <strong style="color: black">result</strong> to access tokens or make API calls</span>
+});</pre>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col col-lg-6">
+		<h3>OR</h3>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<ul style="list-style-type: circle; font-size: 1.1em; margin-left: 20px">
+			<li><strong>Redirect the user</strong> to the {{provider}} authorize form</li>
+		</ul>
+
+	</div>
+	<div class="col col-lg-6">
+		<pre>OAuth.redirect('<span class="api-text">{{provider}}</span>', "<strong>callback/url</strong>");</pre>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col col-lg-6">
+		<p style="font-size: 1.1em">In the redirect mode, you have to catch the response in your callback page using <code>OAuth.callback</code></p>
+	</div>
+	<div class="col col-lg-6">
+		<pre>OAuth.callback('<span class="api-text">{{provider}}</span>', function(<span class="err">err</span>, <strong>result</strong>) {
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// use <strong style="color: black">result</strong> to access tokens or make API calls</span>
+});</pre>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<h1>Make an authorized API call</h1>
+	</div>
+</div>
+<div class="row">
+	<div class="col col-lg-6">
+		<p style="font-size: 1.1em">Once your user authorized, in the callback function, you can easily make API calls without having to know what is an access_token. We've put in the SDK some methods to make your API call as simple as it should be.</p>
+		<p style="font-size: 1.1em">You can use <code>get()</code>, <code>post()</code>, <code>put()</code>, <code>delete()</code> and <code>patch()</code> to make your API calls. As the tokens are in the result of the authorization, we totaly abstract them by adding some high-level methods.</p>
+
+		<p style="font-size: 1.1em" ng-show="settings.data.settings.install.href.docs">
+			<b>{{ provider_name | capitalize }} documentation :</b> <a target="_blank" href="{{ settings.data.settings.install.href.docs }}">{{ settings.data.settings.install.href.docs | trunc:35 }}</a>
+		</p>
+		<p style="font-size: 1.1em" ng-show="settings.data.settings.install.href.apps">
+			<b>{{ provider_name | capitalize }} apps page :</b> <a target="_blank" href="{{ settings.data.settings.install.href.apps }}">{{ settings.data.settings.install.href.apps | trunc:35 }}</a>
+		</p>
+	</div>
+	<div class="col col-lg-6">
+		<pre>OAuth.popup('<span class="api-text">{{provider}}</span>', function(<span class="err">err</span>, <strong>result</strong>) { <span class="text-muted">// or OAuth.callback</span>
+  <span class="text-muted">// handle error with <span class="err">err</span></span>
+  <span class="text-muted">// call the API with the jQuery's <strong>$.ajax</strong> style:</span>
+  <strong style="color: black">result.</strong><span class="access_token">{{ sample.method || 'get' }}</span>('<span class="api-text">{{ sample.url || '/api/method/url' }}</span>').done(function(<span class="access-token">data</span>) {
+    <span class="text-muted">// <span class="access-token">data</span> is the API call's response.</span><div class="text-muted" ng-show="sample.description">    // {{ sample.description }}</div>    <span ng-show="sample.doc_url" class="text-muted">// <a target="_blank" href="{{ sample.doc_url }}">More info on this example's returned data here</a></span>
+  });
+});</pre>
+	</div>
+</div>
+
+<div class="row fiddle-container" ng-show="settings.data.settings.jsfiddle">
+	<div class="col col-lg-12" >
+		<h1>Full example</h1>
+		<fiddle-iframe width="100%" height="300" ng-load="loadedJsFiddle" src="/proxy?url={{ settings.data.settings.jsfiddle }}" allowfullscreen="allowfullscreen" frameborder="0"></fiddle-iframe>
+	</div>
+	<div class="spinner_wrapper" ng-show="loaded_fiddle">
+		<div class="spinner"></div>
+		Loading JSFiddle example
+	</div>
+</div>

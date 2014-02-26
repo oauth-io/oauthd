@@ -41,7 +41,7 @@ app.factory 'OAuthIOService', ($http, $rootScope, $cookieStore) ->
 		).success(success).error(error)
 
 
-app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
+app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService, AppService) ->
 	$rootScope.accessToken = $cookieStore.get 'accessToken'
 	api = apiRequest $http, $rootScope
 	return $rootScope.UserService = {
@@ -50,6 +50,32 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 			$cookieStore.remove 'accessToken'
 			OAuth.clearCache(provider) for provider in ['google','facebook','twitter', 'vk', 'linkedin', 'github']
 			return false
+
+		initialize: (success, error) ->
+			if @isLogin()
+				$rootScope.loading = true
+				@me ((me) ->
+					$rootScope.me =
+						plan: me.data.plan
+						profile: me.data.profile
+
+					if not $rootScope.me.plan
+						$rootScope.me.plan =
+							name: "Bootstrap"
+							nbUsers: 1000
+							nbApp: 2
+							nbProvider: 2
+
+					counter = 0
+					if me.data.apps.length == 0
+						$rootScope.loading = false
+						return success() if success
+					AppService.loadApps me.data.apps, ->
+						if ++counter == me.data.apps.length
+							$rootScope.loading = false
+							success() if success
+				), error
+
 
 		login: (user, success, error) ->
 			authorization = (user.mail + ':' + user.pass).encodeBase64()
@@ -61,21 +87,23 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 					grant_type: "client_credentials"
 				headers:
 					Authorization: "Basic " + authorization
-			).success((data) ->
+			).success((data) =>
 				$rootScope.accessToken = data.access_token
 				$cookieStore.put 'accessToken', data.access_token
 				refreshSession $rootScope
 
 				path = $rootScope.authRequired || '/key-manager'
+				@initialize()
 				success path if success
 			).error(error)
 
 		loginOAuth: (tokens, provider, success, error) ->
-			api 'signin/oauth', ((data) ->
+			api 'signin/oauth', ((data) =>
 				$rootScope.accessToken = data.data.access_token
 				$cookieStore.put 'accessToken', data.data.access_token
 
 				path = $rootScope.authRequired || '/key-manager'
+				@initialize()
 				success path if success
 			), error, data:
 				token: tokens.access_token
@@ -85,23 +113,22 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 
 		isLogin: -> $cookieStore.get('accessToken')?
 
-		register: (user, social, success, error) ->
-			if social?.provider
-				api 'signup/oauth', success, error, data:
-					email:user.mail
-					pass:user.pass
-					name:user.name
-					company:user.company
-					provider:social.provider
-					token:social?.token
-					oauth_token:social?.oauth_token
-					oauth_token_secret:social?.oauth_token_secret
-			else
-				api 'users', success, error, data:
-					email:user.mail
-					pass:user.pass
-					name:user.name
-					company:user.company
+		signupOAuth: (user, social, success, error) ->
+			api 'signup/oauth', success, error, data:
+				email:user.mail
+				name:user.name
+				company:user.company
+				provider:social.provider
+				token:social?.token
+				oauth_token:social?.oauth_token
+				oauth_token_secret:social?.oauth_token_secret
+
+		register: (user, success, error) ->
+			api 'users', success, error, data:
+				email:user.mail
+				pass:user.pass
+				name:user.name
+				company:user.company
 
 		me: (success, error) ->
 			api 'me', success, error
@@ -160,6 +187,24 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore) ->
 				pass: pass
 	}
 
+app.factory 'NotificationService', ($rootScope) ->
+	$rootScope.notifications = []
+	return {
+		push: (notif) ->
+			notif.pop = false
+			notif.href = '#' if not notif.href
+			$rootScope.notifications.push notif
+		list: () ->
+			return $rootScope.notifications
+		clear: () ->
+			$rootScope.notifications = []
+		open: () ->
+			modalInstance = $modal.open
+				templateUrl: '/templates/partials/notifications.html'
+				controller: NotificationCtrl
+				resolve: {
+				}
+	}
 
 app.factory 'MenuService', ($rootScope, $location) ->
 	$rootScope.selectedMenu = $location.path()
@@ -180,6 +225,9 @@ app.factory 'ProviderService', ($http, $rootScope) ->
 
 		get: (name, success, error) ->
 			api 'providers/' + name + '?extend=true', success, error
+
+		getSettings: (name, success, error) ->
+			api 'providers/' + name + '/settings', success, error
 
 		auth: (appKey, provider, success)->
 			OAuth.initialize appKey
@@ -207,8 +255,46 @@ app.factory 'AppService', ($http, $rootScope) ->
 		get: (key, success, error) ->
 			api 'apps/' + key, success, error
 
+		loadApps: (apps, success, error) ->
+			$rootScope.me.apps = []
+			$rootScope.me.totalUsers = 0
+			$rootScope.me.keysets = []
+			for i of apps
+				@loadApp apps[i], ((res) ->
+					if parseInt(i) + 1 == parseInt(apps.length)
+						success() if success
+				), error
+
+
+		loadApp: (key, success, error) ->
+			@get key, ((app) =>
+				#console.log app.data
+
+				app.data.keysets?.sort()
+				app.data.keys = {}
+				app.data.response_type = {}
+				app.data.showKeys = false
+
+				app.data.secret = ""
+
+				$rootScope.me.keysets = [] if not $rootScope.me.keysets
+				$rootScope.me.keysets.add app.data.keysets
+				$rootScope.me.keysets = $rootScope.me.keysets.unique()
+
+				@getTotalUsers app.data.key, (res) ->
+					app.data.totalUsers = parseInt(res.data) || 0
+					$rootScope.me.apps = [] if not $rootScope.me.apps
+					$rootScope.me.apps.push app.data
+					$rootScope.me.totalUsers += parseInt(res.data) || 0
+					success() if success
+				, error
+			), error
+
 		add: (app, success, error) ->
-			api 'apps', success, error, data:
+			api 'apps', ((res) =>
+				console.log res.data
+				@loadApp res.data.key, success, error
+			), error, data:
 				name: app.name
 				domains: app.domains
 
