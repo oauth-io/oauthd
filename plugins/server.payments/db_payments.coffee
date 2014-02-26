@@ -39,7 +39,6 @@ createCustomer = (data, callback) ->
 		email: data.user.mail
 		metadata: data.profile
 		plan: data.plan
-		trial_end: Math.floor(new Date / 1000) + 15
 
 	c.coupon = data.coupon if data.coupon
 

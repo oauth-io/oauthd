@@ -15,8 +15,12 @@ exports.setup = (callback) ->
 	@db.plans = require './plans'
 
 	@stripe_hook = (req, res, next) =>
-		callback = @server.send(res, next)
-		return callback() if not @db.payments.hooks[req.body.type]
+		callback = (err, results) =>
+			if @config.debug and err
+				console.error "stripe hook error for " + req.body.type, err
+				return @server.send(res, next)()
+			return @server.send(res, next)(err, results)
+		return callback() if not @db.payments.hooks[req.body.type] || req.body.livemode == @config.debug
 		@db.payments.hooks[req.body.type] req.body.data.object, callback
 
 	@server.post '/stripe_hook', (req, res, next) => @stripe_hook req, res, next
