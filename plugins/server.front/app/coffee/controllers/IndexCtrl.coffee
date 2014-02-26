@@ -4,9 +4,7 @@
 # Landing page Controller #
 ###########################
 
-define [
-	"app"
-	], (app) ->
+define [], () ->
 	IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
 		MenuService.changed()
 		# if UserService.isLogin()
@@ -48,13 +46,13 @@ define [
 
 		$scope.providerClick = (provider) ->
 			$scope.selectedProvider = provider
-	app.register.controller "IndexCtrl", [
-	    "$scope"
-	    "$rootScope"
-	    "$http"
-	    "$location"
-	    "UserService"
-	    "MenuService"
-	    IndexCtrl
-  	]
-  	return
+	
+	return [
+		"$scope",
+	    "$rootScope",
+	    "$http",
+	    "$location",
+	    "UserService",
+	    "MenuService" ,
+		IndexCtrl
+	]

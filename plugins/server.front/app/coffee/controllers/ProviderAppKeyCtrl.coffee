@@ -1,11 +1,10 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService",
 	"services/KeysetService",
 	"services/ProviderService",
 	"services/AppService"
-	], (app) ->
+	], () ->
 		ProviderAppKeyCtrl = ($scope, $http, MenuService, UserService, KeysetService, ProviderService, AppService, $timeout, $routeParams, $location) ->
 			if not $routeParams.provider
 				$location.path '/providers'
@@ -89,17 +88,16 @@ define [
 				), (error) ->
 			), (error) ->
 			
-		app.register.controller "ProviderAppKeyCtrl", [
-			"$scope"
-			"$http"
-			"MenuService"
-			"UserService"
-			"KeysetService"
-			"ProviderService"
-			"AppService"
-			"$timeout"
-			"$routeParams"
-			"$location"
+		return [
+			"$scope",
+			"$http",
+			"MenuService",
+			"UserService",
+			"KeysetService",
+			"ProviderService",
+			"AppService",
+			"$timeout",
+			"$routeParams",
+			"$location",
 			ProviderAppKeyCtrl
 		]
-		return

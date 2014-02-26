@@ -1,5 +1,5 @@
 define [
-	"services/apiRequest"
+	"utilities/apiRequest"
 	], (apiRequest) ->
 		KeysetService = ($rootScope, $http) ->
 			api = apiRequest $http, $rootScope

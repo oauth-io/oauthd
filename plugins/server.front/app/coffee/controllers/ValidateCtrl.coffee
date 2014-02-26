@@ -5,9 +5,8 @@
 
 "use strict"
 define [
-	"app",
 	"services/MenuService"
-	], (app) ->
+	], () ->
 		ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserService, $location, $cookieStore) ->
 			#MenuService.changed()
 			#if UserService.isLogin()
@@ -41,16 +40,14 @@ define [
 			), (error) ->
 				$location.path '/404'
 			
-		app.register.controller "ValidateCtrl", [
-			"$rootScope"
-			"$timeout"
-			"$scope"
-			"$routeParams"
-			"MenuService"
-			"UserService"
-			"$location"
-			"$cookieStore"
+		return [
+			"$rootScope",
+			"$timeout",
+			"$scope",
+			"$routeParams",
+			"MenuService",
+			"UserService",
+			"$location",
+			"$cookieStore",
 			ValidateCtrl
 		]
-		return
-

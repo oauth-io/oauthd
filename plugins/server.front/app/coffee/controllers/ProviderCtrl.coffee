@@ -1,9 +1,8 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService",
 	"services/ProviderService"
-	], (app) ->
+	], () ->
 		ProviderCtrl = (MenuService, $filter, $scope, $rootScope, ProviderService, $timeout) ->
 			MenuService.changed()
 			ProviderService.list (json) ->
@@ -44,13 +43,12 @@ define [
 						$scope.pagination.current = 1
 					), 0
 		
-		app.register.controller "ProviderCtrl", [
-			"MenuService"
-			"$filter"
-			"$scope"
-			"$rootScope"
-			"ProviderService"
-			"$timeout"
+		return [
+			"MenuService",
+			"$filter",
+			"$scope",
+			"$rootScope",
+			"ProviderService",
+			"$timeout",
 			ProviderCtrl
 		]
-		return

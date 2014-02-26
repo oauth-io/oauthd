@@ -1,10 +1,9 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService",
-	"services/AppService",
-	"controllers/GeneralAccountCtrl"
-	], (app) ->
+	"services/UserService"
+	"services/AppService"
+	], () ->
 		UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuService, UserService, AppService) ->
 			MenuService.changed()
 			if not UserService.isLogin()
@@ -105,15 +104,14 @@ define [
 				$scope.error =
 					state : false
 			
-		app.register.controller "UserProfileCtrl", [
-			"$rootScope"
-			"$scope"
-			"$routeParams"
-			"$location"
-			"$timeout"
-			"MenuService"
-			"UserService"
-			"AppService"
+		return [
+			"$rootScope",
+			"$scope",
+			"$routeParams",
+			"$location",
+			"$timeout",
+			"MenuService",
+			"UserService",
+			"AppService",
 			UserProfileCtrl
 		]
-		return

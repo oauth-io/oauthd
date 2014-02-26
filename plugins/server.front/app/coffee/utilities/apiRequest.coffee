@@ -1,6 +1,6 @@
 define [
 	"app",
-	"services/refreshSession"
+	"utilities/refreshSession"
 	], (app) ->
     apiRequest = ($http, $rootScope) ->
         (url, success, error, opts) ->

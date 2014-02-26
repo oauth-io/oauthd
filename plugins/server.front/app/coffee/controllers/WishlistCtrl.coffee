@@ -1,9 +1,8 @@
 "use strict"
 define [
-	"app",
 	"services/WishlistService",
 	"services/MenuService"
-	], (app) ->
+	], () ->
 		WishlistCtrl = ($filter, $scope, WishlistService, $timeout, MenuService) ->
 			MenuService.changed()
 
@@ -66,12 +65,11 @@ define [
 						state: true
 						message: error.message
 				
-		app.register.controller "WishlistCtrl", [
-			"$filter"
-			"$scope"
-			"WishlistService"
-			"$timeout"
-			"MenuService"
+		return [
+			"$filter",
+			"$scope",
+			"WishlistService",
+			"$timeout",
+			"MenuService",
 			WishlistCtrl
 		]
-		return

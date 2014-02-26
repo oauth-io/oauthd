@@ -1,10 +1,9 @@
 "use strict"
 define [
-	"app",
 	"services/MenuService",
 	"services/ProviderService",
 	"services/AppService"
-	], (app) ->
+	], () ->
 		ProviderPageCtrl = ($scope, MenuService, UserService, ProviderService, AppService, $timeout, $routeParams, $location) ->
 			if not $routeParams.provider
 				$location.path '/providers'
@@ -34,15 +33,14 @@ define [
 				), (error) ->
 			), (error) ->
 			
-		app.register.controller "ProviderPageCtrl", [
-			"$scope"
-			"MenuService"
-			"UserService"
-			"ProviderService"
-			"AppService"
-			"$timeout"
-			"$routeParams"
-			"$location"
+		return [
+			"$scope",
+			"MenuService",
+			"UserService",
+			"ProviderService",
+			"AppService",
+			"$timeout",
+			"$routeParams",
+			"$location",
 			ProviderPageCtrl
 		]
-		return
