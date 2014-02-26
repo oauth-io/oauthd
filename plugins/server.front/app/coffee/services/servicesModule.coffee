@@ -9,8 +9,9 @@ define [
 	"services/PaymentService",
 	"services/PricingService",
 	"services/ProviderService",
-	"services/WishlistService"
-	], (AppService, UserService, NotificationService, CartService, KeysetService, MenuService, OAuthIOService, PaymentService, PricingService, ProviderService, WishlistService) ->
+	"services/WishlistService",
+	"services/InspectorService"
+	], (AppService, UserService, NotificationService, CartService, KeysetService, MenuService, OAuthIOService, PaymentService, PricingService, ProviderService, WishlistService, InspectorService) ->
 		(app) ->
     		app.register.factory 'AppService', AppService
     		app.register.factory 'NotificationService', NotificationService
@@ -23,4 +24,5 @@ define [
     		app.register.factory 'PricingService', PricingService
     		app.register.factory 'ProviderService', ProviderService
     		app.register.factory 'WishlistService', WishlistService
+    		app.register.factory 'InspectorService', InspectorService
     		return
