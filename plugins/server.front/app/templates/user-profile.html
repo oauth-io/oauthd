@@ -35,8 +35,8 @@
       </div>
       <div style="float: right; position: relative; top: 13px">
         <i ng-class="{'glyphicon':true,'glyphicon-star':true,'black':plan.name=='bootstrap','bronze':plan.name=='startup','silver':plan.name=='growth', 'gold':plan.name=='scalability'}" style="position: relative; top: 2px"></i>
-        <span ng-hide="plan.name">Bootstrap Plan</span>
-        <span ng-show="plan.name">{{plan.name|capitalize}} Plan</span>
+        <span ng-hide="me.plan.name">Bootstrap Plan</span>
+        <span ng-show="me.plan.name">{{me.plan.name|capitalize}} Plan</span>
         <a href="/pricing" class="btn btn-success btn-mini" ng-show="plan.name != 'scalability'">Upgrade</a>
       </div>
       <ul class="nav nav-tabs">
