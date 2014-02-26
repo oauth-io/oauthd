@@ -39,9 +39,6 @@ define [
 				
 				route = routeResolverProvider.route
 				
-				$routeProvider.when("/testlapin", 
-					route.resolve("Testlapin"))
-
 				##This registers all the routes 
 				$routeProvider.when '/',
 					route.resolve("Index", 
