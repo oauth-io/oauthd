@@ -1,7 +1,5 @@
-define [
-    "controllers/NotificationCtrl"
-    ], (NotificationCtrl) ->
-    NotificationService = ($rootScope) ->
+define [], () ->
+    NotificationService = ($rootScope, $modal) ->
         $rootScope.notifications = []
         return {
             push: (notif) ->
@@ -13,10 +11,10 @@ define [
             clear: () ->
                 $rootScope.notifications = []
             open: () ->
-                modalInstance = $modal.open
+                $rootScope.notifModal = modalInstance = $modal.open
                     templateUrl: '/templates/partials/notifications.html'
-                    controller: NotificationCtrl
+                    controller: 'NotificationCtrl'
                     resolve: {
                     }
         }
-    return ['$rootScope', NotificationService]
+    return ['$rootScope', '$modal', NotificationService]

@@ -472,9 +472,7 @@ define [
 			UserService.initialize ->
 
 			$rootScope.openNotifications = ->
-				$rootScope.notifModal = $modal.open
-					templateUrl: '/templates/partials/notifications.html'
-					controller: 'NotificationCtrl'
+				NotificationService.open()
 
 			$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
 
