@@ -415,16 +415,6 @@ UserProfileCtrl = ($rootScope, $scope, $routeParams, $location, $timeout, MenuSe
 	 	$location.path '/'
 
 	$scope.changeTab = (tab) ->
-###		if tab == 'payment'
-			$scope.loading = true
-			$scope.subscriptions = null
-			UserService.getSubscriptions (success) ->
-				$scope.subscriptions = success.data.subscriptions
-				$scope.loading = false
-			, (error) ->
-				$scope.loading = false
-				console.log error
-###
 		$scope.accountView = '/templates/partials/account/' + tab + '.html'
 		$scope.tab = tab
 
