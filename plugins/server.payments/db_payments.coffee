@@ -34,14 +34,16 @@ createCustomer = (data, callback) ->
 	if not checkCouponPlan(data.coupon, data.plan)
 		return callback new check.Error 'This code is not available for this plan'
 
-	stripe.customers.create (
+	c =
 		card: data.token.id
 		email: data.user.mail
 		metadata: data.profile
 		plan: data.plan
-		coupon: data.coupon
 		trial_end: Math.floor(new Date / 1000) + 15
-	), (err, customer) ->
+
+	c.coupon = data.coupon if data.coupon
+
+	stripe.customers.create c, (err, customer) ->
 		return callback err if err
 		db.redis.set "u:#{data.user.id}:stripeid", customer.id, callback
 
@@ -58,7 +60,9 @@ updateSubscription = (data, callback) ->
 		return callback err if err
 		opts =
 			plan: data.plan
-			coupon: data.coupon
+
+		opts.coupon = data.coupon if data.coupon
+
 		if subscriptions.data?[0]
 			stripe.customers.updateSubscription data.stripeid, subscriptions.data[0].id, opts, callback
 		else

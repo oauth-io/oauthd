@@ -1566,7 +1566,9 @@ PurchaseCtrl = (UserService, $scope, $rootScope, PaymentService) ->
 				plan: $scope.plan.id
 				profile: $scope.profile
 				coupon: $scope.coupon.registered
-			}, (->), (error) -> $scope.error = error
+			}, (->
+				$scope.purchaseModal.close()
+			), (error) -> $scope.error = error
 		handler.open
 			name: 'OAuth.io'
 			email: $scope.user.mail
