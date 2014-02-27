@@ -24,7 +24,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				<th></th>
 				<th class="plan first">
 					<div style="position: absolute;">
-						<img src="/img/your_plan.png" style="position:absolute; top: 0; left: 0; margin-top: -10px; margin-left: -10px" ng-show="!current_plan && UserService.isLogin()"/>
+						<img src="/img/your_plan.png" style="position:absolute; top: 0; left: 0; margin-top: -10px; margin-left: -10px" ng-show="me.plan.name == 'bootstrap' && UserService.isLogin()"/>
 					</div>
 					<h3>Bootstrap</h3>
 					<h1>$0</h1>
@@ -34,13 +34,13 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				</th>
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
 					<div style="position: absolute;">
-						<img src="/img/your_plan.png" style="margin-top: -13px; margin-left: -10px; left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && current_plan == plan.id"/>
+						<img src="/img/your_plan.png" style="margin-top: -13px; margin-left: -10px; left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && me.plan.id == plan.id"/>
 					</div>
 					<h2>{{plan.name|capitalize}}</h2>
 					<h1>${{plan.amount}}</h1>
 					<p style="margin: 0 10px 15px">
-						<button ng-show="plan.id != current_plan && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
-						<button ng-show="plan.id == current_plan && !processing" ng-click="unsubscribe(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
+						<button ng-show="plan.id != me.plan.name && !processing" ng-click="subscribe(plan)" class="btn btn-primary btn-block" id="purchase_{{plan.id}}">Purchase</button>
+						<button ng-show="plan.id == me.plan.name && !processing" ng-click="unsubscribe(plan)" class="btn btn-warning btn-block" id="unsubscribe_{{plan.id}}">Unsubscribe</button>
 						<img src="/img/ajax-loader-pricing.gif" id="loader_{{plan.id}}" style="display:none;"/>
 					</p>
 				</th>

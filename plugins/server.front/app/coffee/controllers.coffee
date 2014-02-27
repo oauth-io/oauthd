@@ -1565,14 +1565,11 @@ You want to get this API on your own server? https://github.com/oauth-io/oauthd"
 		return "200 OK"
 
 
-PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PaymentService) ->
+PricingCtrl = ($scope, $rootScope, $modal, $location, MenuService, UserService, PaymentService) ->
 
 	MenuService.changed()
 
-	$scope.current_plan = null
-
 	PaymentService.list (success) ->
-		$scope.current_plan = success.data.current_plan
 		$scope.plans = success.data.offers
 	, (error) ->
 		console.log error
@@ -1580,7 +1577,11 @@ PricingCtrl = ($scope, $modal, $location, MenuService, UserService, PaymentServi
 	$scope.unsubscribe = (plan) ->
 		if confirm("Are you sure to unsubscribe from " + plan.name + " ?")
 			PaymentService.unsubscribe (success) ->
-				$scope.current_plan = null
+				$rootScope.me.plan =
+					name: 'bootstrap'
+					nbUsers: 1000
+					nbApp: 2
+					nbProvider: 2
 			, (error) ->
 				console.log error
 
@@ -1643,6 +1644,9 @@ PurchaseCtrl = (UserService, $scope, $rootScope, PaymentService) ->
 				coupon: $scope.coupon.registered
 			}, (->
 				$scope.purchaseModal.close()
+				$rootScope.me.plan = $scope.plan
+				$rootScope.me.plan.displayName = $rootScope.me.plan.name
+				$rootScope.me.plan.name = $rootScope.me.plan.id
 			), (error) -> $scope.error = error
 		handler.open
 			name: 'OAuth.io'

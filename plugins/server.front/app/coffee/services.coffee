@@ -61,7 +61,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 
 					if not $rootScope.me.plan
 						$rootScope.me.plan =
-							name: "Bootstrap"
+							name: "bootstrap"
 							nbUsers: 1000
 							nbApp: 2
 							nbProvider: 2
