@@ -4,7 +4,7 @@ define [
 	"directives/directives",
 	"utilities/servicesModule",
 	"utilities/controllersModule",
-	"services/apiRequest"
+	"utilities/apiRequest"
 	], (registerFilters, registerDirectives, registerServices, registerControllers, apiRequest) ->
 		route = {}
 		app = angular.module("oauth", [
