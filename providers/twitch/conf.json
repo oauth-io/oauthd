@@ -1,7 +1,7 @@
 {
 	"name": "Twitch",
     	"desc": "Twitch or Twitch.tv is a live streaming video platform focused on e-sports and video gaming.",
-	"url": "http://www.twitch.tv/",
+	"url": "https://api.twitch.tv/kraken",
 	"oauth2": {
 		"authorize": "/oauth2/authorize",
 		"access_token": "/oauth2/token",
@@ -9,7 +9,7 @@
 			"url": "https://api.twitch.tv/kraken",
 			"cors": true
 		},
-		"refresh": "/token",
+		"refresh": "/oauth2/token",
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",
