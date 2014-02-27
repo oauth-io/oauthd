@@ -27,7 +27,7 @@
   <div class="row">
     <div ng-class="{'col-lg-2':me.plan.name != 'scalability', 'col-lg-3': me.plan.name == 'scalability', 'col-lg-offset-3': me.plan.name != 'scalability', 'col-lg-offset-4': me.plan.name == 'scalability'}" style="position: relative;">
       <p class="text-center"><strong>Users</strong></p>
-      <p class="chart-label">{{me.totalUsers|readableNumber}} / {{plan.nbUsers|readableNumber}}</p>
+      <p class="chart-label">{{me.totalUsers|readableNumber}} / {{me.plan.nbUsers|readableNumber}}</p>
       <canvas id="connectionChart" width="400" height="400" class="chart"></canvas>
     </div>
     <div class="col-lg-2" style="position: relative;" ng-hide="me.plan.nbApp == 'unlimited'">
