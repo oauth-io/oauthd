@@ -2,8 +2,7 @@ require.config
     baseUrl: '/js'
 
 require [
-    'app',
-    'utilities/routeResolver'
+    'app'
 ], ->
     angular.bootstrap document, ['oauth']
     return
