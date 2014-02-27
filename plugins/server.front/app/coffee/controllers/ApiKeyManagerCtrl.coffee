@@ -20,13 +20,13 @@ define [
 			$scope.createAppTemplate = "/templates/partials/create-app.html"
 			$scope.providersTemplate = "/templates/partials/providers.html"
 			$scope.createKeyLastStepTemplate = "/templates/partials/create-key-laststep.html"
-
+			$scope.createKeyAppKey = {};
 
 			$scope.cancelCreateKey = ->
 				if $scope.createKeyStep <= 2
 					if $scope.isDropped and $scope.createKeyExists
 						app = $rootScope.me.apps.find ((n) ->
-							return n.key == $scope.createKeyAppKey
+							return n.key == $scope.createKeyAppKey.key
 						)
 						if app?.keysets?.length > 0
 							app.keysets.removeAt(app.keysets.length - 1)
@@ -58,8 +58,8 @@ define [
 					type  : ''
 				if $scope.createKeyStep == 3
 
-					# alert $scope.createKeyAppKey
-					key = $scope.createKeyAppKey
+					# alert $scope.createKeyAppKey.key
+					key = $scope.createKeyAppKey.key
 					conf = $scope.createKeyConf
 					response_type = $scope.createKeyType
 
@@ -77,7 +77,7 @@ define [
 						KeysetService.add key, provider, data, response_type, ((keysetEntry) ->
 
 							app = $rootScope.me.apps.find (n) ->
-								return n.key == $scope.createKeyAppKey
+								return n.key == $scope.createKeyAppKey.key
 
 							# console.log $scope.apikeyUpdate
 							app.keys = {} if not app.keys
@@ -88,6 +88,8 @@ define [
 							if not $scope.apikeyUpdate
 								app.keysets.add provider
 								app.keysets.sort()
+							$scope.createKeyAppKey.key = $rootScope.me.apps[0].key
+							alert 'hEY'
 							$scope.$broadcast 'btHide'
 						), (error) ->
 							console.log "error", error
@@ -131,7 +133,7 @@ define [
 					)
 
 					$scope.apikeyUpdate = false
-					KeysetService.get $scope.createKeyAppKey, $scope.createKeyProvider, ((json) ->
+					KeysetService.get $scope.createKeyAppKey.key, $scope.createKeyProvider, ((json) ->
 						if json.data?
 							$scope.apikeyUpdate = true
 							for field of json.data.parameters
@@ -144,7 +146,7 @@ define [
 					), (error) ->
 
 			$scope.updateAppKey = (key) ->
-				$scope.createKeyAppKey = key
+				$scope.createKeyAppKey.key = key
 
 			#open key form
 			$scope.keyFormOpen = (droppable, helper)->
@@ -160,10 +162,11 @@ define [
 				ProviderService.get name, ((data) =>
 					$scope.$broadcast 'btShow'
 					$scope.createKeyProvider = name
-					$scope.createKeyAppKey = key
+					$scope.createKeyAppKey.key = key
+					
 					$scope.createKeyHref = data.data.href
 					a = $rootScope.me.apps.find (n) ->
-						return n.key == $scope.createKeyAppKey
+						return n.key == $scope.createKeyAppKey.key
 
 					$scope.createKeyAppName = a.name
 					$scope.createKeyStep = 2
