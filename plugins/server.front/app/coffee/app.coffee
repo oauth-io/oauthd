@@ -12,7 +12,8 @@ define [
 			"ui.bootstrap"
 			"ngDragDrop"
 			"ui.select2"
-			"ngCookies"
+			"ngCookies",
+			"ngRoute"
 		])
 		app.config [
 			"$routeProvider"
