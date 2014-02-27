@@ -89,7 +89,6 @@ define [
 								app.keysets.add provider
 								app.keysets.sort()
 							$scope.createKeyAppKey.key = $rootScope.me.apps[0].key
-							alert 'hEY'
 							$scope.$broadcast 'btHide'
 						), (error) ->
 							console.log "error", error
@@ -109,7 +108,7 @@ define [
 							app.keysField[provider][k] = v
 						return
 					), (error) ->
-						alert "oh"
+						console.log "error", error
 
 			$scope.$watch "createKeyStep", (newVal, oldVal) ->
 
