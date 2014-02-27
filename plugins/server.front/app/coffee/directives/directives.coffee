@@ -1,4 +1,4 @@
-define [], () ->
+define ["stubborn"], (stubborn) ->
 	registerDirectives = (app) ->
 		app.register.directive 'stubborn', ["$rootScope", "$timeout", ($rootScope, $timeout) ->
 			def =

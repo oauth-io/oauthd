@@ -1,7 +1,6 @@
 define [
-	"app", 
 	"utilities/apiRequest"
-	], (app, apiRequest) ->
+	], (apiRequest) ->
 	WishlistService = ($http, $rootScope) ->
 		api = apiRequest $http, $rootScope
 		return {
