@@ -3,8 +3,9 @@ define [
 	"filters/filters",
 	"directives/directives",
 	"utilities/servicesModule",
-	"utilities/controllersModule"
-	], (registerFilters, registerDirectives, registerServices, registerControllers) ->
+	"utilities/controllersModule",
+	"services/apiRequest"
+	], (registerFilters, registerDirectives, registerServices, registerControllers, apiRequest) ->
 		route = {}
 		app = angular.module("oauth", [
 			"ui.bootstrap"
@@ -35,6 +36,7 @@ define [
 				registerFilters app
 				registerDirectives app
 				registerControllers app
+				hooks.config app, apiRequest if hooks?.config
 				
 				##This registers all the routes 
 				$routeProvider.when '/',
@@ -300,7 +302,8 @@ define [
 			$rootScope.$watch 'me', (-> $timeout initializeNotification, 500), true
 
 			$rootScope.location = $location.path()
+
 		]
-		hooks.config() if hooks?.config
+		
 		
 		app

@@ -5,9 +5,9 @@ hooks.configRoutes = ($routeProvider, $locationProvider) ->
 		templateUrl: '/adm/users-manager.html'
 		controller: 'AdmUsersManagerCtrl'
 
-hooks.config = ->
+hooks.config = (app, apiRequest) ->
 
-	app.factory 'AdmService', ($http, $rootScope, $cookieStore) ->
+	app.register.factory 'AdmService', ($http, $rootScope, $cookieStore) ->
 		$rootScope.accessToken = $cookieStore.get 'accessToken'
 		api = apiRequest $http, $rootScope
 		return {
@@ -102,7 +102,7 @@ hooks.config = ->
 	#################################
 	# ADMIN USER MANAGER CONTROLLER #
 	#################################
-	app.controller 'AdmUsersManagerCtrl', ($scope, $rootScope, $timeout, $filter, $location, ProviderService, UserService, AdmService, MenuService, AppService) ->
+	app.register.controller 'AdmUsersManagerCtrl', ($scope, $rootScope, $timeout, $filter, $location, ProviderService, UserService, AdmService, MenuService, AppService) ->
 		if not UserService.isLogin()
 			$location.path '/signin'
 			return
