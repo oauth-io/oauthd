@@ -34,7 +34,7 @@ table.table tbody { border-bottom: 2px solid #EEE;}
 				</th>
 				<th class="plan" ng-repeat="plan in plans | orderBy:'+amount'">
 					<div style="position: absolute;">
-						<img src="/img/your_plan.png" style="margin-top: -13px; margin-left: -10px; left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && me.plan.id == plan.id"/>
+						<img src="/img/your_plan.png" style="margin-top: -10px; margin-left: -10px; left:0; top: 0; position: absolute" ng-show="UserService.isLogin() && me.plan.name == plan.id"/>
 					</div>
 					<h2>{{plan.name|capitalize}}</h2>
 					<h1>${{plan.amount}}</h1>
