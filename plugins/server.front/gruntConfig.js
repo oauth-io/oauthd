@@ -58,8 +58,7 @@ module.exports = function(gruntConf) {
 				baseUrl: "./plugins/server.front/app/js",
 				paths: {},
 				name: "main",
-				out: "./plugins/server.front/app/js/main-built.js",
-				optimize: "none"
+				out: "./plugins/server.front/app/js/main-built.js"
 			}
 		}
 	};

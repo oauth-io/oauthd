@@ -1,6 +1,6 @@
 define [], () ->
 	registerDirectives = (app) ->
-		app.register.directive 'stubborn', ($rootScope, $timeout) ->
+		app.register.directive 'stubborn', ["$rootScope", "$timeout", ($rootScope, $timeout) ->
 			def =
 				restrict: 'A'
 				templateUrl: '/templates/partials/stubborn.html'
@@ -29,8 +29,9 @@ define [], () ->
 					$rootScope.timeouts.push $timeout getNext, 500
 
 			return def
+		]
 
-		app.register.directive 'googleAnalytics', ($location, $rootScope, $window) ->
+		app.register.directive 'googleAnalytics', [ "$location", "$rootScope", "$window", ($location, $rootScope, $window) ->
 			return {
 				scope: true,
 				link: ($scope) ->
@@ -42,16 +43,18 @@ define [], () ->
 						ga 'send', 'pageview', $location.path()
 						_cio.page $location.absUrl()
 			}
+		]
 
-		app.register.directive 'selectize', ($timeout) ->
+		app.register.directive 'selectize', ["$timeout", ($timeout) ->
 			return {
 				restrict: 'A',
 				link: (scope, element, attrs) ->
 					$timeout ->
 						$(element).selectize scope.$eval(attrs.selectize)
 			}
+		]
 
-		app.register.directive 'bootstrapModal', () ->
+		app.register.directive 'bootstrapModal', [() ->
 			def =
 				restrict: 'A'
 				scope: false
@@ -62,8 +65,9 @@ define [], () ->
 						$(tElement).modal 'show'
 					$scope.$on 'btHide', ->
 						$(tElement).modal 'hide'
+		]
 
-		app.register.directive 'lightbox', ($timeout) ->
+		app.register.directive 'lightbox', ["$timeout", ($timeout) ->
 			def =
 				restrict: 'A'
 				scope: false
@@ -102,9 +106,10 @@ define [], () ->
 							if $scope.lightbox.show
 								$(tElement).modal('hide').find('.modal').hide()
 								$('.modal-backdrop').remove()
+		]
 
 
-		app.register.directive "fiddleIframe", ->
+		app.register.directive "fiddleIframe", [() ->
 			linkFn = (scope, element, attrs) ->
 				element.find("iframe").bind "load", (event) ->
 					scope.ngLoad();
@@ -120,6 +125,7 @@ define [], () ->
 				template: '<iframe class="frame" allowfullscreen="{{ allowfullscreen }}" height="{{height}}" width="{{width}}" frameborder="0" border="0" marginwidth="0" marginheight="0" scrolling="{{scrolling}}" src="{{src}}"></iframe>'
 				link: linkFn
 			return dir
+		]
 
 
 		# app.register.directive 'paymentform', () ->
