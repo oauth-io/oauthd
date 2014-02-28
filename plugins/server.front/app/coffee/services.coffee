@@ -61,7 +61,7 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 
 					if not $rootScope.me.plan
 						$rootScope.me.plan =
-							name: "Bootstrap"
+							name: "bootstrap"
 							nbUsers: 1000
 							nbApp: 2
 							nbProvider: 2
@@ -143,9 +143,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 				oauth_token:tokens?.oauth_token
 				oauth_token_secret:tokens?.oauth_token_secret
 
-		getSubscriptions: (success, error) ->
-			api 'me/subscriptions', success, error
-
 		update: (profile, success, error) ->
 			api 'me', success, error,
 				method: "PUT",
@@ -170,14 +167,6 @@ app.factory 'UserService', ($http, $rootScope, $cookieStore, NotificationService
 				data:
 					current_password: pass,
 					new_password: new_pass
-
-
-		createBilling: (profile, billing, success, error) ->
-			api 'me/billing', success, error,
-				method: "POST",
-				data:
-					profile: profile
-					billing: billing
 
 		isValidable: (id, key, success, error) ->
 			api "users/" + id + "/validate/" + key.replace(/\=/g, '').replace(/\+/g, ''), success, error
@@ -221,13 +210,7 @@ app.factory 'MenuService', ($rootScope, $location) ->
 	$rootScope.selectedMenu = $location.path()
 
 	return changed: ->
-		p = $location.path()
-
-		if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-			$('body').css('background-color', "#FFF")
-		else
-			$('body').css('background-color', '#FFF')
-
+		$('body').css('background-color', '#FFF')
 		$('body > .navbar span, #footer').css('color', '#777777')
 		$('#wsh-powered').attr('src', '/img/webshell-logo.png')
 		$('body > .navbar li a').css('color', '#777777').css('font-weight', 'normal')
@@ -358,42 +341,16 @@ app.factory 'KeysetService', ($rootScope, $http) ->
 app.factory 'PaymentService', ($rootScope, $http) ->
 	api = apiRequest $http, $rootScope
 	return {
-		process: (paymill, success, error) ->
-			api 'payment/process', success, error,
-				method:'POST'
-				data:
-					currency: paymill.currency
-					amount: paymill.amount
-					token: paymill.token
-					offer: paymill.offer
-		getCurrentSubscription: (success, error) ->
-			api 'subscription/get', success, error
-	}
-
-app.factory 'CartService', ($rootScope, $http) ->
-	api = apiRequest $http, $rootScope
-	return {
-		add: (plan, success, error) ->
-			api 'payment/cart/new', success, error,
-				method:'POST'
-				data:
-					plan: plan
-
-		get: (success, error) ->
-			api 'payment/cart/get', success, error
-	}
-
-
-app.factory 'PricingService', ($rootScope, $http) ->
-	api = apiRequest $http, $rootScope
-	return {
-		list: (success, error) ->
-			api 'plans', success, error
-
-		get: (name, success, error) ->
-			api "plans/#{name}", success, error
+		subscribe: (data, success, error) ->
+			api 'payment/subscribe', success, error, data: data
 
 		unsubscribe: (success, error) ->
-			api "plan/unsubscribe", success, error,
-				method : 'delete'
+			api "payment/unsubscribe", success, error,
+				method:'DELETE'
+
+		coupon: (data, success, error) ->
+			api "payment/coupon", success, error, data:data
+
+		list: (success, error) ->
+			api 'plans', success, error
 	}

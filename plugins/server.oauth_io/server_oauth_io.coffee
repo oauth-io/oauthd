@@ -29,6 +29,9 @@ exports.setup = (callback) ->
 		res.send 301
 		next false
 	http_server = restify.createServer name: 'OAuth Daemon (http)', version: '1.0.0'
+	http_server.use restify.bodyParser mapParams:false
+	http_server.post '/stripe_hook', (req, res, next) =>
+		@stripe_hook req, res, next
 	http_server.get /^.*$/, redir
 	http_server.post /^.*$/, redir
 	http_server.put /^.*$/, redir
