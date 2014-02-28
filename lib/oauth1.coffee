@@ -205,7 +205,7 @@ class OAuth1 extends OAuthBase
 
 		# build url
 		options.url = req.apiUrl
-		if typeof req.query == 'function'
+		if typeof req.query == 'function' and typeof req.query() == 'string'
 			options.url += "?" + req.query()
 		if ! options.url.match(/^[a-z]{2,16}:\/\//)
 			if options.url[0] != '/'
