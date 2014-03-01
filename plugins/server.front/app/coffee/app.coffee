@@ -225,7 +225,9 @@ app.config([
 			token: token
 
 	checkLimitation = ->
-		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
+		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp
+		return true if $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers
+		return true if $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 		return false
 	checkValidated = ->
 		return false if $rootScope.me.profile.validated == "2"
