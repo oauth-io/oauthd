@@ -18,12 +18,12 @@
             "method": "get",
             "url": "/user"
         },
-        "endpoints": [
+        "endpoints": {
             "me": {
                 "method": "get",
                 "url": "/user"
             }
-        ],
+        },
         "jsfiddle": "http://jsfiddle.net/willjcksn/2hb6B/embedded/"
     }
 }
