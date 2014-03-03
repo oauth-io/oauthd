@@ -225,7 +225,7 @@ class OAuth1 extends OAuthBase
 		for name, value of oauthrequest.headers
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.headers[name] = param if param
-
+		console.log "OPTIONS MAN", options
 		# do request
 		callback null, options
 

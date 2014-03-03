@@ -83,6 +83,7 @@ exports.raw = ->
 			[provider, {parameters}, domaincheck] = results
 
 			req.apiUrl = decodeURIComponent(req.params[1])
+			console.log "apiURL", req.apiUrl
 			if ! domaincheck
 				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 
@@ -133,8 +134,13 @@ exports.raw = ->
 		res.send 200
 		next false
 
+	user_endpoints_register = require ('./endpoints/user')
+	user_endpoints_register @server, doRequest	
+
 	@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+
+
