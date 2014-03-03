@@ -151,6 +151,7 @@
         res.put = make_res('PUT');
         res.patch = make_res('PATCH');
         res.del = make_res('DELETE');
+
         res.me = make_res_endpoint('GET', 'me');
         return opts.callback(null, res);
     }
@@ -205,6 +206,9 @@
                 var make_res = function(method) {
                     return mkHttp(provider, tokens, request, method);
                 }
+                var make_res_endpoint = function(method, url) {
+                    return mkHttpEndpoint(data.provider, tokens, request, method, url);
+                }
                 var res = {};
                 for (var i in tokens) res[i] = tokens[i];
                 res.get = make_res('GET');
@@ -212,6 +216,8 @@
                 res.put = make_res('PUT');
                 res.patch = make_res('PATCH');
                 res.del = make_res('DELETE');
+
+                res.me = make_res_endpoint('GET', 'me');
                 return res;
             },
             popup: function(provider, opts, callback) {
