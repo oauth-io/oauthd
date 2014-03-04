@@ -64,15 +64,16 @@ OAuth.popup('facebook', {state:#{oauthio_state}}, function(err, res) {
         form: {
             code: req.body.code,
             key: "...",            // The public key from oauth.io
-            secret: "..."         // The secret key from oauth.io
-    }}, function (e,r,body) {
+            secret: "..."          // The secret key from oauth.io
+        }
+    }, function (e,r,body) {
         var data = JSON.parse(body);
         req.session.csrf_tokens = req.session.csrf_tokens || [];
         if ( ! data.state) {
             res.send("Got error:" + body);
             return next();
-		}
-		if (req.session.csrf_tokens.indexOf(data.state) == -1) {
+        }
+        if (req.session.csrf_tokens.indexOf(data.state) == -1) {
             res.send("Oups, state does not match !");
             return next();
         }
