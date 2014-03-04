@@ -18,10 +18,10 @@ sendAbsentFeatureError = (req, res, feature) ->
 
 module.exports = (server, callback) ->
 	server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/endpoint:me$'), (req, res, next) -> 
-		db.providers.getSettings req.params[0], (err, content) ->
+		db.providers.getMeMapping req.params[0], (err, content) ->
 			if !err
-				if content.settings?.endpoints?.me?.url
-					req.params[1] = encodeURIComponent(content.settings.endpoints.me.url);
+				if content.url
+					req.params[1] = encodeURIComponent(content.url);
 					next()
 				else
 					return sendAbsentFeatureError req, res, 'me()'
