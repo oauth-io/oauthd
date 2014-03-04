@@ -442,7 +442,11 @@
                     if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
                     for (var k in options.oauthio.tokens) options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
                     delete options.oauthio;
-                    return $.ajax(options);
+                    var promise = $.ajax(options);
+                    $.when(promise).fail(function(data) {
+                        console.error(data.responseJSON.data);
+                    });
+                    return promise;
                 }
                 if (options.oauthio.tokens) {
                     var defer = $.Deferred();
@@ -467,6 +471,9 @@
                                     defer.reject(new Error('The requested endpoint does not exist for this provider'));
                                     return defer.promise();
                                 }
+                            },
+                            error: function(data) {
+                                console.error(data.responseJSON.data);
                             }
                         });
                     } else {
