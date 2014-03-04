@@ -1,26 +1,53 @@
 # oauthd
 # http://oauth.io
 #
-# Copyright (c) 2013 thyb, bump
+# Copyright (c) 2013 Webshell
 # For private use only.
-#
-# Paymill NodeJS docs : https://github.com/komola/paymill-node
 #
 
 exports.setup = (callback) ->
 
+	if not @config.stripe?.key || not @config.stripe.secret
+		console.log 'Warning: stripe plugin is not configured'
+		return callback()
+
 	@db.payments = require './db_payments'
+	@db.plans = require './plans'
 
-	@server.post @config.base_api + '/payment/process', @auth.needed, (req, res, next) =>
-		@db.payments.process req.body, req.clientId, @server.send(res, next)
+	@stripe_hook = (req, res, next) =>
+		callback = (err, results) =>
+			if @config.debug and err
+				console.error "stripe hook error for " + req.body.type, err
+				return @server.send(res, next)()
+			return @server.send(res, next)(err, results)
+		return callback() if not @db.payments.hooks[req.body.type] || req.body.livemode == @config.debug
+		@db.payments.hooks[req.body.type] req.body.data.object, callback
 
-	@server.post @config.base_api + '/payment/cart/new', @auth.needed, (req, res, next) =>
-		@db.payments.addCart req.body, req.clientId, @server.send(res, next)
+	@server.post '/stripe_hook', (req, res, next) => @stripe_hook req, res, next
 
-	@server.get @config.base_api + '/payment/cart/get', @auth.needed, (req, res, next) =>
-		@db.payments.getCart req.clientId.id, @server.send(res, next)
+	@server.post @config.base_api + '/payment/subscribe', @auth.needed, (req, res, next) =>
+		@db.payments.subscribe req.body, req.user, @server.send(res, next)
 
-	@server.get @config.base_api + '/subscription/get', @auth.needed, (req, res, next) =>
-		@db.payments.getSubscription req.clientId.id, @server.send(res, next)
+	@server.del @config.base_api + '/payment/unsubscribe', @auth.needed, (req, res, next) =>
+		@db.payments.unsubscribe req.user, @server.send(res, next)
+
+	@server.post @config.base_api + '/payment/coupon', @auth.needed, (req, res, next) =>
+		@db.payments.getCoupon req.body, @server.send(res, next)
+
+	@server.get @config.base_api + '/plans', @auth.optional, (req, res, next) =>
+		offers = []
+		for id,plan of @db.plans
+			if id.split('_').length == 1
+				offers.push plan
+
+		if not req.user
+			res.send offers:offers, current_plan: null
+			return next()
+
+		@db.redis.get "u:#{req.user.id}:current_plan", (err, plan_id) ->
+			return next err if err
+			plan_id = plan_id.split('_')[0] if plan_id
+			res.send offers: offers, current_plan: plan_id
+			return next()
 
 	callback()

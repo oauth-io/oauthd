@@ -34,7 +34,15 @@ exports.setup = (callback) ->
 		hipchat room:@config.hipchat.room_support, message:data.body
 
 	@on 'user.pay', (data) =>
-		hipchat room:@config.hipchat.room_activities, message:data.user.profile.name + ' bought offer ' + data.invoice.plan_name + ' ($' + data.invoice.total + ') *shlingggggggggggg*'
+		msg = data.user.profile.name + ' bought (or recurring) offer ' + data.user.plan.displayName
+		msg += '( $' + (data.invoice.total / 100) + ' )'
+		msg += ' *shlingggggggggggg*' if data.invoice.total > 0
+		hipchat room:@config.hipchat.room_activities, message: msg
+
+	@on 'user.pay.failed', (data) =>
+		msg = data.user.profile.name + '[' + data.user.profile.id + ']'
+		msg += ' (' + data.customer.email + ') has failed to pay his invoice ( $' + (data.invoice.total / 100) + ' ) :('
+		hipchat room:@config.hipchat.room_support, message: msg
 
 	if @config.hipchat.crash_monitor
 		exit.push 'crash monitor', (callback) =>

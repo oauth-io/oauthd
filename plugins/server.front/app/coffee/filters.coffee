@@ -5,6 +5,7 @@ app.filter 'toUpper', ->
 
 app.filter 'capitalize', ->
 	return (input, scope) ->
+		return input if typeof input != 'string'
 		if input
 			str = ''
 			arr = input.split '_'

@@ -58,22 +58,6 @@ app.config([
 			controller: 'PricingCtrl'
 			title: 'Pricing'
 
-		$routeProvider.when '/pricing/unsubscribe',
-			templateUrl: '/templates/unsubscribe-confirm.html'
-			controller: 'PricingCtrl'
-
-		$routeProvider.when '/payment/customer',
-			templateUrl: '/templates/payment.html'
-			controller: 'PaymentCtrl'
-
-		$routeProvider.when '/payment/confirm',
-			templateUrl: '/templates/payment-confirm.html'
-			controller: 'PaymentCtrl'
-
-		$routeProvider.when '/payment/:name/success',
-			templateUrl: '/templates/successpayment.html'
-			controller: 'PaymentCtrl'
-
 		$routeProvider.when '/editor',
 			templateUrl: '/templates/editor.html'
 			controller: 'EditorCtrl'
@@ -233,6 +217,13 @@ app.config([
 	]
 	$httpProvider.responseInterceptors.push interceptor
 ]).run ($rootScope, $location, UserService, $modal, NotificationService, $timeout) ->
+	Stripe.setPublishableKey window.stripeKey
+	$rootScope.stripeCheckout = (token) ->
+		StripeCheckout.configure
+			key: window.stripeKey
+			image: '/img/logo_v2.png'
+			token: token
+
 	checkLimitation = ->
 		return true if $rootScope.me.apps?.length >= $rootScope.me.plan?.nbApp or $rootScope.me.totalUsers? >= $rootScope.me.plan?.nbUsers or $rootScope.me.keysets?.length >= $rootScope.me.plan?.nbProvider
 		return false

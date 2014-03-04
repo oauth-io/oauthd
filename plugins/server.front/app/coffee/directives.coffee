@@ -101,7 +101,6 @@ app.directive 'lightbox', ($timeout) ->
 						$(tElement).modal('hide').find('.modal').hide()
 						$('.modal-backdrop').remove()
 
-
 app.directive "fiddleIframe", ->
 	linkFn = (scope, element, attrs) ->
 		element.find("iframe").bind "load", (event) ->

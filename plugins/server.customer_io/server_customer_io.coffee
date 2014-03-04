@@ -3,8 +3,6 @@ async = require 'async'
 
 exports.setup = (callback) ->
 
-	PaymillClient = require '../server.payments/paymill_client'
-
 	if not @config.customer_io?.site_id or not @config.customer_io.api_key
 		console.log 'Warning: customer.io plugin is not configured'
 		return callback()
@@ -63,18 +61,17 @@ exports.setup = (callback) ->
 		sendEvent user, 'login'
 
 	@on 'user.pay', (data) =>
-		sendEvent data.user.profile, 'buy', data.invoice
+		sendEvent data.user.profile, 'user.pay', invoice:data.invoice, customer:data.customer
 
-	@on 'user.subscribe', (user, offer) =>
-		pclient = new PaymillClient
-		pclient.user_id = user.id
-		pclient.getCurrentPlan (e, offer_name) ->
-			return if e or not offer_name
-			updateUser user, offer_name: offer_name
+	@on 'user.pay.failed', (data) =>
+		sendEvent data.user.profile, 'user.pay.failed', invoice:data.invoice, customer:data.customer
 
-	@on 'user.unsubscribe', (user) =>
-		updateUser user, offer_name: 'free'
-		sendEvent user, 'unsubscribe'
+	@on 'user.subscribe', (data, offer) =>
+		updateUser data.user.profile, offer_name: offer || "free"
+
+	@on 'user.unsubscribe', (data) =>
+		updateUser data.user.profile, offer_name: 'free'
+		sendEvent data.user.profile, 'unsubscribe'
 
 	@on 'app.create', (req, app) =>
 		sendEvent req.user, 'app.create', app
@@ -157,7 +154,9 @@ exports.setup = (callback) ->
 					pfx+'date_consumer'
 					pfx+'key'
 					pfx+'validated'
-					pfx+'name']
+					pfx+'name',
+					pfx+'current_plan'
+				]
 				cmds.push ['scard', pfx+'apps']
 				cmds.push ['scard', pfx+'providers']
 			console.log '[ADMIN] start customer.io update'
@@ -184,17 +183,10 @@ exports.setup = (callback) ->
 							updateInfo.date_production = timestamp(profile[4]) if profile[4]
 							updateInfo.date_consumer = timestamp(profile[5]) if profile[5]
 							updateInfo.name = profile[8] if profile[8]
+							updateInfo.offer_name = profile[9] if profile[9]
 
-							pclient = new PaymillClient
-							pclient.user_id = user.id
-							pclient.getCurrentPlan (e, offer_name) ->
-								if e
-									console.log '[ADMIN] could not determine offer for', user.mail
-									updateUser user, updateInfo
-									return callback()
-								updateInfo.offer_name = offer_name || 'free'
-								updateUser user, updateInfo
-								callback()
+							updateUser user, updateInfo
+							callback()
 					i++
 				async.parallel tasks, (e,r) ->
 					console.log '[ADMIN] finish customer.io (there still may be http requests in pool)'

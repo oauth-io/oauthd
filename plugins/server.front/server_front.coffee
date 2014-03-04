@@ -105,7 +105,7 @@ exports.setup = (callback) ->
 			res.send 301
 			next()
 
-		@server.get /^\/(lib|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(lib|data|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 
