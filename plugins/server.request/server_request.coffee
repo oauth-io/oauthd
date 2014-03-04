@@ -83,7 +83,6 @@ exports.raw = ->
 			[provider, {parameters}, domaincheck] = results
 
 			req.apiUrl = decodeURIComponent(req.params[1])
-			console.log "apiURL", req.apiUrl
 			if ! domaincheck
 				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 

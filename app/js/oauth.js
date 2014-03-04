@@ -444,7 +444,12 @@
                     delete options.oauthio;
                     var promise = $.ajax(options);
                     $.when(promise).fail(function(data) {
-                        console.error(data.responseJSON.data);
+                        if (data.responseJSON)
+                            console.error(data.responseJSON.data);
+                        else {
+                            console.log(data);
+                            console.error('An error occured while trying to access the resource');
+                        }
                     });
                     return promise;
                 }

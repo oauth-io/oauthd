@@ -55,7 +55,7 @@ module.exports = function(grunt) {
     for (var i in config.plugins) {
         var plugin = config.plugins[i];
         gruntConf.watch[plugin] = {
-            files: ['plugins/' + plugin + '/{,*}*.coffee'],
+            files: ['plugins/' + plugin + '/**/*.coffee'],
             tasks: ['coffee:' + plugin]
         };
         gruntConf.coffee[plugin] = {
