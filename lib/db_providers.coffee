@@ -133,7 +133,6 @@ exports.getMeMapping = (provider, callback) ->
 	fs.exists provider, (exists) ->
 		if (exists)
 			me = require(provider);
-			console.log 'GOT ME', me
 			return callback null, me
 		else
 			return callback new check.Error 'No me.js information for ' + provider_name

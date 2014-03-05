@@ -8,6 +8,6 @@ var me = {
         bio: 'description',
         avatar: 'profile_image_url'
     }
-}
+};
 
 module.exports = me;

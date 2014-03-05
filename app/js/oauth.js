@@ -84,19 +84,16 @@
     };
 
     function mkHttpMe(provider, tokens, request, method) {
-        return function(opts) {
+        return function(filter) {
             var options = {};
-            if (typeof opts === 'object') {
-                for (var i in opts) {
-                    options[i] = opts[i];
-                }
-            }
             options.type = options.type || method;
             options.oauthio = {
                 provider: provider,
                 tokens: tokens,
                 request: request
             };
+            options.data = options.data || {};
+            options.data.filter = filter ? filter.join(',') : undefined;
             return exports.OAuth.http_me(options);
         };
     };
