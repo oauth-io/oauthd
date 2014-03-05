@@ -133,13 +133,8 @@ exports.raw = ->
 		res.send 200
 		next false
 
-	user_endpoints_register = require ('./endpoints/user')
-	user_endpoints_register @server, doRequest	
-
 	@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-
-
