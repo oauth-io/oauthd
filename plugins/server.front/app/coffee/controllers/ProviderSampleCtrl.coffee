@@ -28,8 +28,10 @@ define [
 
 			ProviderService.get $routeParams.provider, ((provider) ->
 				ProviderService.getSettings $routeParams.provider, ((settings) ->
+					$scope.loaded_fiddle = true
 					$scope.providerConf = provider
 					$scope.settings = settings
+					$scope.fiddle_url = '/proxy?url=' + settings.data.settings.jsfiddle
 					$scope.sample = settings.data.settings.sample
 					$scope.provider_name = settings.data.provider.replace /_/g, ' '
 				), (error) ->
