@@ -39,7 +39,6 @@ define [
 					$location.path '/404'
 			), (error) ->
 				$location.path '/404'
-			
 		return [
 			"$rootScope",
 			"$timeout",

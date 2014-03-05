@@ -34,7 +34,6 @@ define [
 					$scope.provider_name = settings.data.provider.replace /_/g, ' '
 				), (error) ->
 			), (error) ->
-			
 		return [
 			"$scope",
 			"MenuService",
