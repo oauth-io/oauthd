@@ -87,20 +87,20 @@ exports.raw = ->
 		res.send 200
 		next false
 
-	@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), cors_middleware, restify.queryParser(),(req, res, next) =>
+	@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), cors_middleware,(req, res, next) =>
 		cb = @server.send res, next
 		provider = req.params[0]
 		filter = req.query.filter
 		filter = filter?.split ','
+		oauthio = req.headers.oauthio
+		if ! oauthio
+			return cb new Error "You must provide a valid 'oauthio' http header"
+		oauthio = qs.parse(oauthio)
+		if ! oauthio.k
+			return cb new Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 		@db.providers.getMeMapping provider, (err, content) =>
 			if !err
 				if content.url
-					oauthio = req.headers.oauthio
-					if ! oauthio
-						return cb new Error "You must provide a valid 'oauthio' http header"
-					oauthio = qs.parse(oauthio)
-					if ! oauthio.k
-						return cb new Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 					@apiRequest apiUrl: content.url, provider, oauthio, (err, options) =>
 						return sendAbsentFeatureError(req, res, 'me()') if err
 						options.json = true
@@ -108,6 +108,32 @@ exports.raw = ->
 							return sendAbsentFeatureError(req, res, 'me()') if err
 							# parsing body and mapping values to common field names, and sending the result
 							res.send fieldMap(body, content.fields, filter)
+				else if content.fetch
+					user_fetcher = {}
+					apiRequest = @apiRequest
+					async.eachSeries content.fetch, (item, cb) -> 
+						if typeof item == 'object'
+							url = item.url
+
+							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
+								return sendAbsentFeatureError(req, res, 'me()') if err
+								options.json = true
+								request options, (err, response, body) =>
+									for k of item.export
+										value = item.export[k](body)
+										user_fetcher[k] = value
+										cb()
+						if typeof item == 'function'
+							url = item(user_fetcher)
+							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
+								return sendAbsentFeatureError(req, res, 'me()') if err
+								options.json = true
+								request options, (err, response, body) =>
+									return sendAbsentFeatureError(req, res, 'me()') if err
+									# parsing body and mapping values to common field names, and sending the result
+									res.send fieldMap(body, content.fields, filter)
+
+					, ->
 				else
 					return sendAbsentFeatureError(req, res, 'me()')
 			else
