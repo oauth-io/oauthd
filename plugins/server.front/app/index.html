@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en" data-ng-app="oauth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title data-ng-bind="pageTitle">OAuth that just works.</title>
+    <title>OAuth that just works.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{pageDesc}}">
     <style>
@@ -33,7 +33,9 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
     <script src="/lib/jquery-ui/jquery-ui.js"></script>
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
     <script src="https://checkout.stripe.com/checkout.js"></script>
-    <script src="/lib/angular/angular.min.js"></script>
+    <script src="/lib/angular/angular-1.2.12.min.js"></script>
+    <script src="/lib/angular/angular-route.min.js"></script>
+
     <script src="/lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js"></script>
     <script src="/lib/angular-cookies/angular-cookies.js"></script>
     <script src="/lib/sugar/sugar.min.js"></script>
@@ -43,13 +45,13 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
     <script src="/lib/angular-ui-select2/select2.js"></script>
     <script src="/lib/angular-drag-drop/angular-dragdrop.js"></script>
     {{if admin}}<script src="/adm/js/adm.js"></script>{{endif}}
-    <script src="/js/app.js"></script>
+    <!--<script src="/js/app.js"></script>-->
     <script src="/lib/angular-local-storage/localStorageModule.js"></script>
-    <script src="/js/stubborn.js"></script>
-    <script src="/js/services.js"></script>
-    <script src="/js/filters.js"></script>
-    <script src="/js/directives.js"></script>
-    <script src="/js/controllers.js"></script>
+
+    <!--<script src="/js/stubborn.js"></script>-->
+    <!--<script src="/js/services.js"></script>-->
+    <!--<script src="/js/filters.js"></script>-->
+    <!--<script src="/js/directives.js"></script>-->
     <script src="/auth/download/latest/oauth.js"></script>
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -104,11 +106,11 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
         </a>
 
         <!-- Place everything within .navbar-collapse to hide it until above 768px -->
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
+        <div class="ng-cloak navbar-collapse collapse navbar-responsive-collapse">
 
           <ul class="nav navbar-nav">
           </ul>
-          <ul class="nav navbar-nav pull-right">
+          <ul class="nav navbar-nav pull-right ng-cloak">
             <li ng-class="{active: selectedMenu == '/providers'}" ><a href="/providers">Providers</a></li>
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
 <!--             <li ng-class="{active: selectedMenu == '/features'}" ng-hide="UserService.isLogin()"><a href="/features">Features</a></li> -->
@@ -118,21 +120,13 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
             <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer">Account</a></li>
-            <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="#"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
+            <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="javascript:void(0);"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
             <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
           </ul>
   <!--         <button style="position:relative; left: 15px; top: 4px;" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add a Key</button> -->
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
     </div><!-- /.navbar -->
-  <!--   <div class="container">
-   <div class="row">
-  <div class="col-lg-12">
-    <pre>{{notifications|json}}
-{{me|json}}</pre>
-  </div>
-</div>
-</div> -->
     <did id="container">
       <div id="content" ng-view></div>
     </did>
@@ -140,6 +134,8 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
         <div style="font-size: 1.0em; margin-left: 20px; margin-bottom: 20px" class="pull-left">Powered by <a href="http://webshell.io" target="_blank" alt="Webshell logo"><img width="100" style="position: relative; top: -2px; left: 3px;" id="wsh-powered" src="/img/webshell-logo.png"></a></div>
         <div style="font-size: 1.0em; margin-bottom: 20px" class="pull-right"><a href="http://blog.oauth.io/" target="_blank">Blog</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/wishlist">Wishlist</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/imprint">Imprint</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/terms">Terms</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="/contact-us">Contact</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
     </div>
-    <div ng-controller="InspectorCtrl"></div>
+
+    <!-- <script src="/lib/requirejs/require.js" data-main="/js/main.js"></script> -->
+    <script src="/lib/requirejs/require.js" data-main="/js/main.js"></script>
 </body>
 </html>

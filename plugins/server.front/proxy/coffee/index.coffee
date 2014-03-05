@@ -8,7 +8,7 @@ transform_urls = (data, host) ->
 
 	data = data.replace /(script.+?src=[\"'])(http:.+?)([\"'])/g, '$1' + '/proxy?url=' + '$2' + '$3'
 	data = data.replace /(link.+?href=[\"'])(http:.+?)([\"'])/g, '$1' +'/proxy?url=' + '$2' + '$3'
-	
+
 
 	data = data.replace /(a.+?href=[\"'])(\/.+?)([\"'])/g, '$1' + host + '$2' + '$3'
 	data = data.replace /\ =\ [\"'](http:.+?)[\"']/g, ' = "' + '/proxy?url=' +  '$1' + '"'
@@ -20,13 +20,21 @@ module.exports = (req, res, next) ->
 	url = url.parse req.params.url
 	urlDecoded = decodeURIComponent ( req.params.url )
 
-	options = 
+	options =
 		uri: urlDecoded,
 		method: 'GET',
 		'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
-	
+
 
 	request options, (err, response, body) ->
+		if err
+			###	res.writeHead(200, {
+				'Content-Length': Buffer.byteLength(result),
+				'Content-Type': response.headers['content-type']
+			});
+			res.write('<div class="alert alert-info">Error when trying to load the jsfiddle</div>')
+			res end
+			return###
 		result = transform_urls body, url.protocol + '//' + url.host
 		res.writeHead(200, {
 			'Content-Length': Buffer.byteLength(result),
