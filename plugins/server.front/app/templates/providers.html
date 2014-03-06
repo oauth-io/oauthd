@@ -2,7 +2,7 @@
 	<div class="row">
 		<h1 class="text-center" style="margin-bottom: 50px">OAuth.io supports the APIs listed below<br /></h1>
 	</div>
-	<div class="row">
+	<div class="row ng-cloak">
 		<div class="col-lg-12">
 			<div class="input-group">
 				<span class="input-group-addon">
@@ -12,7 +12,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row ng-cloak">
 		<div class="col-lg-12">
 			<ul style="margin-top: 15px" class="nav nav-list dashboard-sidenav">
 				<li ng-repeat="provider in filtered | startFrom:(pagination.current-1)*pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="providers" ng-mouseover="hoverItem = provider" ng-mouseleave="hoverItem = null">

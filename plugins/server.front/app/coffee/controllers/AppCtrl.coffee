@@ -227,7 +227,7 @@ define [], () ->
 					delete app.keys[provider]
 				), (error) ->
 					alert "error"
-					
+
 	return [
 		'$scope', 
 		'$rootScope', 
