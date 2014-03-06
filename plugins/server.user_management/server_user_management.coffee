@@ -62,6 +62,7 @@ fieldMap = (body, map_array, filter) ->
 					result[k] = body[field]
 			else if typeof field == 'function'
 				result[k] = field(body)
+	result.raw = if result.raw then result.raw else body
 	return result
 
 
