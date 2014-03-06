@@ -86,7 +86,8 @@ exports.raw = ->
 				config: 
 					OAUTHIO_URL: user.heroku_url
 			console.log "result", result
-			res.send result
+			res.setHeader 'Content-Type', 'application/json'
+			res.end JSON.stringify(result)
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
