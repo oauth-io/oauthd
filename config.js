@@ -69,6 +69,7 @@ module.exports = {
 		'server.users',
 		'server.clients',
 		'server.adm',
+		'server.heroku',
 		'server.hipchat',
 		'server.zendesk',
 		'server.oauth_io',
