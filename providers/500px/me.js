@@ -27,9 +27,6 @@ var me = {
         },
         location: function(me) {
             return me.user.city + ', ' + me.user.country
-        },
-        raw: function(me) {
-            return me;
         }
     }
 };
