@@ -39,6 +39,10 @@ module.exports = {
 		secret_key: '923660828109fb1ca53c8e1b6916d94d',
 		public_key: '8a8394c340c4033a0140d9f61cfd3145'
 	},
+	heroku: {
+		heroku_user: 'oauthio',
+		heroku_password: '539502edf5e15ad2a63ccf94ce7950e1'
+	},
 
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",

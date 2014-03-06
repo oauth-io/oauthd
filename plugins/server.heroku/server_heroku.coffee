@@ -6,6 +6,8 @@
 
 'use strict'
 
+restify = require 'restify'
+
 {config,check,db} = shared = require '../shared'
 
 exports.raw = ->
@@ -42,6 +44,17 @@ exports.raw = ->
 					# shared.emit 'user.register', user
 					return callback null, user
 
+
+	basic_auth = (req, res, next) ->
+		if req.authorization and req.authorization.scheme is 'Basic' and req.authorization.basic.username is config.heroku.heroku_user and req.authorization.basic.password is config.heroku.heroku_password
+			return next()
+		else
+			console.log "Unable to authenticate user"
+			console.log "req.authorization", req.authorization
+			res.header "WWW-Authenticate", "Basic realm=\"Admin Area\""
+			res.send 401, "Authentication required"
+			return
+
 	# * Provisioning
 	# A private resource is created for each app that adds your add-on.
 	# Any provisioned resource should be referenced by a unique URL, 
@@ -51,8 +64,7 @@ exports.raw = ->
 	# - a config var hash containing a URL to consume the service
 	provisionResource = (req, res, next) =>
 		console.log "heroku resources post"
-		req.params heroku_user
-		
+
 		registerHerokuAppUser (err, user) =>
 			console.log "user", user
 			res.send 404 if err
@@ -66,4 +78,4 @@ exports.raw = ->
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
-	@server.post new RegExp('/heroku/resources'), provisionResource
+	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, provisionResource
