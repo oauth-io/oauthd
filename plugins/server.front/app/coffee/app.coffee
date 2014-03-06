@@ -284,7 +284,7 @@ define [
 						content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
 				$('#notification').popover()
 
-			UserService.initialize ->
+			UserService.initialize()
 
 			$rootScope.openNotifications = ->
 				NotificationService.open()

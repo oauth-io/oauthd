@@ -129,15 +129,15 @@ hooks.config = (app, apiRequest) ->
 			$scope.filtered = $filter('filter')(array, $scope.query)
 			if (page)
 				$scope.pagination =
-					nbPerPage: 11
-					nbPages: Math.ceil($scope.nbUsers / 10)
+					nbPerPage: 15
+					nbItems: $scope.nbUsers
 					current: page
 					max: 5
 
 			$scope.queryChange = ->
 				$timeout (->
 					$scope.filtered = $filter('filter')(array, $scope.query)
-					$scope.pagination.nbPages = Math.ceil($scope.nbUsers / 10)
+					$scope.pagination.nbItems = $scope.nbUsers
 					$scope.pagination.current = page if page
 				), 0
 
@@ -286,7 +286,7 @@ hooks.config = (app, apiRequest) ->
 				$scope.ranksFiltered = success.data
 				$scope.ranksPagination =
 					nbPerPage: 15
-					nbPages: Math.ceil($scope.ranksFiltered.length / 15)
+					nbItems: $scope.ranksFiltered.length
 					current: 1
 					max: 5
 
@@ -329,7 +329,7 @@ hooks.config = (app, apiRequest) ->
 				$scope.providerFiltered = success.data
 				$scope.providerPagination =
 					nbPerPage: 15
-					nbPages: Math.ceil($scope.providerFiltered.length / 15)
+					nbItems: $scope.providerFiltered.length
 					current: 1
 					max: 5
 
@@ -365,7 +365,7 @@ hooks.config = (app, apiRequest) ->
 					}
 					$scope.scopePagination =
 						nbPerPage: 15
-						nbPages: Math.ceil($scope.scopeFiltered.length / 15)
+						nbItems: $scope.scopeFiltered.length
 						current: 1
 						max: 5
 		$scope.refreshScopes()
@@ -394,7 +394,7 @@ hooks.config = (app, apiRequest) ->
 				$scope.appFiltered = success.data
 				$scope.appPagination =
 					nbPerPage: 15
-					nbPages: Math.ceil($scope.appFiltered.length / 15)
+					nbItems: $scope.appFiltered.length
 					current: 1
 					max: 5
 
@@ -428,7 +428,7 @@ hooks.config = (app, apiRequest) ->
 
 			$scope.wishListPagination =
 				nbPerPage: 15
-				nbPages: Math.ceil($scope.wishListProviders.length / 15)
+				nbItems: $scope.wishListProviders.length
 				current: 1
 				max: 5
 
@@ -452,7 +452,7 @@ hooks.config = (app, apiRequest) ->
 
 					$scope.wishListPagination =
 						nbPerPage: 15
-						nbPages: Math.ceil($scope.wishListProviders.length / 15)
+						nbItems: $scope.wishListProviders.length
 						current: 1
 						max: 5
 

@@ -6,6 +6,7 @@
 "use strict"
 define [
 	"services/MenuService"
+	"services/UserService"
 	], () ->
 		ValidateCtrl = ($rootScope, $timeout, $scope, $routeParams, MenuService, UserService, $location, $cookieStore) ->
 			#MenuService.changed()
@@ -28,18 +29,13 @@ define [
 						key: $routeParams.key
 						mail: data.data.mail
 					UserService.validate $scope.user.id, $scope.user.key, ((data) ->
-						$rootScope.me.profile.validated = "1"
-						$timeout (->
-							$rootScope.accessToken = $cookieStore.get 'accessToken'
-							$location.path '/key-manager'
-							$scope.$apply()
-						), 5000
+						$rootScope.accessToken = $cookieStore.get 'accessToken'
+						UserService.initialize()
 					), (error) ->
 				else if not data.data.is_validable
 					$location.path '/404'
 			), (error) ->
 				$location.path '/404'
-			
 		return [
 			"$rootScope",
 			"$timeout",
