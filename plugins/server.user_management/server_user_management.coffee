@@ -88,7 +88,7 @@ exports.raw = ->
 		res.send 200
 		next false
 
-	@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), cors_middleware,(req, res, next) =>
+	@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), restify.queryParser(), cors_middleware, (req, res, next) =>
 		cb = @server.send res, next
 		provider = req.params[0]
 		filter = req.query.filter
