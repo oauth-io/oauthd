@@ -41,7 +41,8 @@ module.exports = {
 	},
 	heroku: {
 		heroku_user: 'oauthio',
-		heroku_password: '539502edf5e15ad2a63ccf94ce7950e1'
+		heroku_password: '539502edf5e15ad2a63ccf94ce7950e1',
+		sso_salt: '080b19049ca3afb9d948dba1fc1e26f0'
 	},
 
 	cacheTime: 1,
