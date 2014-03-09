@@ -404,7 +404,7 @@ exports.login = check check.format.mail, 'string', (mail, pass, callback) ->
 				return callback err if err
 				calcpass = db.generateHash pass + replies[1]
 				return callback new check.Error 'Bad password' if replies[0] != calcpass || replies[4] != "1"
-				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3]
+				return callback null, id:iduser, mail:replies[2], date_inscr:replies[3], validated:(replies[4] == "1")
 
 exports.updateProviders = check 'int', (iduser, callback) ->
 	exports.getApps iduser, (e, apps) ->
