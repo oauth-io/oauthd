@@ -104,16 +104,27 @@ exports.raw = ->
 			# let oauth modules do the request
 			oa.request provider, parameters, req, (err, options) ->
 				return cb err if err
-				api_request = request options
-				#if req.headers['content-type']?.indexOf('multipart/form-data') != -1
-				delete req.headers
-				api_request = req.pipe(api_request)
+				api_request = null
 
-				api_request.pipefilter = (response, dest) ->
-					dest.setHeader 'Access-Control-Allow-Origin', origin
-					dest.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
-				api_request.pipe(res)
-				api_request.once 'end', -> next false
+				sendres = ->
+					api_request.pipefilter = (response, dest) ->
+						dest.setHeader 'Access-Control-Allow-Origin', origin
+						dest.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
+					api_request.pipe(res)
+					api_request.once 'end', -> next false
+
+				if req.headers['content-type'] and req.headers['content-type'].indexOf('application/x-www-form-urlencoded') != -1
+					bodyParser = restify.bodyParser mapParams:false
+					bodyParser[0] req, res, -> bodyParser[1] req, res, ->
+						options.form = req.body
+						api_request = request options
+						sendres()
+				else
+					api_request = request options
+					delete req.headers
+					api_request = req.pipe(api_request)
+					sendres()
+
 
 	# request's endpoints
 	@server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
