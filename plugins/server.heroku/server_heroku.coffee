@@ -97,9 +97,7 @@ exports.raw = ->
 		return
 
 	get_resource_by_id = (data, callback) ->
-		console.log "get_resource_by_id"
 		db.redis.hget 'u:heroku_id', data, (err, iduser) ->
-			console.log "iduser", iduser 
 			return callback err if err or iduser is 'undefined'
 			prefix = 'u:' + iduser + ':'
 			db.redis.mget [ prefix + 'mail',
@@ -127,16 +125,12 @@ exports.raw = ->
 				return callback null, resource
 
 	destroy_resource = (iduser, callback) ->
-		console.log "destroy_resource iduser", iduser
 		return callback err if iduser is 'undefined'
 		prefix = 'u:' + iduser + ':'
 		db.redis.get prefix+'heroku_id', (err, heroku_id) ->
-			console.log "destroy_resource heroku_id", heroku_id
 			return callback err if err or heroku_id is 'undefined'
 			return callback new check.Error 'Unknown user' unless heroku_id
-			console.log "db_users.getApps"
 			db.users.getApps iduser, (err, appkeys) ->
-				console.log "db.users.getApps appkeys", appkeys
 				tasks = []
 				for key in appkeys
 					do (key) ->
@@ -170,10 +164,8 @@ exports.raw = ->
 
 	# * Deprovision
 	deprovisionResource = (req, res, next) =>
-		console.log "req.params", req.params
 		get_resource_by_id req.params.id, (err, resource) =>
 			res.send 404, "Not found" if err
-			console.log "resource", resource
 			destroy_resource resource.id, (err, resource) =>
 				res.send 404, "Cannot deprovision resource" if err
 				res.send("ok")
