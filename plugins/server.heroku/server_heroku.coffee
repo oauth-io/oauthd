@@ -6,6 +6,7 @@
 
 'use strict'
 
+async = require 'async'
 restify = require 'restify'
 
 {config,check,db} = shared = require '../shared'
@@ -96,8 +97,10 @@ exports.raw = ->
 		return
 
 	get_resource_by_id = (data, callback) ->
+		console.log "get_resource_by_id"
 		db.redis.hget 'u:heroku_id', data, (err, iduser) ->
-			return callback err if err
+			console.log "iduser", iduser 
+			return callback err if err or iduser is 'undefined'
 			prefix = 'u:' + iduser + ':'
 			db.redis.mget [ prefix + 'mail',
 				prefix + 'date_inscr',
@@ -108,7 +111,7 @@ exports.raw = ->
 				prefix + 'validated' ]
 			, (err, replies) ->
 				return callback err if err
-				profile =
+				resource =
 					id:iduser,
 					mail:replies[0],
 					date_inscr:replies[1],
@@ -117,14 +120,39 @@ exports.raw = ->
 					heroku_name: replies[4],
 					heroku_url: replies[5],
 					validated: replies[6]
-				for field of profile
-					profile[field] = '' if profile[field] == 'undefined'
+				for field of resource
+					resource[field] = '' if resource[field] == 'undefined'
 
-			return callback err if err
-			return callback null, resource: profile
+				return callback err if err
+				return callback null, resource
 
-	destroy_resource = (data) ->
-		return
+	destroy_resource = (iduser, callback) ->
+		console.log "destroy_resource iduser", iduser
+		return callback err if iduser is 'undefined'
+		prefix = 'u:' + iduser + ':'
+		db.redis.get prefix+'heroku_id', (err, heroku_id) ->
+			console.log "destroy_resource heroku_id", heroku_id
+			return callback err if err or heroku_id is 'undefined'
+			return callback new check.Error 'Unknown user' unless heroku_id
+			console.log "db_users.getApps"
+			db.users.getApps iduser, (err, appkeys) ->
+				console.log "db.users.getApps appkeys", appkeys
+				tasks = []
+				for key in appkeys
+					do (key) ->
+						tasks.push (cb) -> db.apps.remove key, cb
+				async.series tasks, (err) ->
+					return callback err if err
+
+					db.redis.multi([
+						[ 'hdel', 'u:heroku_id', heroku_id ]
+						[ 'del', prefix+'mail', prefix+'date_inscr', prefix+'key', 
+								prefix+'heroku_id', prefix+'heroku_name', prefix+'heroku_url', 
+								prefix+'validated', prefix+'date_validate', prefix+'current_plan', prefix+'apps' ]
+					]).exec (err, replies) ->
+						return callback err if err
+						# shared.emit 'user.remove', mail:mail
+						callback()
 
 	# Plan Change
 	changePlan = (req, res, next) =>
@@ -145,8 +173,10 @@ exports.raw = ->
 		console.log "req.params", req.params
 		get_resource_by_id req.params.id, (err, resource) =>
 			res.send 404, "Not found" if err
-			destroy_resource request.params.id
-			res.send("ok")
+			console.log "resource", resource
+			destroy_resource resource.id, (err, resource) =>
+				res.send 404, "Cannot deprovision resource" if err
+				res.send("ok")
 
 	# * Provisioning
 	# A private resource is created for each app that adds your add-on.
@@ -175,5 +205,6 @@ exports.raw = ->
 	# in order to provision a new resource.
 	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), provisionResource
 	@server.put new RegExp('/heroku/resources/:id'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), changePlan
-	@server.del new RegExp('/heroku/resources/:id'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
-	@server.post new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
+	@server.del '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
+	@server.post new RegExp('/heroku/sso'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
+	@server.get new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
