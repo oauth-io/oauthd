@@ -76,10 +76,6 @@ exports.raw = ->
 	# Then set a cookie in the user’s browser to indicate that they are authenticated, 
 	# and then redirect to the admin panel for the resource.
 	sso_auth = (req, res, next) ->
-		console.log " "
-		console.log " "
-		console.log "req.body", req.body
-
 		pre_token = req.body.id + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
 		shasum = crypto.createHash("sha1")
 		shasum.update pre_token
@@ -97,11 +93,9 @@ exports.raw = ->
 		expireDate = new Date((new Date - 0) + config.expire * 1000)
 		res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
 		res.setHeader 'Set-Cookie', 'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
-		res.setHeader 'Location', config.host_url
+		res.setHeader 'Location', config.host_url + '/key-manager'
 
-		console.log "before get_resource_by_id"
 		get_resource_by_id req.body.id, (err, resource) =>
-			console.log "resource", resource
 			res.send 404, "Not found" if err
 			# req.session.resource = resource
 			# req.session.email = req.body.email
@@ -109,13 +103,13 @@ exports.raw = ->
 			return
 
 	sso_login = (req, res, next) ->
-		console.log "sso login req.session", req.session
+		# We need to send the app name to fill the heroku navbar
+		console.log "sso login req.body.app", req.body.app
 		res.setHeader 'Location', '/'
 		res.send 301
 		return
 
 	get_resource_by_id = (data, callback) ->
-		console.log "get_resource_by_id"
 		db.redis.hget 'u:heroku_id', data, (err, iduser) ->
 			return callback err if err or iduser is 'undefined'
 			prefix = 'u:' + iduser + ':'
@@ -169,8 +163,6 @@ exports.raw = ->
 
 	# Plan Change
 	changePlan = (req, res, next) =>
-		console.log "req.body", req.body
-		console.log "req.params", req.params
 		get_resource_by_id req.params.id, (err, resource) =>
 			res.send 404, "Not found" if err
 			user_id = resource.id

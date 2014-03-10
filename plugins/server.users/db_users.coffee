@@ -176,7 +176,7 @@ exports.lostPassword = check mail:check.format.mail, (data, callback) ->
 			if not key
 				dynsalt = Math.floor(Math.random() * 9999999)
 				key = db.generateHash(dynsalt).replace(/\=/g, '').replace(/\+/g, '').replace(/\//g, '')
-				
+
 				# set new key
 				db.redis.mset [
 					prefix + 'key_pass', key
