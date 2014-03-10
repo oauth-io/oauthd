@@ -8,6 +8,7 @@
 
 async = require 'async'
 restify = require 'restify'
+crypto = require 'crypto'
 
 {config,check,db} = shared = require '../shared'
 
@@ -75,28 +76,46 @@ exports.raw = ->
 	# Then set a cookie in the user’s browser to indicate that they are authenticated, 
 	# and then redirect to the admin panel for the resource.
 	sso_auth = (req, res, next) ->
-		console.log "req.params", req.body
-		 
-		pre_token = req.params.id + ":" + config.heroku.sso_salt + ":" + req.params.timestamp
+		console.log " "
+		console.log " "
+		console.log "req.body", req.body
+
+		pre_token = req.body.id + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
 		shasum = crypto.createHash("sha1")
 		shasum.update pre_token
 		token = shasum.digest("hex")
 
-		unless req.param.token is token
+		unless req.body.token is token
 			res.send 403, "Token Mismatch" 
 			return
 		time = (new Date().getTime() / 1000) - (2 * 60)
-		if parseInt(req.param.timestamp) < time
+		if parseInt(req.body.timestamp) < time
 			res.send 403, "Timestamp Expired"
 			return
 
-		res.cookie "heroku-nav-data", req.param("nav-data")
-		req.session.resource = get_resource_by_id(id)
-		req.session.email = req.param.email
-		next()
+		res.setHeader 'Content-Type', 'text/html'
+		expireDate = new Date((new Date - 0) + config.expire * 1000)
+		res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
+		res.setHeader 'Set-Cookie', 'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
+		res.setHeader 'Location', config.host_url
+
+		console.log "before get_resource_by_id"
+		get_resource_by_id req.body.id, (err, resource) =>
+			console.log "resource", resource
+			res.send 404, "Not found" if err
+			# req.session.resource = resource
+			# req.session.email = req.body.email
+			next()
+			return
+
+	sso_login = (req, res, next) ->
+		console.log "sso login req.session", req.session
+		res.setHeader 'Location', '/'
+		res.send 301
 		return
 
 	get_resource_by_id = (data, callback) ->
+		console.log "get_resource_by_id"
 		db.redis.hget 'u:heroku_id', data, (err, iduser) ->
 			return callback err if err or iduser is 'undefined'
 			prefix = 'u:' + iduser + ':'
@@ -159,7 +178,7 @@ exports.raw = ->
 			db.redis.mset [
 				prefix + 'current_plan', req.body.plan
 			], (err) ->
-				return callback err if err
+				res.send 404, "Connot change plan" if err
 				res.send "ok"
 
 	# * Deprovision
@@ -196,7 +215,8 @@ exports.raw = ->
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
 	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), provisionResource
-	@server.put new RegExp('/heroku/resources/:id'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), changePlan
-	@server.del '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
-	@server.post '/heroku/sso/login', restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
 	@server.get new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
+	@server.put '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), changePlan
+	@server.del '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
+	@server.post '/heroku/sso/login', restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth, sso_login
+	
