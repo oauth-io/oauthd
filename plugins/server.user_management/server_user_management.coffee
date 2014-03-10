@@ -20,6 +20,9 @@ qs = require 'querystring'
 Url = require 'url'
 restify = require 'restify'
 request = require 'request'
+zlib = require 'zlib'
+fs = require 'fs'
+Stream = require 'stream'
 
 oauth =
 	oauth1: require '../../lib/oauth1'
@@ -119,20 +122,54 @@ exports.raw = ->
 							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
-								request options, (err, response, body) =>
+								rq = request options, (err, response, body) =>
 									for k of item.export
 										value = item.export[k](body)
 										user_fetcher[k] = value
 										cb()
+								chunks = []
+								rq.on 'response', (rs) ->
+									rs.on 'data',  (chunk) ->
+										chunks.push chunk
+									rs.on 'end', ->
+										buffer = Buffer.concat chunks
+										if rs.headers['content-encoding'] == 'gzip'
+											zlib.gunzip buffer, (err, decoded) ->
+												res.send 500, err if err
+												body = JSON.parse decoded.toString()
+												for k of item.export
+													value = item.export[k](body)
+													user_fetcher[k] = value
+													cb()
+										else
+											body = JSON.parse buffer.toString()
+											for k of item.export
+												value = item.export[k](body)
+												user_fetcher[k] = value
+												cb()
 						if typeof item == 'function'
 							url = item(user_fetcher)
 							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
-								request options, (err, response, body) =>
-									return sendAbsentFeatureError(req, res, 'me()') if err
-									# parsing body and mapping values to common field names, and sending the result
-									res.send fieldMap(body, content.fields, filter)
+								
+								options.headers['accept-encoding'] = undefined
+								rq = request options
+								chunks = []
+								rq.on 'response', (rs) ->
+									rs.on 'data', (chunk) ->
+										chunks.push chunk
+									rs.on 'end', ->
+										buffer = Buffer.concat chunks
+										if rs.headers['content-encoding'] == 'gzip'
+											zlib.gunzip buffer, (err, decoded) ->
+												res.send 500, err if err
+												body = JSON.parse decoded.toString()
+												res.send fieldMap(body, content.fields, filter)
+										else
+											body = JSON.parse buffer.toString()
+											res.send fieldMap(body, content.fields, filter)
+
 
 					, ->
 				else

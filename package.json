@@ -17,7 +17,9 @@
   "scripts": {
     "test": "grunt test && coffee test/providers_check.coffee"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "zlib": "~1.0.5"
+  },
   "keywords": [],
   "directories": {
     "test": "test"
