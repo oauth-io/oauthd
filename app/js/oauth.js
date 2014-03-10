@@ -98,12 +98,13 @@
         };
     };
 
-    function sendCallback(opts) {
+    function sendCallback(opts, defer) {
         var data;
         var err;
         try {
             data = JSON.parse(opts.data);
         } catch (e) {
+            defer.reject(new Error('Error while parsing result'));
             return opts.callback(new Error('Error while parsing result'));
         }
         if (!data || !data.provider) return;
@@ -111,14 +112,25 @@
         if (data.status === 'error' || data.status === 'fail') {
             err = new Error(data.message);
             err.body = data.data;
-            return opts.callback(err);
+            defer.reject(err);
+            if (opts.callback) {
+                return opts.callback(err);
+            } else {
+                return;
+            }
         }
         if (data.status !== 'success' || !data.data) {
             err = new Error();
             err.body = data.data;
-            return opts.callback(err);
+            defer.reject(err);
+            if (opts.callback) return opts.callback(err);
+            else return;
         }
-        if (!data.state || client_states.indexOf(data.state) == -1) return opts.callback(new Error('State is not matching'));
+        if (!data.state || client_states.indexOf(data.state) == -1) {
+            defer.reject(new Error('State is not matching'));
+            if (opts.callback) return opts.callback(new Error('State is not matching'));
+            else return;
+        }
         if (!opts.provider) data.data.provider = data.provider;
         var res = data.data;
         if (cacheEnabled(opts.cache) && res) storeCache(data.provider, res);
@@ -132,7 +144,11 @@
             oauth_token: res.oauth_token,
             oauth_token_secret: res.oauth_token_secret
         };
-        if (!request) return opts.callback(null, res);
+        if (!request) {
+            defer.resolve(res);
+            if (opts.callback) return opts.callback(null, res);
+            else return;
+        }
         if (request.required)
             for (var i in request.required) tokens[request.required[i]] = res[request.required[i]];
         var make_res = function(method) {
@@ -147,7 +163,9 @@
 
         res.me = mkHttpMe(data.provider, tokens, request, 'GET');
 
-        return opts.callback(null, res);
+        defer.resolve(res);
+        if (opts.callback) return opts.callback(null, res);
+        else return;
     }
 
     function tryCache(provider, cache) {
@@ -218,14 +236,23 @@
             },
             popup: function(provider, opts, callback) {
                 var wnd, frm, wndTimeout;
-                if (!config.key) return callback(new Error('OAuth object must be initialized'));
+                var defer = $.Deferred();
+                opts = opts || {};
+                if (!config.key) {
+                    defer.rejet(new Error('OAuth object must be initialized'));
+                    return callback(new Error('OAuth object must be initialized'));
+                }
                 if (arguments.length == 2) {
                     callback = opts;
                     opts = {};
                 }
                 if (cacheEnabled(opts.cache)) {
                     var res = tryCache(provider, opts.cache);
-                    if (res) return callback(null, res);
+                    if (res) {
+                        defer.resolve(res);
+                        if (callback) return callback(null, res);
+                        else return;
+                    }
                 }
                 if (!opts.state) {
                     opts.state = create_hash();
@@ -258,7 +285,7 @@
                         wnd.close();
                     } catch (e) {}
                     opts.data = e.data;
-                    return sendCallback(opts);
+                    return sendCallback(opts, defer);
                 }
                 opts.callback = function(e, r) {
                     if (window.removeEventListener) window.removeEventListener("message", getMessage, false);
@@ -269,13 +296,14 @@
                         clearTimeout(wndTimeout);
                         wndTimeout = undefined;
                     }
-                    return callback(e, r);
+                    return callback ? callback(e, r) : undefined;
                 };
                 if (window.attachEvent) window.attachEvent("onmessage", getMessage);
                 else if (document.attachEvent) document.attachEvent("onmessage", getMessage);
                 else if (window.addEventListener) window.addEventListener("message", getMessage, false);
                 if (typeof chrome != 'undefined' && chrome.runtime && chrome.runtime.onMessageExternal) chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
                     request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0]
+                    defer.resolve();
                     return getMessage(request);
                 });
                 if (!frm && (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0)) {
@@ -288,14 +316,21 @@
                     document.body.appendChild(frm);
                 }
                 wndTimeout = setTimeout(function() {
-                    opts.callback(new Error('Authorization timed out'));
+                    defer.reject(new Error('Authorization timed out'));
+                    if (opts.callback)
+                        opts.callback(new Error('Authorization timed out'));
                     try {
                         wnd.close();
                     } catch (e) {}
                 }, 1200 * 1000);
                 wnd = window.open(url, "Authorization", wnd_options);
                 if (wnd) wnd.focus();
-                else opts.callback(new Error("Could not open a popup"));
+                else {
+                    defer.reject(new Error("Could not open a popup"));
+                    if (opts.callback) opts.callback(new Error("Could not open a popup"));
+                }
+
+                return defer.promise();
             },
             redirect: function(provider, opts, url) {
                 if (arguments.length == 2) {
@@ -409,7 +444,6 @@
         };
 
         exports.OAuth.http_me = function(opts) {
-            console.log('http me');
             var options = {};
             for (var k in opts) {
                 options[k] = opts[k];
