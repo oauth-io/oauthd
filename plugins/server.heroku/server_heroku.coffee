@@ -75,7 +75,7 @@ exports.raw = ->
 	# Then set a cookie in the user’s browser to indicate that they are authenticated, 
 	# and then redirect to the admin panel for the resource.
 	sso_auth = (req, res, next) ->
-		console.log "req.params", req.params
+		console.log "req.params", req.body
 		 
 		pre_token = req.params.id + ":" + config.heroku.sso_salt + ":" + req.params.timestamp
 		shasum = crypto.createHash("sha1")
@@ -198,5 +198,5 @@ exports.raw = ->
 	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), provisionResource
 	@server.put new RegExp('/heroku/resources/:id'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), changePlan
 	@server.del '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
-	@server.post new RegExp('/heroku/sso'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
+	@server.post '/heroku/sso/login', restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
 	@server.get new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
