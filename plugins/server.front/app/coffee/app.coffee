@@ -41,6 +41,10 @@ define [
 					templateUrl: '/templates/landing-new.html'
 					controller: 'IndexCtrl'
 
+				$routeProvider.when '/heroku',
+					templateUrl: '/templates/landing-new.html'
+					controller: 'IndexCtrl'
+
 				$routeProvider.when '/providers',
 					templateUrl: '/templates/providers.html'
 					controller: 'ProviderCtrl'

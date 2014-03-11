@@ -90,21 +90,32 @@ exports.raw = ->
 			return
 
 		res.setHeader 'Content-Type', 'text/html'
-		expireDate = new Date((new Date - 0) + config.expire * 1000)
-		res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
-		res.setHeader 'Set-Cookie', 'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
-		res.setHeader 'Location', config.host_url + '/key-manager'
+		expireDate = new Date((new Date - 0) + 3600*36 * 1000)
+
+		# We need to send the app name to fill the heroku navbar
+		# We need to fil the heroku nav data cookie
+		cookies = [
+			'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
+			'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
+			'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
+			]
+		res.setHeader 'Set-Cookie', cookies
+		# multiple setHeader erasing previous one
+		# res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22;' + ' Path=/; Expires=' + expireDate.toUTCString() 
+		# res.setHeader 'Set-Cookie', 'heroku-body-app=' + req.body.app + ';' + ' Path=/; Expires=' + expireDate.toUTCString()
+		# res.setHeader 'Set-Cookie', 'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
+		# res.setHeader 'Location', config.host_url + '/key-manager'
+		res.setHeader 'Location', config.host_url
 
 		get_resource_by_id req.body.id, (err, resource) =>
 			res.send 404, "Not found" if err
+			# not used for now
 			# req.session.resource = resource
 			# req.session.email = req.body.email
 			next()
 			return
 
 	sso_login = (req, res, next) ->
-		# We need to send the app name to fill the heroku navbar
-		console.log "sso login req.body.app", req.body.app
 		res.setHeader 'Location', '/'
 		res.send 301
 		return

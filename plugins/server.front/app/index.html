@@ -89,13 +89,15 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
 	  });
       {{endif}}
     </script>
-
+  
+    {{if herokuNavData}}
     <script src="https://s3.amazonaws.com/assets.heroku.com/boomerang/boomerang.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        Boomerang.init({app: 'myapp', addon: 'oauthio'});
+        Boomerang.init({app: '{{heroku_app}}', addon: 'oauthio'});
       });
     </script>
+    {{endif}}
 </head>
 <body style="-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;">
     <div google-analytics></div>
