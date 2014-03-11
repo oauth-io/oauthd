@@ -1,493 +1,14 @@
-(function(exports) {
-    "use strict";
-    var config = {
-        oauthd_url: '{{auth_url}}',
-        oauthd_api: '{{api_url}}',
-        version: 'web-0.1.7',
-        options: {}
-    };
-    var providers_desc = {};
-    var providers_cb = {};
-    var providers_api = {
-        "execProvidersCb": function(provider, e, r) {
-            if (providers_cb[provider]) {
-                var cbs = providers_cb[provider];
-                delete providers_cb[provider];
-                for (var i in cbs) cbs[i](e, r);
-            }
-        },
-        // "fetchDescription": function(provider) is created once jquery loaded
-        "getDescription": function(provider, opts, callback) {
-            opts = opts || {}
-            if (typeof providers_desc[provider] === 'object') return callback(null, providers_desc[provider]);
-            if (!providers_desc[provider]) providers_api.fetchDescription(provider);
-            if (!opts.wait) return callback(null, {});
-            providers_cb[provider] = providers_cb[provider] || []
-            providers_cb[provider].push(callback);
-        }
-    };
-    config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
-    var client_states = [];
-    var oauth_result;
-    (function parse_urlfragment() {
-        var results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
-        if (results) {
-            document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, '');
-            oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
-            var cookie_state = readCookie("oauthio_state");
-            if (cookie_state) {
-                client_states.push(cookie_state);
-                eraseCookie("oauthio_state");
-            }
-        }
-    })();
-
-    function getAbsUrl(url) {
-        if (url.match(/^.{2,5}:\/\//)) return url;
-        if (url[0] === '/') return document.location.protocol + '//' + document.location.host + url;
-        var base_url = document.location.protocol + '//' + document.location.host + document.location.pathname;
-        if (base_url[base_url.length - 1] != '/' && url[0] != '#') return base_url + '/' + url;
-        return base_url + url;
-    }
-
-    function replaceParam(param, rep, rep2) {
-        param = param.replace(/\{\{(.*?)\}\}/g, function(m, v) {
-            return rep[v] || "";
-        });
-        if (rep2) param = param.replace(/\{(.*?)\}/g, function(m, v) {
-            return rep2[v] || "";
-        });
-        return param;
-    }
-
-    function mkHttp(provider, tokens, request, method) {
-        return function(opts, opts2) {
-            var options = {};
-            if (typeof opts === 'string') {
-                if (typeof opts2 === 'object')
-                    for (var i in opts2) {
-                        options[i] = opts2[i];
-                    }
-                options.url = opts;
-            } else if (typeof opts === 'object')
-                for (var i in opts) {
-                    options[i] = opts[i];
-                }
-            options.type = options.type || method;
-            options.oauthio = {
-                provider: provider,
-                tokens: tokens,
-                request: request
-            };
-            return exports.OAuth.http(options);
-        };
-    };
-
-    function mkHttpMe(provider, tokens, request, method) {
-        return function(filter) {
-            var options = {};
-            options.type = options.type || method;
-            options.oauthio = {
-                provider: provider,
-                tokens: tokens,
-                request: request
-            };
-            options.data = options.data || {};
-            options.data.filter = filter ? filter.join(',') : undefined;
-            return exports.OAuth.http_me(options);
-        };
-    };
-
-    function sendCallback(opts, defer) {
-        var data;
-        var err;
-        try {
-            data = JSON.parse(opts.data);
-        } catch (e) {
-            defer.reject(new Error('Error while parsing result'));
-            return opts.callback(new Error('Error while parsing result'));
-        }
-        if (!data || !data.provider) return;
-        if (opts.provider && data.provider.toLowerCase() !== opts.provider.toLowerCase()) return;
-        if (data.status === 'error' || data.status === 'fail') {
-            err = new Error(data.message);
-            err.body = data.data;
-            defer.reject(err);
-            if (opts.callback) {
-                return opts.callback(err);
-            } else {
-                return;
-            }
-        }
-        if (data.status !== 'success' || !data.data) {
-            err = new Error();
-            err.body = data.data;
-            defer.reject(err);
-            if (opts.callback) return opts.callback(err);
-            else return;
-        }
-        if (!data.state || client_states.indexOf(data.state) == -1) {
-            defer.reject(new Error('State is not matching'));
-            if (opts.callback) return opts.callback(new Error('State is not matching'));
-            else return;
-        }
-        if (!opts.provider) data.data.provider = data.provider;
-        var res = data.data;
-        if (cacheEnabled(opts.cache) && res) storeCache(data.provider, res);
-        var request = res.request;
-        delete res.request;
-        var tokens;
-        if (res.access_token) tokens = {
-            access_token: res.access_token
-        };
-        else if (res.oauth_token && res.oauth_token_secret) tokens = {
-            oauth_token: res.oauth_token,
-            oauth_token_secret: res.oauth_token_secret
-        };
-        if (!request) {
-            defer.resolve(res);
-            if (opts.callback) return opts.callback(null, res);
-            else return;
-        }
-        if (request.required)
-            for (var i in request.required) tokens[request.required[i]] = res[request.required[i]];
-        var make_res = function(method) {
-            return mkHttp(data.provider, tokens, request, method);
-        }
-
-        res.get = make_res('GET');
-        res.post = make_res('POST');
-        res.put = make_res('PUT');
-        res.patch = make_res('PATCH');
-        res.del = make_res('DELETE');
-
-        res.me = mkHttpMe(data.provider, tokens, request, 'GET');
-
-        defer.resolve(res);
-        if (opts.callback) return opts.callback(null, res);
-        else return;
-    }
-
-    function tryCache(provider, cache) {
-        if (cacheEnabled(cache)) {
-            cache = readCookie("oauthio_provider_" + provider);
-            if (!cache) return false;
-            cache = decodeURIComponent(cache);
-        }
-        if (typeof cache === 'string') {
-            try {
-                cache = JSON.parse(cache);
-            } catch (e) {
-                return false;
-            }
-        }
-        if (typeof cache === "object") {
-            var res = {};
-            for (var i in cache)
-                if (i !== 'request' && typeof cache[i] !== 'function') res[i] = cache[i];
-            return exports.OAuth.create(provider, res, cache.request);
-        }
-        return false;
-    }
-
-    function storeCache(provider, cache) {
-        createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
-    }
-
-    function cacheEnabled(cache) {
-        if (typeof cache === 'undefined') return config.options.cache;
-        return cache;
-    }
-    if (!exports.OAuth) {
-        exports.OAuth = {
-            initialize: function(public_key, options) {
-                config.key = public_key;
-                if (options)
-                    for (var i in options) config.options[i] = options[i];
-            },
-            setOAuthdURL: function(url) {
-                config.oauthd_url = url;
-                config.oauthd_base = getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
-            },
-            getVersion: function() {
-                return config.version;
-            },
-            create: function(provider, tokens, request) {
-                if (!tokens) return tryCache(provider, true);
-                if (typeof request !== 'object') providers_api.fetchDescription(provider);
-                var make_res = function(method) {
-                    return mkHttp(provider, tokens, request, method);
-                }
-                var make_res_endpoint = function(method, url) {
-                    return mkHttpEndpoint(data.provider, tokens, request, method, url);
-                }
-                var res = {};
-                for (var i in tokens) res[i] = tokens[i];
-                res.get = make_res('GET');
-                res.post = make_res('POST');
-                res.put = make_res('PUT');
-                res.patch = make_res('PATCH');
-                res.del = make_res('DELETE');
-
-                res.me = function(opts) {
-                    mkHttpMe(data.provider, tokens, request, 'GET');
-                }
-                return res;
-            },
-            popup: function(provider, opts, callback) {
-                var wnd, frm, wndTimeout;
-                var defer = $.Deferred();
-                opts = opts || {};
-                if (!config.key) {
-                    defer.rejet(new Error('OAuth object must be initialized'));
-                    return callback(new Error('OAuth object must be initialized'));
-                }
-                if (arguments.length == 2) {
-                    callback = opts;
-                    opts = {};
-                }
-                if (cacheEnabled(opts.cache)) {
-                    var res = tryCache(provider, opts.cache);
-                    if (res) {
-                        defer.resolve(res);
-                        if (callback) return callback(null, res);
-                        else return;
-                    }
-                }
-                if (!opts.state) {
-                    opts.state = create_hash();
-                    opts.state_type = "client";
-                }
-                client_states.push(opts.state);
-                var url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
-                url += '&d=' + encodeURIComponent(getAbsUrl('/'));
-                if (opts) url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
-                // create popup
-                var wnd_settings = {
-                    width: Math.floor(window.outerWidth * 0.8),
-                    height: Math.floor(window.outerHeight * 0.5)
-                };
-                if (wnd_settings.height < 350) wnd_settings.height = 350;
-                if (wnd_settings.width < 800) wnd_settings.width = 800;
-                wnd_settings.left = window.screenX + (window.outerWidth - wnd_settings.width) / 2;
-                wnd_settings.top = window.screenY + (window.outerHeight - wnd_settings.height) / 8;
-                var wnd_options = "width=" + wnd_settings.width + ",height=" + wnd_settings.height;
-                wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
-                wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
-                opts = {
-                    provider: provider,
-                    cache: opts.cache
-                };
-
-                function getMessage(e) {
-                    if (e.origin !== config.oauthd_base) return;
-                    try {
-                        wnd.close();
-                    } catch (e) {}
-                    opts.data = e.data;
-                    return sendCallback(opts, defer);
-                }
-                opts.callback = function(e, r) {
-                    if (window.removeEventListener) window.removeEventListener("message", getMessage, false);
-                    else if (window.detachEvent) window.detachEvent("onmessage", getMessage);
-                    else if (document.detachEvent) document.detachEvent("onmessage", getMessage);
-                    opts.callback = function() {};
-                    if (wndTimeout) {
-                        clearTimeout(wndTimeout);
-                        wndTimeout = undefined;
-                    }
-                    return callback ? callback(e, r) : undefined;
-                };
-                if (window.attachEvent) window.attachEvent("onmessage", getMessage);
-                else if (document.attachEvent) document.attachEvent("onmessage", getMessage);
-                else if (window.addEventListener) window.addEventListener("message", getMessage, false);
-                if (typeof chrome != 'undefined' && chrome.runtime && chrome.runtime.onMessageExternal) chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
-                    request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0]
-                    defer.resolve();
-                    return getMessage(request);
-                });
-                if (!frm && (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0)) {
-                    frm = document.createElement("iframe");
-                    frm.src = config.oauthd_url + "/auth/iframe?d=" + encodeURIComponent(getAbsUrl('/'));
-                    frm.width = 0
-                    frm.height = 0
-                    frm.frameBorder = 0
-                    frm.style.visibility = "hidden";
-                    document.body.appendChild(frm);
-                }
-                wndTimeout = setTimeout(function() {
-                    defer.reject(new Error('Authorization timed out'));
-                    if (opts.callback)
-                        opts.callback(new Error('Authorization timed out'));
-                    try {
-                        wnd.close();
-                    } catch (e) {}
-                }, 1200 * 1000);
-                wnd = window.open(url, "Authorization", wnd_options);
-                if (wnd) wnd.focus();
-                else {
-                    defer.reject(new Error("Could not open a popup"));
-                    if (opts.callback) opts.callback(new Error("Could not open a popup"));
-                }
-
-                return defer.promise();
-            },
-            redirect: function(provider, opts, url) {
-                if (arguments.length == 2) {
-                    url = opts;
-                    opts = {};
-                }
-                if (cacheEnabled(opts.cache)) {
-                    var res = tryCache(provider, opts.cache);
-                    if (res) {
-                        url = getAbsUrl(url) + ((url.indexOf('#') === -1) ? '#' : '&') + 'oauthio=cache';
-                        document.location.href = url;
-                        document.location.reload();
-                        return;
-                    }
-                }
-                if (!opts.state) {
-                    opts.state = create_hash();
-                    opts.state_type = "client";
-                }
-                createCookie("oauthio_state", opts.state);
-                var redirect_uri = encodeURIComponent(getAbsUrl(url));
-                url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
-                url += "&redirect_uri=" + redirect_uri;
-                if (opts) url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
-                document.location.href = url;
-            },
-            callback: function(provider, opts, callback) {
-                if (arguments.length == 1) {
-                    callback = provider;
-                    provider = undefined;
-                    opts = {};
-                }
-                if (arguments.length == 2) {
-                    callback = opts;
-                    opts = {};
-                }
-                if (cacheEnabled(opts.cache) || oauth_result === 'cache') {
-                    if (oauth_result === 'cache' && (typeof provider !== 'string' || !provider)) return callback(new Error("You must set a provider when using the cache"));
-                    var res = tryCache(provider, opts.cache);
-                    if (res) return callback(null, res);
-                }
-                if (!oauth_result) return;
-                sendCallback({
-                    data: oauth_result,
-                    provider: provider,
-                    cache: opts.cache,
-                    callback: callback
-                });
-            },
-            clearCache: function(provider) {
-                eraseCookie("oauthio_provider_" + provider);
-            }
-        };
-        if (typeof jQuery == 'undefined') {
-            var _preloadcalls = [];
-            var delayfn;
-            if (typeof chrome != 'undefined' && chrome.runtime) {
-                delayfn = function() {
-                    return function() {
-                        throw new Error("Please include jQuery before oauth.js");
-                    };
-                }
-            } else {
-                var e = document.createElement("script");
-                e.src = "//code.jquery.com/jquery.min.js";
-                e.type = "text/javascript";
-                e.onload = function() {
-                    delayedFunctions(jQuery);
-                    for (var i in _preloadcalls) _preloadcalls[i].fn.apply(null, _preloadcalls[i].args);
-                };
-                document.getElementsByTagName("head")[0].appendChild(e);
-                delayfn = function(f) {
-                    return function() {
-                        var args_copy = [];
-                        for (var arg in arguments) args_copy[arg] = arguments[arg];
-                        _preloadcalls.push({
-                            fn: f,
-                            args: args_copy
-                        });
-                    }
-                };
-            }
-            exports.OAuth.http = delayfn(function() {
-                exports.OAuth.http.apply(exports.OAuth, arguments)
-            })
-            providers_api.fetchDescription = delayfn(function() {
-                providers_api.fetchDescription.apply(providers_api, arguments)
-            });
-        } else delayedFunctions(jQuery);
-    }
-
-    function delayedFunctions($) {
-        providers_api.fetchDescription = function(provider) {
-            if (providers_desc[provider]) return;
-            providers_desc[provider] = true;
-            $.ajax({
-                url: config.oauthd_base + config.oauthd_api + '/providers/' + provider,
-                data: {
-                    extend: true
-                },
-                dataType: 'json'
-            }).done(function(data) {
-                providers_desc[provider] = data.data;
-                providers_api.execProvidersCb(provider, null, data.data);
-            }).always(function() {
-                if (typeof providers_desc[provider] !== 'object') {
-                    delete providers_desc[provider];
-                    providers_api.execProvidersCb(provider, new Error("Unable to fetch request description"));
-                }
-            });
-        };
-
-        exports.OAuth.http_me = function(opts) {
-            var options = {};
-            for (var k in opts) {
-                options[k] = opts[k];
-            }
-            if (!options.oauthio.request || options.oauthio.request === true) {
-                var desc_opts = {
-                    wait: !! options.oauthio.request
-                };
-                var defer = $.Deferred();
-                providers_api.getDescription(options.oauthio.provider, desc_opts, function(e, desc) {
-                    if (e) return defer.reject(e);
-                    if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.oauthio.request = desc.oauth1 && desc.oauth1.request;
-                    else options.oauthio.request = desc.oauth2 && desc.oauth2.request;
-                    defer.resolve();
-                });
-                return defer.then(doRequest);
-            } else return doRequest();
-
-            function doRequest() {
-                var defer = $.Deferred();
-                var request = options.oauthio.request || {};
-                options.url = config.oauthd_url + '/auth/' + options.oauthio.provider + '/me';
-                options.headers = options.headers || {};
-                options.headers.oauthio = 'k=' + config.key;
-                if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
-                for (var k in options.oauthio.tokens) options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
-                delete options.oauthio;
-                var promise = $.ajax(options);
-                $.when(promise)
-                    .done(function(data) {
-                        defer.resolve(data.data);
-                    })
-                    .fail(function(data) {
-                        if (data.responseJSON) {
-                            defer.reject(data.responseJSON.data);
-                        } else {
-                            defer.reject(new Error('An error occured while trying to access the resource'));
-                        }
-                    });
-                return defer.promise();
-            }
-        };
-
-        exports.OAuth.http = function(opts) {
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = {
+    oauthd_url: '{{auth_url}}',
+    oauthd_api: '{{api_url}}',
+    version: 'web-0.1.7',
+    options: {}
+};
+},{}],2:[function(require,module,exports){
+module.exports = function($, config, client_states, datastore) {
+    return {
+        http: function(opts) {
             var options = {};
             var i;
             for (i in opts) {
@@ -543,110 +64,607 @@
                     return $.ajax(options);
                 }
             };
+        },
+        http_me: function(opts) {
+            var options = {};
+            for (var k in opts) {
+                options[k] = opts[k];
+            }
+            if (!options.oauthio.request || options.oauthio.request === true) {
+                var desc_opts = {
+                    wait: !! options.oauthio.request
+                };
+                var defer = $.Deferred();
+                providers_api.getDescription(options.oauthio.provider, desc_opts, function(e, desc) {
+                    if (e) return defer.reject(e);
+                    if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.oauthio.request = desc.oauth1 && desc.oauth1.request;
+                    else options.oauthio.request = desc.oauth2 && desc.oauth2.request;
+                    defer.resolve();
+                });
+                return defer.then(doRequest);
+            } else return doRequest();
+
+            function doRequest() {
+                var defer = $.Deferred();
+                var request = options.oauthio.request || {};
+                options.url = config.oauthd_url + '/auth/' + options.oauthio.provider + '/me';
+                options.headers = options.headers || {};
+                options.headers.oauthio = 'k=' + config.key;
+                if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
+                for (var k in options.oauthio.tokens) options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
+                delete options.oauthio;
+                var promise = $.ajax(options);
+                $.when(promise)
+                    .done(function(data) {
+                        defer.resolve(data.data);
+                    })
+                    .fail(function(data) {
+                        if (data.responseJSON) {
+                            defer.reject(data.responseJSON.data);
+                        } else {
+                            defer.reject(new Error('An error occured while trying to access the resource'));
+                        }
+                    });
+                return defer.promise();
+            }
+        },
+        mkHttp: function(provider, tokens, request, method) {
+            var base = this;
+            return function(opts, opts2) {
+                var options = {};
+                if (typeof opts === 'string') {
+                    if (typeof opts2 === 'object')
+                        for (var i in opts2) {
+                            options[i] = opts2[i];
+                        }
+                    options.url = opts;
+                } else if (typeof opts === 'object')
+                    for (var i in opts) {
+                        options[i] = opts[i];
+                    }
+                options.type = options.type || method;
+                options.oauthio = {
+                    provider: provider,
+                    tokens: tokens,
+                    request: request
+                };
+                return base.http(options);
+            };
+        },
+        mkHttpMe: function(provider, tokens, request, method) {
+            var base = this;
+            return function(filter) {
+                var options = {};
+                options.type = options.type || method;
+                options.oauthio = {
+                    provider: provider,
+                    tokens: tokens,
+                    request: request
+                };
+                options.data = options.data || {};
+                options.data.filter = filter ? filter.join(',') : undefined;
+                return base.http_me(options);
+            };
+        },
+        sendCallback: function(opts, defer) {
+            var base = this;
+            var data;
+            var err;
+            try {
+                data = JSON.parse(opts.data);
+            } catch (e) {
+                defer.reject(new Error('Error while parsing result'));
+                return opts.callback(new Error('Error while parsing result'));
+            }
+            if (!data || !data.provider) return;
+            if (opts.provider && data.provider.toLowerCase() !== opts.provider.toLowerCase()) return;
+            if (data.status === 'error' || data.status === 'fail') {
+                err = new Error(data.message);
+                err.body = data.data;
+                defer.reject(err);
+                if (opts.callback) {
+                    return opts.callback(err);
+                } else {
+                    return;
+                }
+            }
+            if (data.status !== 'success' || !data.data) {
+                err = new Error();
+                err.body = data.data;
+                defer.reject(err);
+                if (opts.callback) return opts.callback(err);
+                else return;
+            }
+            if (!data.state || client_states.indexOf(data.state) == -1) {
+                defer.reject(new Error('State is not matching'));
+                if (opts.callback) return opts.callback(new Error('State is not matching'));
+                else return;
+            }
+            if (!opts.provider) data.data.provider = data.provider;
+            var res = data.data;
+            if (datastore.cache.cacheEnabled(opts.cache) && res) datastore.cache.storeCache(data.provider, res);
+            var request = res.request;
+            delete res.request;
+            var tokens;
+            if (res.access_token) tokens = {
+                access_token: res.access_token
+            };
+            else if (res.oauth_token && res.oauth_token_secret) tokens = {
+                oauth_token: res.oauth_token,
+                oauth_token_secret: res.oauth_token_secret
+            };
+            if (!request) {
+                defer.resolve(res);
+                if (opts.callback) return opts.callback(null, res);
+                else return;
+            }
+            if (request.required)
+                for (var i in request.required) tokens[request.required[i]] = res[request.required[i]];
+            var make_res = function(method) {
+                return base.mkHttp(data.provider, tokens, request, method);
+            }
+
+            res.get = make_res('GET');
+            res.post = make_res('POST');
+            res.put = make_res('PUT');
+            res.patch = make_res('PATCH');
+            res.del = make_res('DELETE');
+
+            res.me = base.mkHttpMe(data.provider, tokens, request, 'GET');
+
+            defer.resolve(res);
+            if (opts.callback) return opts.callback(null, res);
+            else return;
+        }
+    };
+}
+},{}],3:[function(require,module,exports){
+require('./oauth')(window || this);
+},{"./oauth":4}],4:[function(require,module,exports){
+"use strict";
+
+var sha1 = require('./tools/sha1');
+var config = require('./config');
+var datastore = require('./tools/datastore')(config);
+var Url = require('./tools/url')();
+
+var oauthio = {
+    request: {}
+};
+
+var providers_desc = {};
+var providers_cb = {};
+var providers_api = {
+    "execProvidersCb": function(provider, e, r) {
+        if (providers_cb[provider]) {
+            var cbs = providers_cb[provider];
+            delete providers_cb[provider];
+            for (var i in cbs) cbs[i](e, r);
+        }
+    },
+    // "fetchDescription": function(provider) is created once jquery loaded
+    "getDescription": function(provider, opts, callback) {
+        opts = opts || {};
+        if (typeof providers_desc[provider] === 'object') return callback(null, providers_desc[provider]);
+        if (!providers_desc[provider]) providers_api.fetchDescription(provider);
+        if (!opts.wait) return callback(null, {});
+        providers_cb[provider] = providers_cb[provider] || [];
+        providers_cb[provider].push(callback);
+    }
+};
+
+config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+
+var client_states = [];
+var oauth_result;
+(function parse_urlfragment() {
+    var results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
+    if (results) {
+        document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, '');
+        oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
+        var cookie_state = datastore.cookies.readCookie("oauthio_state");
+        if (cookie_state) {
+            client_states.push(cookie_state);
+            datastore.cookies.eraseCookie("oauthio_state");
         }
     }
+})();
 
-    function create_hash() {
-        var hash = b64_sha1((new Date()).getTime() + ':' + Math.floor(Math.random() * 9999999));
-        return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+module.exports = function(exports) {
+    if (!exports.OAuth) {
+        exports.OAuth = {
+            initialize: function(public_key, options) {
+                config.key = public_key;
+                if (options)
+                    for (var i in options) config.options[i] = options[i];
+            },
+            setOAuthdURL: function(url) {
+                config.oauthd_url = url;
+                config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+            },
+            getVersion: function() {
+                return config.version;
+            },
+            create: function(provider, tokens, request) {
+                if (!tokens) return datastore.cache.tryCache(provider, true);
+                if (typeof request !== 'object') providers_api.fetchDescription(provider);
+                var make_res = function(method) {
+                    return oauthio.request.mkHttp(provider, tokens, request, method);
+                }
+                var make_res_endpoint = function(method, url) {
+                    return oauthio.request.mkHttpEndpoint(data.provider, tokens, request, method, url);
+                }
+                var res = {};
+                for (var i in tokens) res[i] = tokens[i];
+                res.get = make_res('GET');
+                res.post = make_res('POST');
+                res.put = make_res('PUT');
+                res.patch = make_res('PATCH');
+                res.del = make_res('DELETE');
+
+                res.me = function(opts) {
+                    oauthio.request.mkHttpMe(data.provider, tokens, request, 'GET');
+                }
+                return res;
+            },
+            popup: function(provider, opts, callback) {
+                var wnd, frm, wndTimeout;
+                var defer = $.Deferred();
+                opts = opts || {};
+                if (!config.key) {
+                    defer.rejet(new Error('OAuth object must be initialized'));
+                    return callback(new Error('OAuth object must be initialized'));
+                }
+                if (arguments.length == 2) {
+                    callback = opts;
+                    opts = {};
+                }
+                if (datastore.cache.cacheEnabled(opts.cache)) {
+                    var res = datastore.cache.tryCache(provider, opts.cache);
+                    if (res) {
+                        defer.resolve(res);
+                        if (callback) return callback(null, res);
+                        else return;
+                    }
+                }
+                if (!opts.state) {
+                    opts.state = sha1.create_hash();
+                    opts.state_type = "client";
+                }
+                client_states.push(opts.state);
+                var url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
+                url += '&d=' + encodeURIComponent(Url.getAbsUrl('/'));
+                if (opts) url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
+                // create popup
+                var wnd_settings = {
+                    width: Math.floor(window.outerWidth * 0.8),
+                    height: Math.floor(window.outerHeight * 0.5)
+                };
+                if (wnd_settings.height < 350) wnd_settings.height = 350;
+                if (wnd_settings.width < 800) wnd_settings.width = 800;
+                wnd_settings.left = window.screenX + (window.outerWidth - wnd_settings.width) / 2;
+                wnd_settings.top = window.screenY + (window.outerHeight - wnd_settings.height) / 8;
+                var wnd_options = "width=" + wnd_settings.width + ",height=" + wnd_settings.height;
+                wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
+                wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
+                opts = {
+                    provider: provider,
+                    cache: opts.cache
+                };
+
+                function getMessage(e) {
+                    if (e.origin !== config.oauthd_base) return;
+                    try {
+                        wnd.close();
+                    } catch (e) {}
+                    opts.data = e.data;
+                    return oauthio.request.sendCallback(opts, defer);
+                }
+                opts.callback = function(e, r) {
+                    if (window.removeEventListener) window.removeEventListener("message", getMessage, false);
+                    else if (window.detachEvent) window.detachEvent("onmessage", getMessage);
+                    else if (document.detachEvent) document.detachEvent("onmessage", getMessage);
+                    opts.callback = function() {};
+                    if (wndTimeout) {
+                        clearTimeout(wndTimeout);
+                        wndTimeout = undefined;
+                    }
+                    return callback ? callback(e, r) : undefined;
+                };
+                if (window.attachEvent) window.attachEvent("onmessage", getMessage);
+                else if (document.attachEvent) document.attachEvent("onmessage", getMessage);
+                else if (window.addEventListener) window.addEventListener("message", getMessage, false);
+                if (typeof chrome != 'undefined' && chrome.runtime && chrome.runtime.onMessageExternal) chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
+                    request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0]
+                    defer.resolve();
+                    return getMessage(request);
+                });
+                if (!frm && (navigator.userAgent.indexOf('MSIE') !== -1 || navigator.appVersion.indexOf('Trident/') > 0)) {
+                    frm = document.createElement("iframe");
+                    frm.src = config.oauthd_url + "/auth/iframe?d=" + encodeURIComponent(Url.getAbsUrl('/'));
+                    frm.width = 0
+                    frm.height = 0
+                    frm.frameBorder = 0
+                    frm.style.visibility = "hidden";
+                    document.body.appendChild(frm);
+                }
+                wndTimeout = setTimeout(function() {
+                    defer.reject(new Error('Authorization timed out'));
+                    if (opts.callback)
+                        opts.callback(new Error('Authorization timed out'));
+                    try {
+                        wnd.close();
+                    } catch (e) {}
+                }, 1200 * 1000);
+                wnd = window.open(url, "Authorization", wnd_options);
+                if (wnd) wnd.focus();
+                else {
+                    defer.reject(new Error("Could not open a popup"));
+                    if (opts.callback) opts.callback(new Error("Could not open a popup"));
+                }
+
+                return defer.promise();
+            },
+            redirect: function(provider, opts, url) {
+                if (arguments.length == 2) {
+                    url = opts;
+                    opts = {};
+                }
+                if (datastore.cache.cacheEnabled(opts.cache)) {
+                    var res = datastore.cache.tryCache(provider, opts.cache);
+                    if (res) {
+                        url = Url.getAbsUrl(url) + ((url.indexOf('#') === -1) ? '#' : '&') + 'oauthio=cache';
+                        document.location.href = url;
+                        document.location.reload();
+                        return;
+                    }
+                }
+                if (!opts.state) {
+                    opts.state = sha1.create_hash();
+                    opts.state_type = "client";
+                }
+                datastore.cookies.createCookie("oauthio_state", opts.state);
+                var redirect_uri = encodeURIComponent(Url.getAbsUrl(url));
+                url = config.oauthd_url + '/auth/' + provider + "?k=" + config.key;
+                url += "&redirect_uri=" + redirect_uri;
+                if (opts) url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
+                document.location.href = url;
+            },
+            callback: function(provider, opts, callback) {
+                if (arguments.length == 1) {
+                    callback = provider;
+                    provider = undefined;
+                    opts = {};
+                }
+                if (arguments.length == 2) {
+                    callback = opts;
+                    opts = {};
+                }
+                if (datastore.cache.cacheEnabled(opts.cache) || oauth_result === 'cache') {
+                    if (oauth_result === 'cache' && (typeof provider !== 'string' || !provider)) return callback(new Error("You must set a provider when using the cache"));
+                    var res = datastore.cache.tryCache(provider, opts.cache);
+                    if (res) return callback(null, res);
+                }
+                if (!oauth_result) return;
+                oauthio.request.sendCallback({
+                    data: oauth_result,
+                    provider: provider,
+                    cache: opts.cache,
+                    callback: callback
+                });
+            },
+            clearCache: function(provider) {
+                datastore.cookies.eraseCookie("oauthio_provider_" + provider);
+            },
+            http_me: function(opts) {
+                if (oauthio.request.http_me)
+                    oauthio.request.http_me(opts);
+            },
+            http: function(opts) {
+                if (oauthio.request.http)
+                    oauthio.request.http(opts);
+            }
+        };
+        if (typeof jQuery == 'undefined') {
+            var _preloadcalls = [];
+            var delayfn;
+            if (typeof chrome != 'undefined' && chrome.runtime) {
+                delayfn = function() {
+                    return function() {
+                        throw new Error("Please include jQuery before oauth.js");
+                    };
+                }
+            } else {
+                var e = document.createElement("script");
+                e.src = "//code.jquery.com/jquery.min.js";
+                e.type = "text/javascript";
+                e.onload = function() {
+                    delayedFunctions(jQuery);
+                    for (var i in _preloadcalls) _preloadcalls[i].fn.apply(null, _preloadcalls[i].args);
+                };
+                document.getElementsByTagName("head")[0].appendChild(e);
+                delayfn = function(f) {
+                    return function() {
+                        var args_copy = [];
+                        for (var arg in arguments) args_copy[arg] = arguments[arg];
+                        _preloadcalls.push({
+                            fn: f,
+                            args: args_copy
+                        });
+                    }
+                };
+            }
+            oauthio.request.http = delayfn(function() {
+                oauthio.request.http.apply(exports.OAuth, arguments);
+            })
+            providers_api.fetchDescription = delayfn(function() {
+                providers_api.fetchDescription.apply(providers_api, arguments);
+            });
+            oauthio.request = require('./lib/oauthio_requests')(jQuery, config, client_states, datastore);
+        } else delayedFunctions(jQuery);
     }
 
-    function createCookie(name, value, expires) {
-        eraseCookie(name);
-        var date = new Date();
-        date.setTime(date.getTime() + (expires || 1200) * 1000); // def: 20 mins
-        var expires = "; expires=" + date.toGMTString();
-        document.cookie = name + "=" + value + expires + "; path=/";
+    function delayedFunctions($) {
+        oauthio.request = require('./lib/oauthio_requests')($, config, client_states, datastore);
+        providers_api.fetchDescription = function(provider) {
+            if (providers_desc[provider]) return;
+            providers_desc[provider] = true;
+            $.ajax({
+                url: config.oauthd_base + config.oauthd_api + '/providers/' + provider,
+                data: {
+                    extend: true
+                },
+                dataType: 'json'
+            }).done(function(data) {
+                providers_desc[provider] = data.data;
+                providers_api.execProvidersCb(provider, null, data.data);
+            }).always(function() {
+                if (typeof providers_desc[provider] !== 'object') {
+                    delete providers_desc[provider];
+                    providers_api.execProvidersCb(provider, new Error("Unable to fetch request description"));
+                }
+            });
+        };
     }
-
-    function readCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+};
+},{"./config":1,"./lib/oauthio_requests":2,"./tools/datastore":5,"./tools/sha1":6,"./tools/url":7}],5:[function(require,module,exports){
+module.exports = function(config) {
+    return {
+        cookies: {
+            createCookie: function(name, value, expires) {
+                eraseCookie(name);
+                var date = new Date();
+                date.setTime(date.getTime() + (expires || 1200) * 1000); // def: 20 mins
+                var expires = "; expires=" + date.toGMTString();
+                document.cookie = name + "=" + value + expires + "; path=/";
+            },
+            readCookie: function(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            },
+            eraseCookie: function(name) {
+                var date = new Date();
+                date.setTime(date.getTime() - 86400000);
+                document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
+            }
+        },
+        cache: {
+            tryCache: function(provider, cache) {
+                if (cacheEnabled(cache)) {
+                    cache = readCookie("oauthio_provider_" + provider);
+                    if (!cache) return false;
+                    cache = decodeURIComponent(cache);
+                }
+                if (typeof cache === 'string') {
+                    try {
+                        cache = JSON.parse(cache);
+                    } catch (e) {
+                        return false;
+                    }
+                }
+                if (typeof cache === "object") {
+                    var res = {};
+                    for (var i in cache)
+                        if (i !== 'request' && typeof cache[i] !== 'function') res[i] = cache[i];
+                    return exports.OAuth.create(provider, res, cache.request);
+                }
+                return false;
+            },
+            storeCache: function(provider, cache) {
+                createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
+            },
+            cacheEnabled: function(cache) {
+                if (typeof cache === 'undefined') return config.options.cache;
+                return cache;
+            }
         }
-        return null;
-    }
+    };
+}
+},{}],6:[function(require,module,exports){
+/*
+ * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
+ * in FIPS 180-1
+ * Version 2.2 Copyright Paul Johnston 2000 - 2009.
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
+ * Distributed under the BSD License
+ * See http://pajhome.org.uk/crypt/md5 for details.
+ */
+/*
+ * Configurable variables. You may need to tweak these to be compatible with
+ * the server-side, but the defaults work in most cases.
+ */
 
-    function eraseCookie(name) {
-        var date = new Date();
-        date.setTime(date.getTime() - 86400000);
-        document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
-    }
-    /*
-     * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
-     * in FIPS 180-1
-     * Version 2.2 Copyright Paul Johnston 2000 - 2009.
-     * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
-     * Distributed under the BSD License
-     * See http://pajhome.org.uk/crypt/md5 for details.
-     */
-    /*
-     * Configurable variables. You may need to tweak these to be compatible with
-     * the server-side, but the defaults work in most cases.
-     */
-    var hexcase = 0; /* hex output format. 0 - lowercase; 1 - uppercase        */
-    var b64pad = ""; /* base-64 pad character. "=" for strict RFC compliance   */
-    /*
-     * These are the functions you'll usually want to call
-     * They take string arguments and return either hex or base-64 encoded strings
-     */
-    function hex_sha1(s) {
-        return rstr2hex(rstr_sha1(str2rstr_utf8(s)));
-    }
 
-    function b64_sha1(s) {
-        return rstr2b64(rstr_sha1(str2rstr_utf8(s)));
-    }
 
-    function any_sha1(s, e) {
-        return rstr2any(rstr_sha1(str2rstr_utf8(s)), e);
-    }
+var hexcase = 0; /* hex output format. 0 - lowercase; 1 - uppercase        */
+var b64pad = ""; /* base-64 pad character. "=" for strict RFC compliance   */
+/*
+ * These are the functions you'll usually want to call
+ * They take string arguments and return either hex or base-64 encoded strings
+ */
+module.exports = {
+    hex_sha1: function(s) {
+        return this.rstr2hex(this.rstr_sha1(this.str2rstr_utf8(s)));
+    },
 
-    function hex_hmac_sha1(k, d) {
-        return rstr2hex(rstr_hmac_sha1(str2rstr_utf8(k), str2rstr_utf8(d)));
-    }
+    b64_sha1: function(s) {
+        return this.rstr2b64(this.rstr_sha1(this.str2rstr_utf8(s)));
+    },
 
-    function b64_hmac_sha1(k, d) {
-        return rstr2b64(rstr_hmac_sha1(str2rstr_utf8(k), str2rstr_utf8(d)));
-    }
+    any_sha1: function(s, e) {
+        return this.rstr2any(this.rstr_sha1(this.str2rstr_utf8(s)), e);
+    },
 
-    function any_hmac_sha1(k, d, e) {
-        return rstr2any(rstr_hmac_sha1(str2rstr_utf8(k), str2rstr_utf8(d)), e);
-    }
+    hex_hmac_sha1: function(k, d) {
+        return this.rstr2hex(this.rstr_hmac_sha1(this.str2rstr_utf8(k), this.str2rstr_utf8(d)));
+    },
+
+    b64_hmac_sha1: function(k, d) {
+        return this.rstr2b64(this.rstr_hmac_sha1(this.str2rstr_utf8(k), this.str2rstr_utf8(d)));
+    },
+
+    any_hmac_sha1: function(k, d, e) {
+        return this.rstr2any(this.rstr_hmac_sha1(this.str2rstr_utf8(k), this.str2rstr_utf8(d)), e);
+    },
     /*
      * Perform a simple self-test to see if the VM is working
      */
-    function sha1_vm_test() {
-        return hex_sha1("abc").toLowerCase() == "a9993e364706816aba3e25717850c26c9cd0d89d";
-    }
+    sha1_vm_test: function() {
+        return thishex_sha1("abc").toLowerCase() == "a9993e364706816aba3e25717850c26c9cd0d89d";
+    },
+
+
     /*
      * Calculate the SHA1 of a raw string
      */
-    function rstr_sha1(s) {
-        return binb2rstr(binb_sha1(rstr2binb(s), s.length * 8));
-    }
+    rstr_sha1: function(s) {
+        return this.binb2rstr(this.binb_sha1(this.rstr2binb(s), s.length * 8));
+    },
     /*
      * Calculate the HMAC-SHA1 of a key and some data (raw strings)
      */
-    function rstr_hmac_sha1(key, data) {
-        var bkey = rstr2binb(key);
-        if (bkey.length > 16) bkey = binb_sha1(bkey, key.length * 8);
+    rstr_hmac_sha1: function(key, data) {
+        var bkey = this.rstr2binb(key);
+        if (bkey.length > 16) bkey = this.binb_sha1(bkey, key.length * 8);
         var ipad = Array(16),
             opad = Array(16);
         for (var i = 0; i < 16; i++) {
             ipad[i] = bkey[i] ^ 0x36363636;
             opad[i] = bkey[i] ^ 0x5C5C5C5C;
         }
-        var hash = binb_sha1(ipad.concat(rstr2binb(data)), 512 + data.length * 8);
-        return binb2rstr(binb_sha1(opad.concat(hash), 512 + 160));
-    }
+        var hash = this.binb_sha1(ipad.concat(this.rstr2binb(data)), 512 + data.length * 8);
+        return this.binb2rstr(this.binb_sha1(opad.concat(hash), 512 + 160));
+    },
     /*
      * Convert a raw string to a hex string
      */
-    function rstr2hex(input) {
+    rstr2hex: function(input) {
         try {
             hexcase
         } catch (e) {
@@ -660,11 +678,11 @@
             output += hex_tab.charAt((x >>> 4) & 0x0F) + hex_tab.charAt(x & 0x0F);
         }
         return output;
-    }
+    },
     /*
      * Convert a raw string to a base-64 string
      */
-    function rstr2b64(input) {
+    rstr2b64: function(input) {
         try {
             b64pad
         } catch (e) {
@@ -681,11 +699,11 @@
             }
         }
         return output;
-    }
+    },
     /*
      * Convert a raw string to an arbitrary string encoding
      */
-    function rstr2any(input, encoding) {
+    rstr2any: function(input, encoding) {
         var divisor = encoding.length;
         var remainders = Array();
         var i, q, x, quotient;
@@ -719,12 +737,12 @@
         var full_length = Math.ceil(input.length * 8 / (Math.log(encoding.length) / Math.log(2)))
         for (i = output.length; i < full_length; i++) output = encoding[0] + output;
         return output;
-    }
+    },
     /*
      * Encode a string as utf-8.
      * For efficiency, this assumes the input is valid utf-16.
      */
-    function str2rstr_utf8(input) {
+    str2rstr_utf8: function(input) {
         var output = "";
         var i = -1;
         var x, y;
@@ -743,43 +761,43 @@
             else if (x <= 0x1FFFFF) output += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07), 0x80 | ((x >>> 12) & 0x3F), 0x80 | ((x >>> 6) & 0x3F), 0x80 | (x & 0x3F));
         }
         return output;
-    }
+    },
     /*
      * Encode a string as utf-16
      */
-    function str2rstr_utf16le(input) {
+    str2rstr_utf16le: function(input) {
         var output = "";
         for (var i = 0; i < input.length; i++) output += String.fromCharCode(input.charCodeAt(i) & 0xFF, (input.charCodeAt(i) >>> 8) & 0xFF);
         return output;
-    }
+    },
 
-    function str2rstr_utf16be(input) {
+    str2rstr_utf16be: function(input) {
         var output = "";
         for (var i = 0; i < input.length; i++) output += String.fromCharCode((input.charCodeAt(i) >>> 8) & 0xFF, input.charCodeAt(i) & 0xFF);
         return output;
-    }
+    },
     /*
      * Convert a raw string to an array of big-endian words
      * Characters >255 have their high-byte silently ignored.
      */
-    function rstr2binb(input) {
+    rstr2binb: function(input) {
         var output = Array(input.length >> 2);
         for (var i = 0; i < output.length; i++) output[i] = 0;
         for (var i = 0; i < input.length * 8; i += 8) output[i >> 5] |= (input.charCodeAt(i / 8) & 0xFF) << (24 - i % 32);
         return output;
-    }
+    },
     /*
      * Convert an array of big-endian words to a string
      */
-    function binb2rstr(input) {
+    binb2rstr: function(input) {
         var output = "";
         for (var i = 0; i < input.length * 32; i += 8) output += String.fromCharCode((input[i >> 5] >>> (24 - i % 32)) & 0xFF);
         return output;
-    }
+    },
     /*
      * Calculate the SHA-1 of an array of big-endian words, and a bit length
      */
-    function binb_sha1(x, len) {
+    binb_sha1: function(x, len) {
         /* append padding */
         x[len >> 5] |= 0x80 << (24 - len % 32);
         x[((len + 64 >> 9) << 4) + 15] = len;
@@ -797,51 +815,78 @@
             var olde = e;
             for (var j = 0; j < 80; j++) {
                 if (j < 16) w[j] = x[i + j];
-                else w[j] = bit_rol(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
-                var t = safe_add(safe_add(bit_rol(a, 5), sha1_ft(j, b, c, d)), safe_add(safe_add(e, w[j]), sha1_kt(j)));
+                else w[j] = this.bit_rol(w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16], 1);
+                var t = this.safe_add(this.safe_add(this.bit_rol(a, 5), this.sha1_ft(j, b, c, d)), this.safe_add(this.safe_add(e, w[j]), this.sha1_kt(j)));
                 e = d;
                 d = c;
-                c = bit_rol(b, 30);
+                c = this.bit_rol(b, 30);
                 b = a;
                 a = t;
             }
-            a = safe_add(a, olda);
-            b = safe_add(b, oldb);
-            c = safe_add(c, oldc);
-            d = safe_add(d, oldd);
-            e = safe_add(e, olde);
+            a = this.safe_add(a, olda);
+            b = this.safe_add(b, oldb);
+            c = this.safe_add(c, oldc);
+            d = this.safe_add(d, oldd);
+            e = this.safe_add(e, olde);
         }
         return Array(a, b, c, d, e);
-    }
+    },
     /*
      * Perform the appropriate triplet combination function for the current
      * iteration
      */
-    function sha1_ft(t, b, c, d) {
+    sha1_ft: function(t, b, c, d) {
         if (t < 20) return (b & c) | ((~b) & d);
         if (t < 40) return b ^ c ^ d;
         if (t < 60) return (b & c) | (b & d) | (c & d);
         return b ^ c ^ d;
-    }
+    },
     /*
      * Determine the appropriate additive constant for the current iteration
      */
-    function sha1_kt(t) {
+    sha1_kt: function(t) {
         return (t < 20) ? 1518500249 : (t < 40) ? 1859775393 : (t < 60) ? -1894007588 : -899497514;
-    }
+    },
     /*
      * Add integers, wrapping at 2^32. This uses 16-bit operations internally
      * to work around bugs in some JS interpreters.
      */
-    function safe_add(x, y) {
+    safe_add: function(x, y) {
         var lsw = (x & 0xFFFF) + (y & 0xFFFF);
         var msw = (x >> 16) + (y >> 16) + (lsw >> 16);
         return (msw << 16) | (lsw & 0xFFFF);
-    }
+    },
     /*
      * Bitwise rotate a 32-bit number to the left.
      */
-    function bit_rol(num, cnt) {
+    bit_rol: function(num, cnt) {
         return (num << cnt) | (num >>> (32 - cnt));
+    },
+
+    create_hash: function() {
+        var hash = this.b64_sha1((new Date()).getTime() + ':' + Math.floor(Math.random() * 9999999));
+        return hash.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
     }
-})(this || window);
+};
+},{}],7:[function(require,module,exports){
+module.exports = function() {
+    return {
+        getAbsUrl: function(url) {
+            if (url.match(/^.{2,5}:\/\//)) return url;
+            if (url[0] === '/') return document.location.protocol + '//' + document.location.host + url;
+            var base_url = document.location.protocol + '//' + document.location.host + document.location.pathname;
+            if (base_url[base_url.length - 1] != '/' && url[0] != '#') return base_url + '/' + url;
+            return base_url + url;
+        },
+        replaceParam: function(param, rep, rep2) {
+            param = param.replace(/\{\{(.*?)\}\}/g, function(m, v) {
+                return rep[v] || "";
+            });
+            if (rep2) param = param.replace(/\{(.*?)\}/g, function(m, v) {
+                return rep2[v] || "";
+            });
+            return param;
+        }
+    };
+}
+},{}]},{},[3])
