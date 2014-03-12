@@ -44,7 +44,7 @@ exports.raw = ->
 				]).exec (err, res) ->
 					return callback err if err
 					user = id:val, mail:data.heroku_id, heroku_id:data.heroku_id, heroku_name:heroku_app_name, heroku_url:heroku_url, current_plan:data.plan, key:key, date_inscr:date_now, date_validate:date_now
-					# shared.emit 'user.register', user
+					shared.emit 'user.register', user
 					return callback null, user
 
 	# * Authentication
@@ -185,7 +185,7 @@ exports.raw = ->
 							prefix + 'apps' ]
 					]).exec (err, replies) ->
 						return callback err if err
-						# shared.emit 'user.remove', mail:mail
+						shared.emit 'user.remove', mail:resource.mail
 						callback()
 
 	# Plan Change
@@ -219,20 +219,29 @@ exports.raw = ->
 	# - the ID
 	# - a config var hash containing a URL to consume the service
 	provisionResource = (req, res, next) =>
-		console.log "req.body", req.body
 		data =
   			heroku_id: req.body.heroku_id
   			plan: req.body.plan
+  			callback_url: req.body.callback_url
+  		# callback_url unused for the moment
 		registerHerokuAppUser data, (err, user) =>
+			console.log ""
 			console.log "user", user
 			res.send 404 if err
-			result = 
-				id: 
-					user.heroku_id
-				config: 
-					OAUTHIO_URL: user.heroku_url
-			res.setHeader 'Content-Type', 'application/json'
-			res.end JSON.stringify(result)
+			db.users.getApps user.id, (err, appkeys) ->
+				console.log ""
+				console.log "appkeys", appkeys
+				result = 
+					id: 
+						user.heroku_id
+					config: 
+						OAUTHIO_PUBLIC_KEY: appkeys[0]
+						OAUTHIO_URL: user.heroku_url
+				stringifyResult = JSON.stringify(result)
+				console.log "stringifyResult", stringifyResult
+				console.log ""
+				res.setHeader 'Content-Type', 'application/json'
+				res.end stringifyResult
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
