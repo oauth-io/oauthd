@@ -115,6 +115,7 @@ exports.raw = ->
 					bodyParser = restify.bodyParser mapParams:false
 					bodyParser[0] req, res, -> bodyParser[1] req, res, ->
 						options.form = req.body
+						delete options.headers['Content-Length']
 						api_request = request options
 						sendres()
 				else
