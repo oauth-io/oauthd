@@ -61,14 +61,21 @@
 						</div>
 				  </div>
 				</div>
-				<div class="row" style="margin-top: 15px">
-					<div class="col-lg-12">
-						<label for="profile_name">Promotion code</label>
-						<div class="input-group">
-							<input type="text" ng-model="coupon.code" name="coupon" ng-required="false" id="coupon" class="form-control" ng-change="coupon.changed = true" />
-							<span class="input-group-btn">
-								<button type="button" class="btn btn-success" ng-click="confirmCoupon()">Apply</button>
-							</span>
+				<div ng-init="promotionDisplay = false">
+					<div class="row" style="margin-top: 15px" ng-hide="promotionDisplay">
+						<div class="col-lg-12">
+							<small><a href="#" ng-click="promotionDisplay = true">I have a <strong>Promotion code</strong></a></small>
+						</div>
+					</div>
+					<div class="row" style="margin-top: 15px" ng-show="promotionDisplay">
+						<div class="col-lg-12">
+							<label for="profile_name">Promotion code <small><a href="#" ng-click="promotionDisplay=false">(cancel)</a></small></label>
+							<div class="input-group">
+								<input type="text" ng-model="coupon.code" name="coupon" ng-required="false" id="coupon" class="form-control" ng-change="coupon.changed = true" />
+								<span class="input-group-btn">
+									<button type="button" class="btn btn-success" ng-click="confirmCoupon()">Apply</button>
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
