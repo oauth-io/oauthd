@@ -397,7 +397,8 @@ module.exports = function(exports) {
 };
 
 },{"../config":1,"../tools/datastore":5,"../tools/sha1":6,"../tools/url":7,"./oauthio_requests":3}],3:[function(require,module,exports){
-var Url;
+var Url,
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 Url = require('../tools/url')();
 
@@ -438,10 +439,10 @@ module.exports = function($, config, client_states, datastore) {
           options.url = Url.replaceParam(options.url, options.oauthio.tokens, request.parameters);
           if (request.query) {
             qs = [];
-            for (i in request.headers) {
-              options.headers[i] = Url.replaceParam(request.headers[i], options.oauthio.tokens, request.parameters);
+            for (i in request.query) {
+              qs.push(encodeURIComponent(i) + "=" + encodeURIComponent(Url.replaceParam(request.query[i], options.oauthio.tokens, request.parameters)));
             }
-            if (options.url.indexOf("?") !== -1) {
+            if (__indexOf.call(options.url, "?") >= 0) {
               options.url += "&" + qs;
             } else {
               options.url += "?" + qs;
@@ -572,10 +573,9 @@ module.exports = function($, config, client_states, datastore) {
         options = {};
         options.type = options.type || method;
         options.oauthio = {
-          provider: provider({
-            tokens: tokens,
-            request: request
-          })
+          provider: provider,
+          tokens: tokens,
+          request: request
         };
         options.data = options.data || {};
         options.data.filter = (filter ? filter.join(",") : undefined);
