@@ -17,7 +17,6 @@ module.exports = ($, config, client_states, datastore) ->
 
 				return $.ajax(options)
 			if options.oauthio.tokens
-				
 				#Fetching the url if a common endpoint is called
 				options.oauthio.tokens.token = options.oauthio.tokens.access_token  if options.oauthio.tokens.access_token
 				unless options.url.match(/^[a-z]{2,16}:\/\//)
@@ -26,9 +25,9 @@ module.exports = ($, config, client_states, datastore) ->
 				options.url = Url.replaceParam(options.url, options.oauthio.tokens, request.parameters)
 				if request.query
 					qs = []
-					for i of request.headers
-  						options.headers[i] = Url.replaceParam(request.headers[i], options.oauthio.tokens, request.parameters)
-					if options.url.indexOf("?") isnt -1
+					for i of request.query
+  						qs.push encodeURIComponent(i) + "=" + encodeURIComponent(Url.replaceParam(request.query[i], options.oauthio.tokens, request.parameters))
+					if "?" in options.url
 						options.url += "&" + qs
 					else
 						options.url += "?" + qs
@@ -130,7 +129,7 @@ module.exports = ($, config, client_states, datastore) ->
 			options = {}
 			options.type = options.type or method
 			options.oauthio =
-			provider: provider
+				provider: provider
 				tokens: tokens
 				request: request
 
