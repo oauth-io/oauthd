@@ -5,3 +5,6 @@ Disallow: /logout
 Disallow: /404
 Disallow: /key-manager/*
 Disallow: /account
+Disallow: /request/*
+Disallow: /auth/*
+Disallow: /js/*
