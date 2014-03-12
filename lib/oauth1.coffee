@@ -234,7 +234,7 @@ class OAuth1 extends OAuthBase
 		options.headers = {}
 		for k, v of req.headers
 			if ignoreheaders.indexOf(k) == -1
-				k = k.replace(/\b[a-z]/g, function() {return arguments[0].toUpperCase()})
+				k = k.replace /\b[a-z]/g, (-> arguments[0].toUpperCase())
 				options.headers[k] = v
 
 		for name, value of oauthrequest.headers
