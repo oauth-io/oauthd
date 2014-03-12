@@ -21,3 +21,6 @@ plugins/server.front/app/templates/pricing.bak.html
 newrelic_agent.log
 /.idea/
 /private
+app/sdk-js/js/*
+app/sdk-js/jsold/*
+app/sdk-js/node_modules/*
