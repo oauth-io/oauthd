@@ -216,21 +216,17 @@ class OAuth1 extends OAuthBase
 			token_secret: parameters.oauthio.oauth_token_secret
 
 		# build headers
-		console.log req.headers
-
-		normalcases =
-			'content-length': 'Content-Length'
-			accept: 'Accept',
-			'content-type': 'Content-Type'
-			'user-agent': 'User-Agent'
-			'accept-encoding': 'Accept-Encoding'
-			'accept-language': 'Accept-Language'
-
+		ignoreheaders = [
+			'oauthio', 'host', 'connection',
+			'origin', 'referer'
+		]
 
 		options.headers = {}
 		for k, v of req.headers
-			if ['oauthio','host','connection','origin','referer'].indexOf(k) == -1
-				options.headers[normalcases[k]] = v
+			if ignoreheaders.indexOf(k) == -1
+				k = k.replace(/\b[a-z]/g, function() {return arguments[0].toUpperCase()})
+				options.headers[k] = v
+
 		for name, value of oauthrequest.headers
 			param = @_replaceParam value, parameters.oauthio, parameters
 			options.headers[name] = param if param
