@@ -17,7 +17,6 @@ exports.raw = ->
 	# * Registering a user coming from heroku cloud
 	# 
 	registerHerokuAppUser = (data, callback) ->
-
 		db.redis.incr 'u:i', (err, val) ->
 			return callback err if err
 			prefix = 'u:' + val + ':'
@@ -45,6 +44,7 @@ exports.raw = ->
 					return callback err if err
 					user = id:val, mail:data.heroku_id, heroku_id:data.heroku_id, heroku_name:heroku_app_name, heroku_url:heroku_url, current_plan:data.plan, key:key, date_inscr:date_now, date_validate:date_now
 					shared.emit 'user.register', user
+					shared.emit 'heroku_user.register', user
 					return callback null, user
 
 	# * Authentication
@@ -63,8 +63,8 @@ exports.raw = ->
 		if req.authorization and req.authorization.scheme is 'Basic' and req.authorization.basic.username is config.heroku.heroku_user and req.authorization.basic.password is config.heroku.heroku_password
 			return next()
 		else
-			console.log "Unable to authenticate user"
-			console.log "req.authorization", req.authorization
+			# console.log "Unable to authenticate user"
+			# console.log "req.authorization", req.authorization
 			res.header "WWW-Authenticate", "Basic realm=\"Admin Area\""
 			res.send 401, "Authentication required"
 			return
@@ -102,10 +102,6 @@ exports.raw = ->
 			'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
 			]
 		res.setHeader 'Set-Cookie', cookies
-		# multiple setHeader erasing previous one
-		# res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22;' + ' Path=/; Expires=' + expireDate.toUTCString() 
-		# res.setHeader 'Set-Cookie', 'heroku-body-app=' + req.body.app + ';' + ' Path=/; Expires=' + expireDate.toUTCString()
-		# res.setHeader 'Set-Cookie', 'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
 		# res.setHeader 'Location', config.host_url + '/key-manager'
 		res.setHeader 'Location', config.host_url
 
@@ -116,6 +112,17 @@ exports.raw = ->
 			# req.session.email = req.body.email
 			next()
 			return
+
+	checkPlan = (req, res, next) ->
+		resource_plan = "startup"
+		for plan in db.plans
+			resource_plan = plan.id if req.body.plan is plan.id 
+
+		if req.body.region isnt undefined and req.body.region is 'fr'
+			resource_plan += "_fr"
+		req.body.plan = resource_plan
+		next()
+		return
 
 	sso_login = (req, res, next) ->
 		res.setHeader 'Location', '/'
@@ -186,6 +193,7 @@ exports.raw = ->
 					]).exec (err, replies) ->
 						return callback err if err
 						shared.emit 'user.remove', mail:resource.mail
+						shared.emit 'heroku_user.remove', mail:resource.mail
 						callback()
 
 	# Plan Change
@@ -199,6 +207,7 @@ exports.raw = ->
 				prefix + 'current_plan', req.body.plan
 			], (err) ->
 				res.send 404, "Connot change plan" if err
+				shared.emit 'heroku_user.subscribe', resource, req.body.plan
 				res.send "ok"
 
 	# * Deprovision
@@ -208,8 +217,20 @@ exports.raw = ->
 			res.send 404, "Not found" if err
 			destroy_resource resource, (err, resource) =>
 				res.send 404, "Cannot deprovision resource" if err
+				shared.emit 'heroku_user.unsubscribe', resource
 				res.send("ok")
 
+	createDefaultApp = (userid, callback) =>
+		appreq = 
+			body: 
+				domains:["localhost"]
+				name:"Heroku default app"
+			user:
+				id:userid
+		db.apps.create appreq, (err, app) ->
+			return callback err if err
+			return callback null, app
+		
 	# * Provisioning
 	# A private resource is created for each app that adds your add-on.
 	# Any provisioned resource should be referenced by a unique URL, 
@@ -219,35 +240,39 @@ exports.raw = ->
 	# - the ID
 	# - a config var hash containing a URL to consume the service
 	provisionResource = (req, res, next) =>
+		# console.log "provisionResource req.body", req.body
 		data =
   			heroku_id: req.body.heroku_id
   			plan: req.body.plan
   			callback_url: req.body.callback_url
   		# callback_url unused for the moment
+
 		registerHerokuAppUser data, (err, user) =>
-			console.log ""
-			console.log "user", user
+			# console.log "user", user
 			res.send 404 if err
-			db.users.getApps user.id, (err, appkeys) ->
-				console.log ""
-				console.log "appkeys", appkeys
+			createDefaultApp user.id, (err, app) =>
+				# not working
+				# db.users.getApps user.id, (err, appkeys) ->
+				# 	console.log "appkeys", appkeys
+
 				result = 
 					id: 
 						user.heroku_id
 					config: 
-						OAUTHIO_PUBLIC_KEY: appkeys[0]
+						OAUTHIO_PUBLIC_KEY: app.key
 						OAUTHIO_URL: user.heroku_url
 				stringifyResult = JSON.stringify(result)
-				console.log "stringifyResult", stringifyResult
-				console.log ""
+				# console.log "stringifyResult", stringifyResult
 				res.setHeader 'Content-Type', 'application/json'
 				res.end stringifyResult
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
-	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), provisionResource
+	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), checkPlan, provisionResource
 	@server.get new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
-	@server.put '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), changePlan
+	# Heroku will call your service via a PUT to /heroku/resources/:id 
+	# in order to change the plan.
+	@server.put '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), checkPlan, changePlan
 	@server.del '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), deprovisionResource
 	@server.post '/heroku/sso/login', restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth, sso_login
 	
