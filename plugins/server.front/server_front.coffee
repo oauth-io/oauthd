@@ -31,7 +31,7 @@ checkLogged = (req, res, next) ->
 checkAdmin = (req, res, next) -> checkLogged req, res, ->
 	return next() if not req.token
 	db.redis.hgetall 'session:' + req.token, (err, res) ->
-		if not err and res?['mail'].match /^.*@oauth.io$/ and res['validated']
+		if not err and res?['mail'].match(/^.*@oauth.io$/) and res['validated']
 			req.admin = true
 		next()
 

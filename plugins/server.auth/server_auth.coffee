@@ -57,7 +57,7 @@ exports.needed = (req, res, next) ->
 exports.adm = (req, res, next) ->
 	exports.needed req, res, (e) ->
 		return next e if e
-		if not (req.user.mail.match /.*@oauth\.io$/ and req.user.validated)
+		if not req.user.mail.match(/.*@oauth\.io$/) or not req.user.validated
 			return next new restify.NotAuthorizedError
 		next()
 
