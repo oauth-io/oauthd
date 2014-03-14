@@ -114,15 +114,19 @@ exports.raw = ->
 			return
 
 	checkPlan = (req, res, next) ->
-		resource_plan = "startup"
-		for plan in db.plans
-			resource_plan = plan.id if req.body.plan is plan.id 
-
+		resource_plan = "bootstrap"
+		plan_ask = db.plans[req.body.plan]
+		if plan_ask isnt undefined
+			resource_plan = plan_ask
 		if req.body.region isnt undefined and req.body.region is 'fr'
 			resource_plan += "_fr"
 		req.body.plan = resource_plan
 		next()
 		return
+
+	subscribeEvent = (resource, plan) ->
+		if plan isnt "bootstrap"
+			shared.emit 'heroku_user.subscribe', resource, plan
 
 	sso_login = (req, res, next) ->
 		res.setHeader 'Location', '/'
@@ -207,7 +211,7 @@ exports.raw = ->
 				prefix + 'current_plan', req.body.plan
 			], (err) ->
 				res.send 404, "Connot change plan" if err
-				shared.emit 'heroku_user.subscribe', resource, req.body.plan
+				subscribeEvent resource, req.body.plan
 				res.send "ok"
 
 	# * Deprovision
@@ -254,7 +258,7 @@ exports.raw = ->
 				# not working
 				# db.users.getApps user.id, (err, appkeys) ->
 				# 	console.log "appkeys", appkeys
-
+				subscribeEvent user, user.current_plan
 				result = 
 					id: 
 						user.heroku_id

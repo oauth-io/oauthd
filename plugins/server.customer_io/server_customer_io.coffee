@@ -73,9 +73,9 @@ exports.setup = (callback) ->
 		sendEvent data.user.profile, 'unsubscribe'
 
 	@on 'heroku_user.subscribe', (heroku_user, offer) =>
-		sendEvent heroku_user, 'subscribe'
+		sendEvent heroku_user, 'heroku_user_subscribe'
 	@on 'heroku_user.unsubscribe', (heroku_user) =>
-		sendEvent heroku_user, 'unsubscribe'
+		sendEvent heroku_user, 'heroku_user_unsubscribe'
 
 	@on 'app.create', (req, app) =>
 		sendEvent req.user, 'app.create', app
