@@ -28,10 +28,17 @@ checkLogged = (req, res, next) ->
 	req.token = token?[1]
 	next()
 
+checkHeroku = (req, res, next) ->
+	herokuNavData = req.headers.cookie?.match /heroku-nav-data=(.*?);/
+	req.herokuNavData = herokuNavData?[1]
+	herokuBodyApp = req.headers.cookie?.match /heroku-body-app=%22(.*?)%22/
+	req.herokuBodyApp = herokuBodyApp?[1]
+	next()
+
 checkAdmin = (req, res, next) -> checkLogged req, res, ->
 	return next() if not req.token
 	db.redis.hgetall 'session:' + req.token, (err, res) ->
-		if not err and res?['mail'].match /^.*@oauth.io$/ and res['validated']
+		if not err and res?['mail'].match(/^.*@oauth.io$/) and res['validated']
 			req.admin = true
 		next()
 
@@ -78,6 +85,8 @@ exports.setup = (callback) ->
 				data = data.replace /\{\{if logged\}\}([\s\S]*?)\{\{endif\}\}/g, if req.token then '$1' else ''
 				res.end data
 				next()
+			data = data.replace /\{\{if herokuNavData\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '$1' else ''
+			data = data.replace /\{\{heroku_app\}\}/g, if req.herokuNavData and req.herokuBodyApp then '$1' else ''
 			if req.token
 				db.redis.hgetall 'session:' + req.token, (err, session) ->
 					if err or not session
@@ -89,7 +98,7 @@ exports.setup = (callback) ->
 			else
 				sendres()
 
-		@server.get '/', checkAdmin, bootPathCache(logged:true), sendIndex
+		@server.get '/', checkAdmin, checkHeroku, bootPathCache(logged:true), sendIndex
 
 		@server.get '/proxy', (req, res, next) ->
 			proxy(req, res, next);

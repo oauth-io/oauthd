@@ -1,4 +1,13 @@
 module.exports =
+	"bootstrap":
+		"id": "bootstrap"
+		"name": "Bootstrap"
+		"amount": 0
+		"currency": "USD"
+		"users": 1000
+		"apps": 2
+		"providers": 2
+		"support": "Email"
 	"startup":
 		"id": "startup"
 		"name": "Startup"

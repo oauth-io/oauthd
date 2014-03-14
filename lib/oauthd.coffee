@@ -11,6 +11,19 @@ config = require "./config"
 async = require "async"
 config.rootdir = Path.normalize __dirname + '/..'
 
+# request FIX
+qs = require 'request/node_modules/qs'
+oldstringify = qs.stringify
+qs.stringify = ->
+	result = oldstringify.apply(qs, arguments)
+	result = result.replace /!/g, '%21'
+	result = result.replace /'/g, '%27'
+	result = result.replace /\(/g, '%28'
+	result = result.replace /\)/g, '%29'
+	result = result.replace /\*/g, '%2A'
+	return result
+# --
+
 # initialize plugins
 exports.plugins = plugins = require "./plugins"
 plugins.init()

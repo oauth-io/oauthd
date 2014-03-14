@@ -5,7 +5,7 @@
 	<div class="list-group" style="margin-bottom: 0">
 		<a ng-href="{{notification.href}}" ng-click="notifModal.close()" class="list-group-item" ng-repeat="notification in notifications">
 			<h4>{{notification.title}}</h4>
-			<p ng-bind-html-unsafe="notification.content"></p>
+			<p ng-bind-html="notification.content"></p>
 		</a>
 	</div>
 </div>
