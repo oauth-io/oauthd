@@ -53,6 +53,7 @@ define [
 			$scope.socialSignin = (provider) ->
 				OAuth.initialize window.loginKey
 				OAuth.popup provider, cache: true, (err, res) ->
+					console.log 'LOGIN ERR', err
 					return false if err
 					UserService.loginOAuth {
 						access_token: res.access_token

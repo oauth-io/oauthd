@@ -258,7 +258,7 @@ module.exports = function(exports) {
         }
         wndTimeout = setTimeout(function() {
           defer.reject(new Error("Authorization timed out"));
-          if (opts.callback) {
+          if (opts.callback && typeof opts.callback === "function") {
             opts.callback(new Error("Authorization timed out"));
           }
           try {
@@ -270,7 +270,7 @@ module.exports = function(exports) {
           wnd.focus();
         } else {
           defer.reject(new Error("Could not open a popup"));
-          if (opts.callback) {
+          if (opts.callback && typeof opts.callback === "function") {
             opts.callback(new Error("Could not open a popup"));
           }
         }
@@ -305,7 +305,9 @@ module.exports = function(exports) {
         document.location.href = url;
       },
       callback: function(provider, opts, callback) {
-        var res;
+        var defer, res;
+        console.log('OAUTH RESULT', oauth_result);
+        defer = $.Deferred();
         if (arguments.length === 1) {
           callback = provider;
           provider = undefined;
@@ -316,12 +318,22 @@ module.exports = function(exports) {
           opts = {};
         }
         if (datastore.cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
-          if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
-            return callback(new Error("You must set a provider when using the cache"));
-          }
           res = datastore.cache.tryCache(provider, opts.cache);
-          if (res) {
-            return callback(null, res);
+          if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
+            defer.reject(new Error("You must set a provider when using the cache"));
+            if (callback) {
+              return callback(new Error("You must set a provider when using the cache"));
+            } else {
+              return;
+            }
+          }
+          if (callback) {
+            if (res) {
+              return callback(null, res);
+            }
+          } else {
+            defer.resolve(res);
+            return;
           }
         }
         if (!oauth_result) {
@@ -332,7 +344,8 @@ module.exports = function(exports) {
           provider: provider,
           cache: opts.cache,
           callback: callback
-        });
+        }, defer);
+        return defer;
       },
       clearCache: function(provider) {
         datastore.cookies.eraseCookie("oauthio_provider_" + provider);
@@ -604,7 +617,7 @@ module.exports = function($, config, client_states, datastore) {
         err = new Error(data.message);
         err.body = data.data;
         defer.reject(err);
-        if (opts.callback) {
+        if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(err);
         } else {
           return;
@@ -614,7 +627,7 @@ module.exports = function($, config, client_states, datastore) {
         err = new Error();
         err.body = data.data;
         defer.reject(err);
-        if (opts.callback) {
+        if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(err);
         } else {
           return;
@@ -622,7 +635,7 @@ module.exports = function($, config, client_states, datastore) {
       }
       if (!data.state || client_states.indexOf(data.state) === -1) {
         defer.reject(new Error("State is not matching"));
-        if (opts.callback) {
+        if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(new Error("State is not matching"));
         } else {
           return;
@@ -650,7 +663,7 @@ module.exports = function($, config, client_states, datastore) {
       }
       if (!request) {
         defer.resolve(res);
-        if (opts.callback) {
+        if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(null, res);
         } else {
           return;
@@ -671,7 +684,7 @@ module.exports = function($, config, client_states, datastore) {
       res.del = make_res("DELETE");
       res.me = base.mkHttpMe(data.provider, tokens, request, "GET");
       defer.resolve(res);
-      if (opts.callback) {
+      if (opts.callback && typeof opts.callback === "function") {
         return opts.callback(null, res);
       } else {
 
@@ -685,11 +698,12 @@ require('./lib/oauth')(window || this);
 
 },{"./lib/oauth":2}],5:[function(require,module,exports){
 module.exports = function(config) {
-  return {
+  var m;
+  m = {
     cookies: {
       createCookie: function(name, value, expires) {
         var date;
-        eraseCookie(name);
+        m.cookies.eraseCookie(name);
         date = new Date();
         date.setTime(date.getTime() + (expires || 1200) * 1000);
         expires = "; expires=" + date.toGMTString();
@@ -722,8 +736,8 @@ module.exports = function(config) {
     cache: {
       tryCache: function(provider, cache) {
         var e, i, res;
-        if (cacheEnabled(cache)) {
-          cache = readCookie("oauthio_provider_" + provider);
+        if (m.cache.cacheEnabled(cache)) {
+          cache = m.cookies.readCookie("oauthio_provider_" + provider);
           if (!cache) {
             return false;
           }
@@ -749,7 +763,7 @@ module.exports = function(config) {
         return false;
       },
       storeCache: function(provider, cache) {
-        createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
+        m.cookies.createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
       },
       cacheEnabled: function(cache) {
         if (typeof cache === "undefined") {
@@ -759,6 +773,7 @@ module.exports = function(config) {
       }
     }
   };
+  return m;
 };
 
 },{}],6:[function(require,module,exports){
