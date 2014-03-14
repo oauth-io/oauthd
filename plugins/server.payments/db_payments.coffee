@@ -118,7 +118,6 @@ exports.hooks =
 			db.redis.del "u:#{data.user.profile.id}:current_plan"
 			callback()
 
-
 exports.subscribe = check profile:'object', coupon:['string','none'], token:'object', plan:'string', 'object', (data, user, callback) ->
 	if data.profile.country_code == 'FR'
 		data.plan += '_fr'
