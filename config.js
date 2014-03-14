@@ -39,6 +39,11 @@ module.exports = {
 		secret_key: '923660828109fb1ca53c8e1b6916d94d',
 		public_key: '8a8394c340c4033a0140d9f61cfd3145'
 	},
+	heroku: {
+		heroku_user: 'oauthio',
+		heroku_password: '539502edf5e15ad2a63ccf94ce7950e1',
+		sso_salt: '080b19049ca3afb9d948dba1fc1e26f0'
+	},
 
 	cacheTime: 1,
 	demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
@@ -69,6 +74,7 @@ module.exports = {
 		'server.users',
 		'server.clients',
 		'server.adm',
+		'server.heroku',
 		'server.hipchat',
 		'server.zendesk',
 		'server.oauth_io',

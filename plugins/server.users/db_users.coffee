@@ -25,7 +25,6 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 			dynsalt = Math.floor(Math.random() * 9999999)
 			pass = db.generateHash data.pass + dynsalt
 
-
 			arr = ['mset', prefix+'mail', data.mail,
 				prefix+'key', key,
 				prefix+'validated', 0,
