@@ -28,6 +28,7 @@ define [
 			if not $rootScope.me
 				$location.path '/signin'
 				return
+			mixpanel.track "purchase click"
 			$scope.purchaseModal = $modal.open
 				templateUrl: '/templates/partials/purchase-plan.html'
 				controller: PurchaseCtrl

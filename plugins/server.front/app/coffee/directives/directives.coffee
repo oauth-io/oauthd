@@ -40,6 +40,7 @@ define ["stubborn"], (stubborn) ->
 						if $location.ga_skip
 							$location.ga_skip = false
 							return
+						mixpanel.track "route", path: $location.path()
 						ga 'send', 'pageview', $location.path()
 						_cio.page $location.absUrl()
 			}
