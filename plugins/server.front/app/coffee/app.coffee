@@ -253,7 +253,7 @@ define [
 						return promise.then success, error
 			]
 			$httpProvider.responseInterceptors.push interceptor
-		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', 'InspectorService', ($rootScope, $location, UserService, $modal, NotificationService, $timeout, InspectorService) ->
+		]).run ['$rootScope', '$location', 'UserService', '$modal', 'NotificationService', '$timeout', 'InspectorService', '$sce', ($rootScope, $location, UserService, $modal, NotificationService, $timeout, InspectorService, $sce) ->
 			Stripe.setPublishableKey window.stripeKey
 			$rootScope.stripeCheckout = (token) ->
 				StripeCheckout.configure
@@ -276,15 +276,15 @@ define [
 						type: 'upgrade',
 						href: '/pricing',
 						title: "Time to upgrade",
-						content: 'You\'ve reached the limit. To go further: <a href="/pricing">upgrade your plan</a>.'
+						content: $sce.trustAsHtml('You\'ve reached the limit. To go further: <a href="/pricing">upgrade your plan</a>.')
 				if not checkValidated()
 					NotificationService.push
 						type: 'validate'
 						title: 'Email validation'
-						content: 'We\'ve sent you an email to validate your account. Please open the link inside to validate your account'
+						content: $sce.trustAsHtml('We\'ve sent you an email to validate your account. Please open the link inside to validate your account')
 				$('#notification').popover()
 
-			UserService.initialize ->
+			UserService.initialize()
 
 			$rootScope.openNotifications = ->
 				NotificationService.open()

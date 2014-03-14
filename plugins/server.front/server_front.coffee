@@ -30,8 +30,8 @@ checkLogged = (req, res, next) ->
 
 checkAdmin = (req, res, next) -> checkLogged req, res, ->
 	return next() if not req.token
-	db.redis.hget 'session:' + req.token, 'mail', (err, res) ->
-		if not err and res and res.match /^.*@oauth.io$/
+	db.redis.hgetall 'session:' + req.token, (err, res) ->
+		if not err and res?['mail'].match(/^.*@oauth.io$/) and res['validated']
 			req.admin = true
 		next()
 
@@ -64,7 +64,7 @@ init = (callback) ->
 exports.setup = (callback) ->
 	init.call @, (e) =>
 		console.error 'error', e if e
-		
+
 		sendIndex = (req, res, next) ->
 			if req.headers.host == 'www.oauth.io'
 				res.setHeader 'Location', 'https://oauth.io'

@@ -10,8 +10,11 @@
 						<h4 style="font-size: 1.1em;">Sign up</h4>
 						<h5 style="font-size: 0.8em; margin-top: 5px; font-weight: normal; color: #666">And never worry about OAuth again...</h5>
 					</div><br /><br />
-		        	<div class="row" style="height: 500px; position: relative">
-		        	<div class="col-xs-8" style="padding-right: 50px;">
+			  		<div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
+						<strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
+			  		</div>
+		        	<div class="row" style="height: 500px; position: relative" ng-hide="signupInfo.status == 'success'">
+		        		<div class="col-xs-8" style="padding-right: 50px;">
 							<h3 style="text-align: center;font-weight: normal; font-size: 22px;">Fill the following information</h3>
 							<form role="form" name="signup" class="form-vertical" style="margin-top:20px " method="POST" ng-submit="signupSubmit()">
 					  			<div class="alert alert-danger" ng-show="info.status == 'error'">
@@ -36,9 +39,6 @@
 									<label for="company" style="font-size: 1.1em">Company name <small style="color: #999; font-size: 0.9em">(optional)</small></label>
 									<input type="text" class="form-control" id="company" ng-model="user.company" name="company" placeholder="" style="font-size: 1.1em">
 							  	</div>
-								<div ng-show="social" class="form-group">
-									<img ng-src="/api/providers/{{social.provider}}/logo"> <span class="text-success" style="font-size: 1.1em;position:relative; left: 15px; top: 2px">Successful sync with {{social.provider}}</span>
-								</div>
 							  	<div style="margin-top: 30px" class="form-group">
 							  		<p style="font-size:1.0em; color: #666">By signing up, you agree to our <a href="/terms">Terms of service</a></p>
 									<button type="submit" style="" class="btn btn-lg btn-primary">
@@ -50,9 +50,6 @@
 						  		<strong>Oups!</strong> {{signup.message}}
 							</div>
 							<div ng-show="userForm.mode == 'Sign up'" style="margin-top: 30px">
-						  		<div class="alert alert-success alert-block" ng-show="signupInfo.status == 'success'">
-									<strong>Well done!</strong> We've sent you an email to validate your account. Thanks for trying out OAuth.io beta!
-						  		</div>
 							  	<div class="alert alert-danger alert-block" ng-show="signupInfo.status == 'error'">
 									<strong>Oh Snap!</strong> <span class="message">{{signupInfo.message}}</span>
 							  	</div>

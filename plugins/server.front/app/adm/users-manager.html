@@ -25,16 +25,16 @@ $('#navTab a').click(function (e) {
 		<!-- home -->
 		<div ng-show="tabShow == 'home'">
 			<div class="col-lg-4">
-				<h3>Force updates:</h3>
-				<form ng-submit="mailjetUpdate()">
-					<button class="col" type="submit">Force mailjet contacts update</button>
-				</form>
-				<form ng-submit="rankingsUpdate()">
-					<button class="col" type="submit">Force rankings update</button>
-				</form>
-				<form ng-submit="resetSecrets()">
-					<button class="col" type="submit">Reset all secret keys</button>
-				</form>
+<!--				<h3>Force updates:</h3>
+ 				<form ng-submit="mailjetUpdate()">
+	<button class="col" type="submit">Force mailjet contacts update</button>
+</form>
+<form ng-submit="rankingsUpdate()">
+	<button class="col" type="submit">Force rankings update</button>
+</form>
+<form ng-submit="resetSecrets()">
+	<button class="col" type="submit">Reset all secret keys</button>
+</form> -->
 				<form ng-submit="cohortAnalysis()" class="form-inline" role="form">
 					<div class="form-group">
 						<label class="sr-only" for="cohortStart">Start date</label>
@@ -107,7 +107,7 @@ $('#navTab a').click(function (e) {
 					</table>
 
 					<div class="row">
-						<pagination style="margin-top: -5px; cursor: pointer;" num-pages="pagination.nbPages" current-page="pagination.current" max-size="pagination.max"></pagination>
+						<pagination style="cursor: pointer;" total-items="pagination.nbItems" items-per-page="pagination.nbPerPage" page="pagination.current" max-size="pagination.max" ></pagination>
 					</div>
 					<button ng-hide="nbUnvalidatedUser == 0" ng-click="inviteAllUsers()" class="btn btn-success">Invite 20 next users</button><span style="position: relative; left: 20px">unvalidated: {{nbUnvalidatedUser}}</span><hr />
 				</div>
@@ -234,7 +234,7 @@ $('#navTab a').click(function (e) {
 				</table>
 
 				<div class="row">
-					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="wishListPagination.nbPages" current-page="wishListPagination.current" max-size="wishListPagination.max"></pagination>
+					<pagination style="margin-top: -5px; cursor: pointer;" total-items="wishListPagination.nbItems" items-per-page="wishListPagination.nbPerPage" page="wishListPagination.current" max-size="8"></pagination>
 				</div>
 			</div>
 		</div>
@@ -306,7 +306,7 @@ $('#navTab a').click(function (e) {
 				</table>
 
 				<div class="row">
-					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="ranksPagination.nbPages" current-page="ranksPagination.current" max-size="ranksPagination.max"></pagination>
+					<pagination style="margin-top: -5px; cursor: pointer;" items-per-page="ranksPagination.nbPerPage" total-items="ranksPagination.nbItems" page="ranksPagination.current" max-size="8"></pagination>
 				</div>
 
 			</div>
@@ -370,7 +370,7 @@ $('#navTab a').click(function (e) {
 				</table>
 
 				<div class="row">
-					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="providerPagination.nbPages" current-page="providerPagination.current" max-size="providerPagination.max"></pagination>
+					<pagination style="margin-top: -5px; cursor: pointer;" items-per-page="providerPagination.nbPerPage" total-items="providerPagination.nbItems" page="providerPagination.current" max-size="8"></pagination>
 				</div>
 
 			</div>
@@ -407,7 +407,7 @@ $('#navTab a').click(function (e) {
 				</table>
 
 				<div class="row">
-					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="scopePagination.nbPages" current-page="scopePagination.current" max-size="scopePagination.max"></pagination>
+					<pagination style="margin-top: -5px; cursor: pointer;" items-per-page="scopePagination.nbPerPage" total-items="scopePagination.nbItems" page="scopePagination.current" max-size="8"></pagination>
 				</div>
 
 			</div>
@@ -480,7 +480,7 @@ $('#navTab a').click(function (e) {
 				</table>
 
 				<div class="row">
-					<pagination style="margin-top: -5px; cursor: pointer;" num-pages="appPagination.nbPages" current-page="appPagination.current" max-size="appPagination.max"></pagination>
+					<pagination style="margin-top: -5px; cursor: pointer;" items-per-page="appPagination.nbPerPage" total-items="appPagination.nbItems" page="appPagination.current" max-size="8"></pagination>
 				</div>
 
 			</div>

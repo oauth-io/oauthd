@@ -17,7 +17,7 @@ hooks =
 	grantClientToken: (clientId, clientSecret, cb) ->
 		shared.db.users.login clientId, clientSecret, (err, res) ->
 			return cb null, false if err
-			exports.generateToken id:res.id, mail:res.mail, cb
+			exports.generateToken id:res.id, mail:res.mail, validated:res.validated, cb
 	authenticateToken: (token, cb) ->
 		shared.db.redis.hgetall 'session:' + token, (err, res) ->
 			return cb err if err
@@ -27,7 +27,7 @@ hooks =
 exports.generateToken = (user, cb) ->
 	token = shared.db.generateUid user.id
 	(shared.db.redis.multi [
-		['hmset', 'session:' + token, 'id', user.id, 'mail', user.mail]
+		['hmset', 'session:' + token, 'id', user.id, 'mail', user.mail, 'validated', user.validated]
 		['expire', 'session:' + token, _config.expire]
 	]).exec (err, r) ->
 		return cb err if err
@@ -50,14 +50,14 @@ exports.needed = (req, res, next) ->
 		return next()
 	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
 		return next err if err
-		if not req.user.mail.match /.*@oauth\.io$/
+		if not (req.user.mail.match /.*@oauth\.io$/ and req.user.validated)
 			return next new restify.NotAuthorizedError "You have not access to this app" if not res
 		next()
 
 exports.adm = (req, res, next) ->
 	exports.needed req, res, (e) ->
 		return next e if e
-		if not req.user.mail.match /.*@oauth\.io$/
+		if not req.user.mail.match(/.*@oauth\.io$/) or not req.user.validated
 			return next new restify.NotAuthorizedError
 		next()
 
@@ -245,7 +245,7 @@ exports.setup = (callback) ->
 					return cb err if err
 					token = @db.generateUid()
 					(@db.redis.multi [
-						['hmset', 'session:' + token, 'id', user.profile.id, 'mail', user.profile.mail]
+						['hmset', 'session:' + token, 'id', user.profile.id, 'mail', user.profile.mail, 'validated', user.profile.validated == "1"]
 						['expire', 'session:' + token, _config.expire]
 					]).exec (err, r) =>
 						return cb err if err

@@ -68,7 +68,7 @@ exports.setup = (callback) ->
 			prefix = 'u:' + req.params.id + ':'
 			@db.redis.get prefix + 'mail', (e, mail) =>
 				return next e if e
-				@auth.generateToken id:req.params.id, mail:mail, (e, token) =>
+				@auth.generateToken id:req.params.id, mail:mail, validated:true, (e, token) =>
 					return next e if e
 					expireDate = new Date((new Date - 0) + @auth.config.expire * 1000)
 					res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
