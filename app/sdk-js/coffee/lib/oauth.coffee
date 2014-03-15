@@ -122,7 +122,7 @@ module.exports = (exports) ->
 				defer = $.Deferred()
 				opts = opts or {}
 				unless config.key
-					defer.rejet new Error("OAuth object must be initialized")
+					defer.reject new Error("OAuth object must be initialized")
 					return callback(new Error("OAuth object must be initialized"))
 				if arguments.length is 2
 					callback = opts
