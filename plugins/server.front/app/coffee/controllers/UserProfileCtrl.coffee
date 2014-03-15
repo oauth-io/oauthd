@@ -52,6 +52,7 @@ define [
 
 			$scope.cancelEmailUpdate = ->
 				UserService.cancelUpdateEmail ((success) ->
+					mixpanel.track "cancel email update"
 					$rootScope.me.profile.email_changed = null
 				), (error) ->
 
@@ -64,6 +65,7 @@ define [
 			$scope.updatePassword = (currentPassword, newPassword, newPassword2) ->
 				if newPassword is newPassword2
 					UserService.updatePassword currentPassword, newPassword, ((success) ->
+						mixpanel.track "password update"
 						$scope.cancelChangePasswordButton()
 					), (error) ->
 						$scope.errorPassword = error
@@ -77,6 +79,7 @@ define [
 
 			$scope.updateEmail = ->
 				UserService.updateEmail $scope.user.mail, ((success) ->
+					mixpanel.track "email update"
 					$('#email-input').attr('disabled', 'disabled')
 					$scope.changeEmailState = false
 					$rootScope.me.profile.mail_changed = $scope.user.mail
@@ -90,6 +93,7 @@ define [
 			$scope.update = ->
 				$scope.updateDone = false
 				UserService.update $scope.user, (success) ->
+					mixpanel.track "userinfo update"
 					$rootScope.me.profile.name = success.data.name
 					$scope.updateDone = true
 					$rootScope.me.profile.location = success.data.location

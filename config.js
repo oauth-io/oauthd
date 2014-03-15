@@ -62,6 +62,11 @@ module.exports = {
 		//api_key: '...API key...'
 	},
 
+	mixpanel: {
+		//api_key: '...App API key...'
+		//token: '...App token...'
+	},
+
 	prerender: {
 		//host: '...prerender server host...'
 		//port: '...prerender server port...'
@@ -82,6 +87,7 @@ module.exports = {
 		'server.mailjet',
 		'server.wishlist',
 		'server.customer_io',
+		'server.mixpanel',
 		'server.cohort',
 		'server.apiratings',
 		/* ------------------------- */

@@ -18,6 +18,7 @@ define [
 				$location.path '/404' if not data.data.is_validable and not data.data.is_updated
 
 				if UserService.isLogin() and data.data.is_updated
+					mixpanel.track "update mail validate"
 					$rootScope.me.profile.mail = $rootScope.me.profile.mail_changed
 					$rootScope.me.profile.mail_changed = null
 					$rootScope.me.validated = '1'
@@ -29,6 +30,7 @@ define [
 						key: $routeParams.key
 						mail: data.data.mail
 					UserService.validate $scope.user.id, $scope.user.key, ((data) ->
+						mixpanel.track "user validate"
 						$rootScope.accessToken = $cookieStore.get 'accessToken'
 						UserService.initialize()
 					), (error) ->

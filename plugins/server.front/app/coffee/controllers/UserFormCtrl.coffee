@@ -59,6 +59,7 @@ define [
 						oauth_token: res.oauth_token
 						oauth_token_secret: res.oauth_token_secret
 					}, provider, ((path) ->
+						mixpanel.track "signin social", provider: provider
 						$location.path '/key-manager'
 					), (error) ->
 						$scope.provider = provider
@@ -73,6 +74,7 @@ define [
 				$scope.canSignin = $scope.needEmail = $scope.success = false
 				UserService.signupOAuth $scope.user, $scope.social, ((data) ->
 					#console.log data.validated, not data.validated
+					mixpanel.track "signup social", provider: provider
 					$scope.notValidated = not data.data.validated
 					$scope.success = true
 					$scope.loading = $scope.needEmail = false
@@ -137,6 +139,7 @@ define [
 			$scope.signupSubmit = ->
 				#verif field
 				UserService.register $scope.user, ((data) ->
+					mixpanel.track "signup"
 					$scope.signupInfo =
 						status: 'success'
 				), (error) ->
@@ -160,9 +163,9 @@ define [
 						message: ''
 
 					if $scope.userForm.mode == "Sign in"
-
 						#signin
 						UserService.login {mail:$('#mail').val(), pass:$('#pass').val()}, ((path)->
+							mixpanel.track "signin"
 							$(window).off()
 							$(document).off()
 							$location.ga_skip = true;
@@ -173,19 +176,10 @@ define [
 							$scope.info =
 								status: 'error'
 								message: error?.message || 'Wrong email or password'
-
-					else if $scope.userForm.mode == "Sign up"
-						#signup
-						UserService.register $('#mail').val(), ((data) ->
-							$scope.signupInfo =
-								status: 'success'
-						), (error) ->
-							$scope.signupInfo =
-								status: 'error'
-								message: error.message
 					else
 						#lost password
 						UserService.lostPassword $('#mail').val(), ((data) ->
+							mixpanel.track "lost password"
 							$scope.info =
 								status: 'info'
 								message: 'We have sent password reset instructions to your email address'

@@ -28,7 +28,7 @@ define [
 				if user.pass == user.pass2
 
 					UserService.resetPassword $routeParams.id, $routeParams.key, user.pass, ((data) ->
-
+						mixpanel.track "reset password"
 						UserService.login {
 							mail: data.data.email
 							pass: user.pass
@@ -43,7 +43,7 @@ define [
 					$scope.error =
 						status: 'error'
 						message: "Password1 != Password2"
-			
+
 		return [
 			"$scope",
 			"$routeParams",

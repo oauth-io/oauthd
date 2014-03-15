@@ -32,6 +32,7 @@ define [
 				delete $scope.coupon.registered
 				$scope.recompute()
 				PaymentService.coupon coupon:coupon_code, plan:$scope.plan.id, ((infos) ->
+					mixpanel.track "coupon add"
 					$scope.coupon.infos = infos.data
 					$scope.coupon.registered = coupon_code
 					$scope.coupon.changed = false
