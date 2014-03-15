@@ -31,7 +31,7 @@ exports.setup = (callback) ->
 				url: 'https://track.customer.io/api/v1/customers/' + user.id
 				json: data
 			}, (e, r, body) ->
-				console.error "Error while updating contact to customer.io", e, data, body, r.statusCode if e or r.statusCode != 200
+				console.error "Error while updating contact to customer.io", e, data, body, r?.statusCode if e or r.statusCode != 200
 
 	sendEvent = (user, name, data) =>
 		reqData = name: name
@@ -40,7 +40,7 @@ exports.setup = (callback) ->
 			url: 'https://track.customer.io/api/v1/customers/' + user.id + '/events'
 			json: reqData
 		}, (e, r, body) ->
-			console.error "Error while sending event to customer.io", e, user.id, name, data, body, r.statusCode if e or r.statusCode != 200
+			console.error "Error while sending event to customer.io", e, user.id, name, data, body, r?.statusCode if e or r.statusCode != 200
 
 	@on 'cohort.inscr', (user, now) =>
 		updateUser user, date_inscr:timestamp(now), created_at:timestamp(now), key:user.key
@@ -67,7 +67,7 @@ exports.setup = (callback) ->
 		sendEvent data.user.profile, 'user.pay.failed', invoice:data.invoice, customer:data.customer
 
 	@on 'user.subscribe', (data, offer) =>
-		updateUser data.user.profile, offer_name: offer || "free"
+		updateUser data.user.profile, offer_name: data.subscription.plan.id || "free"
 	@on 'user.unsubscribe', (data) =>
 		updateUser data.user.profile, offer_name: 'free'
 		sendEvent data.user.profile, 'unsubscribe'
