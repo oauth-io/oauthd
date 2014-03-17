@@ -1,0 +1,17 @@
+{
+    "name": "Prizm Capture",
+    "url": "https://www.prizmcapture.com/0/oauth",
+    "oauth2": {
+        "authorize": "/authorize",
+        "access_token": "/token",
+        "request": "https://www.prizmcapture.com",
+        "refresh": "/token"
+    },
+    "href": {
+        "keys": "none",
+        "docs": "none",
+        "apps": "none",
+        "provider": "none"
+    }
+
+}
