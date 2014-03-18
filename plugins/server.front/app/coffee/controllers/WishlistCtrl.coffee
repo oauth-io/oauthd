@@ -46,6 +46,8 @@ define [
 
 				WishlistService.add query.name, (success) ->
 
+					mixpanel.track "wishlist add provider", provider: query.name
+
 					$scope.info =
 						state: true
 						message: "Thanks for your contribution !"
