@@ -8,7 +8,6 @@ exports.setup = (callback) ->
 		return callback()
 
 	updateUser = (user, data) =>
-		console.log "mixpanel update", user, data
 		mp_data =
 			"$token": @config.mixpanel.token
 			"$distinct_id": user.id.toString()
@@ -18,25 +17,21 @@ exports.setup = (callback) ->
 			url: 'http://api.mixpanel.com/engage/'
 			qs: {data:mp_data, verbose:1}
 		}, (e, r, body) ->
-			console.log e, data, body, r.statusCode
-			console.error "Error while updating contact to mixpanel", e, data, body, r.statusCode if e or r.statusCode != 200
+			console.error "Error while updating contact to mixpanel", e, data, body, r?.statusCode if e or r.statusCode != 200
 
 	sendEvent = (user, name, data) =>
-		console.log "mixpanel event", user, name, data
 		mp_data =
 			event: name,
 			properties:
 				distinct_id: user.id.toString()
 				token: @config.mixpanel.token
 		mp_data.properties[k] = v for k, v of data
-		console.log mp_data
 		mp_data = (new Buffer JSON.stringify(mp_data)).toString('base64')
 		request {
 			url: 'http://api.mixpanel.com/track/'
 			qs: {data:mp_data, verbose:1}
 		}, (e, r, body) ->
-			console.log e, user.id, name, data, body, r.statusCode
-			console.error "Error while sending event to mixpanel", e, user.id, name, data, body, r.statusCode if e or r.statusCode != 200
+			console.error "Error while sending event to mixpanel", e, user.id, name, data, body, r?.statusCode if e or r.statusCode != 200
 
 	@on 'user.login', (user) =>
 		sendEvent user, 'login'
