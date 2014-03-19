@@ -35,8 +35,7 @@ app.directive 'googleAnalytics', ($location, $rootScope, $window) ->
 		link: ($scope) ->
 			$scope.$on '$routeChangeSuccess', ->
 				$rootScope.location = $location.path()
-				mixpanel.track "route", page: $location.path()
-				alert "ok"
+				mixpanel.track $location.path()
 				if $location.ga_skip
 					$location.ga_skip = false
 					return
