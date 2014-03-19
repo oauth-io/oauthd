@@ -78,46 +78,48 @@ exports.raw = ->
 	# and then redirect to the admin panel for the resource.
 	sso_auth = (req, res, next) ->
 		idresource = decodeURIComponent(req.body.id)
-		pre_token = idresource + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
-		shasum = crypto.createHash("sha1")
-		shasum.update pre_token
-		token = shasum.digest("hex")
-
-		unless req.body.token is token
-			res.send 403, "Token Mismatch" 
-			return
-		time = (new Date().getTime() / 1000) - (2 * 60)
-		if parseInt(req.body.timestamp) < time
-			res.send 403, "Timestamp Expired"
-			return
-
-		res.setHeader 'Content-Type', 'text/html'
-		expireDate = new Date((new Date - 0) + 3600*36 * 1000)
-
-		# We need to send the app name to fill the heroku navbar
-		# We need to fil the heroku nav data cookie
-		cookies = [
-			'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
-			'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
-			'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
-			]
-		res.setHeader 'Set-Cookie', cookies
-		# res.setHeader 'Location', config.host_url + '/key-manager'
-		res.setHeader 'Location', config.host_url
-
 		get_resource_by_id idresource, (err, resource) =>
 			res.send 404, "Not found" if err
 			# not used for now
 			# req.session.resource = resource
 			# req.session.email = req.body.email
-			next()
-			return
+			pre_token = idresource + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
+			shasum = crypto.createHash("sha1")
+			shasum.update pre_token
+			token = shasum.digest("hex")
+
+			unless req.body.token is token
+				res.send 403, "Token Mismatch" 
+				return
+			time = (new Date().getTime() / 1000) - (2 * 60)
+			if parseInt(req.body.timestamp) < time
+				res.send 403, "Timestamp Expired"
+				return
+
+			res.setHeader 'Content-Type', 'text/html'
+			shared.auth.generateToken id:resource.id, mail:resource.mail, validated:true, (err, token) =>
+				return next err if err
+				console.log "token", token
+				expireDate = new Date((new Date - 0) + 3600*36 * 1000)
+				# We need to send the app name to fill the heroku navbar
+				# We need to fil the heroku nav data cookie
+				cookies = [
+					'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
+					'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
+					'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
+					]
+				res.setHeader 'Set-Cookie', cookies
+				# res.setHeader 'Location', config.host_url + '/key-manager'
+				res.setHeader 'Location', config.host_url
+
+				next()
+				return
 
 	checkPlan = (req, res, next) ->
 		resource_plan = "bootstrap"
 		plan_ask = db.plans[req.body.plan]
 		if plan_ask isnt undefined
-			resource_plan = plan_ask
+			resource_plan = plan_ask.id
 		if req.body.region isnt undefined and req.body.region is 'fr'
 			resource_plan += "_fr"
 		req.body.plan = resource_plan
@@ -210,7 +212,7 @@ exports.raw = ->
 			db.redis.mset [
 				prefix + 'current_plan', req.body.plan
 			], (err) ->
-				res.send 404, "Connot change plan" if err
+				res.send 404, "Cannot change plan" if err
 				subscribeEvent resource, req.body.plan
 				res.send "ok"
 
@@ -273,7 +275,7 @@ exports.raw = ->
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
 	@server.post new RegExp('/heroku/resources'), restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), checkPlan, provisionResource
-	@server.get new RegExp('/heroku/sso/:id'), restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth
+	@server.get '/heroku/sso/:id', restify.authorizationParser(), restify.bodyParser({ mapParams: false }), sso_auth, sso_login
 	# Heroku will call your service via a PUT to /heroku/resources/:id 
 	# in order to change the plan.
 	@server.put '/heroku/resources/:id', restify.authorizationParser(), basic_auth, restify.bodyParser({ mapParams: false }), checkPlan, changePlan
