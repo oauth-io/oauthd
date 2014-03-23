@@ -28,4 +28,3 @@ module.exports = (server, callback) ->
 			else
 				return sendAbsentFeatureError req, res, 'me()'
 	, callback
-	
