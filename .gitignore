@@ -8,6 +8,7 @@
 /lib/*.js
 /lib/*.map
 /plugins/**/*.map
+/plugins/server.request/**/*.js
 .nodemonignore
 nohup.out
 config.local.js
