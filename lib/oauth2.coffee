@@ -14,42 +14,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-querystring = require 'querystring'
-
-async = require 'async'
 request = require 'request'
-
 check = require './check'
-dbstates = require './db_states'
-dbproviders = require './db_providers'
-dbapps = require './db_apps'
-config = require './config'
 
 OAuth2ResponseParser = require './oauth2-response-parser'
 OAuthBase = require './oauth-base'
 
 class OAuth2 extends OAuthBase
-	constructor: ->
-		super 'oauth2'
+	constructor: (provider, parameters) ->
+		super 'oauth2', provider, parameters
 
-	authorize: (provider, parameters, opts, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
-		@_createState provider, opts, (err, state) =>
+	authorize: (opts, callback) ->
+		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
+			configuration = @_provider.oauth2.authorize
+			placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
+			callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
-			authorize = provider.oauth2.authorize
-			query = {}
-			if typeof opts.options?.authorize == 'object'
-				query = opts.options.authorize
-			for name, value of authorize.query
-				param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
-				query[name] = param if param
-			url = @_replaceParam authorize.url, {}, parameters
-			url += "?" + querystring.stringify query
-			callback null, url:url, state:state.id
-
-	access_token: (state, req, callback) ->
+	access_token: (state, req, response_type, callback) ->
 		# manage errors in callback
 		if req.params.error || req.params.error_description
 			err = new check.Error
@@ -62,90 +45,74 @@ class OAuth2 extends OAuthBase
 			return callback err
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
-		# get infos from state
-		async.parallel [
-			(callback) -> dbproviders.getExtended state.provider, callback
-			(callback) -> dbapps.getKeyset state.key, state.provider, callback
-		], (err, res) =>
-			return callback err if err
-			[provider, {parameters,response_type}] = res
-			@_setParams provider.parameters
-			@_setParams provider.oauth2.parameters
+		configuration = @_provider.oauth2.access_token
+		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
+		query = @_buildQuery(configuration.query, placeholderValues)
 
-			access_token = provider.oauth2.access_token
-			query = {}
-			for name, value of access_token.query
-				param = @_replaceParam value, code:req.params.code, state:state.id, callback:config.host_url+config.relbase, parameters
-				query[name] = param if param
-			headers = {}
-			headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
-			for name, value of access_token.headers
-				param = @_replaceParam value, {}, parameters
-				headers[name] = param if param
-			options =
-				url: @_replaceParam access_token.url, {}, parameters
-				method: access_token.method?.toUpperCase() || "POST"
-				followAllRedirects: true
-				encoding: null
-
-			options.headers = headers if Object.keys(headers).length
-			if options.method == "GET"
-				options.qs = query
-			else
-				options.form = query # or .json = qs for json post
-
-			# do request to access_token
-			request options, (e, r, body) =>
-				return callback e if e
-				responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
-				responseParser.parse (err, response) ->
-					return callback err if err
-
-					expire = response.body.expire
-					expire ?= response.body.expires
-					expire ?= response.body.expires_in
-					expire ?= response.body.expires_at
-					if expire
-						expire = parseInt expire
-						now = (new Date).getTime()
-						expire -= now if expire > now
-					requestclone = {}
-					requestclone[k] = v for k, v of provider.oauth2.request
-					for k, v of @_params
-						if v.scope == 'public'
-							requestclone.parameters ?= {}
-							requestclone.parameters[k] = parameters[k]
-					result =
-						access_token: response.access_token
-						token_type: response.body.token_type
-						expires_in: expire
-						base: provider.baseurl
-						request: requestclone
-					result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
-					for extra in (access_token.extra||[])
-						result[extra] = response.body[extra] if response.body[extra]
-					for extra in (provider.oauth2.authorize.extra||[])
-						result[extra] = req.params[extra] if req.params[extra]
-					callback null, result
-
-	refresh: (keyset, provider, token, callback) ->
-		parameters = keyset.parameters
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
-
-		refresh = provider.oauth2.refresh
-		query = {}
-		for name, value of refresh.query
-			param = @_replaceParam value, refresh_token:token, parameters
-			query[name] = param if param
 		headers = {}
-		headers["Accept"] = @_short_formats[refresh.format] || refresh.format if refresh.format
-		for name, value of refresh.headers
-			param = @_replaceParam value, refresh_token:token, parameters
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
+			param = @_replaceParam value, {}
 			headers[name] = param if param
 		options =
-			url: @_replaceParam refresh.url, {}, parameters
-			method: refresh.method?.toUpperCase() || "POST"
+			url: @_replaceParam configuration.url, {}
+			method: configuration.method?.toUpperCase() || "POST"
+			followAllRedirects: true
+			encoding: null
+
+		options.headers = headers if Object.keys(headers).length
+		if options.method == "GET"
+			options.qs = query
+		else
+			options.form = query # or .json = qs for json post
+
+		# do request to access_token
+		request options, (e, r, body) =>
+			return callback e if e
+			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
+			responseParser.parse (err, response) =>
+				return callback err if err
+
+				expire = response.body.expire
+				expire ?= response.body.expires
+				expire ?= response.body.expires_in
+				expire ?= response.body.expires_at
+				if expire
+					expire = parseInt expire
+					now = (new Date).getTime()
+					expire -= now if expire > now
+				requestclone = {}
+				requestclone[k] = v for k, v of @_provider.oauth2.request
+				for k, v of @_params
+					if v.scope == 'public'
+						requestclone.parameters ?= {}
+						requestclone.parameters[k] = @_parameters[k]
+				result =
+					access_token: response.access_token
+					token_type: response.body.token_type
+					expires_in: expire
+					base: @_provider.baseurl
+					request: requestclone
+				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
+				for extra in (configuration.extra||[])
+					result[extra] = response.body[extra] if response.body[extra]
+				for extra in (@_provider.oauth2.authorize.extra||[])
+					result[extra] = req.params[extra] if req.params[extra]
+				callback null, result
+
+	refresh: (token, callback) ->
+		configuration = @_provider.oauth2.refresh
+		placeholderValues = { refresh_token: token }
+		query = @_buildQuery(configuration.query, placeholderValues)
+
+		headers = {}
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
+			param = @_replaceParam value, { refresh_token: token }
+			headers[name] = param if param
+		options =
+			url: @_replaceParam configuration.url, {}
+			method: configuration.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 
 		options.headers = headers if Object.keys(headers).length
@@ -176,56 +143,25 @@ class OAuth2 extends OAuthBase
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
 				callback null, result
 
-	request: (provider, parameters, req, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth2.parameters
-
-		if ! parameters.oauthio.token
-			if parameters.oauthio.access_token
-				parameters.oauthio.token = parameters.oauthio.access_token
+	request: (req, callback) ->
+		if ! @_parameters.oauthio.token
+			if @_parameters.oauthio.access_token
+				@_parameters.oauthio.token = @_parameters.oauthio.access_token
 			else
 				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
-		oauthrequest = provider.oauth2.request
+		oauthrequest = @_provider.oauth2.request
 
 		options =
 			method: req.method
 			followAllRedirects: true
 			encoding: null
 
-		# build url
-		options.url = req.apiUrl
-		if typeof req.query == 'function' and typeof req.query() == 'string'
-			options.url += "?" + req.query()
-		if ! options.url.match(/^[a-z]{2,16}:\/\//)
-			if options.url[0] != '/'
-				options.url = '/' + options.url
-			options.url = oauthrequest.url + options.url
-		options.url = @_replaceParam options.url, parameters.oauthio, parameters
-
-		# build query
-		options.qs = {}
-		for name, value of oauthrequest.query
-			param = @_replaceParam value, parameters.oauthio, parameters
-			options.qs[name] = param if param
-
-		# build headers
-		ignoreheaders = [
-			'oauthio', 'host', 'connection',
-			'origin', 'referer'
-		]
-
-		options.headers = {}
-		for k, v of req.headers
-			if ignoreheaders.indexOf(k) == -1
-				k = k.replace /\b[a-z]/g, (-> arguments[0].toUpperCase())
-				options.headers[k] = v
-
-		for name, value of oauthrequest.headers
-			param = @_replaceParam value, parameters.oauthio, parameters
-			options.headers[name] = param if param
+		options.url = @_buildServerRequestUrl(req.apiUrl, req, oauthrequest.url)
+		options.qs = @_buildServerRequestQuery(oauthrequest.query)
+		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
 
 		# do request
-		callback null, request(options)
+		callback null, options
 
 module.exports = OAuth2

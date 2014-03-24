@@ -95,12 +95,10 @@ exports.raw = ->
 				return cb new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
-			oa = new oauth[oauthv]
-
 			parameters.oauthio = oauthio
-
+			oa = new oauth[oauthv](provider, parameters)
 			# let oauth modules do the request
-			oa.request provider, parameters, req, (err, options) ->
+			oa.request req, (err, options) ->
 				return cb err if err
 				api_request = null
 
