@@ -1,5 +1,6 @@
 exports.config = 
 	provider_name: "facebook"
+	popup_domain: "facebook.com"
 	test_suite_name: "Facebook test suite"
 	client_id: "773865389304244"
 	client_secret: "02fff42a5f3b1f61bd768b8ce2dc987d"
@@ -16,6 +17,10 @@ exports.config =
 			pass: 'jeanrene'
 		},
 		validate_button: "#u_0_1"
+		permissions_buttons: [
+			'#platformDialogForm',
+			'#platformDialogForm'
+		]
 	requests: [
 					method: "get",
 					params: ["/me"],
@@ -30,5 +35,14 @@ exports.config =
 						    }
 						]
 					validate: (error, data)  ->
-						return (error == undefined  or error == null) and typeof data.id == "string"
+						return (error == undefined  or error == null) and data and typeof data.id == "string"
+					export: (databag, error, data) ->
+						if data and data.id
+							databag.facebookid = data.id
+				,
+					method: "del"
+					params: (databag) ->
+						return ["/" + databag.facebookid]
+					validate: (error, data) ->
+						return (error == undefined or error == null) and data == true
 		]

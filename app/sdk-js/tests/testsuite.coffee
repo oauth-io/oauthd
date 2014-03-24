@@ -1,4 +1,6 @@
-exports.launch = (casper, provider, global_conf) ->
+
+
+exports.launch = (casper, provider, global_conf, utils) ->
 	casper.test.begin provider.test_suite_name, 5, suite = (test) ->
 		casper.start ->
 			window.__flag = false
@@ -15,14 +17,14 @@ exports.launch = (casper, provider, global_conf) ->
 			)
 			base.test.assert typeof version is "string", "OAuth.version is defined"
 
-		require('./initializer').initialize casper, global_conf
-		require("./popup").tests casper, provider, global_conf
+		require('./initializer').initialize casper, global_conf, utils
+		require("./popup").tests casper, provider, global_conf, utils
 		# require("./requests_me").tests casper, provider, global_conf
 
+		databag = {}
 		for request in provider.requests
-			console.log "about to test ", request.method, request.params
 			request.provider = provider.provider_name
-			require('./requester').request casper, request
+			require('./requester').request casper, request, utils, databag
 		
 		casper.run()
 		return

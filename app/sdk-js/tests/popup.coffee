@@ -1,33 +1,23 @@
-exports.tests = (casper, provider, global_conf) ->
+popup_gone = false
+
+waitformyselector = (selectors, callback, index) ->
+	index = index || 0
+	
+	@waitForSelector selectors[index], =>
+		#Accepting permissions
+		@fill selectors[index], {}, true
+		if (selectors.length > index + 1)
+			@wait 2000, =>
+				waitformyselector.call @, selectors, callback, index + 1
+		else
+			@wait 2000, =>
+				callback.apply @
+
+exports.tests = (casper, provider, global_conf, utils) ->
+
+
 	casper.then ->
 		base = this
-		
-		#Bad provider error catching -- needs to be new test
-	# 	base.evaluate ->
-	# 		window.__flag = false
-	# 		window.__workedflag = false
-	# 		window.OAuth.popup().fail((err) ->
-	# 			window.__flag = true
-	# 			window.caught_error = err
-	# 			return
-	# 		).done ->
-	# 			window.__flag = true
-	# 			window.__workedflag = true
-	# 			return
-
-	# 		return
-
-	# 	return
-
-	# casper.waitFor (->
-	# 	@getGlobal("__flag") is true
-	# ), ->
-	# 	result = @evaluate(->
-	# 		error: window.caught_error
-	# 		passed_in_done: window.__workedflag
-	# 	)
-	# 	@test.assert result.error and result.passed_in_done is false, "Popup method : failure on wrong provider - promise.fail()"
-	# 	return
 
 	casper.then ->
 		base = @
@@ -45,7 +35,7 @@ exports.tests = (casper, provider, global_conf) ->
 					return
 
 				popupres.fail ->
-					window.__flag = true
+					window.__flag = tr ue
 					window.error = arguments_
 					window.callPhantom finished: true
 					return
@@ -58,25 +48,34 @@ exports.tests = (casper, provider, global_conf) ->
 		@.test.assert launch_popup, "Popup method : defined and callable"
 		return
 
-	casper.waitForPopup /oauth\.io/, (->
-		@test.assertEquals @popups.length, 1, "Popup method : call loaded popup"
+	casper.waitForPopup /facebook\.com/, (->
+		@test.assertEquals @popups.length, 1, "Popup method : popup showing"
+
+		
+
 		return
 	), (->
 	), 1000
-	casper.then ->
-		@echo "Waiting 1 second for facebook form to load"
+
+	casper.wait 5000, ->
 		return
 
-	casper.wait 1000, ->
-
-	casper.withPopup /oauth\.io/, ->
+	casper.withPopup /facebook\.com/, ->
 		@echo "Form loaded"
-		@fill provider.form.selector, provider.form.fields, false
-		@click provider.form.validate_button
-		return
+		#Logging into service
+		@fill provider.form.selector, provider.form.fields, true
+		@echo "Filled login form and clicked login button, now waiting 5"
+		@wait 5000, ->
+			if popup_gone
+				@echo "Permissions already validated"
+			else
+				@echo "Going through permissions validation"
+				waitformyselector.apply @, [provider.form.permissions_buttons, => @echo "Clicked accept permission"]
 
-	casper.withPopup /oauth\.io/, ->
-		console.log "Filled form and clicked ok."
-		return
+	casper.on 'popup.closed', ->
+		popup_gone = true
 
-	casper.wait 5000
+	casper.waitFor (->
+		return popup_gone
+		), (->
+		), (-> return), 20000
