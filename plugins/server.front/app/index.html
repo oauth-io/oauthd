@@ -101,7 +101,9 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         Boomerang.init({app: '{{heroku_app}}', addon: 'oauthio'});
+        document.getElementsByClassName("navbar")[0].className += " heroku_mode";
       });
+
     </script>
     {{endif}}
 </head>
@@ -151,6 +153,6 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
     </div>
 
     <!-- <script src="/lib/requirejs/require.js" data-main="/js/main.js"></script> -->
-    <script src="/lib/requirejs/require.js" data-main="/js/main.js"></script>
+    <script src="/lib/requirejs/require.js" data-main="/js/main-built.js"></script>
 </body>
 </html>

@@ -44,13 +44,11 @@ exports.setup = (callback) ->
 		msg += ' (' + data.customer.email + ') has failed to pay his invoice ( $' + (data.invoice.total / 100) + ' ) :('
 		hipchat room:@config.hipchat.room_support, message: msg
 
-	@on 'heroku_user.subscribe', (heroku_user, offer) =>
-		msg = heroku_user.name + '[' + heroku_user.id + ']'
-		msg += 'subscribe to heroku oauthio addon with plan ' + offer + '.'
+	@on 'heroku_user.subscribe', (msg) =>
 		hipchat room:@config.hipchat.room_activities, message: msg
 		
 	@on 'heroku_user.unsubscribe', (heroku_user) =>
-		msg = heroku_user.name + '[' + heroku_user.id + ']'
+		msg = heroku_user.mail + '[' + heroku_user.id + ']'
 		msg += 'unsubscribe from heroku oauthio addon.'
 		hipchat room:@config.hipchat.room_activities, message: msg
 

@@ -249,7 +249,7 @@ exports.setup = (callback) ->
 						['expire', 'session:' + token, _config.expire]
 					]).exec (err, r) =>
 						return cb err if err
-						@emit 'user.login', res
+						@emit 'user.login', user.profile
 						return cb null, access_token:token, expires_in:_config.expire
 	callback()
 

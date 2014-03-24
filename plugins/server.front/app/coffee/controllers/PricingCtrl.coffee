@@ -8,7 +8,8 @@ define [
 		MenuService.changed()
 
 		PaymentService.list (success) ->
-			$scope.plans = success.data.offers
+			$scope.plans = success.data.offers.slice 1
+
 		, (error) ->
 			console.log error
 
