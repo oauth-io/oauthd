@@ -69,7 +69,9 @@ module.exports = (exports) ->
 			return
 
 		return
-	unless exports.OAuth
+	if exports.OAuth
+		datastore.setOAuth exports.OAuth
+	else
 		exports.OAuth =
 			initialize: (public_key, options) ->
 				config.key = public_key
@@ -270,6 +272,7 @@ module.exports = (exports) ->
 			http: (opts) ->
 				oauthio.request.http opts  if oauthio.request.http
 				return
+		datastore.setOAuth exports.OAuth
 
 		if typeof jQuery is "undefined"
 			_preloadcalls = []
