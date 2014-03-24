@@ -88,9 +88,6 @@ exports.setup = (callback) ->
 				res.end data
 				next()
 			
-			console.log ""
-			console.log "req.herokuNavData", req.herokuNavData
-			console.log "req.herokuBodyApp", req.herokuBodyApp
 			data = data.replace /\{\{if herokuNavData\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '$1' else ''
 			if req.heroku
 				data = data.replace /\{\{heroku_app\}\}/g, req.herokuBodyApp
