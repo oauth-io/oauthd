@@ -1,11 +1,9 @@
-
-
 exports.launch = (casper, provider, global_conf, utils) ->
 	casper.test.begin provider.test_suite_name, 5, suite = (test) ->
 		casper.start ->
 			window.__flag = false
 			return
-		casper.thenOpen "https://oauth.io", ->
+		casper.thenOpen global_conf.test_server, ->
 			base = this
 			#Testing OAuth
 			OAuth = base.evaluate(->
@@ -18,7 +16,8 @@ exports.launch = (casper, provider, global_conf, utils) ->
 			base.test.assert typeof version is "string", "OAuth.version is defined"
 
 		require('./initializer').initialize casper, global_conf, utils
-		require("./popup").tests casper, provider, global_conf, utils
+		# require("./popup").tests casper, provider, global_conf, utils
+		require("./redirect").tests casper, provider, global_conf, utils
 		# require("./requests_me").tests casper, provider, global_conf
 
 		databag = {}

@@ -4,3 +4,4 @@
 /out.log
 /err.log
 /forever.log
+/app/sdk-js/tests/testsiteserver/node_modules

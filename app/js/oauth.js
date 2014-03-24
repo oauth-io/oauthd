@@ -308,7 +308,6 @@ module.exports = function(exports) {
       },
       callback: function(provider, opts, callback) {
         var defer, res;
-        console.log('OAUTH RESULT', oauth_result);
         defer = $.Deferred();
         if (arguments.length === 1) {
           callback = provider;
@@ -705,8 +704,7 @@ module.exports = function(config) {
   m = {};
   m.setOAuth = (function(_this) {
     return function(o) {
-      m.OAuth = o;
-      return console.log("OAUTH IN DATASTORE", m.OAuth);
+      return m.OAuth = o;
     };
   })(this);
   m.cookies = {
