@@ -33,8 +33,6 @@ checkHeroku = (req, res, next) ->
 	req.herokuNavData = herokuNavData?[1]
 	herokuBodyApp = req.headers.cookie?.match /heroku-body-app=%22(.*?)%22/
 	req.herokuBodyApp = herokuBodyApp?[1]
-	if req.herokuNavData
-		req.heroku = true
 	next()
 
 checkAdmin = (req, res, next) -> checkLogged req, res, ->
@@ -88,12 +86,9 @@ exports.setup = (callback) ->
 				res.end data
 				next()
 			
-			console.log ""
-			console.log "req.herokuNavData", req.herokuNavData
-			console.log "req.herokuBodyApp", req.herokuBodyApp
 			data = data.replace /\{\{if herokuNavData\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '$1' else ''
-			if req.heroku
-				data = data.replace /\{\{heroku_app\}\}/g, req.herokuBodyApp
+			data = data.replace /\{\{if herokuUser\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '' else '$1'
+			data = data.replace /\{\{heroku_app\}\}/g, req.herokuBodyApp
 
 			if req.token
 				db.redis.hgetall 'session:' + req.token, (err, session) ->
@@ -112,7 +107,12 @@ exports.setup = (callback) ->
 			proxy(req, res, next);
 
 		@server.get '/logout', (req, res, next) =>
-			res.setHeader 'Set-Cookie', 'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
+			cookies = [
+				'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				'heroku-nav-data=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				'heroku-body-app=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				]
+			res.setHeader 'Set-Cookie', cookies
 			res.setHeader 'Location', '/'
 			res.send 302
 			next()
