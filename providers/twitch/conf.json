@@ -6,7 +6,6 @@
 		"authorize": "/oauth2/authorize",
 		"access_token": "/oauth2/token",
 		"request": {
-			"url": "https://api.twitch.tv/kraken",
 			"cors": true
 		},
 		"refresh": "/oauth2/token",
