@@ -132,7 +132,7 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
 <!--             <li ng-class="{active: selectedMenu == '/features'}" ng-hide="UserService.isLogin()"><a href="/features">Features</a></li> -->
             <li ng-class="{active: selectedMenu.substr(0,5) == '/docs'}"><a href="/docs">Documentation</a></li>
-            <li style="margin-right: 20px" ng-class="{active: selectedMenu.substr(0,8) == '/pricing'}"><a href="/pricing">Pricing</a></li>
+            {{if herokuUser}}<li style="margin-right: 20px" ng-class="{active: selectedMenu.substr(0,8) == '/pricing'}"><a href="/pricing">Pricing</a></li>{{endif}}
             {{if admin}}<li ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></li>{{endif}}
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
