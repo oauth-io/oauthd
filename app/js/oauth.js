@@ -83,7 +83,7 @@
         };
     };
 
-    function mkHttpEndpoint(provider, tokens, request, method, endpoint) {
+    function mkHttpMe(provider, tokens, request, method) {
         return function(opts) {
             var options = {};
             if (typeof opts === 'object') {
@@ -91,15 +91,13 @@
                     options[i] = opts[i];
                 }
             }
-            options.common_endpoint = true;
-            options.endpoint = endpoint;
             options.type = options.type || method;
             options.oauthio = {
                 provider: provider,
                 tokens: tokens,
                 request: request
             };
-            return exports.OAuth.http(options);
+            return exports.OAuth.http_me(options);
         };
     };
 
@@ -143,16 +141,15 @@
         var make_res = function(method) {
             return mkHttp(data.provider, tokens, request, method);
         }
-        var make_res_endpoint = function(method, url) {
-            return mkHttpEndpoint(data.provider, tokens, request, method, url);
-        }
+
         res.get = make_res('GET');
         res.post = make_res('POST');
         res.put = make_res('PUT');
         res.patch = make_res('PATCH');
         res.del = make_res('DELETE');
 
-        res.me = make_res_endpoint('GET', 'me');
+        res.me = mkHttpMe(data.provider, tokens, request, 'GET');
+
         return opts.callback(null, res);
     }
 
@@ -217,7 +214,9 @@
                 res.patch = make_res('PATCH');
                 res.del = make_res('DELETE');
 
-                res.me = make_res_endpoint('GET', 'me');
+                res.me = function(opts) {
+                    mkHttpMe(data.provider, tokens, request, 'GET');
+                }
                 return res;
             },
             popup: function(provider, opts, callback) {
@@ -411,6 +410,52 @@
                 }
             });
         };
+
+        exports.OAuth.http_me = function(opts) {
+            console.log('http me');
+            var options = {};
+            for (var k in opts) {
+                options[k] = opts[k];
+            }
+            if (!options.oauthio.request || options.oauthio.request === true) {
+                var desc_opts = {
+                    wait: !! options.oauthio.request
+                };
+                var defer = $.Deferred();
+                providers_api.getDescription(options.oauthio.provider, desc_opts, function(e, desc) {
+                    if (e) return defer.reject(e);
+                    if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.oauthio.request = desc.oauth1 && desc.oauth1.request;
+                    else options.oauthio.request = desc.oauth2 && desc.oauth2.request;
+                    defer.resolve();
+                });
+                return defer.then(doRequest);
+            } else return doRequest();
+
+            function doRequest() {
+                var request = options.oauthio.request || {};
+                options.url = config.oauthd_url + '/auth/' + options.oauthio.provider + '/me';
+                options.headers = options.headers || {};
+                options.headers.oauthio = 'k=' + config.key;
+                if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
+                for (var k in options.oauthio.tokens) options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
+                delete options.oauthio;
+                var promise = $.ajax(options);
+                $.when(promise)
+                    .done(function(data) {
+                        promise.resolve(data.data);
+                    })
+                    .fail(function(data) {
+                        if (data.responseJSON)
+                            console.error(data.responseJSON.data);
+                        else {
+                            console.log(data);
+                            console.error('An error occured while trying to access the resource');
+                        }
+                    });
+                return promise;
+            }
+        };
+
         exports.OAuth.http = function(opts) {
             var options = {};
             var i;
@@ -434,7 +479,7 @@
             function doRequest() {
                 var request = options.oauthio.request || {};
                 if (!request.cors) {
-                    options.url = !options.common_endpoint ? encodeURIComponent(options.url) : 'endpoint:' + options.endpoint;
+                    options.url = encodeURIComponent(options.url);
                     if (options.url[0] != '/') options.url = '/' + options.url;
                     options.url = config.oauthd_url + '/request/' + options.oauthio.provider + options.url;
                     options.headers = options.headers || {};
@@ -442,75 +487,30 @@
                     if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) options.headers.oauthio += '&oauthv=1'; // make sure to use oauth 1
                     for (var k in options.oauthio.tokens) options.headers.oauthio += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(options.oauthio.tokens[k]);
                     delete options.oauthio;
-                    var promise = $.ajax(options);
-                    $.when(promise).fail(function(data) {
-                        if (data.responseJSON)
-                            console.error(data.responseJSON.data);
-                        else {
-                            console.log(data);
-                            console.error('An error occured while trying to access the resource');
-                        }
-                    });
-                    return promise;
+                    return $.ajax(options);
                 }
                 if (options.oauthio.tokens) {
-                    var defer = $.Deferred();
-                    var defer_return = $.Deferred();
                     //Fetching the url if a common endpoint is called
-                    if (options.common_endpoint) {
-                        var headers = options.headers || {};
-                        headers.oauthio = 'k=' + config.key;
-                        $.ajax({
-                            url: config.oauthd_url + '/api/providers/github/settings',
-                            method: 'GET',
-                            success: function(data, status) {
-                                data = data.data;
-                                console.log(data);
-                                console.log(options.endpoint);
-                                if (data.settings.endpoints && data.settings.endpoints[options.endpoint]) {
-                                    options.url = data.settings.endpoints[options.endpoint].url;
-                                    options.method = data.settings.endpoints[options.endpoint].method;
-                                    console.log(options);
-                                    defer.resolve();
-                                } else {
-                                    defer.reject(new Error('The requested endpoint does not exist for this provider'));
-                                    return defer.promise();
-                                }
-                            },
-                            error: function(data) {
-                                console.error(data.responseJSON.data);
-                            }
-                        });
-                    } else {
-                        defer.resolve();
+                    if (options.oauthio.tokens.access_token) options.oauthio.tokens.token = options.oauthio.tokens.access_token;
+                    if (!options.url.match(/^[a-z]{2,16}:\/\//)) {
+                        if (options.url[0] !== '/') options.url = '/' + options.url;
+                        options.url = request.url + options.url;
                     }
-                    defer.promise().done(function() {
-                        if (options.oauthio.tokens.access_token) options.oauthio.tokens.token = options.oauthio.tokens.access_token;
-                        if (!options.url.match(/^[a-z]{2,16}:\/\//)) {
-                            if (options.url[0] !== '/') options.url = '/' + options.url;
-                            options.url = request.url + options.url;
-                        }
-                        options.url = replaceParam(options.url, options.oauthio.tokens, request.parameters);
-                        if (request.query) {
-                            var qs = [];
-                            for (i in request.query) qs.push(encodeURIComponent(i) + '=' + encodeURIComponent(replaceParam(request.query[i], options.oauthio.tokens, request.parameters)));
-                            qs = qs.join('&');
-                            if (options.url.indexOf('?') !== -1) options.url += '&' + qs;
-                            else options.url += '?' + qs;
-                        }
-                        if (request.headers) {
-                            options.headers = options.headers || {};
-                            for (i in request.headers) options.headers[i] = replaceParam(request.headers[i], options.oauthio.tokens, request.parameters);
-                        }
-                        delete options.oauthio;
-                        $.ajax(options).done(function() {
-                            defer_return.resolve.apply(this, arguments);
-                        }).fail(function() {
-                            defer_return.reject.apply(this, arguments);
-                        });
-                    });
+                    options.url = replaceParam(options.url, options.oauthio.tokens, request.parameters);
+                    if (request.query) {
+                        var qs = [];
+                        for (i in request.query) qs.push(encodeURIComponent(i) + '=' + encodeURIComponent(replaceParam(request.query[i], options.oauthio.tokens, request.parameters)));
+                        qs = qs.join('&');
+                        if (options.url.indexOf('?') !== -1) options.url += '&' + qs;
+                        else options.url += '?' + qs;
+                    }
+                    if (request.headers) {
+                        options.headers = options.headers || {};
+                        for (i in request.headers) options.headers[i] = replaceParam(request.headers[i], options.oauthio.tokens, request.parameters);
+                    }
+                    delete options.oauthio;
+                    return $.ajax(options);
                 }
-                return defer_return.promise();
             };
         }
     }

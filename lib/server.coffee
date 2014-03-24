@@ -417,11 +417,11 @@ server.get config.base_api + '/providers/:provider', (req, res, next) ->
 
 # get a provider config's extras
 server.get config.base_api + '/providers/:provider/settings', cors_middleware, (req, res, next) ->
-	console.log 'here'
 	db.providers.getSettings req.params.provider, send(res,next)
 
-server.get '/hello_world', (req, res, next) ->
-	res.send 'HELLO PEOPLE'
+# get the provider me.json mapping configuration
+server.get config.base_api + '/providers/:provider/user-mapping', cors_middleware, (req, res, next) ->
+	db.providers.getMeMapping req.params.provider, send(res,next)
 
 # get a provider logo
 server.get config.base_api + '/providers/:provider/logo', ((req, res, next) ->
