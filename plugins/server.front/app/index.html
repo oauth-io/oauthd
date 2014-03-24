@@ -101,7 +101,9 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         Boomerang.init({app: '{{heroku_app}}', addon: 'oauthio'});
+        document.getElementsByClassName("navbar")[0].className += " heroku_mode";
       });
+
     </script>
     {{endif}}
 </head>

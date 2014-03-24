@@ -99,7 +99,6 @@ exports.raw = ->
 			res.setHeader 'Content-Type', 'text/html'
 			shared.auth.generateToken id:resource.id, mail:resource.mail, validated:true, (err, token) =>
 				return next err if err
-				console.log "token", token
 				expireDate = new Date((new Date - 0) + 3600*36 * 1000)
 				# We need to send the app name to fill the heroku navbar
 				# We need to fil the heroku nav data cookie
@@ -109,8 +108,7 @@ exports.raw = ->
 					'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
 					]
 				res.setHeader 'Set-Cookie', cookies
-				# res.setHeader 'Location', config.host_url + '/key-manager'
-				res.setHeader 'Location', config.host_url
+				res.setHeader 'Location', config.host_url + '/key-manager'
 
 				next()
 				return
@@ -127,11 +125,14 @@ exports.raw = ->
 		return
 
 	subscribeEvent = (resource, plan) ->
+		msg = resource.mail + '[' + resource.id + ']'
+		msg += 'subscribe to heroku oauthio addon with plan ' + plan + '.'
 		if plan isnt "bootstrap"
-			shared.emit 'heroku_user.subscribe', resource, plan
+			shared.emit 'heroku_user.subscribe', msg
 
 	sso_login = (req, res, next) ->
-		res.setHeader 'Location', '/'
+		# res.setHeader 'Location', '/'
+		res.setHeader 'Location', '/key-manager'
 		res.send 301
 		return
 
