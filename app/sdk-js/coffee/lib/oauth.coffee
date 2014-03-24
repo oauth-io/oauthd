@@ -230,7 +230,6 @@ module.exports = (exports) ->
 				return
 
 			callback: (provider, opts, callback) ->
-				console.log 'OAUTH RESULT', oauth_result
 				defer = $.Deferred()
 				if arguments.length is 1
 					callback = provider

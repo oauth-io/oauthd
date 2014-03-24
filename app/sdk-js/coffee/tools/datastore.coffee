@@ -2,7 +2,6 @@ module.exports = (config) ->
 	m = {}
 	m.setOAuth = (o) =>
 		m.OAuth = o
-		console.log "OAUTH IN DATASTORE", m.OAuth
 
 	m.cookies =
 		createCookie: (name, value, expires) ->
