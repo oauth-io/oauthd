@@ -30,6 +30,10 @@ exports.raw = ->
 
 	@apiRequest = (req, provider_name, oauthio, callback) =>
 		req.headers ?= {}
+		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
+		urlinfos = Url.parse(ref)
+		if not urlinfos.hostname
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 		async.parallel [
 			(callback) => @db.providers.getExtended provider_name, callback
 			(callback) => @db.apps.getKeyset oauthio.k, provider_name, callback
