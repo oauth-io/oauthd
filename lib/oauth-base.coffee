@@ -68,6 +68,15 @@ class OAuthBase
 		url += "?" + querystring.stringify(query)
 		return { url: url, state: stateId }
 
+	_buildServerRequestOptions: (req, configuration) ->
+		return {
+			method: req.method
+			followAllRedirects: true
+			url: @_buildServerRequestUrl(req.apiUrl, req, configuration.url)
+			qs: @_buildServerRequestQuery(configuration.query)
+			headers: @_buildServerRequestHeaders(req.headers, configuration.headers)
+		}
+
 	_buildServerRequestUrl: (url, req, configurationUrl) ->
 		if typeof req.query == 'function' and typeof req.query() == 'string'
 			url += "?" + req.query()
