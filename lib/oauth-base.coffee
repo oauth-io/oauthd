@@ -143,4 +143,16 @@ class OAuthBase
 			headers[name] = param if param
 		return headers
 
+	_buildOptions: (configuration, placeholderValues, headers, query) ->
+		method = configuration.method?.toUpperCase() || 'POST'
+		options = {
+			url: @_replaceParam(configuration.url, placeholderValues)
+			method: method
+			encoding: null
+			form: query if method != 'GET'
+			qs: query if method == 'GET'
+			headers: headers if Object.keys(headers).length
+		}
+		return options
+
 module.exports = OAuthBase
