@@ -16,14 +16,17 @@ exports.launch = (casper, provider, global_conf, utils) ->
 			base.test.assert typeof version is "string", "OAuth.version is defined"
 
 		require('./initializer').initialize casper, global_conf, utils
-		# require("./popup").tests casper, provider, global_conf, utils
-		require("./redirect").tests casper, provider, global_conf, utils
-		# require("./requests_me").tests casper, provider, global_conf
+		
+		if (casper.cli.options.auth == "redirect")
+			require("./redirect").tests casper, provider, global_conf, utils
+			require('./initializer').initialize casper, global_conf, utils
+		else
+			require("./popup").tests casper, provider, global_conf, utils
 
 		databag = {}
 		for request in provider.requests
 			request.provider = provider.provider_name
-			require('./requester').request casper, request, utils, databag
+			require('./requester').request casper, request, utils, databag		
 		
 		casper.run()
 		return
