@@ -92,8 +92,7 @@ class OAuth1 extends OAuthBase
 
 		configuration = @_oauthConfiguration.access_token
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-		for extra in (@_oauthConfiguration.authorize.extra || [])
-			placeholderValues[extra] = req.params[extra] if req.params[extra]
+		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 
 		headers = {}
@@ -137,10 +136,8 @@ class OAuth1 extends OAuthBase
 					oauth_token_secret: response.oauth_token_secret
 					expires_in: expire
 					request: requestclone
-				for extra in (configuration.extra||[])
-					result[extra] = response.body[extra] if response.body[extra]
-				for extra in (@_oauthConfiguration.authorize.extra||[])
-					result[extra] = req.params[extra] if req.params[extra]
+				@_setExtraResponseParameters(configuration, response, result)
+				@_setExtraRequestAuthorizeParameters(req, result)
 				callback null, result
 
 	request: (req, callback) ->
