@@ -49,7 +49,7 @@ class OAuth2 extends OAuthBase
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
 
-		headers = @_getHeaders(configuration)
+		headers = @_buildHeaders(configuration)
 		options =
 			url: @_replaceParam configuration.url, {}
 			method: configuration.method?.toUpperCase() || "POST"
@@ -86,7 +86,7 @@ class OAuth2 extends OAuthBase
 		configuration = @_oauthConfiguration.refresh
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)
-		headers = @_getHeaders(configuration, { refresh_token: token })
+		headers = @_buildHeaders(configuration, { refresh_token: token })
 		options =
 			url: @_replaceParam configuration.url, {}
 			method: configuration.method?.toUpperCase() || "POST"
