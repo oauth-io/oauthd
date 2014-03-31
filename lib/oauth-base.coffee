@@ -127,4 +127,12 @@ class OAuthBase
 				clonedRequest.parameters[k] = @_parameters[k]
 		return clonedRequest
 
+	_setExtraResponseParameters: (configuration, response, data) ->
+		for extra in (configuration.extra || [])
+			data[extra] = response.body[extra] if response.body[extra]
+
+	_setExtraRequestAuthorizeParameters: (request, data) ->
+		for extra in (@_oauthConfiguration.authorize.extra || [])
+			data[extra] = request.params[extra] if request.params[extra]
+
 module.exports = OAuthBase
