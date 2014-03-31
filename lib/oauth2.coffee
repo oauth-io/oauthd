@@ -51,11 +51,7 @@ class OAuth2 extends OAuthBase
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
 
-		headers = {}
-		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
-		for name, value of configuration.headers
-			param = @_replaceParam value, {}
-			headers[name] = param if param
+		headers = @_getHeaders(configuration)
 		options =
 			url: @_replaceParam configuration.url, {}
 			method: configuration.method?.toUpperCase() || "POST"
@@ -78,7 +74,6 @@ class OAuth2 extends OAuthBase
 
 				expire = @_getExpireParameter(response)
 				requestclone = @_cloneRequest()
-
 				result =
 					access_token: response.access_token
 					token_type: response.body.token_type
@@ -94,12 +89,7 @@ class OAuth2 extends OAuthBase
 		configuration = @_oauthConfiguration.refresh
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)
-
-		headers = {}
-		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
-		for name, value of configuration.headers
-			param = @_replaceParam value, { refresh_token: token }
-			headers[name] = param if param
+		headers = @_getHeaders(configuration, { refresh_token: token })
 		options =
 			url: @_replaceParam configuration.url, {}
 			method: configuration.method?.toUpperCase() || "POST"

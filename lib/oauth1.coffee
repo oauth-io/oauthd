@@ -24,11 +24,7 @@ class OAuth1 extends OAuthBase
 		configuration = @_oauthConfiguration.request_token
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
-		headers = {}
-		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
-		for name, value of configuration.headers
-			param = @_replaceParam(value, {})
-			headers[name] = param if param
+		headers = @_getHeaders(configuration)
 		options =
 			url: configuration.url
 			method: configuration.method?.toUpperCase() || "POST"
@@ -84,12 +80,7 @@ class OAuth1 extends OAuthBase
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
-
-		headers = {}
-		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
-		for name, value of configuration.headers
-			param = @_replaceParam value, {}
-			headers[name] = param if param
+		headers = @_getHeaders(configuration)
 		options =
 			url: @_replaceParam configuration.url, placeholderValues
 			method: configuration.method?.toUpperCase() || "POST"

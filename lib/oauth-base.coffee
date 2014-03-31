@@ -25,7 +25,6 @@ class OAuthBase
 		@_provider = provider
 		@_oauthConfiguration = provider[oauthv];
 		@_parameters = parameters
-		@_shortFormats = json: 'application/json', url: 'application/x-www-form-urlencoded'
 		@_serverCallbackUrl = config.host_url + config.relbase
 		@_setParams @_provider.parameters
 		@_setParams @_provider[oauthv].parameters
@@ -134,5 +133,14 @@ class OAuthBase
 	_setExtraRequestAuthorizeParameters: (request, data) ->
 		for extra in (@_oauthConfiguration.authorize.extra || [])
 			data[extra] = request.params[extra] if request.params[extra]
+
+	_getHeaders: (configuration, headerParameters = {}) ->
+		shortFormats = { json: 'application/json', url: 'application/x-www-form-urlencoded' }
+		headers = {}
+		headers["Accept"] = shortFormats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
+			param = @_replaceParam(value, headerParameters)
+			headers[name] = param if param
+		return headers
 
 module.exports = OAuthBase
