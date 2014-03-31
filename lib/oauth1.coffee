@@ -130,20 +130,8 @@ class OAuth1 extends OAuthBase
 			responseParser.parse (err, response) =>
 				return callback err if err
 
-				expire = response.body.expire
-				expire ?= response.body.expires
-				expire ?= response.body.expires_in
-				expire ?= response.body.expires_at
-				if expire
-					expire = parseInt expire
-					now = (new Date).getTime()
-					expire -= now if expire > now
-				requestclone = {}
-				requestclone[k] = v for k, v of @_provider.oauth1.request
-				for k, v of @_params
-					if v.scope == 'public'
-						requestclone.parameters ?= {}
-						requestclone.parameters[k] = @_parameters[k]
+				expire = @_getExpireParameter(response)
+				requestclone = @_cloneRequest(@_provider.oauth1.request)
 				result =
 					oauth_token: response.oauth_token
 					oauth_token_secret: response.oauth_token_secret
