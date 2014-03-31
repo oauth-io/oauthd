@@ -134,7 +134,7 @@ class OAuthBase
 		for extra in (@_oauthConfiguration.authorize.extra || [])
 			data[extra] = request.params[extra] if request.params[extra]
 
-	_getHeaders: (configuration, headerParameters = {}) ->
+	_buildHeaders: (configuration, headerParameters = {}) ->
 		shortFormats = { json: 'application/json', url: 'application/x-www-form-urlencoded' }
 		headers = {}
 		headers["Accept"] = shortFormats[configuration.format] || configuration.format if configuration.format

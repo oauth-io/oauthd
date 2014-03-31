@@ -24,7 +24,7 @@ class OAuth1 extends OAuthBase
 		configuration = @_oauthConfiguration.request_token
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
-		headers = @_getHeaders(configuration)
+		headers = @_buildHeaders(configuration)
 		options =
 			url: configuration.url
 			method: configuration.method?.toUpperCase() || "POST"
@@ -80,7 +80,7 @@ class OAuth1 extends OAuthBase
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
-		headers = @_getHeaders(configuration)
+		headers = @_buildHeaders(configuration)
 		options =
 			url: @_replaceParam configuration.url, placeholderValues
 			method: configuration.method?.toUpperCase() || "POST"
