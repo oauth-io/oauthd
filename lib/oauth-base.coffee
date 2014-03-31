@@ -23,8 +23,9 @@ class OAuthBase
 		@_params = {}
 		@_oauthv = oauthv
 		@_provider = provider
+		@_oauthConfiguration = provider[oauthv];
 		@_parameters = parameters
-		@_short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
+		@_shortFormats = json: 'application/json', url: 'application/x-www-form-urlencoded'
 		@_serverCallbackUrl = config.host_url + config.relbase
 		@_setParams @_provider.parameters
 		@_setParams @_provider[oauthv].parameters
@@ -43,10 +44,10 @@ class OAuthBase
 				return @_parameters[val].join(@_params[val].separator || ",")
 			return @_parameters[val]
 
-	_createState: (provider, opts, callback) ->
+	_createState: (opts, callback) ->
 		newStateData =
 			key: opts.key,
-			provider: provider.provider,
+			provider: @_provider.provider,
 			redirect_uri: opts.redirect_uri,
 			oauthv: @_oauthv,
 			origin: opts.origin,
@@ -68,13 +69,13 @@ class OAuthBase
 		url += "?" + querystring.stringify(query)
 		return { url: url, state: stateId }
 
-	_buildServerRequestOptions: (req, configuration) ->
+	_buildServerRequestOptions: (req) ->
 		return {
 			method: req.method
 			followAllRedirects: true
-			url: @_buildServerRequestUrl(req.apiUrl, req, configuration.url)
-			qs: @_buildServerRequestQuery(configuration.query)
-			headers: @_buildServerRequestHeaders(req.headers, configuration.headers)
+			url: @_buildServerRequestUrl(req.apiUrl, req, @_oauthConfiguration.request.url)
+			qs: @_buildServerRequestQuery(@_oauthConfiguration.request.query)
+			headers: @_buildServerRequestHeaders(req.headers, @_oauthConfiguration.request.headers)
 		}
 
 	_buildServerRequestUrl: (url, req, configurationUrl) ->
@@ -117,9 +118,9 @@ class OAuthBase
 			expire -= now if expire > now
 		return expire
 
-	_cloneRequest: (requestConfiguration) ->
+	_cloneRequest: () ->
 		clonedRequest = {}
-		clonedRequest[k] = v for k, v of requestConfiguration
+		clonedRequest[k] = v for k, v of @_oauthConfiguration.request
 		for k, v of @_params
 			if v.scope == 'public'
 				clonedRequest.parameters ?= {}
