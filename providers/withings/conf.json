@@ -18,7 +18,7 @@
 		}
 	},
 	"href": {
-		"keys": "https://dev.twitter.com/apps/new",
+		"keys": "http://oauth.withings.com/partner/dashboard",
 		"docs": "https://oauth.withings.com/partner/add",
 		"apps": "https://oauth.withings.com/partner/dashboard",
 		"provider": "https://www.withings.com"
