@@ -92,7 +92,7 @@ class OAuth1 extends OAuthBase
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_getHeaders(configuration)
 		options =
-			url: @_replaceParam configuration.url, placeholderValues
+			url: @_replaceParam(configuration.url, placeholderValues)
 			method: configuration.method?.toUpperCase() || "POST"
 			encoding: null
 			oauth:
@@ -106,7 +106,6 @@ class OAuth1 extends OAuthBase
 		else
 			options.oauth.verifier = ""
 		delete query.oauth_callback
-
 		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
 			options.form = query
