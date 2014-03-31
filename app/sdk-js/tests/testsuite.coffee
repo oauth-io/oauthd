@@ -7,12 +7,13 @@ exports.launch = (casper, provider, global_conf, utils) ->
 			base = this
 			#Testing OAuth
 			OAuth = base.evaluate(->
-				window.OAuth
+				return window.OAuth
 			)
 			base.test.assert OAuth isnt null, "OAuth is defined"
 			version = base.evaluate(->
-				window.OAuth.getVersion()
+				return window.OAuth.getVersion()
 			)
+			
 			base.test.assert typeof version is "string", "OAuth.version is defined"
 
 		require('./initializer').initialize casper, global_conf, utils

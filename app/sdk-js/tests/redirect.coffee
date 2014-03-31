@@ -6,10 +6,10 @@ waitformyselector = (selectors, callback, index) ->
 		#Accepting permissions
 		@fill selectors[index], {}, true
 		if (selectors.length > index + 1)
-			@wait 2000, =>
+			@wait 5000, =>
 				waitformyselector.call @, selectors, callback, index + 1
 		else
-			@wait 2000, =>
+			@wait 5000, =>
 				callback.apply @
 
 exports.tests = (casper, provider, global_conf, utils) ->

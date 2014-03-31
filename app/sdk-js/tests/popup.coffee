@@ -5,12 +5,15 @@ waitformyselector = (selectors, callback, index) ->
 	
 	@waitForSelector selectors[index], =>
 		#Accepting permissions
+		@echo "in waitForSelector"
 		@fill selectors[index], {}, true
 		if (selectors.length > index + 1)
-			@wait 2000, =>
-				waitformyselector.call @, selectors, callback, index + 1
+			@wait 5000, =>
+				@echo "recursive call"
+				waitformyselector.apply @, [selectors, callback, index + 1]
 		else
-			@wait 2000, =>
+			@wait 5000, =>
+				@echo "end callback"
 				callback.apply @
 
 exports.tests = (casper, provider, global_conf, utils) ->
@@ -91,6 +94,18 @@ exports.tests = (casper, provider, global_conf, utils) ->
 	
 
 	casper.waitFor (->
-		return popup_gone
-		), (->
-		), (-> return), 20000
+			return popup_gone
+	), (->
+		error = @evaluate (->
+				return window.error
+			)
+		response = @evaluate (->
+				return window.res
+			)
+		if (casper.cli.options.logall)
+			if error
+				utils.dump error
+			if response
+				utils.dump response
+			@test.assert typeof response == "object" and !error, "Popup response available"
+	), (-> return), 20000
