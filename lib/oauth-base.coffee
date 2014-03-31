@@ -143,7 +143,7 @@ class OAuthBase
 			headers[name] = param if param
 		return headers
 
-	_buildOptions: (configuration, placeholderValues, headers, query) ->
+	_buildRequestOptions: (configuration, placeholderValues, headers, query) ->
 		method = configuration.method?.toUpperCase() || 'POST'
 		options = {
 			url: @_replaceParam(configuration.url, placeholderValues)

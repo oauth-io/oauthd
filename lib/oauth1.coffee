@@ -35,20 +35,13 @@ class OAuth1 extends OAuthBase
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = @_buildHeaders(configuration)
-		options =
-			url: configuration.url
-			method: configuration.method?.toUpperCase() || "POST"
-			encoding: null
-			oauth:
-				callback: query.oauth_callback
-				consumer_key: @_parameters.client_id
-				consumer_secret: @_parameters.client_secret
+		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options.oauth = {
+			callback: query.oauth_callback
+			consumer_key: @_parameters.client_id
+			consumer_secret: @_parameters.client_secret
+		}
 		delete query.oauth_callback
-		options.headers = headers if Object.keys(headers).length
-		if options.method == 'POST'
-			options.form = query
-		else
-			options.qs = query
 
 		# do request to request_token
 		request options, (err, response, body) =>
@@ -91,7 +84,8 @@ class OAuth1 extends OAuthBase
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
-		options = @_buildOptions(configuration, placeholderValues, headers, query)
+		# This is the only call that replaces placeholders in url
+		options = @_buildRequestOptions(configuration, placeholderValues, headers, query)
 		options.oauth = {
 			callback: query.oauth_callback
 			consumer_key: @_parameters.client_id
@@ -128,7 +122,6 @@ class OAuth1 extends OAuthBase
 			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 
 		options = @_buildServerRequestOptions(req)
-
 		options.oauth =
 			consumer_key: @_parameters.client_id
 			consumer_secret: @_parameters.client_secret
