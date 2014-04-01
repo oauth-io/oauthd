@@ -38,9 +38,9 @@ exports.tests = (casper, provider, global_conf, utils) ->
 					window.res = res
 					window.callPhantom finished: true
 					return true
-				popupres.fail ->
+				popupres.fail (e) ->
 					window.__flag = true
-					window.error = arguments_
+					window.error = e
 					window.callPhantom finished: true
 					return
 				return true
@@ -82,6 +82,8 @@ exports.tests = (casper, provider, global_conf, utils) ->
 	casper.withPopup new RegExp(provider.domain_regexp), ->
 		@echo "Form loaded"
 		#Logging into service
+		if (casper.cli.options.screenshots)
+			@capture './pictures/' + provider.provider_name + '_form' + (new Date().getTime()) + '.png'
 		@fill provider.form.selector, provider.form.fields, true
 		@echo "Filled login form and clicked login button, now waiting 5"
 		@wait 5000, ->
@@ -103,9 +105,10 @@ exports.tests = (casper, provider, global_conf, utils) ->
 				return window.res
 			)
 		if (casper.cli.options.logall)
-			if error
-				utils.dump error
-			if response
-				utils.dump response
-			@test.assert typeof response == "object" and !error, "Popup response available"
+			# if error
+			utils.dump error
+			# if response
+			utils.dump response
+
+			@test.assert typeof response == "object" and response != null and !error, "Popup response available"
 	), (-> return), 20000
