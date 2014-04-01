@@ -25,9 +25,9 @@ class OAuth2 extends OAuthBase
 		super 'oauth2', provider, parameters
 
 	authorize: (opts, callback) ->
-		@_createState @_provider, opts, (err, state) =>
+		@_createState opts, (err, state) =>
 			return callback err if err
-			configuration = @_provider.oauth2.authorize
+			configuration = @_oauthConfiguration.authorize
 			placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 			callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
@@ -45,12 +45,12 @@ class OAuth2 extends OAuthBase
 			return callback err
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
-		configuration = @_provider.oauth2.access_token
+		configuration = @_oauthConfiguration.access_token
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
 
 		headers = {}
-		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
 		for name, value of configuration.headers
 			param = @_replaceParam value, {}
 			headers[name] = param if param
@@ -74,7 +74,7 @@ class OAuth2 extends OAuthBase
 				return callback err if err
 
 				expire = @_getExpireParameter(response)
-				requestclone = @_cloneRequest(@_provider.oauth2.request)
+				requestclone = @_cloneRequest()
 
 				result =
 					access_token: response.access_token
@@ -85,17 +85,17 @@ class OAuth2 extends OAuthBase
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
 				for extra in (configuration.extra||[])
 					result[extra] = response.body[extra] if response.body[extra]
-				for extra in (@_provider.oauth2.authorize.extra||[])
+				for extra in (@_oauthConfiguration.authorize.extra||[])
 					result[extra] = req.params[extra] if req.params[extra]
 				callback null, result
 
 	refresh: (token, callback) ->
-		configuration = @_provider.oauth2.refresh
+		configuration = @_oauthConfiguration.refresh
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)
 
 		headers = {}
-		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
 		for name, value of configuration.headers
 			param = @_replaceParam value, { refresh_token: token }
 			headers[name] = param if param
@@ -132,8 +132,7 @@ class OAuth2 extends OAuthBase
 			else
 				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
-		configuration = @_provider.oauth2.request
-		options = @_buildServerRequestOptions(req, configuration)
+		options = @_buildServerRequestOptions(req)
 		options.encoding = null
 
 		# do request
