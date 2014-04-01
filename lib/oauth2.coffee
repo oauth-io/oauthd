@@ -83,10 +83,8 @@ class OAuth2 extends OAuthBase
 					base: @_provider.baseurl
 					request: requestclone
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
-				for extra in (configuration.extra||[])
-					result[extra] = response.body[extra] if response.body[extra]
-				for extra in (@_oauthConfiguration.authorize.extra||[])
-					result[extra] = req.params[extra] if req.params[extra]
+				@_setExtraResponseParameters(configuration, response, result)
+				@_setExtraRequestAuthorizeParameters(req, result)
 				callback null, result
 
 	refresh: (token, callback) ->
