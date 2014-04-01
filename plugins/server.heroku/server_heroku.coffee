@@ -235,6 +235,7 @@ exports.raw = ->
 			user:
 				id:userid
 		db.apps.create appreq, (err, app) ->
+			shared.emit 'app.create', appreq, app
 			return callback err if err
 			return callback null, app
 		
@@ -264,7 +265,7 @@ exports.raw = ->
 				subscribeEvent user, user.current_plan
 				result = 
 					id: 
-						user.heroku_id
+						user.heroku_id 
 					config: 
 						OAUTHIO_PUBLIC_KEY: app.key
 						OAUTHIO_URL: user.heroku_url

@@ -49,7 +49,7 @@ exports.setup = (callback) ->
 		
 	@on 'heroku_user.unsubscribe', (heroku_user) =>
 		msg = heroku_user.mail + '[' + heroku_user.id + ']'
-		msg += 'unsubscribe from heroku oauthio addon.'
+		msg += ' unsubscribe from heroku oauthio addon.'
 		hipchat room:@config.hipchat.room_activities, message: msg
 
 	if @config.hipchat.crash_monitor
