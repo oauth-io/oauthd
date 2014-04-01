@@ -201,7 +201,7 @@ exports.raw = ->
 						return callback err if err
 						shared.emit 'user.remove', mail:resource.mail
 						shared.emit 'heroku_user.remove', mail:resource.mail
-						callback()
+						callback null, resource
 
 	# Plan Change
 	changePlan = (req, res, next) =>
