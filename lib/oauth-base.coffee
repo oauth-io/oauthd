@@ -52,4 +52,13 @@ class OAuthBase
 			expire: 1200
 		dbstates.add newStateData, callback
 
+	_buildQuery : (configuration, placeholderValues, defaultParameters) ->
+		query = if (defaultParameters instanceof Object) then defaultParameters else {}
+		# replaces '{{placeholder1}}' in placeholders[parameterName]
+		# with matching placeholderValues's 'placeholder1' value
+		for parameterName, placeholder of configuration
+			param = @_replaceParam placeholder, placeholderValues
+			query[parameterName] = param if param
+		return query
+
 module.exports = OAuthBase
