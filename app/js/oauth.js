@@ -113,7 +113,7 @@ module.exports = function(window, document, jQuery, navigator) {
         });
       };
     };
-    if (!exports.OAuth) {
+    if (exports.OAuth == null) {
       exports.OAuth = {
         initialize: function(public_key, options) {
           var i;
@@ -174,10 +174,12 @@ module.exports = function(window, document, jQuery, navigator) {
           wnd = void 0;
           frm = void 0;
           wndTimeout = void 0;
-          defer = $.Deferred();
+          defer = $ != null ? $.Deferred() : void 0;
           opts = opts || {};
           if (!config.key) {
-            defer.reject(new Error("OAuth object must be initialized"));
+            if (defer != null) {
+              defer.reject(new Error("OAuth object must be initialized"));
+            }
             return callback(new Error("OAuth object must be initialized"));
           }
           if (arguments.length === 2) {
@@ -187,7 +189,9 @@ module.exports = function(window, document, jQuery, navigator) {
           if (cache.cacheEnabled(opts.cache)) {
             res = cache.tryCache(exports.OAuth, provider, opts.cache);
             if (res) {
-              defer.resolve(res);
+              if (defer != null) {
+                defer.resolve(res);
+              }
               if (callback) {
                 return callback(null, res);
               } else {
@@ -257,7 +261,9 @@ module.exports = function(window, document, jQuery, navigator) {
           if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessageExternal) {
             chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
               request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0];
-              defer.resolve();
+              if (defer != null) {
+                defer.resolve();
+              }
               return getMessage(request);
             });
           }
@@ -271,7 +277,9 @@ module.exports = function(window, document, jQuery, navigator) {
             document.body.appendChild(frm);
           }
           wndTimeout = setTimeout(function() {
-            defer.reject(new Error("Authorization timed out"));
+            if (defer != null) {
+              defer.reject(new Error("Authorization timed out"));
+            }
             if (opts.callback && typeof opts.callback === "function") {
               opts.callback(new Error("Authorization timed out"));
             }
@@ -283,12 +291,14 @@ module.exports = function(window, document, jQuery, navigator) {
           if (wnd) {
             wnd.focus();
           } else {
-            defer.reject(new Error("Could not open a popup"));
+            if (defer != null) {
+              defer.reject(new Error("Could not open a popup"));
+            }
             if (opts.callback && typeof opts.callback === "function") {
               opts.callback(new Error("Could not open a popup"));
             }
           }
-          return defer.promise();
+          return defer != null ? defer.promise() : void 0;
         },
         redirect: function(provider, opts, url) {
           var redirect_uri, res;
@@ -320,7 +330,7 @@ module.exports = function(window, document, jQuery, navigator) {
         },
         callback: function(provider, opts, callback) {
           var defer, res;
-          defer = $.Deferred();
+          defer = $ != null ? $.Deferred() : void 0;
           if (arguments.length === 1) {
             callback = provider;
             provider = undefined;
@@ -333,7 +343,9 @@ module.exports = function(window, document, jQuery, navigator) {
           if (cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
             res = cache.tryCache(exports.OAuth, provider, opts.cache);
             if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
-              defer.reject(new Error("You must set a provider when using the cache"));
+              if (defer != null) {
+                defer.reject(new Error("You must set a provider when using the cache"));
+              }
               if (callback) {
                 return callback(new Error("You must set a provider when using the cache"));
               } else {
@@ -345,7 +357,9 @@ module.exports = function(window, document, jQuery, navigator) {
                 return callback(null, res);
               }
             } else {
-              defer.resolve(res);
+              if (defer != null) {
+                defer.resolve(res);
+              }
               return;
             }
           }
@@ -358,7 +372,7 @@ module.exports = function(window, document, jQuery, navigator) {
             cache: opts.cache,
             callback: callback
           }, defer);
-          return defer;
+          return defer != null ? defer.promise() : void 0;
         },
         clearCache: function(provider) {
           cookies.eraseCookie("oauthio_provider_" + provider);
@@ -374,10 +388,10 @@ module.exports = function(window, document, jQuery, navigator) {
           }
         }
       };
-      if (typeof jQuery === "undefined") {
+      if (typeof window.jQuery === "undefined") {
         _preloadcalls = [];
         delayfn = void 0;
-        if (typeof chrome !== "undefined" && chrome.runtime) {
+        if (typeof chrome !== "undefined" && chrome.runtime && false) {
           delayfn = function() {
             return function() {
               throw new Error("Please include jQuery before oauth.js");
@@ -389,7 +403,7 @@ module.exports = function(window, document, jQuery, navigator) {
           e.type = "text/javascript";
           e.onload = function() {
             var i;
-            delayedFunctions(jQuery);
+            delayedFunctions(window.jQuery);
             for (i in _preloadcalls) {
               _preloadcalls[i].fn.apply(null, _preloadcalls[i].args);
             }
@@ -415,9 +429,9 @@ module.exports = function(window, document, jQuery, navigator) {
         providers_api.fetchDescription = delayfn(function() {
           providers_api.fetchDescription.apply(providers_api, arguments);
         });
-        oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, cache);
+        oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache);
       } else {
-        delayedFunctions(jQuery);
+        delayedFunctions(window.jQuery);
       }
     }
   };
@@ -430,6 +444,7 @@ var Url,
 Url = require('../tools/url')();
 
 module.exports = function($, config, client_states, cache) {
+  console.log('GOT JQUERY', $);
   return {
     http: function(opts) {
       var defer, desc_opts, doRequest, i, options;
@@ -495,19 +510,21 @@ module.exports = function($, config, client_states, cache) {
         desc_opts = {
           wait: !!options.oauthio.request
         };
-        defer = $.Deferred();
+        defer = $ != null ? $.Deferred() : void 0;
         providers_api.getDescription(options.oauthio.provider, desc_opts, function(e, desc) {
           if (e) {
-            return defer.reject(e);
+            return defer != null ? defer.reject(e) : void 0;
           }
           if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) {
             options.oauthio.request = desc.oauth1 && desc.oauth1.request;
           } else {
             options.oauthio.request = desc.oauth2 && desc.oauth2.request;
           }
-          defer.resolve();
+          if (defer != null) {
+            defer.resolve();
+          }
         });
-        return defer.then(doRequest);
+        return defer != null ? defer.then(doRequest) : void 0;
       } else {
         return doRequest();
       }
@@ -516,7 +533,7 @@ module.exports = function($, config, client_states, cache) {
       var defer, desc_opts, doRequest, k, options;
       doRequest = function() {
         var defer, k, promise, request;
-        defer = $.Deferred();
+        defer = $ != null ? $.Deferred() : void 0;
         request = options.oauthio.request || {};
         options.url = config.oauthd_url + "/auth/" + options.oauthio.provider + "/me";
         options.headers = options.headers || {};
@@ -530,15 +547,21 @@ module.exports = function($, config, client_states, cache) {
         delete options.oauthio;
         promise = $.ajax(options);
         $.when(promise).done(function(data) {
-          defer.resolve(data.data);
+          if (defer != null) {
+            defer.resolve(data.data);
+          }
         }).fail(function(data) {
           if (data.responseJSON) {
-            defer.reject(data.responseJSON.data);
+            if (defer != null) {
+              defer.reject(data.responseJSON.data);
+            }
           } else {
-            defer.reject(new Error("An error occured while trying to access the resource"));
+            if (defer != null) {
+              defer.reject(new Error("An error occured while trying to access the resource"));
+            }
           }
         });
-        return defer.promise();
+        return defer != null ? defer.promise() : void 0;
       };
       options = {};
       for (k in opts) {
@@ -548,19 +571,21 @@ module.exports = function($, config, client_states, cache) {
         desc_opts = {
           wait: !!options.oauthio.request
         };
-        defer = $.Deferred();
+        defer = $ != null ? $.Deferred() : void 0;
         providers_api.getDescription(options.oauthio.provider, desc_opts, function(e, desc) {
           if (e) {
-            return defer.reject(e);
+            return defer != null ? defer.reject(e) : void 0;
           }
           if (options.oauthio.tokens.oauth_token && options.oauthio.tokens.oauth_token_secret) {
             options.oauthio.request = desc.oauth1 && desc.oauth1.request;
           } else {
             options.oauthio.request = desc.oauth2 && desc.oauth2.request;
           }
-          defer.resolve();
+          if (defer != null) {
+            defer.resolve();
+          }
         });
-        return defer.then(doRequest);
+        return defer != null ? defer.then(doRequest) : void 0;
       } else {
         return doRequest();
       }
@@ -618,7 +643,9 @@ module.exports = function($, config, client_states, cache) {
         data = JSON.parse(opts.data);
       } catch (_error) {
         e = _error;
-        defer.reject(new Error("Error while parsing result"));
+        if (defer != null) {
+          defer.reject(new Error("Error while parsing result"));
+        }
         return opts.callback(new Error("Error while parsing result"));
       }
       if (!data || !data.provider) {
@@ -630,7 +657,9 @@ module.exports = function($, config, client_states, cache) {
       if (data.status === "error" || data.status === "fail") {
         err = new Error(data.message);
         err.body = data.data;
-        defer.reject(err);
+        if (defer != null) {
+          defer.reject(err);
+        }
         if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(err);
         } else {
@@ -640,7 +669,9 @@ module.exports = function($, config, client_states, cache) {
       if (data.status !== "success" || !data.data) {
         err = new Error();
         err.body = data.data;
-        defer.reject(err);
+        if (defer != null) {
+          defer.reject(err);
+        }
         if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(err);
         } else {
@@ -648,7 +679,9 @@ module.exports = function($, config, client_states, cache) {
         }
       }
       if (!data.state || client_states.indexOf(data.state) === -1) {
-        defer.reject(new Error("State is not matching"));
+        if (defer != null) {
+          defer.reject(new Error("State is not matching"));
+        }
         if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(new Error("State is not matching"));
         } else {
@@ -676,7 +709,9 @@ module.exports = function($, config, client_states, cache) {
         };
       }
       if (!request) {
-        defer.resolve(res);
+        if (defer != null) {
+          defer.resolve(res);
+        }
         if (opts.callback && typeof opts.callback === "function") {
           return opts.callback(null, res);
         } else {
@@ -697,7 +732,9 @@ module.exports = function($, config, client_states, cache) {
       res.patch = make_res("PATCH");
       res.del = make_res("DELETE");
       res.me = base.mkHttpMe(data.provider, tokens, request, "GET");
-      defer.resolve(res);
+      if (defer != null) {
+        defer.resolve(res);
+      }
       if (opts.callback && typeof opts.callback === "function") {
         return opts.callback(null, res);
       } else {
@@ -708,9 +745,15 @@ module.exports = function($, config, client_states, cache) {
 };
 
 },{"../tools/url":8}],4:[function(require,module,exports){
-var OAuth_creator;
+var OAuth_creator, jquery;
 
-OAuth_creator = require('./lib/oauth')(window, document, jQuery, navigator);
+if (typeof jQuery !== "undefined" && jQuery !== null) {
+  jquery = jQuery;
+} else {
+  jquery = void 0;
+}
+
+OAuth_creator = require('./lib/oauth')(window, document, jquery, navigator);
 
 OAuth_creator(window || this);
 
