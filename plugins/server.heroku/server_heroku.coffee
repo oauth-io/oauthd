@@ -266,7 +266,7 @@ exports.raw = ->
 						user.heroku_id 
 					config: 
 						OAUTHIO_PUBLIC_KEY: app.key
-						OAUTHIO_URL: user.heroku_url
+						# OAUTHIO_URL: user.heroku_url
 				stringifyResult = JSON.stringify(result)
 				# console.log "stringifyResult", stringifyResult
 				res.setHeader 'Content-Type', 'application/json'
