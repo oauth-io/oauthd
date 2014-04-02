@@ -125,10 +125,8 @@ exports.raw = ->
 		return
 
 	subscribeEvent = (resource, plan) ->
-		msg = resource.mail + '[' + resource.id + ']'
-		msg += 'subscribe to heroku oauthio addon with plan ' + plan + '.'
 		if plan isnt "bootstrap"
-			shared.emit 'heroku_user.subscribe', msg
+			shared.emit 'heroku_user.subscribe', resource, plan
 
 	sso_login = (req, res, next) ->
 		# res.setHeader 'Location', '/'
@@ -235,6 +233,7 @@ exports.raw = ->
 			user:
 				id:userid
 		db.apps.create appreq, (err, app) ->
+			shared.emit 'app.create', appreq, app
 			return callback err if err
 			return callback null, app
 		
@@ -264,7 +263,7 @@ exports.raw = ->
 				subscribeEvent user, user.current_plan
 				result = 
 					id: 
-						user.heroku_id
+						user.heroku_id 
 					config: 
 						OAUTHIO_PUBLIC_KEY: app.key
 						OAUTHIO_URL: user.heroku_url
