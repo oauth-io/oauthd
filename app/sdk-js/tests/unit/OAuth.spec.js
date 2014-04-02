@@ -12,7 +12,7 @@ var navigator = {
 };
 
 var rewire = require('rewire');
-var oauth_creator = rewire('../../../js/lib/oauth');
+var oauth_creator = rewire('../../js/lib/oauth');
 oauth_creator.__set__('config', config);
 oauth_creator.__set__('cookies', cookies);
 oauth_creator = oauth_creator(window, document, jQuery, navigator);
@@ -33,15 +33,15 @@ describe("OAuth object", function() {
     });
 
     it("should contain a create method", function() {
-        expect(window.OAuth.popup).toBeDefined();
+        expect(window.OAuth.create).toBeDefined();
     });
 
     it("should contain a redirect method", function() {
-        expect(window.OAuth.popup).toBeDefined();
+        expect(window.OAuth.redirect).toBeDefined();
     });
 
     it("should contain a callback method", function() {
-        expect(window.OAuth.popup).toBeDefined();
+        expect(window.OAuth.callback).toBeDefined();
     });
 
     it("should contain a popup method", function() {

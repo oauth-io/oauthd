@@ -23,5 +23,6 @@ newrelic_agent.log
 /private
 app/sdk-js/js/*
 app/sdk-js/jsold/*
-app/sdk-js/node_modules/*
+app/sdk-js/**/node_modules/*
 app/sdk-js/.grunt
+keys/local*
