@@ -89,10 +89,14 @@ exports.raw = ->
 			token = shasum.digest("hex")
 
 			unless req.body.token is token
+				console.log "req.body.token", req.body.token
+				console.log "token", token
 				res.send 403, "Token Mismatch" 
 				return
 			time = (new Date().getTime() / 1000) - (2 * 60)
 			if parseInt(req.body.timestamp) < time
+				console.log "req.body.timestamp", req.body.timestamp
+				console.log "time", time
 				res.send 403, "Timestamp Expired"
 				return
 
