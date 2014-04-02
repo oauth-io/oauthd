@@ -21,23 +21,23 @@ OAuth1ResponseParser = require './oauth1-response-parser'
 OAuthBase = require './oauth-base'
 
 class OAuth1 extends OAuthBase
-	constructor: ->
-		super 'oauth1'
+	constructor: (provider) ->
+		super 'oauth1', provider
 
-	authorize: (provider, parameters, opts, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth1.parameters
-		@_createState provider, opts, (err, state) =>
+	authorize: (parameters, opts, callback) ->
+		@_setParams @_provider.parameters
+		@_setParams @_provider.oauth1.parameters
+		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
-			@_getRequestToken state, provider, parameters, opts, callback
+			@_getRequestToken state, parameters, opts, callback
 
-	_getRequestToken: (state, provider, parameters, opts, callback) ->
-		request_token = provider.oauth1.request_token
+	_getRequestToken: (state, parameters, opts, callback) ->
+		request_token = @_provider.oauth1.request_token
 		query = {}
 		if typeof opts.options?.request_token == 'object'
 			query = opts.options.request_token
 		for name, value of request_token.query
-			param = @_replaceParam value, state:state.id, callback:config.host_url+config.base, parameters
+			param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
 		headers = {}
 		headers["Accept"] = @_short_formats[request_token.format] || request_token.format if request_token.format
@@ -61,25 +61,25 @@ class OAuth1 extends OAuthBase
 
 		# do request to request_token
 		request options, (err, response, body) =>
-			return callback(err) if err
-			@_parseGetRequestTokenResponse(response, body, provider, parameters, opts, headers, state, callback)
+			return callback err if err
+			@_parseGetRequestTokenResponse(response, body, parameters, opts, headers, state, callback)
 
-	_parseGetRequestTokenResponse: (response, body, provider, parameters, opts, headers, state, callback) ->
+	_parseGetRequestTokenResponse: (response, body, parameters, opts, headers, state, callback) ->
 		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
 		responseParser.parse (err, response) =>
 			return callback err if err
 
 			dbstates.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
-				return callback(err) if err
-				callback null, @_generateRequestTokenAuthorizeUrl(state, provider, parameters, opts, response)
+				return callback err if err
+				callback null, @_generateRequestTokenAuthorizeUrl(state, parameters, opts, response)
 
-	_generateRequestTokenAuthorizeUrl: (state, provider, parameters, opts, response) ->
-		authorize = provider.oauth1.authorize
+	_generateRequestTokenAuthorizeUrl: (state, parameters, opts, response) ->
+		authorize = @_provider.oauth1.authorize
 		query = {}
 		if typeof opts.options?.authorize == 'object'
 			query = opts.options.authorize
 		for name, value of authorize.query
-			param = @_replaceParam value, state:state.id, callback:config.host_url+config.base, parameters
+			param = @_replaceParam value, state:state.id, callback:config.host_url+config.relbase, parameters
 			query[name] = param if param
 		query.oauth_token = response.oauth_token
 		url = @_replaceParam authorize.url, {}, parameters
@@ -99,25 +99,22 @@ class OAuth1 extends OAuthBase
 			return callback err
 
 		# get infos from state
-		async.parallel [
-			(callback) -> dbproviders.getExtended state.provider, callback
-			(callback) -> dbapps.getKeyset state.key, state.provider, callback
-		], (err, res) =>
+		dbapps.getKeyset state.key, state.provider, (err, keyset) =>
 			return callback err if err
-			[provider, {parameters,response_type}] = res
+			parameters = keyset.parameters
 			err = new check.Error
-			if provider.oauth1.authorize.ignore_verifier == true
+			if @_provider.oauth1.authorize.ignore_verifier == true
 				err.check req.params, oauth_token:'string'
 			else
 				err.check req.params, oauth_token:'string', oauth_verifier:'string'
 			return callback err if err.failed()
-			@_setParams provider.parameters
-			@_setParams provider.oauth1.parameters
+			@_setParams @_provider.parameters
+			@_setParams @_provider.oauth1.parameters
 
-			access_token = provider.oauth1.access_token
+			access_token = @_provider.oauth1.access_token
 			query = {}
-			hard_params = state:state.id, callback:config.host_url+config.base
-			for extra in (provider.oauth1.authorize.extra||[])
+			hard_params = state:state.id, callback:config.host_url+config.relbase
+			for extra in (@_provider.oauth1.authorize.extra || [])
 				hard_params[extra] = req.params[extra] if req.params[extra]
 			for name, value of access_token.query
 				param = @_replaceParam value, hard_params, parameters
@@ -136,7 +133,7 @@ class OAuth1 extends OAuthBase
 					consumer_secret: parameters.client_secret
 					token: req.params.oauth_token
 					token_secret: state.token
-			if provider.oauth1.authorize.ignore_verifier != true
+			if @_provider.oauth1.authorize.ignore_verifier != true
 				options.oauth.verifier = req.params.oauth_verifier
 			else
 				options.oauth.verifier = ""
@@ -164,7 +161,7 @@ class OAuth1 extends OAuthBase
 						now = (new Date).getTime()
 						expire -= now if expire > now
 					requestclone = {}
-					requestclone[k] = v for k, v of provider.oauth1.request
+					requestclone[k] = v for k, v of @_provider.oauth1.request
 					for k, v of @_params
 						if v.scope == 'public'
 							requestclone.parameters ?= {}
@@ -176,18 +173,18 @@ class OAuth1 extends OAuthBase
 						request: requestclone
 					for extra in (access_token.extra||[])
 						result[extra] = response.body[extra] if response.body[extra]
-					for extra in (provider.oauth1.authorize.extra||[])
+					for extra in (@_provider.oauth1.authorize.extra||[])
 						result[extra] = req.params[extra] if req.params[extra]
 					callback null, result
 
-	request: (provider, parameters, req, callback) ->
-		@_setParams provider.parameters
-		@_setParams provider.oauth1.parameters
+	request: (parameters, req, callback) ->
+		@_setParams @_provider.parameters
+		@_setParams @_provider.oauth1.parameters
 
 		if ! parameters.oauthio.oauth_token || ! parameters.oauthio.oauth_token_secret
 			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 
-		oauthrequest = provider.oauth1.request
+		oauthrequest = @_provider.oauth1.request
 
 		options =
 			method: req.method
