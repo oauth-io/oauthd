@@ -1,12 +1,17 @@
 "use strict"
 config = require("../config")
-datastore = require("../tools/datastore")
+cookies = require("../tools/cookies")
+cache = require("../tools/cache")
 Url = require("../tools/url")
 sha1 = require("../tools/sha1")
-module.exports = (window, document, jQuery) ->
+module.exports = (window, document, jQuery, navigator) ->
 	$ = jQuery
-	datastore = datastore(config, document)
+
+	# datastore = datastore(config, document)
 	Url = Url(document)
+	cookies.init config, document
+	cache.init cookies, config
+
 	oauthio = request: {}
 	providers_desc = {}
 	providers_cb = {}
@@ -39,10 +44,10 @@ module.exports = (window, document, jQuery) ->
 		if results
 			document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, "")
 			oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "))
-			cookie_state = datastore.cookies.readCookie("oauthio_state")
+			cookie_state = cookies.readCookie("oauthio_state")
 			if cookie_state
 				client_states.push cookie_state
-				datastore.cookies.eraseCookie "oauthio_state"
+				cookies.eraseCookie "oauthio_state"
 		return
 	)()
 
@@ -61,7 +66,7 @@ module.exports = (window, document, jQuery) ->
 		
 		# create popup
 		delayedFunctions = ($) ->
-			oauthio.request = require("./oauthio_requests")($, config, client_states, datastore)
+			oauthio.request = require("./oauthio_requests")($, config, client_states, cache)
 			providers_api.fetchDescription = (provider) ->
 				return  if providers_desc[provider]
 				providers_desc[provider] = true
@@ -85,9 +90,7 @@ module.exports = (window, document, jQuery) ->
 				return
 
 			return
-		if exports.OAuth
-			datastore.setOAuth exports.OAuth
-		else
+		unless exports.OAuth
 			exports.OAuth =
 				initialize: (public_key, options) ->
 					config.key = public_key
@@ -105,7 +108,7 @@ module.exports = (window, document, jQuery) ->
 					config.version
 
 				create: (provider, tokens, request) ->
-					return datastore.cache.tryCache(provider, true)  unless tokens
+					return cache.tryCache(exports.OAuth, provider, true)  unless tokens
 					providers_api.fetchDescription provider  if typeof request isnt "object"
 					make_res = (method) ->
 						oauthio.request.mkHttp provider, tokens, request, method
@@ -145,8 +148,8 @@ module.exports = (window, document, jQuery) ->
 					if arguments.length is 2
 						callback = opts
 						opts = {}
-					if datastore.cache.cacheEnabled(opts.cache)
-						res = datastore.cache.tryCache(provider, opts.cache)
+					if cache.cacheEnabled(opts.cache)
+						res = cache.tryCache(exports.OAuth, provider, opts.cache)
 						if res
 							defer.resolve res
 							if callback
@@ -227,8 +230,8 @@ module.exports = (window, document, jQuery) ->
 					if arguments.length is 2
 						url = opts
 						opts = {}
-					if datastore.cache.cacheEnabled(opts.cache)
-						res = datastore.cache.tryCache(provider, opts.cache)
+					if cache.cacheEnabled(opts.cache)
+						res = cache.tryCache(exports.OAuth, provider, opts.cache)
 						if res
 							url = Url.getAbsUrl(url) + ((if (url.indexOf("#") is -1) then "#" else "&")) + "oauthio=cache"
 							window.location_operations.changeHref url
@@ -237,7 +240,7 @@ module.exports = (window, document, jQuery) ->
 					unless opts.state
 						opts.state = sha1.create_hash()
 						opts.state_type = "client"
-					datastore.cookies.createCookie "oauthio_state", opts.state
+					cookies.createCookie "oauthio_state", opts.state
 					redirect_uri = encodeURIComponent(Url.getAbsUrl(url))
 					url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key
 					url += "&redirect_uri=" + redirect_uri
@@ -254,8 +257,8 @@ module.exports = (window, document, jQuery) ->
 					if arguments.length is 2
 						callback = opts
 						opts = {}
-					if datastore.cache.cacheEnabled(opts.cache) or oauth_result is "cache"
-						res = datastore.cache.tryCache(provider, opts.cache)
+					if cache.cacheEnabled(opts.cache) or oauth_result is "cache"
+						res = cache.tryCache(exports.OAuth, provider, opts.cache)
 						if oauth_result is "cache" and (typeof provider isnt "string" or not provider)
 							defer.reject new Error("You must set a provider when using the cache")
 							if callback
@@ -277,7 +280,7 @@ module.exports = (window, document, jQuery) ->
 					return defer
 
 				clearCache: (provider) ->
-					datastore.cookies.eraseCookie "oauthio_provider_" + provider
+					cookies.eraseCookie "oauthio_provider_" + provider
 					return
 
 				http_me: (opts) ->
@@ -287,7 +290,6 @@ module.exports = (window, document, jQuery) ->
 				http: (opts) ->
 					oauthio.request.http opts  if oauthio.request.http
 					return
-			datastore.setOAuth exports.OAuth
 
 			if typeof jQuery is "undefined"
 				_preloadcalls = []
@@ -326,7 +328,7 @@ module.exports = (window, document, jQuery) ->
 					providers_api.fetchDescription.apply providers_api, arguments
 					return
 				)
-				oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, datastore)
+				oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, cache)
 			else
 				delayedFunctions jQuery
 		return

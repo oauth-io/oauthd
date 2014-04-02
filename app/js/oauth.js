@@ -8,21 +8,24 @@ module.exports = {
 
 },{}],2:[function(require,module,exports){
 "use strict";
-var Url, config, datastore, sha1;
+var Url, cache, config, cookies, sha1;
 
 config = require("../config");
 
-datastore = require("../tools/datastore");
+cookies = require("../tools/cookies");
+
+cache = require("../tools/cache");
 
 Url = require("../tools/url");
 
 sha1 = require("../tools/sha1");
 
-module.exports = function(window, document, jQuery) {
+module.exports = function(window, document, jQuery, navigator) {
   var $, client_states, oauth_result, oauthio, parse_urlfragment, providers_api, providers_cb, providers_desc;
   $ = jQuery;
-  datastore = datastore(config, document);
   Url = Url(document);
+  cookies.init(config, document);
+  cache.init(cookies, config);
   oauthio = {
     request: {}
   };
@@ -63,10 +66,10 @@ module.exports = function(window, document, jQuery) {
     if (results) {
       document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, "");
       oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
-      cookie_state = datastore.cookies.readCookie("oauthio_state");
+      cookie_state = cookies.readCookie("oauthio_state");
       if (cookie_state) {
         client_states.push(cookie_state);
-        datastore.cookies.eraseCookie("oauthio_state");
+        cookies.eraseCookie("oauthio_state");
       }
     }
   })();
@@ -87,7 +90,7 @@ module.exports = function(window, document, jQuery) {
   return function(exports) {
     var delayedFunctions, delayfn, e, _preloadcalls;
     delayedFunctions = function($) {
-      oauthio.request = require("./oauthio_requests")($, config, client_states, datastore);
+      oauthio.request = require("./oauthio_requests")($, config, client_states, cache);
       providers_api.fetchDescription = function(provider) {
         if (providers_desc[provider]) {
           return;
@@ -110,9 +113,7 @@ module.exports = function(window, document, jQuery) {
         });
       };
     };
-    if (exports.OAuth) {
-      datastore.setOAuth(exports.OAuth);
-    } else {
+    if (!exports.OAuth) {
       exports.OAuth = {
         initialize: function(public_key, options) {
           var i;
@@ -133,7 +134,7 @@ module.exports = function(window, document, jQuery) {
         create: function(provider, tokens, request) {
           var i, make_res, make_res_endpoint, res;
           if (!tokens) {
-            return datastore.cache.tryCache(provider, true);
+            return cache.tryCache(exports.OAuth, provider, true);
           }
           if (typeof request !== "object") {
             providers_api.fetchDescription(provider);
@@ -183,8 +184,8 @@ module.exports = function(window, document, jQuery) {
             callback = opts;
             opts = {};
           }
-          if (datastore.cache.cacheEnabled(opts.cache)) {
-            res = datastore.cache.tryCache(provider, opts.cache);
+          if (cache.cacheEnabled(opts.cache)) {
+            res = cache.tryCache(exports.OAuth, provider, opts.cache);
             if (res) {
               defer.resolve(res);
               if (callback) {
@@ -295,8 +296,8 @@ module.exports = function(window, document, jQuery) {
             url = opts;
             opts = {};
           }
-          if (datastore.cache.cacheEnabled(opts.cache)) {
-            res = datastore.cache.tryCache(provider, opts.cache);
+          if (cache.cacheEnabled(opts.cache)) {
+            res = cache.tryCache(exports.OAuth, provider, opts.cache);
             if (res) {
               url = Url.getAbsUrl(url) + (url.indexOf("#") === -1 ? "#" : "&") + "oauthio=cache";
               window.location_operations.changeHref(url);
@@ -308,7 +309,7 @@ module.exports = function(window, document, jQuery) {
             opts.state = sha1.create_hash();
             opts.state_type = "client";
           }
-          datastore.cookies.createCookie("oauthio_state", opts.state);
+          cookies.createCookie("oauthio_state", opts.state);
           redirect_uri = encodeURIComponent(Url.getAbsUrl(url));
           url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key;
           url += "&redirect_uri=" + redirect_uri;
@@ -329,8 +330,8 @@ module.exports = function(window, document, jQuery) {
             callback = opts;
             opts = {};
           }
-          if (datastore.cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
-            res = datastore.cache.tryCache(provider, opts.cache);
+          if (cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
+            res = cache.tryCache(exports.OAuth, provider, opts.cache);
             if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
               defer.reject(new Error("You must set a provider when using the cache"));
               if (callback) {
@@ -360,7 +361,7 @@ module.exports = function(window, document, jQuery) {
           return defer;
         },
         clearCache: function(provider) {
-          datastore.cookies.eraseCookie("oauthio_provider_" + provider);
+          cookies.eraseCookie("oauthio_provider_" + provider);
         },
         http_me: function(opts) {
           if (oauthio.request.http_me) {
@@ -373,7 +374,6 @@ module.exports = function(window, document, jQuery) {
           }
         }
       };
-      datastore.setOAuth(exports.OAuth);
       if (typeof jQuery === "undefined") {
         _preloadcalls = [];
         delayfn = void 0;
@@ -415,7 +415,7 @@ module.exports = function(window, document, jQuery) {
         providers_api.fetchDescription = delayfn(function() {
           providers_api.fetchDescription.apply(providers_api, arguments);
         });
-        oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, datastore);
+        oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, cache);
       } else {
         delayedFunctions(jQuery);
       }
@@ -423,13 +423,13 @@ module.exports = function(window, document, jQuery) {
   };
 };
 
-},{"../config":1,"../tools/datastore":5,"../tools/sha1":6,"../tools/url":7,"./oauthio_requests":3}],3:[function(require,module,exports){
+},{"../config":1,"../tools/cache":5,"../tools/cookies":6,"../tools/sha1":7,"../tools/url":8,"./oauthio_requests":3}],3:[function(require,module,exports){
 var Url,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 Url = require('../tools/url')();
 
-module.exports = function($, config, client_states, datastore) {
+module.exports = function($, config, client_states, cache) {
   return {
     http: function(opts) {
       var defer, desc_opts, doRequest, i, options;
@@ -659,8 +659,8 @@ module.exports = function($, config, client_states, datastore) {
         data.data.provider = data.provider;
       }
       res = data.data;
-      if (datastore.cache.cacheEnabled(opts.cache) && res) {
-        datastore.cache.storeCache(data.provider, res);
+      if (cache.cacheEnabled(opts.cache) && res) {
+        cache.storeCache(data.provider, res);
       }
       request = res.request;
       delete res.request;
@@ -707,98 +707,98 @@ module.exports = function($, config, client_states, datastore) {
   };
 };
 
-},{"../tools/url":7}],4:[function(require,module,exports){
+},{"../tools/url":8}],4:[function(require,module,exports){
 var OAuth_creator;
 
-OAuth_creator = require('./lib/oauth')(window, document, jQuery);
+OAuth_creator = require('./lib/oauth')(window, document, jQuery, navigator);
 
 OAuth_creator(window || this);
 
 },{"./lib/oauth":2}],5:[function(require,module,exports){
-module.exports = function(config, document) {
-  var m;
-  m = {};
-  m.setOAuth = (function(_this) {
-    return function(o) {
-      return m.OAuth = o;
-    };
-  })(this);
-  m.cookies = {
-    createCookie: function(name, value, expires) {
-      var date;
-      m.cookies.eraseCookie(name);
-      date = new Date();
-      date.setTime(date.getTime() + (expires || 1200) * 1000);
-      expires = "; expires=" + date.toGMTString();
-      document.cookie = name + "=" + value + expires + "; path=/";
-    },
-    readCookie: function(name) {
-      var c, ca, i, nameEQ;
-      nameEQ = name + "=";
-      ca = document.cookie.split(";");
-      i = 0;
-      while (i < ca.length) {
-        c = ca[i];
-        while (c.charAt(0) === " ") {
-          c = c.substring(1, c.length);
-        }
-        if (c.indexOf(nameEQ) === 0) {
-          return c.substring(nameEQ.length, c.length);
-        }
-        i++;
+module.exports = {
+  init: function(cookies_module, config) {
+    this.config = config;
+    return this.cookies = cookies_module;
+  },
+  tryCache: function(OAuth, provider, cache) {
+    var e, i, res;
+    if (this.cacheEnabled(cache)) {
+      cache = this.cookies.readCookie("oauthio_provider_" + provider);
+      if (!cache) {
+        return false;
       }
-      return null;
-    },
-    eraseCookie: function(name) {
-      var date;
-      date = new Date();
-      date.setTime(date.getTime() - 86400000);
-      document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
+      cache = decodeURIComponent(cache);
     }
-  };
-  m.cache = {
-    tryCache: function(provider, cache) {
-      var e, i, res;
-      if (m.cache.cacheEnabled(cache)) {
-        cache = m.cookies.readCookie("oauthio_provider_" + provider);
-        if (!cache) {
-          return false;
-        }
-        cache = decodeURIComponent(cache);
+    if (typeof cache === "string") {
+      try {
+        cache = JSON.parse(cache);
+      } catch (_error) {
+        e = _error;
+        return false;
       }
-      if (typeof cache === "string") {
-        try {
-          cache = JSON.parse(cache);
-        } catch (_error) {
-          e = _error;
-          return false;
-        }
-      }
-      if (typeof cache === "object") {
-        res = {};
-        for (i in cache) {
-          if (i !== "request" && typeof cache[i] !== "function") {
-            res[i] = cache[i];
-          }
-        }
-        return m.OAuth.create(provider, res, cache.request);
-      }
-      return false;
-    },
-    storeCache: function(provider, cache) {
-      m.cookies.createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
-    },
-    cacheEnabled: function(cache) {
-      if (typeof cache === "undefined") {
-        return config.options.cache;
-      }
-      return cache;
     }
-  };
-  return m;
+    if (typeof cache === "object") {
+      res = {};
+      for (i in cache) {
+        if (i !== "request" && typeof cache[i] !== "function") {
+          res[i] = cache[i];
+        }
+      }
+      return OAuth.create(provider, res, cache.request);
+    }
+    return false;
+  },
+  storeCache: function(provider, cache) {
+    this.cookies.createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
+  },
+  cacheEnabled: function(cache) {
+    if (typeof cache === "undefined") {
+      return this.config.options.cache;
+    }
+    return cache;
+  }
 };
 
 },{}],6:[function(require,module,exports){
+module.exports = {
+  init: function(config, document) {
+    this.config = config;
+    return this.document = document;
+  },
+  createCookie: function(name, value, expires) {
+    var date;
+    this.eraseCookie(name);
+    date = new Date();
+    date.setTime(date.getTime() + (expires || 1200) * 1000);
+    expires = "; expires=" + date.toGMTString();
+    this.document.cookie = name + "=" + value + expires + "; path=/";
+  },
+  readCookie: function(name) {
+    var c, ca, i, nameEQ;
+    nameEQ = name + "=";
+    ca = this.document.cookie.split(";");
+    i = 0;
+    while (i < ca.length) {
+      c = ca[i];
+      while (c.charAt(0) === " ") {
+        c = c.substring(1, c.length);
+      }
+      if (c.indexOf(nameEQ) === 0) {
+        return c.substring(nameEQ.length, c.length);
+      }
+      i++;
+    }
+    return null;
+  },
+  eraseCookie: function(name) {
+    var date;
+    date = new Date();
+    date.setTime(date.getTime() - 86400000);
+    this.document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
+  }
+};
+
+},{}],7:[function(require,module,exports){
 var b64pad, hexcase;
 
 hexcase = 0;
@@ -1093,7 +1093,7 @@ module.exports = {
   }
 };
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function(document) {
   return {
     getAbsUrl: function(url) {
