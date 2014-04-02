@@ -38,18 +38,12 @@ class OAuth2 extends OAuthBase
 	authorize: (opts, callback) ->
 		@_createState @_provider, opts, (err, state) =>
 			return callback err if err
-
-			authorize = @_provider.oauth2.authorize
-			query = {}
-			if typeof opts.options?.authorize == 'object'
-				query = opts.options.authorize
-			hard_params = { state: state.id, callback: config.host_url + config.relbase }
-			for name, value of authorize.query
-				param = @_replaceParam value, hard_params
-				query[name] = param if param
-			url = @_replaceParam authorize.url, {}
-			url += "?" + querystring.stringify query
-			callback null, url:url, state:state.id
+			configuration = @_provider.oauth2.authorize
+			placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
+			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
+			url = @_replaceParam(configuration.url, {})
+			url += "?" + querystring.stringify(query)
+			callback null, { url: url, state: state.id }
 
 	access_token: (state, req, response_type, callback) ->
 		# manage errors in callback
@@ -64,20 +58,18 @@ class OAuth2 extends OAuthBase
 			return callback err
 		return callback new check.Error 'code', 'unable to find authorize code' if not req.params.code
 
-		access_token = @_provider.oauth2.access_token
-		query = {}
-		hard_params = { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
-		for name, value of access_token.query
-			param = @_replaceParam value, hard_params
-			query[name] = param if param
+		configuration = @_provider.oauth2.access_token
+		placeholderValues = { code: req.params.code, state: state.id, callback: config.host_url + config.relbase }
+		query = @_buildQuery(configuration.query, placeholderValues)
+
 		headers = {}
-		headers["Accept"] = @_short_formats[access_token.format] || access_token.format if access_token.format
-		for name, value of access_token.headers
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
 			param = @_replaceParam value, {}
 			headers[name] = param if param
 		options =
-			url: @_replaceParam access_token.url, {}
-			method: access_token.method?.toUpperCase() || "POST"
+			url: @_replaceParam configuration.url, {}
+			method: configuration.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 			encoding: null
 
@@ -116,27 +108,25 @@ class OAuth2 extends OAuthBase
 					base: @_provider.baseurl
 					request: requestclone
 				result.refresh_token = response.body.refresh_token if response.body.refresh_token && response_type == "code"
-				for extra in (access_token.extra||[])
+				for extra in (configuration.extra||[])
 					result[extra] = response.body[extra] if response.body[extra]
 				for extra in (@_provider.oauth2.authorize.extra||[])
 					result[extra] = req.params[extra] if req.params[extra]
 				callback null, result
 
 	refresh: (token, callback) ->
-		refresh = @_provider.oauth2.refresh
-		query = {}
-		hard_params = { refresh_token: token }
-		for name, value of refresh.query
-			param = @_replaceParam value, hard_params
-			query[name] = param if param
+		configuration = @_provider.oauth2.refresh
+		placeholderValues = { refresh_token: token }
+		query = @_buildQuery(configuration.query, placeholderValues)
+
 		headers = {}
-		headers["Accept"] = @_short_formats[refresh.format] || refresh.format if refresh.format
-		for name, value of refresh.headers
+		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		for name, value of configuration.headers
 			param = @_replaceParam value, { refresh_token: token }
 			headers[name] = param if param
 		options =
-			url: @_replaceParam refresh.url, {}
-			method: refresh.method?.toUpperCase() || "POST"
+			url: @_replaceParam configuration.url, {}
+			method: configuration.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 			encoding: null
 
@@ -193,10 +183,9 @@ class OAuth2 extends OAuthBase
 		options.url = @_replaceParam options.url, @_parameters.oauthio
 
 		# build query
-		options.qs = {}
-		for name, value of oauthrequest.query
-			param = @_replaceParam value, @_parameters.oauthio
-			options.qs[name] = param if param
+		presetQuery = {}
+		presetQuery[name] = value for name, value of req.query
+		options.qs = @_buildQuery(oauthrequest.query, @_parameters.oauthio, presetQuery)
 
 		# build headers
 		ignoreheaders = [
