@@ -4,13 +4,10 @@
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
 
-crypto = require 'crypto'
-
-async = require 'async'
 request = require 'request'
 
 check = require './check'
-dbstates = require './db_states'
+db = require './db'
 config = require './config'
 
 OAuth1ResponseParser = require './oauth1-response-parser'
@@ -58,8 +55,7 @@ class OAuth1 extends OAuthBase
 		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
 		responseParser.parse (err, response) =>
 			return callback err if err
-
-			dbstates.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
+			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 				return callback err if err
 				configuration = @_provider.oauth1.authorize
 				placeholderValues = { state: state.id, callback: config.host_url + config.relbase }
