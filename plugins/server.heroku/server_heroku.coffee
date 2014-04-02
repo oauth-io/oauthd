@@ -95,8 +95,8 @@ exports.raw = ->
 				return
 			time = (new Date().getTime() / 1000) - (2 * 60)
 			if parseInt(req.body.timestamp) < time
-				console.log "req.body.timestamp", req.body.timestamp
-				console.log "time", time
+				console.log "parseInt(req.body.timestamp) ", parseInt(req.body.timestamp)
+				console.log "time ", time
 				res.send 403, "Timestamp Expired"
 				return
 
