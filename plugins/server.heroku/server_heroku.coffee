@@ -125,10 +125,8 @@ exports.raw = ->
 		return
 
 	subscribeEvent = (resource, plan) ->
-		msg = resource.mail + '[' + resource.id + ']'
-		msg += 'subscribe to heroku oauthio addon with plan ' + plan + '.'
 		if plan isnt "bootstrap"
-			shared.emit 'heroku_user.subscribe', msg
+			shared.emit 'heroku_user.subscribe', resource, plan
 
 	sso_login = (req, res, next) ->
 		# res.setHeader 'Location', '/'
