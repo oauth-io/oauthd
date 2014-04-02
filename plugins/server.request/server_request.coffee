@@ -35,7 +35,7 @@ exports.raw = ->
 			(callback) => @db.apps.getKeyset oauthio.k, provider_name, callback
 		], (err, results) =>
 			return callback err if err
-			[provider, {parameters}, domaincheck] = results
+			[provider, {parameters}] = results
 
 			# select oauth version
 			oauthv = oauthio.oauthv && {
