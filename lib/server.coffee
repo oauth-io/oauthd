@@ -16,7 +16,6 @@ UAParser = require 'ua-parser-js'
 
 config = require './config'
 db = require './db'
-dbproviders = require './db_providers'
 plugins = require './plugins'
 exit = require './exit'
 check = require './check'
@@ -110,8 +109,8 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				return next e if e
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
-				oa = new oauth.oauth2(provider)
-				oa.refresh keyset, req.body.token, send(res,next)
+				oa = new oauth.oauth2(provider, keyset.parameters)
+				oa.refresh req.body.token, send(res,next)
 
 # iframe injection for IE
 server.get config.base + '/iframe', (req, res, next) ->
@@ -236,9 +235,15 @@ server.get config.base + '/', (req, res, next) ->
 			return next new check.Error 'state', 'invalid or expired' if not state
 			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
 			return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-			dbproviders.getExtended state.provider, (err, provider) ->
+
+			async.parallel [
+					(cb) -> db.providers.getExtended state.provider, cb
+					(cb) -> db.apps.getKeyset state.key, state.provider, cb
+			], (err, r) =>
 				return callback err if err
-				oa = new oauth[state.oauthv](provider)
+				provider = r[0]
+				parameters = r[1].parameters
+				oa = new oauth[state.oauthv](provider, parameters)
 				oa.access_token state, req, (e, r) ->
 					status = if e then 'error' else 'success'
 					cmds = []
@@ -331,7 +336,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 				options.response_type = response_type
 				options.parameters = parameters
 				opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-				oa = new oauth[oauthv](provider)
+				oa = new oauth[oauthv](provider, parameters)
 				oa.authorize provider, parameters, opts, cb
 		(authorize, cb) ->
 				return cb null, authorize.url if not req.oaio_uid

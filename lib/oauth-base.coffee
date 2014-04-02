@@ -18,10 +18,11 @@ dbstates = require './db_states'
 db = require './db'
 
 class OAuthBase
-	constructor: (oauthv, provider) ->
+	constructor: (oauthv, provider, parameters) ->
 		@_params = {}
 		@_oauthv = oauthv
 		@_provider = provider
+		@_parameters = parameters
 		@_short_formats = json: 'application/json', url: 'application/x-www-form-urlencoded'
 		@_setParams @_provider.parameters
 		@_setParams @_provider[oauthv].parameters
