@@ -1,6 +1,6 @@
 Url = require('../tools/url')()
 
-module.exports = ($, config, client_states, datastore) ->
+module.exports = ($, config, client_states, cache) ->
 	http: (opts) ->
 		doRequest = ->
 			request = options.oauthio.request or {}
@@ -172,7 +172,7 @@ module.exports = ($, config, client_states, datastore) ->
 				return
 		data.data.provider = data.provider  unless opts.provider
 		res = data.data
-		datastore.cache.storeCache data.provider, res  if datastore.cache.cacheEnabled(opts.cache) and res
+		cache.storeCache data.provider, res  if cache.cacheEnabled(opts.cache) and res
 		request = res.request
 		delete res.request
 
