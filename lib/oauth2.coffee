@@ -48,19 +48,9 @@ class OAuth2 extends OAuthBase
 		configuration = @_oauthConfiguration.access_token
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
-
 		headers = @_buildHeaders(configuration)
-		options =
-			url: @_replaceParam configuration.url, {}
-			method: configuration.method?.toUpperCase() || "POST"
-			followAllRedirects: true
-			encoding: null
-
-		options.headers = headers if Object.keys(headers).length
-		if options.method == "GET"
-			options.qs = query
-		else
-			options.form = query # or .json = qs for json post
+		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options.followAllRedirects = true
 
 		# do request to access_token
 		request options, (e, r, body) =>
@@ -87,16 +77,8 @@ class OAuth2 extends OAuthBase
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration, { refresh_token: token })
-		options =
-			url: @_replaceParam configuration.url, {}
-			method: configuration.method?.toUpperCase() || "POST"
-			followAllRedirects: true
-
-		options.headers = headers if Object.keys(headers).length
-		if options.method == "GET"
-			options.qs = query
-		else
-			options.form = query # or .json = qs for json post
+		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options.followAllRedirects = true
 
 		# request new token
 		request options, (e, r, body) =>
