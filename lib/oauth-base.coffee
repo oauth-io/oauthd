@@ -40,7 +40,7 @@ class OAuthBase
 		return param.replace /\{(.*?)\}/g, (match, val) =>
 			return "" if ! @_params[val] || ! @_parameters[val]
 			if Array.isArray(@_parameters[val])
-				return @_parameters[val].join @_params[val].separator || ","
+				return @_parameters[val].join(@_params[val].separator || ",")
 			return @_parameters[val]
 
 	_createState: (provider, opts, callback) ->
@@ -59,7 +59,7 @@ class OAuthBase
 		# replaces '{{placeholder1}}' in placeholders[parameterName]
 		# with matching placeholderValues's 'placeholder1' value
 		for parameterName, placeholder of configuration
-			param = @_replaceParam placeholder, placeholderValues
+			param = @_replaceParam(placeholder, placeholderValues)
 			query[parameterName] = param if param
 		return query
 
@@ -67,5 +67,31 @@ class OAuthBase
 		url = @_replaceParam(url, {})
 		url += "?" + querystring.stringify(query)
 		return { url: url, state: stateId }
+
+	_buildServerRequestUrl: (encodedURI, configurationUrl) ->
+		url = decodeURIComponent(encodedURI)
+		if ! url.match(/^[a-z]{2,16}:\/\//)
+			if url[0] != '/'
+				url = '/' + url
+			url = configurationUrl + url
+		return @_replaceParam(url, @_parameters.oauthio)
+
+	_buildServerRequestQuery: (query, configurationQuery) ->
+		presetQuery = {}
+		presetQuery[name] = value for name, value of query
+		return @_buildQuery(configurationQuery, @_parameters.oauthio, presetQuery)
+
+	_buildServerRequestHeaders: (reqHeaders, configurationHeaders) ->
+		headers = {
+			accept: reqHeaders.accept
+			'accept-encoding': reqHeaders['accept-encoding']
+			'accept-language': reqHeaders['accept-language']
+			'content-type': reqHeaders['content-type']
+			'User-Agent': 'OAuth.io'
+		}
+		for parameterName, placeholder of configurationHeaders
+			param = @_replaceParam(placeholder, @_parameters.oauthio)
+			headers[parameterName] = param if param
+		return headers
 
 module.exports = OAuthBase

@@ -155,42 +155,15 @@ class OAuth1 extends OAuthBase
 			method: req.method
 			followAllRedirects: true
 
-		# build url
-		options.url = req.apiUrl
-		if typeof req.query == 'function' and typeof req.query() == 'string'
-			options.url += "?" + req.query()
-		if ! options.url.match(/^[a-z]{2,16}:\/\//)
-			if options.url[0] != '/'
-				options.url = '/' + options.url
-			options.url = oauthrequest.url + options.url
-		options.url = @_replaceParam options.url, @_parameters.oauthio
-
-		# build query
-		presetQuery = {}
-		presetQuery[name] = value for name, value of req.query
-		options.qs = @_buildQuery(oauthrequest.query, @_parameters.oauthio, presetQuery)
-
 		options.oauth =
 			consumer_key: @_parameters.client_id
 			consumer_secret: @_parameters.client_secret
 			token: @_parameters.oauthio.oauth_token
 			token_secret: @_parameters.oauthio.oauth_token_secret
 
-		# build headers
-		ignoreheaders = [
-			'oauthio', 'host', 'connection',
-			'origin', 'referer'
-		]
-
-		options.headers = {}
-		for k, v of req.headers
-			if ignoreheaders.indexOf(k) == -1
-				k = k.replace /\b[a-z]/g, (-> arguments[0].toUpperCase())
-				options.headers[k] = v
-
-		for name, value of oauthrequest.headers
-			param = @_replaceParam value, @_parameters.oauthio
-			options.headers[name] = param if param
+		options.url = @_buildServerRequestUrl(req.params[1], oauthrequest.url)
+		options.qs = @_buildServerRequestQuery(req.query, oauthrequest.query)
+		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
 
 		# do request
 		callback null, options
