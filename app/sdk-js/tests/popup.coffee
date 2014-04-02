@@ -1,11 +1,13 @@
 popup_gone = false
-
+local_data = {}
 waitformyselector = (selectors, callback, index) ->
 	index = index || 0
 	
 	@waitForSelector selectors[index], =>
 		#Accepting permissions
 		@echo "in waitForSelector"
+		if (@cli.options.screenshots)
+			@capture './pictures/' + local_data.provider.provider_name + '_form' + (new Date().getTime()) + '.png'
 		@fill selectors[index], {}, true
 		if (selectors.length > index + 1)
 			@wait 5000, =>
@@ -17,7 +19,7 @@ waitformyselector = (selectors, callback, index) ->
 				callback.apply @
 
 exports.tests = (casper, provider, global_conf, utils) ->
-
+	local_data.provider = provider
 	casper.on 'popup.closed', ->
 		popup_gone = true
 

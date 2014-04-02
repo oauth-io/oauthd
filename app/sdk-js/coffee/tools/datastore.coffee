@@ -1,4 +1,4 @@
-module.exports = (config) ->
+module.exports = (config, document) ->
 	m = {}
 	m.setOAuth = (o) =>
 		m.OAuth = o

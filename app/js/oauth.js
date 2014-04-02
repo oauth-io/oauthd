@@ -8,407 +8,419 @@ module.exports = {
 
 },{}],2:[function(require,module,exports){
 "use strict";
-var Url, client_states, config, datastore, oauth_result, oauthio, parse_urlfragment, providers_api, providers_cb, providers_desc, sha1;
-
-sha1 = require("../tools/sha1");
+var Url, config, datastore, sha1;
 
 config = require("../config");
 
-datastore = require("../tools/datastore")(config);
+datastore = require("../tools/datastore");
 
-Url = require("../tools/url")();
+Url = require("../tools/url");
 
-oauthio = {
-  request: {}
-};
+sha1 = require("../tools/sha1");
 
-providers_desc = {};
-
-providers_cb = {};
-
-providers_api = {
-  execProvidersCb: function(provider, e, r) {
-    var cbs, i;
-    if (providers_cb[provider]) {
-      cbs = providers_cb[provider];
-      delete providers_cb[provider];
-      for (i in cbs) {
-        cbs[i](e, r);
-      }
-    }
-  },
-  getDescription: function(provider, opts, callback) {
-    opts = opts || {};
-    if (typeof providers_desc[provider] === "object") {
-      return callback(null, providers_desc[provider]);
-    }
-    if (!providers_desc[provider]) {
-      providers_api.fetchDescription(provider);
-    }
-    if (!opts.wait) {
-      return callback(null, {});
-    }
-    providers_cb[provider] = providers_cb[provider] || [];
-    providers_cb[provider].push(callback);
-  }
-};
-
-config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
-
-client_states = [];
-
-oauth_result = void 0;
-
-(parse_urlfragment = function() {
-  var cookie_state, results;
-  results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
-  if (results) {
-    document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, "");
-    oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
-    cookie_state = datastore.cookies.readCookie("oauthio_state");
-    if (cookie_state) {
-      client_states.push(cookie_state);
-      datastore.cookies.eraseCookie("oauthio_state");
-    }
-  }
-})();
-
-module.exports = function(exports) {
-  var delayedFunctions, delayfn, e, _preloadcalls;
-  delayedFunctions = function($) {
-    oauthio.request = require("./oauthio_requests")($, config, client_states, datastore);
-    providers_api.fetchDescription = function(provider) {
-      if (providers_desc[provider]) {
-        return;
-      }
-      providers_desc[provider] = true;
-      $.ajax({
-        url: config.oauthd_base + config.oauthd_api + "/providers/" + provider,
-        data: {
-          extend: true
-        },
-        dataType: "json"
-      }).done(function(data) {
-        providers_desc[provider] = data.data;
-        providers_api.execProvidersCb(provider, null, data.data);
-      }).always(function() {
-        if (typeof providers_desc[provider] !== "object") {
-          delete providers_desc[provider];
-          providers_api.execProvidersCb(provider, new Error("Unable to fetch request description"));
-        }
-      });
-    };
+module.exports = function(window, document, jQuery) {
+  var $, client_states, oauth_result, oauthio, parse_urlfragment, providers_api, providers_cb, providers_desc;
+  $ = jQuery;
+  datastore = datastore(config, document);
+  Url = Url(document);
+  oauthio = {
+    request: {}
   };
-  if (exports.OAuth) {
-    datastore.setOAuth(exports.OAuth);
-  } else {
-    exports.OAuth = {
-      initialize: function(public_key, options) {
-        var i;
-        config.key = public_key;
-        if (options) {
-          for (i in options) {
-            config.options[i] = options[i];
-          }
+  providers_desc = {};
+  providers_cb = {};
+  providers_api = {
+    execProvidersCb: function(provider, e, r) {
+      var cbs, i;
+      if (providers_cb[provider]) {
+        cbs = providers_cb[provider];
+        delete providers_cb[provider];
+        for (i in cbs) {
+          cbs[i](e, r);
         }
-      },
-      setOAuthdURL: function(url) {
-        config.oauthd_url = url;
-        config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
-      },
-      getVersion: function() {
-        return config.version;
-      },
-      create: function(provider, tokens, request) {
-        var i, make_res, make_res_endpoint, res;
-        if (!tokens) {
-          return datastore.cache.tryCache(provider, true);
-        }
-        if (typeof request !== "object") {
-          providers_api.fetchDescription(provider);
-        }
-        make_res = function(method) {
-          return oauthio.request.mkHttp(provider, tokens, request, method);
-        };
-        make_res_endpoint = function(method, url) {
-          return oauthio.request.mkHttpEndpoint(data.provider, tokens, request, method, url);
-        };
-        res = {};
-        for (i in tokens) {
-          res[i] = tokens[i];
-        }
-        res.get = make_res("GET");
-        res.post = make_res("POST");
-        res.put = make_res("PUT");
-        res.patch = make_res("PATCH");
-        res.del = make_res("DELETE");
-        res.me = function(opts) {
-          oauthio.request.mkHttpMe(data.provider, tokens, request, "GET");
-        };
-        return res;
-      },
-      popup: function(provider, opts, callback) {
-        var defer, frm, getMessage, res, url, wnd, wndTimeout, wnd_options, wnd_settings;
-        getMessage = function(e) {
-          if (e.origin !== config.oauthd_base) {
-            return;
-          }
-          try {
-            wnd.close();
-          } catch (_error) {}
-          opts.data = e.data;
-          return oauthio.request.sendCallback(opts, defer);
-        };
-        wnd = void 0;
-        frm = void 0;
-        wndTimeout = void 0;
-        defer = $.Deferred();
-        opts = opts || {};
-        if (!config.key) {
-          defer.reject(new Error("OAuth object must be initialized"));
-          return callback(new Error("OAuth object must be initialized"));
-        }
-        if (arguments.length === 2) {
-          callback = opts;
-          opts = {};
-        }
-        if (datastore.cache.cacheEnabled(opts.cache)) {
-          res = datastore.cache.tryCache(provider, opts.cache);
-          if (res) {
-            defer.resolve(res);
-            if (callback) {
-              return callback(null, res);
-            } else {
-              return;
-            }
-          }
-        }
-        if (!opts.state) {
-          opts.state = sha1.create_hash();
-          opts.state_type = "client";
-        }
-        client_states.push(opts.state);
-        url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key;
-        url += "&d=" + encodeURIComponent(Url.getAbsUrl("/"));
-        if (opts) {
-          url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
-        }
-        wnd_settings = {
-          width: Math.floor(window.outerWidth * 0.8),
-          height: Math.floor(window.outerHeight * 0.5)
-        };
-        if (wnd_settings.height < 350) {
-          wnd_settings.height = 350;
-        }
-        if (wnd_settings.width < 800) {
-          wnd_settings.width = 800;
-        }
-        wnd_settings.left = window.screenX + (window.outerWidth - wnd_settings.width) / 2;
-        wnd_settings.top = window.screenY + (window.outerHeight - wnd_settings.height) / 8;
-        wnd_options = "width=" + wnd_settings.width + ",height=" + wnd_settings.height;
-        wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
-        wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
-        opts = {
-          provider: provider,
-          cache: opts.cache
-        };
-        opts.callback = function(e, r) {
-          if (window.removeEventListener) {
-            window.removeEventListener("message", getMessage, false);
-          } else if (window.detachEvent) {
-            window.detachEvent("onmessage", getMessage);
-          } else {
-            if (document.detachEvent) {
-              document.detachEvent("onmessage", getMessage);
-            }
-          }
-          opts.callback = function() {};
-          if (wndTimeout) {
-            clearTimeout(wndTimeout);
-            wndTimeout = undefined;
-          }
-          if (callback) {
-            return callback(e, r);
-          } else {
-            return undefined;
-          }
-        };
-        if (window.attachEvent) {
-          window.attachEvent("onmessage", getMessage);
-        } else if (document.attachEvent) {
-          document.attachEvent("onmessage", getMessage);
-        } else {
-          if (window.addEventListener) {
-            window.addEventListener("message", getMessage, false);
-          }
-        }
-        if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessageExternal) {
-          chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
-            request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0];
-            defer.resolve();
-            return getMessage(request);
-          });
-        }
-        if (!frm && (navigator.userAgent.indexOf("MSIE") !== -1 || navigator.appVersion.indexOf("Trident/") > 0)) {
-          frm = document.createElement("iframe");
-          frm.src = config.oauthd_url + "/auth/iframe?d=" + encodeURIComponent(Url.getAbsUrl("/"));
-          frm.width = 0;
-          frm.height = 0;
-          frm.frameBorder = 0;
-          frm.style.visibility = "hidden";
-          document.body.appendChild(frm);
-        }
-        wndTimeout = setTimeout(function() {
-          defer.reject(new Error("Authorization timed out"));
-          if (opts.callback && typeof opts.callback === "function") {
-            opts.callback(new Error("Authorization timed out"));
-          }
-          try {
-            wnd.close();
-          } catch (_error) {}
-        }, 1200 * 1000);
-        wnd = window.open(url, "Authorization", wnd_options);
-        if (wnd) {
-          wnd.focus();
-        } else {
-          defer.reject(new Error("Could not open a popup"));
-          if (opts.callback && typeof opts.callback === "function") {
-            opts.callback(new Error("Could not open a popup"));
-          }
-        }
-        return defer.promise();
-      },
-      redirect: function(provider, opts, url) {
-        var redirect_uri, res;
-        if (arguments.length === 2) {
-          url = opts;
-          opts = {};
-        }
-        if (datastore.cache.cacheEnabled(opts.cache)) {
-          res = datastore.cache.tryCache(provider, opts.cache);
-          if (res) {
-            url = Url.getAbsUrl(url) + (url.indexOf("#") === -1 ? "#" : "&") + "oauthio=cache";
-            document.location.href = url;
-            document.location.reload();
-            return;
-          }
-        }
-        if (!opts.state) {
-          opts.state = sha1.create_hash();
-          opts.state_type = "client";
-        }
-        datastore.cookies.createCookie("oauthio_state", opts.state);
-        redirect_uri = encodeURIComponent(Url.getAbsUrl(url));
-        url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key;
-        url += "&redirect_uri=" + redirect_uri;
-        if (opts) {
-          url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
-        }
-        document.location.href = url;
-      },
-      callback: function(provider, opts, callback) {
-        var defer, res;
-        defer = $.Deferred();
-        if (arguments.length === 1) {
-          callback = provider;
-          provider = undefined;
-          opts = {};
-        }
-        if (arguments.length === 2) {
-          callback = opts;
-          opts = {};
-        }
-        if (datastore.cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
-          res = datastore.cache.tryCache(provider, opts.cache);
-          if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
-            defer.reject(new Error("You must set a provider when using the cache"));
-            if (callback) {
-              return callback(new Error("You must set a provider when using the cache"));
-            } else {
-              return;
-            }
-          }
-          if (callback) {
-            if (res) {
-              return callback(null, res);
-            }
-          } else {
-            defer.resolve(res);
-            return;
-          }
-        }
-        if (!oauth_result) {
+      }
+    },
+    getDescription: function(provider, opts, callback) {
+      opts = opts || {};
+      if (typeof providers_desc[provider] === "object") {
+        return callback(null, providers_desc[provider]);
+      }
+      if (!providers_desc[provider]) {
+        providers_api.fetchDescription(provider);
+      }
+      if (!opts.wait) {
+        return callback(null, {});
+      }
+      providers_cb[provider] = providers_cb[provider] || [];
+      providers_cb[provider].push(callback);
+    }
+  };
+  config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+  client_states = [];
+  oauth_result = void 0;
+  (parse_urlfragment = function() {
+    var cookie_state, results;
+    results = /[\\#&]oauthio=([^&]*)/.exec(document.location.hash);
+    if (results) {
+      document.location.hash = document.location.hash.replace(/&?oauthio=[^&]*/, "");
+      oauth_result = decodeURIComponent(results[1].replace(/\+/g, " "));
+      cookie_state = datastore.cookies.readCookie("oauthio_state");
+      if (cookie_state) {
+        client_states.push(cookie_state);
+        datastore.cookies.eraseCookie("oauthio_state");
+      }
+    }
+  })();
+  window.location_operations = {
+    reload: function() {
+      return document.location.reload();
+    },
+    getHash: function() {
+      return document.location.hash;
+    },
+    setHash: function(newHash) {
+      return document.location.hash = newHash;
+    },
+    changeHref: function(newLocation) {
+      return document.location.href = newLocation;
+    }
+  };
+  return function(exports) {
+    var delayedFunctions, delayfn, e, _preloadcalls;
+    delayedFunctions = function($) {
+      oauthio.request = require("./oauthio_requests")($, config, client_states, datastore);
+      providers_api.fetchDescription = function(provider) {
+        if (providers_desc[provider]) {
           return;
         }
-        oauthio.request.sendCallback({
-          data: oauth_result,
-          provider: provider,
-          cache: opts.cache,
-          callback: callback
-        }, defer);
-        return defer;
-      },
-      clearCache: function(provider) {
-        datastore.cookies.eraseCookie("oauthio_provider_" + provider);
-      },
-      http_me: function(opts) {
-        if (oauthio.request.http_me) {
-          oauthio.request.http_me(opts);
-        }
-      },
-      http: function(opts) {
-        if (oauthio.request.http) {
-          oauthio.request.http(opts);
-        }
-      }
-    };
-    datastore.setOAuth(exports.OAuth);
-    if (typeof jQuery === "undefined") {
-      _preloadcalls = [];
-      delayfn = void 0;
-      if (typeof chrome !== "undefined" && chrome.runtime) {
-        delayfn = function() {
-          return function() {
-            throw new Error("Please include jQuery before oauth.js");
-          };
-        };
-      } else {
-        e = document.createElement("script");
-        e.src = "//code.jquery.com/jquery.min.js";
-        e.type = "text/javascript";
-        e.onload = function() {
-          var i;
-          delayedFunctions(jQuery);
-          for (i in _preloadcalls) {
-            _preloadcalls[i].fn.apply(null, _preloadcalls[i].args);
+        providers_desc[provider] = true;
+        $.ajax({
+          url: config.oauthd_base + config.oauthd_api + "/providers/" + provider,
+          data: {
+            extend: true
+          },
+          dataType: "json"
+        }).done(function(data) {
+          providers_desc[provider] = data.data;
+          providers_api.execProvidersCb(provider, null, data.data);
+        }).always(function() {
+          if (typeof providers_desc[provider] !== "object") {
+            delete providers_desc[provider];
+            providers_api.execProvidersCb(provider, new Error("Unable to fetch request description"));
           }
-        };
-        document.getElementsByTagName("head")[0].appendChild(e);
-        delayfn = function(f) {
-          return function() {
-            var arg, args_copy;
-            args_copy = [];
-            for (arg in arguments) {
-              args_copy[arg] = arguments[arg];
-            }
-            _preloadcalls.push({
-              fn: f,
-              args: args_copy
-            });
-          };
-        };
-      }
-      oauthio.request.http = delayfn(function() {
-        oauthio.request.http.apply(exports.OAuth, arguments);
-      });
-      providers_api.fetchDescription = delayfn(function() {
-        providers_api.fetchDescription.apply(providers_api, arguments);
-      });
-      oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, datastore);
+        });
+      };
+    };
+    if (exports.OAuth) {
+      datastore.setOAuth(exports.OAuth);
     } else {
-      delayedFunctions(jQuery);
+      exports.OAuth = {
+        initialize: function(public_key, options) {
+          var i;
+          config.key = public_key;
+          if (options) {
+            for (i in options) {
+              config.options[i] = options[i];
+            }
+          }
+        },
+        setOAuthdURL: function(url) {
+          config.oauthd_url = url;
+          config.oauthd_base = Url.getAbsUrl(config.oauthd_url).match(/^.{2,5}:\/\/[^/]+/)[0];
+        },
+        getVersion: function() {
+          return config.version;
+        },
+        create: function(provider, tokens, request) {
+          var i, make_res, make_res_endpoint, res;
+          if (!tokens) {
+            return datastore.cache.tryCache(provider, true);
+          }
+          if (typeof request !== "object") {
+            providers_api.fetchDescription(provider);
+          }
+          make_res = function(method) {
+            return oauthio.request.mkHttp(provider, tokens, request, method);
+          };
+          make_res_endpoint = function(method, url) {
+            return oauthio.request.mkHttpEndpoint(data.provider, tokens, request, method, url);
+          };
+          res = {};
+          for (i in tokens) {
+            res[i] = tokens[i];
+          }
+          res.get = make_res("GET");
+          res.post = make_res("POST");
+          res.put = make_res("PUT");
+          res.patch = make_res("PATCH");
+          res.del = make_res("DELETE");
+          res.me = function(opts) {
+            oauthio.request.mkHttpMe(data.provider, tokens, request, "GET");
+          };
+          return res;
+        },
+        popup: function(provider, opts, callback) {
+          var defer, frm, getMessage, res, url, wnd, wndTimeout, wnd_options, wnd_settings;
+          getMessage = function(e) {
+            if (e.origin !== config.oauthd_base) {
+              return;
+            }
+            try {
+              wnd.close();
+            } catch (_error) {}
+            opts.data = e.data;
+            return oauthio.request.sendCallback(opts, defer);
+          };
+          wnd = void 0;
+          frm = void 0;
+          wndTimeout = void 0;
+          defer = $.Deferred();
+          opts = opts || {};
+          if (!config.key) {
+            defer.reject(new Error("OAuth object must be initialized"));
+            return callback(new Error("OAuth object must be initialized"));
+          }
+          if (arguments.length === 2) {
+            callback = opts;
+            opts = {};
+          }
+          if (datastore.cache.cacheEnabled(opts.cache)) {
+            res = datastore.cache.tryCache(provider, opts.cache);
+            if (res) {
+              defer.resolve(res);
+              if (callback) {
+                return callback(null, res);
+              } else {
+                return;
+              }
+            }
+          }
+          if (!opts.state) {
+            opts.state = sha1.create_hash();
+            opts.state_type = "client";
+          }
+          client_states.push(opts.state);
+          url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key;
+          url += "&d=" + encodeURIComponent(Url.getAbsUrl("/"));
+          if (opts) {
+            url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
+          }
+          wnd_settings = {
+            width: Math.floor(window.outerWidth * 0.8),
+            height: Math.floor(window.outerHeight * 0.5)
+          };
+          if (wnd_settings.height < 350) {
+            wnd_settings.height = 350;
+          }
+          if (wnd_settings.width < 800) {
+            wnd_settings.width = 800;
+          }
+          wnd_settings.left = window.screenX + (window.outerWidth - wnd_settings.width) / 2;
+          wnd_settings.top = window.screenY + (window.outerHeight - wnd_settings.height) / 8;
+          wnd_options = "width=" + wnd_settings.width + ",height=" + wnd_settings.height;
+          wnd_options += ",toolbar=0,scrollbars=1,status=1,resizable=1,location=1,menuBar=0";
+          wnd_options += ",left=" + wnd_settings.left + ",top=" + wnd_settings.top;
+          opts = {
+            provider: provider,
+            cache: opts.cache
+          };
+          opts.callback = function(e, r) {
+            if (window.removeEventListener) {
+              window.removeEventListener("message", getMessage, false);
+            } else if (window.detachEvent) {
+              window.detachEvent("onmessage", getMessage);
+            } else {
+              if (document.detachEvent) {
+                document.detachEvent("onmessage", getMessage);
+              }
+            }
+            opts.callback = function() {};
+            if (wndTimeout) {
+              clearTimeout(wndTimeout);
+              wndTimeout = undefined;
+            }
+            if (callback) {
+              return callback(e, r);
+            } else {
+              return undefined;
+            }
+          };
+          if (window.attachEvent) {
+            window.attachEvent("onmessage", getMessage);
+          } else if (document.attachEvent) {
+            document.attachEvent("onmessage", getMessage);
+          } else {
+            if (window.addEventListener) {
+              window.addEventListener("message", getMessage, false);
+            }
+          }
+          if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessageExternal) {
+            chrome.runtime.onMessageExternal.addListener(function(request, sender, sendResponse) {
+              request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0];
+              defer.resolve();
+              return getMessage(request);
+            });
+          }
+          if (!frm && (navigator.userAgent.indexOf("MSIE") !== -1 || navigator.appVersion.indexOf("Trident/") > 0)) {
+            frm = document.createElement("iframe");
+            frm.src = config.oauthd_url + "/auth/iframe?d=" + encodeURIComponent(Url.getAbsUrl("/"));
+            frm.width = 0;
+            frm.height = 0;
+            frm.frameBorder = 0;
+            frm.style.visibility = "hidden";
+            document.body.appendChild(frm);
+          }
+          wndTimeout = setTimeout(function() {
+            defer.reject(new Error("Authorization timed out"));
+            if (opts.callback && typeof opts.callback === "function") {
+              opts.callback(new Error("Authorization timed out"));
+            }
+            try {
+              wnd.close();
+            } catch (_error) {}
+          }, 1200 * 1000);
+          wnd = window.open(url, "Authorization", wnd_options);
+          if (wnd) {
+            wnd.focus();
+          } else {
+            defer.reject(new Error("Could not open a popup"));
+            if (opts.callback && typeof opts.callback === "function") {
+              opts.callback(new Error("Could not open a popup"));
+            }
+          }
+          return defer.promise();
+        },
+        redirect: function(provider, opts, url) {
+          var redirect_uri, res;
+          if (arguments.length === 2) {
+            url = opts;
+            opts = {};
+          }
+          if (datastore.cache.cacheEnabled(opts.cache)) {
+            res = datastore.cache.tryCache(provider, opts.cache);
+            if (res) {
+              url = Url.getAbsUrl(url) + (url.indexOf("#") === -1 ? "#" : "&") + "oauthio=cache";
+              window.location_operations.changeHref(url);
+              window.location_operations.reload();
+              return;
+            }
+          }
+          if (!opts.state) {
+            opts.state = sha1.create_hash();
+            opts.state_type = "client";
+          }
+          datastore.cookies.createCookie("oauthio_state", opts.state);
+          redirect_uri = encodeURIComponent(Url.getAbsUrl(url));
+          url = config.oauthd_url + "/auth/" + provider + "?k=" + config.key;
+          url += "&redirect_uri=" + redirect_uri;
+          if (opts) {
+            url += "&opts=" + encodeURIComponent(JSON.stringify(opts));
+          }
+          window.location_operations.changeHref(url);
+        },
+        callback: function(provider, opts, callback) {
+          var defer, res;
+          defer = $.Deferred();
+          if (arguments.length === 1) {
+            callback = provider;
+            provider = undefined;
+            opts = {};
+          }
+          if (arguments.length === 2) {
+            callback = opts;
+            opts = {};
+          }
+          if (datastore.cache.cacheEnabled(opts.cache) || oauth_result === "cache") {
+            res = datastore.cache.tryCache(provider, opts.cache);
+            if (oauth_result === "cache" && (typeof provider !== "string" || !provider)) {
+              defer.reject(new Error("You must set a provider when using the cache"));
+              if (callback) {
+                return callback(new Error("You must set a provider when using the cache"));
+              } else {
+                return;
+              }
+            }
+            if (callback) {
+              if (res) {
+                return callback(null, res);
+              }
+            } else {
+              defer.resolve(res);
+              return;
+            }
+          }
+          if (!oauth_result) {
+            return;
+          }
+          oauthio.request.sendCallback({
+            data: oauth_result,
+            provider: provider,
+            cache: opts.cache,
+            callback: callback
+          }, defer);
+          return defer;
+        },
+        clearCache: function(provider) {
+          datastore.cookies.eraseCookie("oauthio_provider_" + provider);
+        },
+        http_me: function(opts) {
+          if (oauthio.request.http_me) {
+            oauthio.request.http_me(opts);
+          }
+        },
+        http: function(opts) {
+          if (oauthio.request.http) {
+            oauthio.request.http(opts);
+          }
+        }
+      };
+      datastore.setOAuth(exports.OAuth);
+      if (typeof jQuery === "undefined") {
+        _preloadcalls = [];
+        delayfn = void 0;
+        if (typeof chrome !== "undefined" && chrome.runtime) {
+          delayfn = function() {
+            return function() {
+              throw new Error("Please include jQuery before oauth.js");
+            };
+          };
+        } else {
+          e = document.createElement("script");
+          e.src = "//code.jquery.com/jquery.min.js";
+          e.type = "text/javascript";
+          e.onload = function() {
+            var i;
+            delayedFunctions(jQuery);
+            for (i in _preloadcalls) {
+              _preloadcalls[i].fn.apply(null, _preloadcalls[i].args);
+            }
+          };
+          document.getElementsByTagName("head")[0].appendChild(e);
+          delayfn = function(f) {
+            return function() {
+              var arg, args_copy;
+              args_copy = [];
+              for (arg in arguments) {
+                args_copy[arg] = arguments[arg];
+              }
+              _preloadcalls.push({
+                fn: f,
+                args: args_copy
+              });
+            };
+          };
+        }
+        oauthio.request.http = delayfn(function() {
+          oauthio.request.http.apply(exports.OAuth, arguments);
+        });
+        providers_api.fetchDescription = delayfn(function() {
+          providers_api.fetchDescription.apply(providers_api, arguments);
+        });
+        oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, datastore);
+      } else {
+        delayedFunctions(jQuery);
+      }
     }
-  }
+  };
 };
 
 },{"../config":1,"../tools/datastore":5,"../tools/sha1":6,"../tools/url":7,"./oauthio_requests":3}],3:[function(require,module,exports){
@@ -696,10 +708,14 @@ module.exports = function($, config, client_states, datastore) {
 };
 
 },{"../tools/url":7}],4:[function(require,module,exports){
-require('./lib/oauth')(window || this);
+var OAuth_creator;
+
+OAuth_creator = require('./lib/oauth')(window, document, jQuery);
+
+OAuth_creator(window || this);
 
 },{"./lib/oauth":2}],5:[function(require,module,exports){
-module.exports = function(config) {
+module.exports = function(config, document) {
   var m;
   m = {};
   m.setOAuth = (function(_this) {
@@ -1078,7 +1094,7 @@ module.exports = {
 };
 
 },{}],7:[function(require,module,exports){
-module.exports = function() {
+module.exports = function(document) {
   return {
     getAbsUrl: function(url) {
       var base_url;
