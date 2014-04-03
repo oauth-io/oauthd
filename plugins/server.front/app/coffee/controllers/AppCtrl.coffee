@@ -1,3 +1,4 @@
+
 ##################
 # App controller #
 ##################
@@ -51,6 +52,7 @@ define [], () ->
 				app.secret = r.data?.secret
 
 		$scope.tryAuth = (provider, key) ->
+			mixpanel.track "key manager try auth", provider: provider
 			ProviderService.auth key, provider, (err, res) ->
 				$scope.$apply ->
 					app = $rootScope.me.apps.find (n) ->
@@ -182,6 +184,7 @@ define [], () ->
 		$scope.resetKeys = (key)->
 			if confirm 'Are you sure you want to reset your keys? You\'ll need to update the keys in your application.'
 				AppService.resetKey key, (data)->
+					mixpanel.track "reset key"
 					app = $rootScope.me.apps.find (n)->
 						n.key == key
 					app.key = data.data.key
@@ -213,6 +216,7 @@ define [], () ->
 
 			if not $rootScope.error.state
 				KeysetService.add app.key, provider, keys, response_type, (data)->
+					mixpanel.track "key manager apikeys update"
 					$scope.keySaved = true
 					app.editProvider = {}
 					$timeout (->

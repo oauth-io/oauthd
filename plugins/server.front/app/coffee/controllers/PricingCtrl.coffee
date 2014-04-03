@@ -8,7 +8,8 @@ define [
 		MenuService.changed()
 
 		PaymentService.list (success) ->
-			$scope.plans = success.data.offers
+			$scope.plans = success.data.offers.slice 1
+
 		, (error) ->
 			console.log error
 
@@ -28,6 +29,7 @@ define [
 			if not $rootScope.me
 				$location.path '/signin'
 				return
+			mixpanel.track "purchase click"
 			$scope.purchaseModal = $modal.open
 				templateUrl: '/templates/partials/purchase-plan.html'
 				controller: PurchaseCtrl

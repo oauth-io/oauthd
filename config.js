@@ -24,7 +24,6 @@ module.exports = {
         // options: {...other options...}
     },
 
-
     smtp: {
         service: "Gmail",
         auth: {
@@ -50,6 +49,7 @@ module.exports = {
     demoKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
     loginKey: "ZjsbIbKdkuw5fmEkBHDZfUqEadY",
 
+
     hipchat: {
         //token: '...HipChat API token...'
         //room_support: '...ID or name of the support room...'
@@ -63,11 +63,13 @@ module.exports = {
         //api_key: '...API key...'
     },
 
+
+
+
     prerender: {
         //host: '...prerender server host...'
         //port: '...prerender server port...'
     },
-
 
     plugins: [
         /* --- only for oauth.io --- */
@@ -89,7 +91,6 @@ module.exports = {
         'server.user_management',
         /* ------------------------- */
 
-
         //'server.tests',
         'server.statistics',
         'server.request',
@@ -98,7 +99,6 @@ module.exports = {
         'server.front'
         /* ------------------------- */
     ],
-
     vat: 20.0
 }
 if (require('fs').existsSync(__dirname + '/config.local.js')) {

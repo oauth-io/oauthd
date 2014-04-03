@@ -31,6 +31,7 @@ define [
 						if app?.keysets?.length > 0
 							app.keysets.removeAt(app.keysets.length - 1)
 					$scope.$broadcast 'btHide'
+					mixpanel.track "cancel create key"
 				else
 					$scope.createKeyStep--
 
@@ -149,6 +150,7 @@ define [
 
 			#open key form
 			$scope.keyFormOpen = (droppable, helper)->
+				mixpanel.track "add apikeys popup open"
 				if Object.isString droppable
 					name = droppable
 					key = $rootScope.me.apps[0].key
@@ -162,7 +164,7 @@ define [
 					$scope.$broadcast 'btShow'
 					$scope.createKeyProvider = name
 					$scope.createKeyAppKey.key = key
-					
+
 					$scope.createKeyHref = data.data.href
 					a = $rootScope.me.apps.find (n) ->
 						return n.key == $scope.createKeyAppKey.key
@@ -199,15 +201,15 @@ define [
 				), (error) ->
 
 		return [
-			'$scope', 
-			'$routeParams', 
-			'$timeout', 
-			'$rootScope', 
-			'$location', 
-			'UserService', 
-			'$http', 
-			'MenuService', 
-			'KeysetService', 
+			'$scope',
+			'$routeParams',
+			'$timeout',
+			'$rootScope',
+			'$location',
+			'UserService',
+			'$http',
+			'MenuService',
+			'KeysetService',
 			'AppService',
 			'ProviderService',
 			ApiKeyManagerCtrl

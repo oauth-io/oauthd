@@ -56,16 +56,17 @@ define [], () ->
 				body: message
 
 			OAuthIOService.sendMail options, ((data) ->
+				mixpanel.track "contact us", options
 				$scope.sent = true
 			), (error) ->
 				$rootScope.error.state = true
 				$rootScope.error.type = "SEND_MAIL"
 				$rootScope.error.message = "Service unavailable"
-		
+
 	return [
-		'$scope', 
-		'$rootScope', 
-		'OAuthIOService', 
+		'$scope',
+		'$rootScope',
+		'OAuthIOService',
 		'MenuService',
 		ContactUsCtrl
 	]

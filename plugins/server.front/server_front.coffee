@@ -85,8 +85,11 @@ exports.setup = (callback) ->
 				data = data.replace /\{\{if logged\}\}([\s\S]*?)\{\{endif\}\}/g, if req.token then '$1' else ''
 				res.end data
 				next()
+			
 			data = data.replace /\{\{if herokuNavData\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '$1' else ''
-			data = data.replace /\{\{heroku_app\}\}/g, if req.herokuNavData and req.herokuBodyApp then '$1' else ''
+			data = data.replace /\{\{if herokuUser\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '' else '$1'
+			data = data.replace /\{\{heroku_app\}\}/g, req.herokuBodyApp
+
 			if req.token
 				db.redis.hgetall 'session:' + req.token, (err, session) ->
 					if err or not session
@@ -104,7 +107,12 @@ exports.setup = (callback) ->
 			proxy(req, res, next);
 
 		@server.get '/logout', (req, res, next) =>
-			res.setHeader 'Set-Cookie', 'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
+			cookies = [
+				'accessToken=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				'heroku-nav-data=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				'heroku-body-app=; Path=/; Expires=' + (new Date(0)).toUTCString()
+				]
+			res.setHeader 'Set-Cookie', cookies
 			res.setHeader 'Location', '/'
 			res.send 302
 			next()
@@ -130,6 +138,6 @@ exports.setup = (callback) ->
 			directory: __dirname + '/errors'
 			maxAge: 1 # no cache on errors !
 
-		@server.get /.*/, checkAdmin, bootPathCache(logged:true), sendIndex
+		@server.get /.*/, checkAdmin, checkHeroku, bootPathCache(logged:true), sendIndex
 
 		callback()

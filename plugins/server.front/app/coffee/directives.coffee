@@ -1,3 +1,4 @@
+alert "ok321"
 app.directive 'stubborn', ($rootScope, $timeout) ->
 	def =
 		restrict: 'A'
@@ -34,6 +35,7 @@ app.directive 'googleAnalytics', ($location, $rootScope, $window) ->
 		link: ($scope) ->
 			$scope.$on '$routeChangeSuccess', ->
 				$rootScope.location = $location.path()
+				mixpanel.track $location.path()
 				if $location.ga_skip
 					$location.ga_skip = false
 					return
