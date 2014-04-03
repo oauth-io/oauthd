@@ -16,16 +16,16 @@ class OAuth1 extends OAuthBase
 		super 'oauth1', provider, parameters
 
 	authorize: (opts, callback) ->
-		@_createState @_provider, opts, (err, state) =>
+		@_createState opts, (err, state) =>
 			return callback err if err
 			@_getRequestToken state, opts, callback
 
 	_getRequestToken: (state, opts, callback) ->
-		configuration = @_provider.oauth1.request_token
+		configuration = @_oauthConfiguration.request_token
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = {}
-		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
 		for name, value of configuration.headers
 			param = @_replaceParam(value, {})
 			headers[name] = param if param
@@ -55,7 +55,7 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 				return callback err if err
-				configuration = @_provider.oauth1.authorize
+				configuration = @_oauthConfiguration.authorize
 				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 				query.oauth_token = response.oauth_token
@@ -74,20 +74,20 @@ class OAuth1 extends OAuthBase
 			return callback err
 
 		err = new check.Error
-		if @_provider.oauth1.authorize.ignore_verifier == true
+		if @_oauthConfiguration.authorize.ignore_verifier == true
 			err.check req.params, oauth_token:'string'
 		else
 			err.check req.params, oauth_token:'string', oauth_verifier:'string'
 		return callback err if err.failed()
 
-		configuration = @_provider.oauth1.access_token
+		configuration = @_oauthConfiguration.access_token
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-		for extra in (@_provider.oauth1.authorize.extra || [])
+		for extra in (@_oauthConfiguration.authorize.extra || [])
 			placeholderValues[extra] = req.params[extra] if req.params[extra]
 		query = @_buildQuery(configuration.query, placeholderValues)
 
 		headers = {}
-		headers["Accept"] = @_short_formats[configuration.format] || configuration.format if configuration.format
+		headers["Accept"] = @_shortFormats[configuration.format] || configuration.format if configuration.format
 		for name, value of configuration.headers
 			param = @_replaceParam value, {}
 			headers[name] = param if param
@@ -101,7 +101,7 @@ class OAuth1 extends OAuthBase
 				consumer_secret: @_parameters.client_secret
 				token: req.params.oauth_token
 				token_secret: state.token
-		if @_provider.oauth1.authorize.ignore_verifier != true
+		if @_oauthConfiguration.authorize.ignore_verifier != true
 			options.oauth.verifier = req.params.oauth_verifier
 		else
 			options.oauth.verifier = ""
@@ -121,7 +121,7 @@ class OAuth1 extends OAuthBase
 				return callback err if err
 
 				expire = @_getExpireParameter(response)
-				requestclone = @_cloneRequest(@_provider.oauth1.request)
+				requestclone = @_cloneRequest()
 				result =
 					oauth_token: response.oauth_token
 					oauth_token_secret: response.oauth_token_secret
@@ -129,7 +129,7 @@ class OAuth1 extends OAuthBase
 					request: requestclone
 				for extra in (configuration.extra||[])
 					result[extra] = response.body[extra] if response.body[extra]
-				for extra in (@_provider.oauth1.authorize.extra||[])
+				for extra in (@_oauthConfiguration.authorize.extra||[])
 					result[extra] = req.params[extra] if req.params[extra]
 				callback null, result
 
@@ -137,8 +137,7 @@ class OAuth1 extends OAuthBase
 		if ! @_parameters.oauthio.oauth_token || ! @_parameters.oauthio.oauth_token_secret
 			return callback new check.Error "You must provide 'oauth_token' and 'oauth_token_secret' in 'oauthio' http header"
 
-		configuration = @_provider.oauth1.request
-		options = @_buildServerRequestOptions(req, configuration)
+		options = @_buildServerRequestOptions(req)
 
 		options.oauth =
 			consumer_key: @_parameters.client_id
