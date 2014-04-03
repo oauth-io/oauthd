@@ -50,19 +50,17 @@ class OAuth2 extends OAuthBase
 		configuration = @_oauthConfiguration.access_token
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
-
-		headers = @_buildHeaders(configuration)
+		headers = @_getHeaders(configuration)
 		options =
-			url: @_replaceParam configuration.url, {}
+			url: @_replaceParam(configuration.url, {})
 			method: configuration.method?.toUpperCase() || "POST"
-			followAllRedirects: true
 			encoding: null
-
+			followAllRedirects: true
 		options.headers = headers if Object.keys(headers).length
-		if options.method == "GET"
-			options.qs = query
+		if options.method == 'POST'
+			options.form = query
 		else
-			options.form = query # or .json = qs for json post
+			options.qs = query
 
 		# do request to access_token
 		request options, (e, r, body) =>
