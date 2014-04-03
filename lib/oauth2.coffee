@@ -49,7 +49,7 @@ class OAuth2 extends OAuthBase
 		placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
-		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options = @_buildRequestOptions(configuration, headers, query)
 		options.followAllRedirects = true
 
 		# do request to access_token
@@ -77,7 +77,7 @@ class OAuth2 extends OAuthBase
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration, { refresh_token: token })
-		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options = @_buildRequestOptions(configuration, headers, query)
 		options.followAllRedirects = true
 
 		# request new token

@@ -35,7 +35,7 @@ class OAuth1 extends OAuthBase
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = @_buildHeaders(configuration)
-		options = @_buildRequestOptions(configuration, {}, headers, query)
+		options = @_buildRequestOptions(configuration, headers, query)
 		options.oauth = {
 			callback: query.oauth_callback
 			consumer_key: @_parameters.client_id
@@ -84,8 +84,7 @@ class OAuth1 extends OAuthBase
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
-		# This is the only call that replaces placeholders in url
-		options = @_buildRequestOptions(configuration, placeholderValues, headers, query)
+		options = @_buildRequestOptions(configuration, headers, query)
 		options.oauth = {
 			callback: query.oauth_callback
 			consumer_key: @_parameters.client_id
