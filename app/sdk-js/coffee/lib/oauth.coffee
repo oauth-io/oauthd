@@ -294,7 +294,7 @@ module.exports = (window, document, jQuery, navigator) ->
 			if typeof window.jQuery is "undefined"
 				_preloadcalls = []
 				delayfn = undefined
-				if typeof chrome isnt "undefined" and chrome.runtime
+				if typeof chrome isnt "undefined" and chrome.extension
 					delayfn = ->
 						->
 							throw new Error("Please include jQuery before oauth.js")

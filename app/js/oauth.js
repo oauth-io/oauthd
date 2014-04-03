@@ -391,7 +391,7 @@ module.exports = function(window, document, jQuery, navigator) {
       if (typeof window.jQuery === "undefined") {
         _preloadcalls = [];
         delayfn = void 0;
-        if (typeof chrome !== "undefined" && chrome.runtime && false) {
+        if (typeof chrome !== "undefined" && chrome.extension) {
           delayfn = function() {
             return function() {
               throw new Error("Please include jQuery before oauth.js");

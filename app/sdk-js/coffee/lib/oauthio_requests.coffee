@@ -1,7 +1,6 @@
 Url = require('../tools/url')()
 
 module.exports = ($, config, client_states, cache) ->
-	console.log 'GOT JQUERY', $
 	http: (opts) ->
 		doRequest = ->
 			request = options.oauthio.request or {}
@@ -37,7 +36,6 @@ module.exports = ($, config, client_states, cache) ->
 					for i of request.headers
 						options.headers[i] = Url.replaceParam(request.headers[i], options.oauthio.tokens, request.parameters)
 				delete options.oauthio
-				console.log options
 				$.ajax options
 		options = {}
 		i = undefined
