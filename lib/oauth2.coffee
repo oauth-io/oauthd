@@ -155,15 +155,8 @@ class OAuth2 extends OAuthBase
 			else
 				return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
-		oauthrequest = @_provider.oauth2.request
-
-		options =
-			method: req.method
-			followAllRedirects: true
-
-		options.url = @_buildServerRequestUrl(req.apiUrl, req, oauthrequest.url)
-		options.qs = @_buildServerRequestQuery(oauthrequest.query)
-		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
+		configuration = @_provider.oauth2.request
+		options = @_buildServerRequestOptions(req, configuration)
 
 		# do request
 		callback null, options
