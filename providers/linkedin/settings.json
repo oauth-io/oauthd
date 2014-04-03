@@ -17,7 +17,13 @@
         },
         "sample": {
             "method": "get",
-            "url": "/v1/people/~"
+            "url": "/v1/people/~:(first-name,last-name,headline,picture-url)?format=json"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/v1/people/~:(first-name,last-name,headline,picture-url)?format=json"
+            }
         },
         "jsfiddle": "http://jsfiddle.net/thyb/Ar4xC/1/embedded/"
     }

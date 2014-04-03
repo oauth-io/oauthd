@@ -113,6 +113,21 @@ exports.getSettings = (provider, callback) ->
 		content.provider = provider_name
 		callback null, content
 
+# get a provider's user mapping information
+exports.getMeMapping = (provider, callback) ->
+	provider_name = provider
+	providers_dir = config.rootdir + '/providers'
+	provider = Path.resolve providers_dir, provider + '/me.js'
+	if Path.relative(providers_dir, provider).substr(0,2) == ".."
+		return callback new check.Error 'Not authorized'
+	fs.exists provider, (exists) ->
+		if (exists)
+			me = require(provider);
+			return callback null, me
+		else
+			return callback new check.Error 'No me.js information for ' + provider_name
+	
+
 # get a provider's description extended with default params
 exports.getExtended = (name, callback) ->
 	provider = providers._list[name]

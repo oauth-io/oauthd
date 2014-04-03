@@ -29,6 +29,11 @@ oauth =
 auth = plugins.data.auth
 
 
+cors_middleware = (req, res, next) ->
+	res.setHeader 'Access-Control-Allow-Origin', '*'
+	res.setHeader 'Access-Control-Allow-Methods', 'GET'
+	next()
+
 # build server options
 server_options =
 	name: 'OAuth Daemon'
@@ -425,8 +430,12 @@ server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res,
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config's extras
-server.get config.base_api + '/providers/:provider/settings', bootPathCache(), (req, res, next) ->
-		db.providers.getSettings req.params.provider, send(res,next)
+server.get config.base_api + '/providers/:provider/settings', bootPathCache(), cors_middleware, (req, res, next) ->
+	db.providers.getSettings req.params.provider, send(res,next)
+
+# get the provider me.json mapping configuration
+server.get config.base_api + '/providers/:provider/user-mapping', bootPathCache(), cors_middleware, (req, res, next) ->
+	db.providers.getMeMapping req.params.provider, send(res,next)
 
 # get a provider logo
 server.get config.base_api + '/providers/:provider/logo', bootPathCache(), ((req, res, next) ->

@@ -1,0 +1,7 @@
+{
+    "name": "oauth-js",
+    "version": "{{sdk_version}}",
+    "main": "oauth.min.js",
+    "description": "{{description}}",
+    "license": "{{license}}"
+}
