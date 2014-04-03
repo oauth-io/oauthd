@@ -68,27 +68,30 @@ class OAuthBase
 		url += "?" + querystring.stringify(query)
 		return { url: url, state: stateId }
 
-	_buildServerRequestUrl: (encodedURI, configurationUrl) ->
-		url = decodeURIComponent(encodedURI)
+	_buildServerRequestUrl: (url, req, configurationUrl) ->
+		if typeof req.query == 'function' and typeof req.query() == 'string'
+			url += "?" + req.query()
 		if ! url.match(/^[a-z]{2,16}:\/\//)
 			if url[0] != '/'
 				url = '/' + url
 			url = configurationUrl + url
 		return @_replaceParam(url, @_parameters.oauthio)
 
-	_buildServerRequestQuery: (query, configurationQuery) ->
-		presetQuery = {}
-		presetQuery[name] = value for name, value of query
-		return @_buildQuery(configurationQuery, @_parameters.oauthio, presetQuery)
+	_buildServerRequestQuery: (configurationQuery) ->
+		return @_buildQuery(configurationQuery, @_parameters.oauthio)
 
 	_buildServerRequestHeaders: (reqHeaders, configurationHeaders) ->
-		headers = {
-			accept: reqHeaders.accept
-			'accept-encoding': reqHeaders['accept-encoding']
-			'accept-language': reqHeaders['accept-language']
-			'content-type': reqHeaders['content-type']
-			'User-Agent': 'OAuth.io'
-		}
+		ignoreheaders = [
+			'oauthio', 'host', 'connection',
+			'origin', 'referer'
+		]
+
+		headers = {}
+		for k, v of reqHeaders
+			if ignoreheaders.indexOf(k) == -1
+				k = k.replace /\b[a-z]/g, (-> arguments[0].toUpperCase())
+				headers[k] = v
+
 		for parameterName, placeholder of configurationHeaders
 			param = @_replaceParam(placeholder, @_parameters.oauthio)
 			headers[parameterName] = param if param

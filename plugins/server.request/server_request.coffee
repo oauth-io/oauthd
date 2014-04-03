@@ -52,10 +52,8 @@ exports.raw = ->
 			@emit 'request', provider:provider_name, key:oauthio.k
 
 			# let oauth modules do the request
-			oa = new oauth[oauthv]
-			oa.request provider, parameters, req, (err, options) ->
-				return callback err if err
-				return callback null, options
+			oa = new oauth[oauthv](provider, parameters)
+			oa.request req, callback
 
 	doRequest = (req, res, next) =>
 		cb = @server.send(res, next)

@@ -161,8 +161,8 @@ class OAuth2 extends OAuthBase
 			method: req.method
 			followAllRedirects: true
 
-		options.url = @_buildServerRequestUrl(req.params[1], oauthrequest.url)
-		options.qs = @_buildServerRequestQuery(req.query, oauthrequest.query)
+		options.url = @_buildServerRequestUrl(req.apiUrl, req, oauthrequest.url)
+		options.qs = @_buildServerRequestQuery(oauthrequest.query)
 		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
 
 		# do request

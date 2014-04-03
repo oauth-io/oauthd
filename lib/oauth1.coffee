@@ -161,8 +161,8 @@ class OAuth1 extends OAuthBase
 			token: @_parameters.oauthio.oauth_token
 			token_secret: @_parameters.oauthio.oauth_token_secret
 
-		options.url = @_buildServerRequestUrl(req.params[1], oauthrequest.url)
-		options.qs = @_buildServerRequestQuery(req.query, oauthrequest.query)
+		options.url = @_buildServerRequestUrl(req.apiUrl, req, oauthrequest.url)
+		options.qs = @_buildServerRequestQuery(oauthrequest.query)
 		options.headers = @_buildServerRequestHeaders(req.headers, oauthrequest.headers)
 
 		# do request
