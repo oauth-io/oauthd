@@ -1,5 +1,5 @@
 module.exports =
-	oauthd_url: "{{auth_url}}"
-	oauthd_api: "{{api_url}}"
-	version: "web-0.1.7"
+	oauthd_url: process.env.oauthd_url
+	oauthd_api: process.env.api_url
+	version: process.env.sdk_version
 	options: {}
