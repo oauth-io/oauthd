@@ -25,14 +25,12 @@ class OAuth1 extends OAuthBase
 		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = @_buildHeaders(configuration)
-		options =
-			url: configuration.url
-			method: configuration.method?.toUpperCase() || "POST"
-			encoding: null
-			oauth:
-				callback: query.oauth_callback
-				consumer_key: @_parameters.client_id
-				consumer_secret: @_parameters.client_secret
+		options = @_buildRequestOptions(configuration, headers, query)
+		options.oauth = {
+			callback: query.oauth_callback
+			consumer_key: @_parameters.client_id
+			consumer_secret: @_parameters.client_secret
+		}
 		delete query.oauth_callback
 		options.headers = headers if Object.keys(headers).length
 		if options.method == 'POST'
@@ -81,7 +79,7 @@ class OAuth1 extends OAuthBase
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
-		options = @_buildOptions(configuration, placeholderValues, headers, query)
+		options = @_buildRequestOptions(configuration, headers, query)
 		options.oauth = {
 			callback: query.oauth_callback
 			consumer_key: @_parameters.client_id
