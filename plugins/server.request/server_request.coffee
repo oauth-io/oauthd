@@ -44,18 +44,15 @@ exports.raw = ->
 			}[oauthio.oauthv]
 			if oauthv and not provider[oauthv]
 				return callback new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
+
 			oauthv ?= 'oauth2' if provider.oauth2
 			oauthv ?= 'oauth1' if provider.oauth1
 
 			parameters.oauthio = oauthio
 
-			@emit 'request', provider:provider_name, key:oauthio.k
-
 			# let oauth modules do the request
-			oa = new oauth[oauthv]
-			oa.request provider, parameters, req, (err, options) ->
-				return callback err if err
-				return callback null, options
+			oa = new oauth[oauthv](provider, parameters)
+			oa.request req, callback
 
 	doRequest = (req, res, next) =>
 		cb = @server.send(res, next)
@@ -74,57 +71,39 @@ exports.raw = ->
 		else
 			origin = urlinfos.protocol + '//' + urlinfos.host
 
-		async.parallel [
-			(callback) => @db.providers.getExtended req.params[0], callback
-			(callback) => @db.apps.getKeyset oauthio.k, req.params[0], callback
-			(callback) => @db.apps.checkDomain oauthio.k, ref, callback
-		], (err, results) =>
-			return cb err if err
-			[provider, {parameters}, domaincheck] = results
+		req.apiUrl = decodeURIComponent(req.params[1])
 
-			req.apiUrl = decodeURIComponent(req.params[1])
+		@db.apps.checkDomain oauthio.k, ref, (err, domaincheck) ->
+			return cb err if err
 			if ! domaincheck
 				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 
-			# select oauth version
-			oauthv = oauthio.oauthv && {
-				"2":"oauth2"
-				"1":"oauth1"
-			}[oauthio.oauthv]
-			if oauthv and not provider[oauthv]
-				return cb new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
-			oauthv ?= 'oauth2' if provider.oauth2
-			oauthv ?= 'oauth1' if provider.oauth1
-			oa = new oauth[oauthv]
-
-			parameters.oauthio = oauthio
+		@apiRequest req, req.params[0], oauthio, (err, options) =>
+			return cb err if err
 
 			@emit 'request', provider:req.params[0], key:oauthio.k
 
-			# let oauth modules do the request
-			oa.request provider, parameters, req, (err, options) ->
-				return cb err if err
-				api_request = null
+			api_request = null
 
-				sendres = ->
-					api_request.pipefilter = (response, dest) ->
-						dest.setHeader 'Access-Control-Allow-Origin', origin
-						dest.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
-					api_request.pipe(res)
-					api_request.once 'end', -> next false
+			sendres = ->
+				api_request.pipefilter = (response, dest) ->
+					dest.setHeader 'Access-Control-Allow-Origin', origin
+					dest.setHeader 'Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE'
+				api_request.pipe(res)
+				api_request.once 'end', -> next false
 
-				if req.headers['content-type'] and req.headers['content-type'].indexOf('application/x-www-form-urlencoded') != -1
-					bodyParser = restify.bodyParser mapParams:false
-					bodyParser[0] req, res, -> bodyParser[1] req, res, ->
-						options.form = req.body
-						delete options.headers['Content-Length']
-						api_request = request options
-						sendres()
-				else
+			if req.headers['content-type'] and req.headers['content-type'].indexOf('application/x-www-form-urlencoded') != -1
+				bodyParser = restify.bodyParser mapParams:false
+				bodyParser[0] req, res, -> bodyParser[1] req, res, ->
+					options.form = req.body
+					delete options.headers['Content-Length']
 					api_request = request options
-					delete req.headers
-					api_request = req.pipe(api_request)
 					sendres()
+			else
+				api_request = request options
+				delete req.headers
+				api_request = req.pipe(api_request)
+				sendres()
 
 
 	# request's endpoints
