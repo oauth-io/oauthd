@@ -81,26 +81,19 @@ class OAuth1 extends OAuthBase
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
-		options =
-			url: @_replaceParam(configuration.url, placeholderValues)
-			method: configuration.method?.toUpperCase() || "POST"
-			encoding: null
-			oauth:
-				callback: query.oauth_callback
-				consumer_key: @_parameters.client_id
-				consumer_secret: @_parameters.client_secret
-				token: req.params.oauth_token
-				token_secret: state.token
+		options = @_buildOptions(configuration, placeholderValues, headers, query)
+		options.oauth = {
+			callback: query.oauth_callback
+			consumer_key: @_parameters.client_id
+			consumer_secret: @_parameters.client_secret
+			token: req.params.oauth_token
+			token_secret: state.token
+		}
 		if @_oauthConfiguration.authorize.ignore_verifier != true
 			options.oauth.verifier = req.params.oauth_verifier
 		else
-			options.oauth.verifier = ""
+			options.oauth.verifier = ''
 		delete query.oauth_callback
-		options.headers = headers if Object.keys(headers).length
-		if options.method == 'POST'
-			options.form = query
-		else
-			options.qs = query
 
 		# do request to access_token
 		request options, (e, r, body) =>
