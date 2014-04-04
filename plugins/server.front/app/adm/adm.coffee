@@ -67,6 +67,9 @@ hooks.config = (app, apiRequest) ->
 				url = "adm/scripts/appsbynewusers?start=#{data.start}"
 				url += "&end=#{data.end}" if data.end
 				api url, success, error
+
+			getHerokuAppsInfo: (success, error) ->
+				api 'adm/getHerokuAppsInfo', success, error
 		}
 
 	#################################
@@ -470,6 +473,16 @@ hooks.config = (app, apiRequest) ->
 					refreshProvidersList success.data
 				, (error) ->
 					$scope.info = error
+
+		# Get Heroku Apps Info
+		$scope.getHerokuAppsInfo = () ->
+			AdmService.getHerokuAppsInfo (success) ->
+				$scope.herokuApps = JSON.parse(success.data)
+				$scope.herokuAppsPagination =
+					nbPerPage: 15
+					nbItems: $scope.herokuApps.length
+					current: 15
+					max: 5
 
 		refreshProvidersList = (provider) ->
 			for i of $scope.wishListProviders

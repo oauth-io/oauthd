@@ -17,6 +17,7 @@ $('#navTab a').click(function (e) {
 			<li ng-class="{active: tabShow == 'scopes'}"><a ng-click="tabShow = 'scopes'">Scopes</a></li>
 			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
 			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
+			<li ng-class="{active: tabShow == 'heroku'}"><a ng-click="tabShow = 'heroku'">Heroku</a></li>
 		</ul>
 	</div>
 
@@ -486,6 +487,28 @@ $('#navTab a').click(function (e) {
 			</div>
 		</div>
 
+		<!-- heroku -->
+		<div ng-show="tabShow == 'heroku'">
+			<div class="col-lg-8">
+			<button class="btn btn-default" ng-click="getHerokuAppsInfo()">Get Heroku Apps Info</button>
+			</div>
+			<div class="col-lg-8">
+				<table class="table table-striped">
+					<tr>
+						<th>Heroku_id</th>
+						<th>Provider_id</th>
+						<th>Plan</th>
+						<th>Callback_url</th>
+					</tr>
+						<tr ng-repeat="herokuApp in herokuApps track by $index">
+						<td>{{herokuApp.heroku_id}}</td>
+						<td>{{herokuApp.provider_id}}</td>
+						<td>{{herokuApp.plan}}</td>
+						<td>{{herokuApp.callback_url}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 	</div>
 </div>
 

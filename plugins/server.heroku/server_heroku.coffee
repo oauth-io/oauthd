@@ -2,7 +2,7 @@
 # http://oauth.io/
 #
 # Copyright (c) 2014 Webshell
-# Licensed under the MIT license.
+# For private use only.
 
 'use strict'
 
@@ -236,7 +236,49 @@ exports.raw = ->
 			shared.emit 'app.create', appreq, app
 			return callback err if err
 			return callback null, app
-		
+	
+	# Request        : PUT https://username:password@api.heroku.com/vendor/apps/:heroku_id
+	# Request Body   : { "config": {"MYADDON_URL": "http://myaddon.com/ABC123"}}
+	# Response       : 200 OK
+	# Use this call to update config vars that were previously set for an application 
+	# during provisioning.
+	# You can only update config vars that have been declared in your addon-manifest.json.
+	# updateConfigVar = (username, password) =>
+	# 	options =
+	# 		uri: "",
+	# 		method: 'GET',
+	# 		'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/32.0.1700.107 Safari/537.36'
+
+
+	# 	request options, (err, response, body) ->
+	# 		if err
+	# 			###	res.writeHead(200, {
+	# 				'Content-Length': Buffer.byteLength(result),
+	# 				'Content-Type': response.headers['content-type']
+	# 			});
+	# 			res.write('<div class="alert alert-info">Error when trying to load the jsfiddle</div>')
+	# 			res end
+	# 			return###
+	# 		result = transform_urls body, url.protocol + '//' + url.host
+	# 		res.writeHead(200, {
+	# 			'Content-Length': Buffer.byteLength(result),
+	# 			'Content-Type': response.headers['content-type']
+	# 		});
+	# 		res.write(result);
+	# 		res.end();
+
+	# 	var opts = {
+	#         host: "some.host.com",
+	#         path: "/x",
+	#         method: "PUT"
+	#     }
+
+	#     var req = https.request(opts, function(res) {
+	#         res.on('data', function(someResult) {
+	#             response.send(someResult);
+	#         });
+	#     });
+
 	# * Provisioning
 	# A private resource is created for each app that adds your add-on.
 	# Any provisioned resource should be referenced by a unique URL, 
@@ -271,6 +313,7 @@ exports.raw = ->
 				# console.log "stringifyResult", stringifyResult
 				res.setHeader 'Content-Type', 'application/json'
 				res.end stringifyResult
+
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
