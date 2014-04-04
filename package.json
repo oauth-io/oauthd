@@ -46,6 +46,7 @@
         "prerender-node": "~0.1.15",
         "ua-parser-js": "~0.6.2",
         "stripe": "~2.4.1",
-        "grunt-contrib-requirejs": "latest"
+        "grunt-contrib-requirejs": "latest",
+        "grunt-subgrunt": "~0.3.0"
     }
 }
