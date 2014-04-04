@@ -1,11 +1,10 @@
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
 
-module.exports = function(document) {
+module.exports = function(document, config) {
     return {
         popup: {},
         open: function(url, name, options) {
-            console.log("OPENED POPUP", options);
             this.popup.url = url;
             this.popup.name = name;
             this.popup.options = options;
@@ -17,11 +16,8 @@ module.exports = function(document) {
             getHash: function() {
                 return document.location.hash;
             },
-            setHash: function(newHash) {
-                console.log('SETTING NEW HASH', newHash);
-            },
+            setHash: function(newHash) {},
             changeHref: function(newLocation) {
-                console.log("CHANGING HREF TO", newLocation);
                 document.location.href = newLocation;
             }
         },
@@ -30,7 +26,11 @@ module.exports = function(document) {
         outerWidth: 1680,
         outerHeight: 1050,
         addEventListener: function(eventName, callback) {
-            eventEmitter.on(eventName, callback);
+            eventEmitter.on(eventName, function() {
+                callback({
+                    origin: config.oauthd_base
+                });
+            });
         },
         emitEvent: function(eventName) {
             eventEmitter.emit(eventName);

@@ -1,8 +1,9 @@
-var document = require('./mocks/document')();
-var jQuery = require('./mocks/jquery')();
-var window = require('./mocks/window')(document);
-var config = require('./mocks/config')();
-var cookies = require('./mocks/cookies')();
+var document = require('../mocks/document')();
+var jQuery = require('../mocks/jquery')();
+
+var config = require('../mocks/config')();
+var window = require('../mocks/window')(document, config);
+var cookies = require('../mocks/cookies')();
 var popup = {
 
 }
@@ -12,11 +13,26 @@ var navigator = {
 };
 
 var rewire = require('rewire');
-var oauth_creator = rewire('../../js/lib/oauth');
+var oauth_creator = rewire('../../../js/lib/oauth');
 oauth_creator.__set__('config', config);
 oauth_creator.__set__('cookies', cookies);
 oauth_creator = oauth_creator(window, document, jQuery, navigator);
 oauth_creator(window);
+
+describe("Initialization", function() {
+    it("should have appended the jquery script", function() {
+        var appended = false;
+        var elts = document.getAppendedElements();
+        for (var k in elts) {
+            if (elts[k].tag === "script") {
+                if (elts[k].src && elts[k].src === '//code.jquery.com/jquery.min.js') {
+                    appended = true;
+                }
+            }
+        }
+        expect(appended).toBe(true);
+    });
+});
 
 describe("OAuth object", function() {
     it("should exist", function() {
@@ -68,5 +84,7 @@ describe("OAuth popup", function() {
         expect(window.popup.options).toBeDefined();
     });
 
-    it("should contain a response when message sent")
+    it("should contain a response when message sent", function() {
+        window.emitEvent("message");
+    });
 });
