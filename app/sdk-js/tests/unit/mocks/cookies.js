@@ -18,7 +18,6 @@ module.exports = function() {
 
         },
         readCookie: function(name) {
-            console.log(name);
             if (data[name])
                 return data[name].value;
             else

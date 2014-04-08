@@ -256,7 +256,7 @@ module.exports = (window, document, jQuery, navigator) ->
 						opts = {}
 					if arguments.length is 1 and typeof provider == "string"
 						opts = {}
-					if arguments.length is 2
+					if arguments.length is 2 and typeof opts == "function"
 						callback = opts
 						opts = {}
 					if cache.cacheEnabled(opts.cache) or oauth_result is "cache"
@@ -266,12 +266,13 @@ module.exports = (window, document, jQuery, navigator) ->
 							if callback
 								return callback(new Error("You must set a provider when using the cache"))
 							else
-								return
-						if callback
-							return callback(null, res)  if res
-						else
-							defer?.resolve res
-							return
+								return defer?.promise()
+						if res
+							if callback
+								return callback(null, res)  if res
+							else
+								defer?.resolve res
+								return defer?.promise()
 					return  unless oauth_result
 					oauthio.request.sendCallback {
 						data: oauth_result
