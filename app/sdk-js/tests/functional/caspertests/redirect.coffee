@@ -43,7 +43,8 @@ exports.tests = (casper, provider, global_conf, utils) ->
 		@fill provider.form.selector, provider.form.fields, true
 
 	casper.wait 3000, ->
-		@capture("facebookstuff.png")
+		if (@cli.options.screenshots)
+			@capture("pictures/redirect-" + new Date().getTime()  + ".png")
 
 	casper.then ->
 		if (@getCurrentUrl().match(provider.domain))

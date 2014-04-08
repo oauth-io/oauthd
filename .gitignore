@@ -29,3 +29,4 @@ app/sdk-js/dist
 app/sdk-js/coverage
 keys/local*
 **/*.DS_Store
+app/sdk-js/**/pictures/**/*

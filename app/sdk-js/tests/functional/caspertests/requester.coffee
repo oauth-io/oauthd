@@ -44,7 +44,7 @@ exports.request = (casper, request, utils, databag) ->
 			utils.dump error
 		if (result and casper.cli.options.logall)
 			utils.dump result
-		@test.assert request.validate(error, result), "Request : " + request.method + " method : got expected result"
+		@test.assert request.validate(error, result), "Request : " + request.name || (request.method + " method")
 		if request.export
 			request.export databag, error, result
 		return
