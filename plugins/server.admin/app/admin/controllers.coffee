@@ -53,8 +53,9 @@ hooks.config.push ->
 		$rootScope.providers_name = {} if not $rootScope.providers_name
 		$scope.providers_name = $rootScope.providers_name
 		$scope.keySaved = false
-		$scope.authUrl = document.location.protocol + '//' + document.location.host + '/'
-		$scope.authDomain = document.location.host
+		$scope.authUrl = oauthdconfig.host_url + oauthdconfig.base
+		$scope.authDomain = oauthdconfig.host_url
+		$scope.oauthdconfig = oauthdconfig;
 		$scope.createKeyProvider = 'facebook'
 		$scope.createKeyTemplate = "admin/templates/partials/create-key.html"
 		$scope.createAppTemplate = "admin/templates/partials/create-app.html"
@@ -137,7 +138,10 @@ hooks.config.push ->
 					oauth = "oauth1"
 					if Object.has conf.data, "oauth2"
 						oauth = "oauth2"
-					app.keysField[provider] = conf.data[oauth].parameters
+					app.keysField[provider] = conf.data[oauth].parameters || {}
+					for k,v of conf.data.parameters
+						app.keysField[provider][k] = v
+					return
 				), (error) ->
 					console.log "error", error
 
@@ -204,12 +208,15 @@ hooks.config.push ->
 				$scope.createKeyStep = 2
 				if Object.has data.data, "oauth2"
 					$scope.oauthType = "OAuth 2"
-					$scope.createKeyConf = data.data.oauth2.parameters
+					$scope.createKeyConf = data.data.oauth2.parameters || {}
 					oauth = "oauth2"
 				else
 					$scope.oauthType = "OAuth 1.0a"
-					$scope.createKeyConf = data.data.oauth1.parameters
+					$scope.createKeyConf = data.data.oauth1.parameters || {}
 					oauth = "oauth1"
+
+				for k,v of data.data.parameters
+					$scope.createKeyConf[k] = v
 
 				$http(
 					method: "GET"
@@ -222,7 +229,9 @@ hooks.config.push ->
 
 				if not a.keysField?
 					a.keysField = {}
-				a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters
+				a.keysField[$scope.createKeyProvider] = data.data[oauth].parameters || {}
+				for k,v of data.data.parameters
+					a.keysField[$scope.createKeyProvider][k] = v
 
 			), (error) ->
 
@@ -311,7 +320,7 @@ hooks.config.push ->
 						result: res
 
 		$scope.addDomain = ->
-			if $scope.createAppForm.input != "" and not $scope.createAppForm.domains.find $scope.createAppForm.input
+			if $scope.createAppForm.input != "" and $scope.createAppForm.domains.indexOf($scope.createAppForm.input) == -1
 				$scope.createAppForm.domains.push $scope.createAppForm.input
 				$scope.createAppForm.input = ""
 
@@ -351,7 +360,9 @@ hooks.config.push ->
 					oauth = "oauth1"
 					if Object.has conf.data, "oauth2"
 						oauth = "oauth2"
-					app.keysField[provider] = conf.data[oauth].parameters
+					app.keysField[provider] = conf.data[oauth].parameters || {}
+					for k,v of conf.data.parameters
+						app.keysField[provider][k] = v
 
 		$scope.keyClick = (provider, app) ->
 			if app.showKeys != provider
@@ -384,6 +395,8 @@ hooks.config.push ->
 		$scope.editAppSubmit = (key)->
 
 			nb_domain = $scope.createAppForm.domains.length
+
+			$scope.addDomain()
 
 			if nb_domain == 0
 				$rootScope.error.state = true
@@ -471,4 +484,4 @@ hooks.config.push ->
 
 	app.controller 'NotFoundCtrl', ($scope, $routeParams, UserService, MenuService) ->
 		MenuService.changed()
-		$scope.errorGif = '/img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'
+		$scope.errorGif = 'img/404/' + (Math.floor(Math.random() * 2) + 1) + '.gif'

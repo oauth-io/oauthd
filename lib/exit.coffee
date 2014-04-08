@@ -25,15 +25,21 @@ cleanExit = (killer) ->
 	k = setTimeout (->
 		console.error '--- FORCING STOP'
 		process.kill process.pid
+		return
 	), 5000
 	async.series closing_stack, (err, res) ->
 		console.log '--- successfully closed !'
 		setTimeout killer, 100
+		return
+	return
 
 # nodemon restarting
 process.once 'SIGUSR2', ->
 	console.log '--- closing server...'
-	cleanExit -> process.kill process.pid, 'SIGUSR2'
+	cleanExit ->
+		process.kill process.pid, 'SIGUSR2'
+		return
+	return
 
 # uncaught exception catching
 process.on 'uncaughtException', (err) ->
@@ -46,10 +52,15 @@ process.on 'uncaughtException', (err) ->
 	if closing
 		process.exit 2
 	else
-		cleanExit -> process.exit 1
+		cleanExit ->
+			process.exit 1
+			return
+	return
 
 # push a closing function
 exports.push = (name, f) ->
 	closing_stack.push (callback) ->
 		console.log 'Closing `' + name + '`...'
 		f callback
+		return
+	return

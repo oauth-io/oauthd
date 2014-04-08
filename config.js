@@ -1,6 +1,7 @@
 module.exports = {
 	host_url: "http://localhost:6284",		// mounted on this url
 	base: "/",								// add a base url path. e.g: "/auth"
+	base_api: "/api",						// api base path
 	port: 6284,
 
 	debug: false,							// add stack trace & infos in errors
@@ -8,7 +9,8 @@ module.exports = {
 	/* uncomment to use ssl
 	ssl: {
 		key: '/path/to/key',
-		certificate: '/path/to/crt'
+		certificate: '/path/to/crt',
+		ca: '/path/to/ca'
 	},
 	*/
 
@@ -28,7 +30,12 @@ module.exports = {
 	plugins: [
 		'server.statistics',
 		'server.admin.auth',
-		'server.admin',
-		'server.request'
+		'server.request',
+		'server.admin'
 	]
+}
+if (require('fs').existsSync(__dirname + '/config.local.js')) {
+	var override = require('./config.local.js');
+	for (var i in override)
+		module.exports[i] = override[i];
 }

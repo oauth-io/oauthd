@@ -73,7 +73,7 @@ exports.authorize = (provider, parameters, opts, callback) ->
 			if typeof param != 'string'
 				return callback param
 			query[name] = param if param
-		url = authorize.url
+		url = replace_param authorize.url, params, {}, parameters
 		url += "?" + querystring.stringify query
 		callback null, url
 
@@ -110,8 +110,8 @@ exports.access_token = (state, req, callback) ->
 				return callback param
 			query[name] = param if param
 		options =
-			url: access_token.url
-			method: access_token.method?.toUpperCase() || "GET"
+			url: replace_param access_token.url, params, {}, parameters
+			method: access_token.method?.toUpperCase() || "POST"
 			followAllRedirects: true
 
 		if options.method == "GET"
@@ -162,15 +162,23 @@ exports.access_token = (state, req, callback) ->
 				expire = parseInt expire
 				now = (new Date).getTime()
 				expire -= now if expire > now
+			requestclone = {}
+			requestclone[k] = v for k, v of provider.oauth2.request
+			for k, v of params
+				if v.scope == 'public'
+					requestclone.parameters ?= {}
+					requestclone.parameters[k] = parameters[k]
 			result =
 				access_token: body.access_token
 				token_type: body.token_type
 				expires_in: expire
 				base: provider.baseurl
-				request: provider.oauth2.request
+				request: requestclone
 			result.refresh_token = body.refresh_token if body.refresh_token && response_type == "code"
 			for extra in (access_token.extra||[])
 				result[extra] = body[extra] if body[extra]
+			for extra in (provider.oauth2.authorize.extra||[])
+				result[extra] = req.params[extra] if req.params[extra]
 			callback null, result
 
 exports.refresh = (keyset, provider, token, callback) ->
@@ -187,8 +195,8 @@ exports.refresh = (keyset, provider, token, callback) ->
 			return callback param
 		query[name] = param if param
 	options =
-		url: refresh.url
-		method: refresh.method?.toUpperCase() || "GET"
+		url: replace_param refresh.url, params, {}, parameters
+		method: refresh.method?.toUpperCase() || "POST"
 		followAllRedirects: true
 
 	if options.method == "GET"
@@ -251,8 +259,8 @@ exports.request = (provider, parameters, req, callback) ->
 	params[k] = v for k,v of provider.parameters
 	params[k] = v for k,v of provider.oauth2.parameters
 
-	if ! parameters.oauthio.access_token
-		return callback new check.Error "You must provide an 'access_token' in 'oauthio' http header"
+	if ! parameters.oauthio.token
+		return callback new check.Error "You must provide a 'token' in 'oauthio' http header"
 
 	oauthrequest = provider.oauth2.request
 
@@ -265,13 +273,13 @@ exports.request = (provider, parameters, req, callback) ->
 	if ! options.url.match(/^[a-z]{2,16}:\/\//)
 		if options.url[0] != '/'
 			options.url = '/' + options.url
-		options.url = oauthrequest.url + options.url
+		options.url = replace_param(oauthrequest.url, params, parameters.oauthio, parameters) + options.url
 
 	# build query
 	options.qs = {}
 	options.qs[name] = value for name, value of req.query
 	for name, value of oauthrequest.query
-		param = replace_param value, params, token:parameters.oauthio.access_token, parameters
+		param = replace_param value, params, parameters.oauthio, parameters
 		if typeof param != 'string'
 			return callback param
 		options.qs[name] = param if param
@@ -283,7 +291,7 @@ exports.request = (provider, parameters, req, callback) ->
 		'accept-language':req.headers['accept-language']
 		'content-type':req.headers['content-type']
 	for name, value of oauthrequest.headers
-		param = replace_param value, params, token:parameters.oauthio.access_token, parameters
+		param = replace_param value, params, parameters.oauthio, parameters
 		if typeof param != 'string'
 			return callback param
 		options.headers[name] = param if param

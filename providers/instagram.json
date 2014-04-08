@@ -1,40 +1,36 @@
 {
-  "url": "https://api.instagram.com/oauth", 
-  "oauth2": {
-    "authorize": {
-      "url": "/authorize", 
-      "format": "json"
-    }, 
-    "access_token": {
-      "url": "/access_token", 
-      "method": "post"
-    }, 
-    "request": {
-      "query": {
-        "access_token": "{{token}}"
-      }
-    }, 
-    "parameters": {
-      "client_secret": "string", 
-      "client_id": "string", 
-      "scope": {
-        "values": {
-          "relationships": "to follow and unfollow users on a user\u2019s behalf", 
-          "likes": "to like and unlike items on a user\u2019s behalf", 
-          "comments": "to create or delete comments on a user\u2019s behalf", 
-          "basic": "to read any and all data related to a user (e.g. following/followed-by lists, photos, etc.) (granted by default)"
-        }, 
-        "cardinality": "*", 
-        "separator": " ", 
-        "type": "string"
-      }
-    }
-  }, 
-  "name": "Instagram", 
-  "href": {
-    "keys": "http://instagram.com/developer/clients/register/", 
-    "docs": "http://instagram.com/developer/", 
-    "apps": "http://instagram.com/developer/clients/manage/", 
-    "provider": "http://instagram.com"
-  }
+	"name": "Instagram",
+	"url": "https://api.instagram.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/access_token",
+			"extra": [
+				"user"
+			]
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"relationships": "to follow and unfollow users on a user’s behalf",
+					"likes": "to like and unlike items on a user’s behalf",
+					"comments": "to create or delete comments on a user’s behalf",
+					"basic": "to read any and all data related to a user (e.g. following/followed-by lists, photos, etc.) (granted by default)"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://instagram.com/developer/clients/register/",
+		"docs": "http://instagram.com/developer/",
+		"apps": "http://instagram.com/developer/clients/manage/",
+		"provider": "http://instagram.com"
+	}
 }

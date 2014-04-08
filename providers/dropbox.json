@@ -1,32 +1,22 @@
 {
-  "oauth1": {
-    "request_token": "https://api.dropbox.com/1/oauth/request_token",
-    "authorize": {
-      "url":"https://www.dropbox.com/1/oauth/authorize",
-      "ignore_verifier": true,
-      "query": {
-        "oauth_callback": "{{callback}}"
-      }
-    },
-    "access_token": "https://api.dropbox.com/1/oauth/access_token"
-  },
-  "oauth2": {
-    "authorize": "https://www.dropbox.com/1/oauth2/authorize",
-    "access_token": {
-      "url":"https://api.dropbox.com/1/oauth2/token",
-      "method":"POST"
-    }
-  },
-  "parameters": {
-    "client_secret": "string",
-    "client_id": "string"
-  },
-  "href": {
-    "keys": "https://www.dropbox.com/developers/apps/create",
-    "docs": "https://www.dropbox.com/developers/reference/api",
-    "apps": "https://www.dropbox.com/developers/apps",
-    "provider": "https://www.dropbox.com/"
-  },
-  "name": "Dropbox",
-  "api_url": "https://api.dropbox.com/1/oauth/"
+	"name": "Dropbox",
+	"url": "https://api.dropbox.com/1/oauth/",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": {
+			"url": "https://www.dropbox.com/1/oauth/authorize",
+			"ignore_verifier": true
+		},
+		"access_token": "/access_token"
+	},
+	"oauth2": {
+		"authorize": "https://www.dropbox.com/1/oauth2/authorize",
+		"access_token": "https://api.dropbox.com/1/oauth2/token"
+	},
+	"href": {
+		"keys": "https://www.dropbox.com/developers/apps/create",
+		"docs": "https://www.dropbox.com/developers/reference/api",
+		"apps": "https://www.dropbox.com/developers/apps",
+		"provider": "https://www.dropbox.com/"
+	}
 }

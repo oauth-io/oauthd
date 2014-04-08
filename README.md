@@ -1,3 +1,5 @@
+<a href="http://travis-ci.org/oauth-io/oauthd"><img src="https://secure.travis-ci.org/oauth-io/oauthd.png" alt="Build Status" style="max-width:100%;"></a>
+
 # OAuth daemon
 
 The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) core. This is a background api server that runs on your own server that allow your clients to authenticate to any 70+ available OAuth provider.
@@ -9,6 +11,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 - A working redis database >= v2.4, check [Redis quickstart](http://redis.io/topics/quickstart) for a properly installation
 - nodejs >= v0.8.2
 - npm >= v1.1
+- needed packages for npm dependencies: gcc g++ make python
 
 ## Clone the project
 
@@ -16,7 +19,7 @@ The Oauth Daemon is the open source version of the [OAuth.io](https://oauth.io) 
 
 ## Install global dependencies
 
-    (sudo) npm install -g coffee-script grunt grunt-cli forever
+    (sudo) npm install -g coffee-script grunt-cli forever
 
 ## Install OAuth dependencies
 
@@ -24,7 +27,11 @@ In the cloned project dir, issue:
 
     npm install
 
-`npm` will install dependencies listed in `package.json`.
+`npm` will install dependencies listed in `package.json` and compile coffee files.
+
+If you have a problem during `npm install` you may want to restart the compilation step by doing:
+
+	grunt
 
 ## Using OAuth daemon
 
@@ -32,6 +39,10 @@ Run the redis server if it's not running yet.
 
 To start, stop or restart oauthd, just use
 `npm [start|stop|restart]` in oauthd folder.
+
+If you want to start oauthd in debug mode, you can also use `grunt server`
+
+This will launch nodemon and watch/recompile modified files.
 
 By default, you can access it by [http://localhost:6284/admin](http://localhost:6284/admin).
 
@@ -43,6 +54,8 @@ Then you can include the generated js sdk from oauthd to use it on your sites. B
 `<script src="http://localhost:6284/download/latest/oauth.js"></script>`
 
 You may configure config.js in oauthd folder, to configure your ports, connection with redis, enable ssl etc.
+
+You can also write a config.local.js file that will overwrite existing fields of config.js.
 
 Then the admin interface is available to your url / port set into config.js, at /admin.
 

@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+startTime = new Date
+
 Path = require 'path'
 config = require "./config"
 async = require "async"
@@ -32,3 +34,5 @@ async.series [
 	if err
 		console.error 'Error while initialisation', err.stack.toString()
 		plugins.data.emit 'server', err
+	else
+		console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)'

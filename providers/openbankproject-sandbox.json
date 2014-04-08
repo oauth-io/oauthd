@@ -1,0 +1,14 @@
+{
+  "name": "Open Bank Project",
+  "url": "https://apisandbox.openbankproject.com/oauth",
+  "oauth1": {
+    "request_token": "/initiate",
+    "authorize": "/authorize",
+    "access_token": "/token"
+  },
+  "href": {
+    "keys": "https://apisandbox.openbankproject.com/consumer-registration",
+    "docs": "https://github.com/OpenBankProject/OBP-API/wiki",
+    "provider": "https://www.openbankproject.com/"
+  }
+}

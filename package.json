@@ -18,9 +18,10 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "install": "grunt && cd ./plugins/server.admin && npm install && grunt",
-    "start": "forever -c coffee --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start lib/oauthd.coffee",
-    "stop": "forever stop lib/oauthd.coffee"
+    "install": "grunt",
+    "start": "forever --minUptime 1000 --spinSleepTime 1000 -a -l forever.log -o out.log -e err.log start ./lib/oauthd.js",
+    "stop": "forever stop ./lib/oauthd.js",
+    "test": "grunt test && coffee ./test/providers_check.coffee"
   },
   "keywords": [
     "oauth",
@@ -32,6 +33,7 @@
     "lib": "./lib"
   },
   "dependencies": {
+    "grunt-nodemon": "~0.0.4",
     "hiredis": "~0.1.15",
     "redis": "~0.8.3",
     "restify": "~2.5.1",
@@ -41,7 +43,13 @@
     "underscore": "~1.4.4",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.4.3",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-less": "~0.8.1",
+    "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
-    "restify-oauth2-oauthd": "~2.1.0"
+    "restify-oauth2-oauthd": "~2.1.0",
+    "jayschema": "~0.2.0",
+    "jsonlint": "~1.6.0"
   }
 }

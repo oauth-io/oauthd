@@ -24,6 +24,8 @@ oauth =
 
 exports.setup = (callback) ->
 
+	fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
+
 	doRequest = (req, res, next) =>
 		cb = @server.send(res, next)
 		oauthio = req.headers.oauthio
@@ -34,12 +36,11 @@ exports.setup = (callback) ->
 			return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 
 		origin = null
-		ref = req.headers['referer'] || req.headers['origin']
-		if ref
-			urlinfos = Url.parse(ref)
-			if not urlinfos.hostname
-				return next new restify.InvalidHeaderError 'Missing origin or referer.'
-			origin = urlinfos.protocol + '//' + urlinfos.host
+		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
+		urlinfos = Url.parse(ref)
+		if not urlinfos.hostname
+			return next new restify.InvalidHeaderError 'Missing origin or referer.'
+		origin = urlinfos.protocol + '//' + urlinfos.host
 
 		async.parallel [
 			(callback) => @db.providers.getExtended req.params[0], callback
@@ -50,7 +51,7 @@ exports.setup = (callback) ->
 			[provider, {parameters}, domaincheck] = results
 
 			if ! domaincheck
-				return cb new @check.Error 'Domain name does not match any registered domain on ' + @config.url.host
+				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 
 			# select oauth version
 			oauthv = oauthio.oauthv && {

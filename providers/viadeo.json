@@ -1,12 +1,15 @@
 {
-  "name": "Viadeo",
-  "url": "https://secure.viadeo.com/oauth-provider",
-  "oauth2": {
-    "authorize": "/authorize2",
-    "access_token": "/access_token2",
-    "parameters":{
-      "client_secret": "string",
-      "client_id": "string"
-    }   
-  }
+	"name": "Viadeo",
+	"url": "https://secure.viadeo.com/oauth-provider",
+	"oauth2": {
+		"authorize": "/authorize2",
+		"access_token": "/access_token2",
+		"request": "https://api.viadeo.com"
+	},
+	"href": {
+		"keys": "http://dev.viadeo.com/dashboard/",
+		"apps": "http://dev.viadeo.com/dashboard/",
+		"docs": "http://dev.viadeo.com/documentation/",
+		"provider": "https://www.viadeo.com"
+	}
 }
