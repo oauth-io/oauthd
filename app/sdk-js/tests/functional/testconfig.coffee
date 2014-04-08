@@ -1,3 +1,4 @@
 exports.config =
-	appkey: "nZWH9ywr_LNAWPqjIKze5YCOEOk"
-	test_server: "http://oauth.test:3000"
+	appkey: "tWWq7rPNtbJxj6aRThSSFwHB3Ck"
+	test_server: "http://tester.oauth:3000"
+	oauthio_server: "https://oauth.io"
