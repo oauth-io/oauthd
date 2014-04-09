@@ -490,7 +490,7 @@ $('#navTab a').click(function (e) {
 		<!-- heroku -->
 		<div ng-show="tabShow == 'heroku'">
 			<div class="col-lg-8">
-			<button class="btn btn-default" ng-click="getHerokuAppsInfo()">Get Heroku Apps Info</button>
+				<button class="btn btn-default" ng-click="getAllAppsHeroku()">Get Heroku Apps Info</button>
 			</div>
 			<div class="col-lg-8">
 				<table class="table table-striped">
@@ -499,14 +499,21 @@ $('#navTab a').click(function (e) {
 						<th>Provider_id</th>
 						<th>Plan</th>
 						<th>Callback_url</th>
+						<th>Get info</th>
 					</tr>
 						<tr ng-repeat="herokuApp in herokuApps track by $index">
 						<td>{{herokuApp.heroku_id}}</td>
 						<td>{{herokuApp.provider_id}}</td>
 						<td>{{herokuApp.plan}}</td>
 						<td>{{herokuApp.callback_url}}</td>
+						<td>
+							<a href="#myModalHeroku" role="button" class="btn btn-small btn-primary" data-toggle="modal" ng-click="getAppInfoHeroku(herokuApp)">Details</a>
+						</td>
 					</tr>
 				</table>
+				<div>
+
+				</div>
 			</div>
 		</div>
 	</div>
@@ -546,3 +553,18 @@ $('#navTab a').click(function (e) {
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dalog -->
 </div><!-- /.modal -->
+
+<div class="modal fade" id="myModalHeroku">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">App Details about {{herokuApp.id}}</h4>
+			</div>
+			<pre>{{herokuApp|json}}</pre>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>

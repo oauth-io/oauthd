@@ -102,8 +102,12 @@ exports.setup = (callback) ->
 	@server.post @config.base_api + '/adm/wishlist/setStatus', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.body.provider, req.body.status , @server.send(res, next)
 
-	# get heroku apps info
-	@server.get @config.base_api + '/adm/getHerokuAppsInfo', @auth.adm, (req, res, next) =>
+	# get all heroku apps
+	@server.get @config.base_api + '/adm/getAllAppsHeroku', @auth.adm, (req, res, next) =>
 		@db.heroku.getAllApps @server.send(res, next)
+
+	# get a heroku app info
+	@server.get @config.base_api + '/adm/getAppInfoHeroku/:heroku_id', @auth.adm, (req, res, next) =>
+		@db.heroku.getAppInfo req.params.heroku_id, @server.send(res, next)
 
 	callback()
