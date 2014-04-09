@@ -146,7 +146,13 @@ module.exports = ($, config, client_states, cache) ->
 			defer?.reject new Error("Error while parsing result")
 			return opts.callback(new Error("Error while parsing result"))
 		return  if not data or not data.provider
-		return  if opts.provider and data.provider.toLowerCase() isnt opts.provider.toLowerCase()
+		if opts.provider and data.provider.toLowerCase() isnt opts.provider.toLowerCase()
+			err = new Error("Returned provider name does not match asked provider")
+			defer?.reject err
+			if opts.callback and typeof opts.callback == "function"
+				return opts.callback(err)
+			else
+				return
 		if data.status is "error" or data.status is "fail"
 			err = new Error(data.message)
 			err.body = data.data
