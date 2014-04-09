@@ -106,6 +106,9 @@ module.exports = function() {
                 }
             };
             return def;
+        },
+        when: function (promise) {
+            return promise;
         }
     };
     return jquery;
