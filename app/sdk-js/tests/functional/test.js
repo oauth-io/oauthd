@@ -27,8 +27,6 @@ if (process.argv)
 		arguments.push(process.argv[k]);
 	}
 
-console.log(arguments);
-
 var ps = cp.spawn('casperjs', arguments);
 
 ps.stdout.on('data', function (data) {
@@ -40,5 +38,6 @@ ps.stderr.on('data', function (data) {
 });
 
 ps.on('exit', function () {
-	consumer_server.close();
+	if (process.argv.indexOf('--keepserver') === -1)
+		consumer_server.close();
 });
