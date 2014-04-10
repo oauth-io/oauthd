@@ -109,7 +109,8 @@ exports.tests = (casper, provider, global_conf, utils) ->
 		if (casper.cli.options.screenshots)
 			@capture './pictures/' + provider.provider_name + '_form' + (new Date().getTime()) + '.png'
 		@fill provider.form.selector, provider.form.fields, true
-		@click provider.form.validate_button
+		if (provider.form.validate_button and @exists(provider.form.validate_button))
+			@click provider.form.validate_button
 		if (casper.cli.options.verbose)
 			@echo "Filled login form and clicked login button, now waiting 5"
 		clearPopup()
