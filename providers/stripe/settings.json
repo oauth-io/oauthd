@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://manage.stripe.com/account/applications/settings",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://manage.stripe.com/account/applications/settings",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://stripe.com/",
+				"docs": "https://stripe.com/docs"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/account"
+        }
+	}
+}
