@@ -1,4 +1,4 @@
-describe("OAuth initialize", function() {
+describe("OAuth initialization", function() {
     beforeEach(function() {
         values = require('../init_tests')();
     });
