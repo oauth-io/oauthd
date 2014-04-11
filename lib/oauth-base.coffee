@@ -37,11 +37,13 @@ class OAuthBase
 		param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
 			return db.generateUid() if val == "nonce"
 			return hard_params[val] || ""
-		return param.replace /\{(.*?)\}/g, (match, val) =>
+		param = param.replace /\{(.*?)\}/g, (match, val) =>
 			return "" if ! @_params[val] || ! @_parameters[val]
 			if Array.isArray(@_parameters[val])
 				return @_parameters[val].join(@_params[val].separator || ",")
 			return @_parameters[val]
+		return param.replace /!BASE64(.*?)!BASE64/g, (match, val) ->
+			return (new Buffer val).toString('base64')
 
 	_createState: (opts, callback) ->
 		newStateData =

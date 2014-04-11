@@ -115,7 +115,7 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				if not provider.oauth2?.refresh
 					return next new check.Error "refresh token not supported for " + req.params.provider
 				oa = new oauth.oauth2(provider, keyset.parameters)
-				oa.refresh req.body.token, send(res,next)
+				oa.refresh req.body.token, keyset, send(res,next)
 
 # iframe injection for IE
 server.get config.base + '/iframe', (req, res, next) ->

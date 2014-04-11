@@ -32,7 +32,7 @@ define [
 
 			$scope.modifyType = (type) ->
 				$scope.createKeyType = type
-				
+
 
 
 			# createKey saves given keys for the app and provider.
@@ -87,7 +87,7 @@ define [
 
 				), (error) ->
 			), (error) ->
-			
+
 		return [
 			"$scope",
 			"$http",

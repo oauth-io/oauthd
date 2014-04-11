@@ -79,14 +79,13 @@ define [
 
 							app = $rootScope.me.apps.find (n) ->
 								return n.key == $scope.createKeyAppKey.key
-
 							# console.log $scope.apikeyUpdate
 							app.keys = {} if not app.keys
 							app.response_type = {} if not app.response_type
 							app.showKeys = true
 							app.response_type[provider] = response_type
 							app.keys[provider] = data
-							if not $scope.apikeyUpdate
+							if $scope.apikeyUpdate
 								app.keysets.add provider
 								app.keysets.sort()
 							$scope.createKeyAppKey.key = $rootScope.me.apps[0].key
@@ -199,6 +198,10 @@ define [
 						a.keysField[$scope.createKeyProvider][k] = v
 
 				), (error) ->
+
+			if ($routeParams.provider)
+				$scope.keyFormOpen $routeParams.provider
+
 
 		return [
 			'$scope',
