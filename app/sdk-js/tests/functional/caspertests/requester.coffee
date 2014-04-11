@@ -6,7 +6,8 @@ exports.request = (casper, request, utils, databag) ->
 		if typeof params == "function"
 			params = params databag
 		request.params = params
-		if (casper.cli.options.logdatabag)
+		if (casper.cli.options.verbose and databag)
+			@echo "Current databag :"
 			utils.dump databag
 		get_defined = @evaluate( (request)->
 			window.__flag = false
@@ -21,6 +22,7 @@ exports.request = (casper, request, utils, databag) ->
 					.fail (error) ->
 						window.__flag = true
 						window.__error = e
+						window.__flagerror = true
 						return
 				return true
 			catch e
@@ -40,11 +42,13 @@ exports.request = (casper, request, utils, databag) ->
 		error = @evaluate(->
 			window.__error
 		)
-		if (error and casper.cli.options.logall)
+		if error and casper.cli.options.verbose
+			@echo "An error occured during a request (" + request.name + ") : "
 			utils.dump error
-		if (result and casper.cli.options.logall)
+		if result and casper.cli.options.verbose
+			@echo "Here's the server's response for '" + request.name + "' : "
 			utils.dump result
-		@test.assert request.validate(error, result), "Request : " + request.method + " method : got expected result"
+		@test.assert request.validate(error, result), "Request : " + request.name || (request.method + " method")
 		if request.export
 			request.export databag, error, result
 		return

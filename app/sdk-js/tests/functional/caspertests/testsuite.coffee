@@ -5,6 +5,8 @@ exports.launch = (casper, provider, global_conf, utils) ->
 			return
 		casper.thenOpen global_conf.test_server, ->
 			base = this
+			if @cli.options.screenshots
+				@capture './pictures/start' + (new Date().getTime()) + '.png'
 			#Testing OAuth
 			OAuth = base.evaluate(->
 				return window.OAuth

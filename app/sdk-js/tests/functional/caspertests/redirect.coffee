@@ -22,8 +22,6 @@ exports.tests = (casper, provider, global_conf, utils) ->
 				return true
 			catch e
 				return e
-			
-
 			), {
 				global_conf: global_conf,
 				provider: provider
@@ -43,7 +41,8 @@ exports.tests = (casper, provider, global_conf, utils) ->
 		@fill provider.form.selector, provider.form.fields, true
 
 	casper.wait 3000, ->
-		@capture("facebookstuff.png")
+		if (@cli.options.screenshots)
+			@capture("pictures/redirect-" + new Date().getTime()  + ".png")
 
 	casper.then ->
 		if (@getCurrentUrl().match(provider.domain))
@@ -58,7 +57,7 @@ exports.tests = (casper, provider, global_conf, utils) ->
 				window.OAuth.callback((err, result) ->
 					window.__callbacked = true
 					if (err)
-						window.__error = "HELLO MAN"
+						window.__error = err
 					window.__result = result
 					window.res = result
 				);	
@@ -76,6 +75,6 @@ exports.tests = (casper, provider, global_conf, utils) ->
 			return (window.__error == undefined or window.__error == null) and typeof window.__result == "object"
 		error = @evaluate ->
 			return window.__error
-		if (casper.cli.options.logall)
+		if (casper.cli.options.verbose)
 			utils.dump error
 		@test.assert authentication_worked, "Authentication done with callback"

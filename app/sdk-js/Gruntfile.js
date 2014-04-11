@@ -66,6 +66,17 @@ module.exports = function(grunt) {
                 }
             }
         },
+        jasmine_node: {
+
+            options: {
+                forceExit: true,
+                match: '.',
+                matchall: false,
+                extensions: 'js',
+                specNameMatcher: 'spec'
+            },
+            all: ['tests/unit/spec/']
+        },
 
         taskDefault: ['coffee', 'browserify', 'uglify', 'bower']
     };
@@ -78,6 +89,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-jasmine-node');
 
     grunt.registerTask('bower', 'Creates an updated bower.json to the dist folder', function() {
         var done = this.async();
@@ -99,6 +111,15 @@ module.exports = function(grunt) {
                 console.log("Wrote bower.json file in app/sdk-js/dist/");
                 done();
             });
+        });
+    });
+
+    grunt.registerTask('coverage', 'Creates a tests coverage report', function() {
+        var exec = require('child_process').exec;
+        var done = this.async();
+        exec('npm test', function(error, stdout, stderr) {
+            console.log("Coverage report should be generated in ./coverage/lcov-report/index.html");
+            done();
         });
     });
 

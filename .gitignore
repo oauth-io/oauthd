@@ -26,4 +26,7 @@ app/sdk-js/jsold/*
 app/sdk-js/**/node_modules/*
 app/sdk-js/.grunt
 app/sdk-js/dist
+app/sdk-js/coverage
 keys/local*
+**/*.DS_Store
+app/sdk-js/**/pictures/**/*
