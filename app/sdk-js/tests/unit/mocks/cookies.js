@@ -25,6 +25,13 @@ module.exports = function() {
         },
         eraseCookie: function(name) {
             data[name] = undefined;
+        },
+        getCacheLength: function () {
+            var i = 0;
+            for (var k in data) {
+                i++;
+            }
+            return i;
         }
     };
 };
