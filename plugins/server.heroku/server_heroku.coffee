@@ -192,6 +192,7 @@ exports.raw = ->
 			db.heroku.updateConfigVar user, (err, body) =>
 				if err
 					console.log "Unable to update heroku config var"
+					
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
