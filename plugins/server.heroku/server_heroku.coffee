@@ -138,6 +138,7 @@ exports.raw = ->
 					config: 
 						OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
 						# OAUTHIO_URL: user.heroku_url
+
 				stringifyResult = JSON.stringify(result)
 				res.setHeader 'Content-Type', 'application/json'
 				res.end stringifyResult
@@ -192,7 +193,7 @@ exports.raw = ->
 			db.heroku.updateConfigVar user, (err, body) =>
 				if err
 					console.log "Unable to update heroku config var"
-					
+
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.
