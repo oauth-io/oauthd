@@ -6,7 +6,6 @@
 
 'use strict'
 
-async = require 'async'
 restify = require 'restify'
 crypto = require 'crypto'
 
@@ -30,8 +29,8 @@ exports.raw = ->
 		if req.authorization and req.authorization.scheme is 'Basic' and req.authorization.basic.username is config.heroku.heroku_user and req.authorization.basic.password is config.heroku.heroku_password
 			return next()
 		else
-			# console.log "Unable to authenticate user"
-			# console.log "req.authorization", req.authorization
+			console.log "Unable to authenticate user"
+			console.log "req.authorization", req.authorization
 			res.header "WWW-Authenticate", "Basic realm=\"Admin Area\""
 			res.send 401, "Authentication required"
 			return
@@ -128,16 +127,49 @@ exports.raw = ->
 		db.heroku.registerHerokuAppUser data, (err, user) =>
 			res.send 404 if err
 			db.heroku.createDefaultApp user.id, (err, app) =>
+				res.send 404 if err
 				subscribeEvent user, user.current_plan
+				conf_var = 
+					name:app.name,
+					public_key:app.key
 				result = 
 					id: 
 						user.heroku_id 
 					config: 
-						OAUTHIO_PUBLIC_KEY: app.key
+						OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
 						# OAUTHIO_URL: user.heroku_url
 				stringifyResult = JSON.stringify(result)
 				res.setHeader 'Content-Type', 'application/json'
 				res.end stringifyResult
+				checkProvisionning user, app, (err, res) ->
+					if err
+						db.heroku.destroy_resource user, (err, resource) =>
+						console.log "Cannot deprovision heroku resource" if err
+						shared.emit 'heroku_user.unsubscribe', resource
+				
+
+	checkProvisionning = (user, app, callback) =>
+		return callback true if not user? or not user.heroku_id? or not user.mail?
+		@myTimeOut = setTimeout ( => 
+			clearInterval @myInterval
+			return callback true)
+			,
+			15000
+			,
+			@myInterval = setInterval ( => 
+				db.heroku.getAppInfo user.heroku_id, (err, body) =>
+					return callback true if err
+					clearTimeout @myTimeOut
+					clearInterval @myInterval
+					objectBody = JSON.parse(body)
+					
+					db.apps.addDomain app.key, objectBody.domains[0], (err) ->
+						return callback true if err
+						db.heroku.updateConfigVar user, (err, body) =>
+							return callback true if err
+				)
+				,
+				3000
 
 
 	checkPlan = (req, res, next) ->
@@ -155,6 +187,11 @@ exports.raw = ->
 		if plan isnt "bootstrap"
 			shared.emit 'heroku_user.subscribe', resource, plan
 
+	@on 'user.update_nbapps', (user, nb) =>
+		if user? and user.mail?
+			db.heroku.updateConfigVar user, (err, body) =>
+				if err
+					console.log "Unable to update heroku config var"
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.

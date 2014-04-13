@@ -18,6 +18,8 @@ exports.getAllApps = (callback) ->
 
 	request options, (err, response, body) ->
 		return callback err if err
+		if response.statusCode != 200
+			return callback true
 		return callback null, body
 
 # Use this call to get the full set of details on any of your add-on instances. 
@@ -31,6 +33,8 @@ exports.getAppInfo = (heroku_id, callback) ->
 
 	request options, (err, response, body) ->
 		return callback err if err
+		if response.statusCode != 200
+			return callback true
 		return callback null, body
 
 
@@ -39,21 +43,32 @@ exports.getAppInfo = (heroku_id, callback) ->
 # Request        : PUT https://username:password@api.heroku.com/vendor/apps/:heroku_id
 # Request Body   : { "config": {"MYADDON_URL": "http://myaddon.com/ABC123"}}
 # Response       : 200 OK
-exports.updateConfigVar = (heroku_id, callback) =>
-	db.users.getApps heroku_id, (err, appkeys) ->
-		console.log "updateConfigVar appkeys", appkeys  
-
-		# reqbody =  
-		# 	config: 
-		# 		OAUTHIO_PUBLIC_KEY: "tochange"
-		# options =
-		# 	uri: "https://" + config.heroku.heroku_user + ":" + config.heroku.heroku_password + "@api.heroku.com/vendor/apps/" + heroku_id,
-		# 	method: 'PUT',
-		# 	body: reqbody
-
-		# request options, (err, response, body) ->
-		# 	return callback err if err
-		# 	return callback null, body
+exports.updateConfigVar = (user, callback) =>
+	return callback true if not user? or not user.mail? or not user.id?
+	db.heroku.get_resource_by_id user.mail, (err, resource) =>
+		if not err
+			db.users.getAppsObject user.id, (err, apps) ->
+				conf_var = []
+				for app in apps
+					var_domains = JSON.stringify(app.domains)
+					var_app	=
+						name:app.name,
+						public_key:app.key,
+						domains:app.domains
+					conf_var.push var_app
+				reqbody =  
+					config: 
+						OAUTHIO_APPLICATIONS:JSON.stringify(conf_var)
+				options =
+					uri: "https://" + config.heroku.heroku_user + ":" + config.heroku.heroku_password + "@api.heroku.com/vendor/apps/" + resource.heroku_id,
+					method: 'PUT',
+					body: JSON.stringify(reqbody),
+					headers: {'Content-Type': 'application/json'}
+				request options, (err, response, body) ->
+					return callback err if err
+					if response.statusCode != 200
+						return callback true
+					return callback null, body
 
 
 exports.registerHerokuAppUser = (data, callback) ->
@@ -90,7 +105,9 @@ exports.registerHerokuAppUser = (data, callback) ->
 
 exports.get_resource_by_id = (hid, callback) ->
 	db.redis.hget 'u:heroku_id', hid, (err, idresource) ->
-		return callback err if err or idresource is 'undefined'
+		console.log "get_resource_by_id err", err
+		console.log "get_resource_by_id idresource", idresource
+		return callback true if err or not idresource?
 		prefix = 'u:' + idresource + ':'
 		db.redis.mget [ prefix + 'mail',
 			prefix + 'heroku_id',
@@ -116,12 +133,12 @@ exports.get_resource_by_id = (hid, callback) ->
 				date_validate:replies[8]
 			for field of resource
 				resource[field] = '' if resource[field] == 'undefined'
-			return callback err if err
 			return callback null, resource
+
 
 exports.destroy_resource = (resource, callback) ->
 	idresource = resource.id
-	return callback err if idresource is 'undefined'
+	return callback true if not idresource?
 	prefix = 'u:' + idresource + ':'
 	db.redis.get prefix+'heroku_id', (err, heroku_id) ->
 		return callback err if err or heroku_id is 'undefined'
@@ -153,7 +170,7 @@ exports.destroy_resource = (resource, callback) ->
 					return callback err if err
 					shared.emit 'user.remove', mail:resource.mail
 					shared.emit 'heroku_user.remove', mail:resource.mail
-					callback null, resource
+					return callback null, resource
 
 
 
@@ -165,10 +182,9 @@ exports.createDefaultApp = (userid, callback) =>
 		user:
 			id:userid
 	db.apps.create appreq, (err, app) ->
+		return callback err if err or not app?
 		shared.emit 'app.create', appreq, app
-		return callback err if err
 		return callback null, app
-
 
 
 
