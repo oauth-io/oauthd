@@ -29,7 +29,7 @@ exports.raw = ->
 		if req.authorization and req.authorization.scheme is 'Basic' and req.authorization.basic.username is config.heroku.heroku_user and req.authorization.basic.password is config.heroku.heroku_password
 			return next()
 		else
-			console.log "Unable to authenticate user"
+			console.log "Unable to authenticate user."
 			console.log "req.authorization", req.authorization
 			res.header "WWW-Authenticate", "Basic realm=\"Admin Area\""
 			res.send 401, "Authentication required"
@@ -49,35 +49,36 @@ exports.raw = ->
 			# not used for now
 			# req.session.resource = resource
 			# req.session.email = req.body.email
-			pre_token = idresource + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
-			shasum = crypto.createHash("sha1")
-			shasum.update pre_token
-			token = shasum.digest("hex")
+			if not err
+				pre_token = idresource + ":" + config.heroku.sso_salt + ":" + req.body.timestamp
+				shasum = crypto.createHash("sha1")
+				shasum.update pre_token
+				token = shasum.digest("hex")
 
-			unless req.body.token is token
-				res.send 403, "Token Mismatch" 
-				return
-			time = (new Date().getTime() / 1000) - (4 * 60)
-			if parseInt(req.body.timestamp) < time
-				res.send 403, "Timestamp Expired"
-				return
+				unless req.body.token is token
+					res.send 403, "Token Mismatch" 
+					return
+				time = (new Date().getTime() / 1000) - (4 * 60)
+				if parseInt(req.body.timestamp) < time
+					res.send 403, "Timestamp Expired"
+					return
 
-			res.setHeader 'Content-Type', 'text/html'
-			shared.auth.generateToken id:resource.id, mail:resource.mail, validated:true, (err, token) =>
-				return next err if err
-				expireDate = new Date((new Date - 0) + 3600*36 * 1000)
-				# We need to send the app name to fill the heroku navbar
-				# We need to fil the heroku nav data cookie
-				cookies = [
-					'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
-					'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
-					'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
-					]
-				res.setHeader 'Set-Cookie', cookies
-				res.setHeader 'Location', config.host_url + '/key-manager'
+				res.setHeader 'Content-Type', 'text/html'
+				shared.auth.generateToken id:resource.id, mail:resource.mail, validated:true, (err, token) =>
+					return next err if err
+					expireDate = new Date((new Date - 0) + 3600*36 * 1000)
+					# We need to send the app name to fill the heroku navbar
+					# We need to fil the heroku nav data cookie
+					cookies = [
+						'accessToken=%22' + token + '%22; Path=/; Expires=' + expireDate.toUTCString()
+						'heroku-nav-data=' + req.body['nav-data'] + '; Path=/; Expires=' + expireDate.toUTCString()
+						'heroku-body-app=%22' + req.body.app + '%22; Path=/; Expires=' + expireDate.toUTCString()
+						]
+					res.setHeader 'Set-Cookie', cookies
+					res.setHeader 'Location', config.host_url + '/key-manager'
 
-				next()
-				return
+					next()
+					return
 
 	sso_login = (req, res, next) ->
 		# res.setHeader 'Location', '/'
@@ -90,24 +91,27 @@ exports.raw = ->
 		idresource = decodeURIComponent(req.params.id)
 		db.heroku.get_resource_by_id idresource, (err, resource) =>
 			res.send 404, "Not found" if err
-			user_id = resource.id
-			prefix = "u:#{user_id}:"
-			db.redis.mset [
-				prefix + 'current_plan', req.body.plan
-			], (err) ->
-				res.send 404, "Cannot change plan" if err
-				subscribeEvent resource, req.body.plan
-				res.send "ok"
+			if not err
+				user_id = resource.id
+				prefix = "u:#{user_id}:"
+				db.redis.mset [
+					prefix + 'current_plan', req.body.plan
+				], (err) ->
+					res.send 404, "Cannot change plan." if err
+					if not err
+						subscribeEvent resource, req.body.plan
+						res.send "ok"
 
 	# * Deprovision
 	deprovisionResource = (req, res, next) =>
 		idresource = decodeURIComponent(req.params.id)
 		db.heroku.get_resource_by_id idresource, (err, resource) =>
 			res.send 404, "Not found" if err
-			db.heroku.destroy_resource resource, (err, resource) =>
-				res.send 404, "Cannot deprovision resource" if err
-				shared.emit 'heroku_user.unsubscribe', resource
-				res.send("ok")
+			if not err
+				db.heroku.destroy_resource resource, (err, resource) =>
+					res.send 404, "Cannot deprovision resource." if err
+					shared.emit 'heroku_user.unsubscribe', resource
+					res.send("ok")
 	
 	# * Provisioning
 	# A private resource is created for each app that adds your add-on.
@@ -126,28 +130,32 @@ exports.raw = ->
 
 		db.heroku.registerHerokuAppUser data, (err, user) =>
 			res.send 404 if err
-			db.heroku.createDefaultApp user.id, (err, app) =>
-				res.send 404 if err
-				subscribeEvent user, user.current_plan
-				conf_var = 
-					name:app.name,
-					public_key:app.key
-				result = 
-					id: 
-						user.heroku_id 
-					config: 
-						OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
-						# OAUTHIO_URL: user.heroku_url
+			if not err
+				db.heroku.createDefaultApp user.id, (err, app) =>
+					res.send 404 if err
+					if not err
+						subscribeEvent user, user.current_plan
+						conf_var = 
+							name:app.name,
+							public_key:app.key
+						result = 
+							id: 
+								user.heroku_id 
+							config: 
+								OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
+								# OAUTHIO_URL: user.heroku_url
 
-				stringifyResult = JSON.stringify(result)
-				res.setHeader 'Content-Type', 'application/json'
-				res.end stringifyResult
-				checkProvisionning user, app, (err, res) ->
-					if err
-						db.heroku.destroy_resource user, (err, resource) =>
-						console.log "Cannot deprovision heroku resource" if err
-						shared.emit 'heroku_user.unsubscribe', resource
-				
+						stringifyResult = JSON.stringify(result)
+						res.setHeader 'Content-Type', 'application/json'
+						res.end stringifyResult
+						checkProvisionning user, app, (err, res) ->
+							if err
+								db.heroku.destroy_resource user, (err, resource) =>
+									console.log "Cannot deprovision heroku resource" if err
+									if not err and resource?
+										console.log "Cannot access resource on heroku servers: resource deprovisioned."
+										shared.emit 'heroku_user.unsubscribe', resource 
+					
 
 	checkProvisionning = (user, app, callback) =>
 		return callback true if not user? or not user.heroku_id? or not user.mail?
@@ -159,15 +167,16 @@ exports.raw = ->
 			,
 			@myInterval = setInterval ( => 
 				db.heroku.getAppInfo user.heroku_id, (err, body) =>
-					return callback true if err
-					clearTimeout @myTimeOut
-					clearInterval @myInterval
-					objectBody = JSON.parse(body)
+					if not err
+						clearTimeout @myTimeOut
+						clearInterval @myInterval
+						objectBody = JSON.parse(body)
 					
-					db.apps.addDomain app.key, objectBody.domains[0], (err) ->
-						return callback true if err
-						db.heroku.updateConfigVar user, (err, body) =>
-							return callback true if err
+						db.apps.addDomain app.key, objectBody.domains[0], (err) ->
+							console.log "Cannot add domains to heroku user." if err
+
+							db.heroku.updateConfigVar user, (err, body) =>
+								console.log "Unable to update heroku config var." if err
 				)
 				,
 				3000
@@ -191,8 +200,7 @@ exports.raw = ->
 	@on 'user.update_nbapps', (user, nb) =>
 		if user? and user.mail?
 			db.heroku.updateConfigVar user, (err, body) =>
-				if err
-					console.log "Unable to update heroku config var"
+				console.log "Unable to update heroku config var." if err
 
 
 	# Heroku will call your service via a POST to /heroku/resources 
