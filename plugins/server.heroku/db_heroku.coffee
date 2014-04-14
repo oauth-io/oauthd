@@ -105,8 +105,6 @@ exports.registerHerokuAppUser = (data, callback) ->
 
 exports.get_resource_by_id = (hid, callback) ->
 	db.redis.hget 'u:heroku_id', hid, (err, idresource) ->
-		console.log "get_resource_by_id err", err
-		console.log "get_resource_by_id idresource", idresource
 		return callback true if err or not idresource?
 		prefix = 'u:' + idresource + ':'
 		db.redis.mget [ prefix + 'mail',
