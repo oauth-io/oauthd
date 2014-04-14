@@ -2,50 +2,16 @@
 # http://oauth.io/
 #
 # Copyright (c) 2014 Webshell
-# Licensed under the MIT license.
+# For private use only.
 
 'use strict'
 
-async = require 'async'
 restify = require 'restify'
 crypto = require 'crypto'
 
 {config,check,db} = shared = require '../shared'
 
 exports.raw = ->
-
-	# * Registering a user coming from heroku cloud
-	# 
-	registerHerokuAppUser = (data, callback) ->
-		db.redis.incr 'u:i', (err, val) ->
-			return callback err if err
-			prefix = 'u:' + val + ':'
-			key = db.generateUid()
-			heroku_app_name = data.heroku_id.split("@")[0]
-			heroku_url = 'https://oauth.io/auth/heroku/' + heroku_app_name
-			date_now = (new Date).getTime()
-			arr = ['mset', prefix+'mail', data.heroku_id,
-					prefix+'heroku_id', data.heroku_id,
-					prefix+'heroku_name', heroku_app_name,
-					prefix+'heroku_url', heroku_url,
-					prefix+'current_plan', data.plan,
-					prefix+'key', key,
-					prefix+'validated', 1,
-					prefix+'date_inscr', date_now,
-					prefix+'date_validate', date_now ]
-
-			db.redis.multi([
-					arr,
-					[ 'hset', 'u:mails', data.heroku_id, val ],
-					[ 'hset', 'u:heroku_id', data.heroku_id, val ],
-					[ 'hset', 'u:heroku_name', heroku_app_name, val ]
-					[ 'hset', 'u:heroku_url', heroku_url, val ]
-				]).exec (err, res) ->
-					return callback err if err
-					user = id:val, mail:data.heroku_id, heroku_id:data.heroku_id, heroku_name:heroku_app_name, heroku_url:heroku_url, current_plan:data.plan, key:key, date_inscr:date_now, date_validate:date_now
-					shared.emit 'user.register', user
-					shared.emit 'heroku_user.register', user
-					return callback null, user
 
 	# * Authentication
 	# config.heroku contains :
@@ -63,8 +29,8 @@ exports.raw = ->
 		if req.authorization and req.authorization.scheme is 'Basic' and req.authorization.basic.username is config.heroku.heroku_user and req.authorization.basic.password is config.heroku.heroku_password
 			return next()
 		else
-			# console.log "Unable to authenticate user"
-			# console.log "req.authorization", req.authorization
+			console.log "Unable to authenticate user"
+			console.log "req.authorization", req.authorization
 			res.header "WWW-Authenticate", "Basic realm=\"Admin Area\""
 			res.send 401, "Authentication required"
 			return
@@ -78,7 +44,7 @@ exports.raw = ->
 	# and then redirect to the admin panel for the resource.
 	sso_auth = (req, res, next) ->
 		idresource = decodeURIComponent(req.body.id)
-		get_resource_by_id idresource, (err, resource) =>
+		db.heroku.get_resource_by_id idresource, (err, resource) =>
 			res.send 404, "Not found" if err
 			# not used for now
 			# req.session.resource = resource
@@ -113,6 +79,100 @@ exports.raw = ->
 				next()
 				return
 
+	sso_login = (req, res, next) ->
+		# res.setHeader 'Location', '/'
+		res.setHeader 'Location', '/key-manager'
+		res.send 301
+		return
+
+	# Plan Change
+	changePlan = (req, res, next) =>
+		idresource = decodeURIComponent(req.params.id)
+		db.heroku.get_resource_by_id idresource, (err, resource) =>
+			res.send 404, "Not found" if err
+			user_id = resource.id
+			prefix = "u:#{user_id}:"
+			db.redis.mset [
+				prefix + 'current_plan', req.body.plan
+			], (err) ->
+				res.send 404, "Cannot change plan" if err
+				subscribeEvent resource, req.body.plan
+				res.send "ok"
+
+	# * Deprovision
+	deprovisionResource = (req, res, next) =>
+		idresource = decodeURIComponent(req.params.id)
+		db.heroku.get_resource_by_id idresource, (err, resource) =>
+			res.send 404, "Not found" if err
+			db.heroku.destroy_resource resource, (err, resource) =>
+				res.send 404, "Cannot deprovision resource" if err
+				shared.emit 'heroku_user.unsubscribe', resource
+				res.send("ok")
+	
+	# * Provisioning
+	# A private resource is created for each app that adds your add-on.
+	# Any provisioned resource should be referenced by a unique URL, 
+	# which is how the customer’s app consumes the resource.
+	# 
+	###### RETURN a json containing
+	# - the ID
+	# - a config var hash containing a URL to consume the service
+	provisionResource = (req, res, next) =>
+		data =
+			heroku_id: req.body.heroku_id
+			plan: req.body.plan
+			callback_url: req.body.callback_url
+		# callback_url unused for the moment
+
+		db.heroku.registerHerokuAppUser data, (err, user) =>
+			res.send 404 if err
+			db.heroku.createDefaultApp user.id, (err, app) =>
+				res.send 404 if err
+				subscribeEvent user, user.current_plan
+				conf_var = 
+					name:app.name,
+					public_key:app.key
+				result = 
+					id: 
+						user.heroku_id 
+					config: 
+						OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
+						# OAUTHIO_URL: user.heroku_url
+
+				stringifyResult = JSON.stringify(result)
+				res.setHeader 'Content-Type', 'application/json'
+				res.end stringifyResult
+				checkProvisionning user, app, (err, res) ->
+					if err
+						db.heroku.destroy_resource user, (err, resource) =>
+						console.log "Cannot deprovision heroku resource" if err
+						shared.emit 'heroku_user.unsubscribe', resource
+				
+
+	checkProvisionning = (user, app, callback) =>
+		return callback true if not user? or not user.heroku_id? or not user.mail?
+		@myTimeOut = setTimeout ( => 
+			clearInterval @myInterval
+			return callback true)
+			,
+			15000
+			,
+			@myInterval = setInterval ( => 
+				db.heroku.getAppInfo user.heroku_id, (err, body) =>
+					return callback true if err
+					clearTimeout @myTimeOut
+					clearInterval @myInterval
+					objectBody = JSON.parse(body)
+					
+					db.apps.addDomain app.key, objectBody.domains[0], (err) ->
+						return callback true if err
+						db.heroku.updateConfigVar user, (err, body) =>
+							return callback true if err
+				)
+				,
+				3000
+
+
 	checkPlan = (req, res, next) ->
 		resource_plan = "bootstrap"
 		plan_ask = db.plans[req.body.plan]
@@ -128,149 +188,12 @@ exports.raw = ->
 		if plan isnt "bootstrap"
 			shared.emit 'heroku_user.subscribe', resource, plan
 
-	sso_login = (req, res, next) ->
-		# res.setHeader 'Location', '/'
-		res.setHeader 'Location', '/key-manager'
-		res.send 301
-		return
+	@on 'user.update_nbapps', (user, nb) =>
+		if user? and user.mail?
+			db.heroku.updateConfigVar user, (err, body) =>
+				if err
+					console.log "Unable to update heroku config var"
 
-	get_resource_by_id = (hid, callback) ->
-		db.redis.hget 'u:heroku_id', hid, (err, idresource) ->
-			return callback err if err or idresource is 'undefined'
-			prefix = 'u:' + idresource + ':'
-			db.redis.mget [ prefix + 'mail',
-				prefix + 'heroku_id',
-				prefix + 'heroku_name',
-				prefix + 'heroku_url',
-				prefix + 'current_plan',
-				prefix + 'key',
-				prefix + 'validated',
-				prefix + 'date_inscr',
-				prefix + 'date_validate' ]
-			, (err, replies) ->
-				return callback err if err
-				resource =
-					id:idresource,
-					mail:replies[0],
-					heroku_id: replies[1],
-					heroku_name: replies[2],
-					heroku_url: replies[3],
-					current_plan: replies[4],
-					key: replies[5],
-					validated: replies[6],
-					date_inscr:replies[7],
-					date_validate:replies[8]
-				for field of resource
-					resource[field] = '' if resource[field] == 'undefined'
-				return callback err if err
-				return callback null, resource
-
-	destroy_resource = (resource, callback) ->
-		idresource = resource.id
-		return callback err if idresource is 'undefined'
-		prefix = 'u:' + idresource + ':'
-		db.redis.get prefix+'heroku_id', (err, heroku_id) ->
-			return callback err if err or heroku_id is 'undefined'
-			return callback new check.Error 'Unknown user' unless heroku_id
-			db.users.getApps idresource, (err, appkeys) ->
-				tasks = []
-				for key in appkeys
-					do (key) ->
-						tasks.push (cb) -> db.apps.remove key, cb
-				async.series tasks, (err) ->
-					return callback err if err
-
-					db.redis.multi([
-						[ 'hdel', 'u:mails', resource.mail ]
-						[ 'hdel', 'u:heroku_id', heroku_id ]
-						[ 'hdel', 'u:heroku_name', resource.heroku_name ]
-						[ 'hdel', 'u:heroku_url', resource.heroku_url ]
-						[ 'del', prefix + 'mail',
-							prefix + 'heroku_id',
-							prefix + 'heroku_name',
-							prefix + 'heroku_url',
-							prefix + 'current_plan',
-							prefix + 'key',
-							prefix + 'validated',
-							prefix + 'date_inscr',
-							prefix + 'date_validate',
-							prefix + 'apps' ]
-					]).exec (err, replies) ->
-						return callback err if err
-						shared.emit 'user.remove', mail:resource.mail
-						shared.emit 'heroku_user.remove', mail:resource.mail
-						callback null, resource
-
-	# Plan Change
-	changePlan = (req, res, next) =>
-		idresource = decodeURIComponent(req.params.id)
-		get_resource_by_id idresource, (err, resource) =>
-			res.send 404, "Not found" if err
-			user_id = resource.id
-			prefix = "u:#{user_id}:"
-			db.redis.mset [
-				prefix + 'current_plan', req.body.plan
-			], (err) ->
-				res.send 404, "Cannot change plan" if err
-				subscribeEvent resource, req.body.plan
-				res.send "ok"
-
-	# * Deprovision
-	deprovisionResource = (req, res, next) =>
-		idresource = decodeURIComponent(req.params.id)
-		get_resource_by_id idresource, (err, resource) =>
-			res.send 404, "Not found" if err
-			destroy_resource resource, (err, resource) =>
-				res.send 404, "Cannot deprovision resource" if err
-				shared.emit 'heroku_user.unsubscribe', resource
-				res.send("ok")
-
-	createDefaultApp = (userid, callback) =>
-		appreq = 
-			body: 
-				domains:["localhost"]
-				name:"Heroku default app"
-			user:
-				id:userid
-		db.apps.create appreq, (err, app) ->
-			shared.emit 'app.create', appreq, app
-			return callback err if err
-			return callback null, app
-		
-	# * Provisioning
-	# A private resource is created for each app that adds your add-on.
-	# Any provisioned resource should be referenced by a unique URL, 
-	# which is how the customer’s app consumes the resource.
-	# 
-	###### RETURN a json containing
-	# - the ID
-	# - a config var hash containing a URL to consume the service
-	provisionResource = (req, res, next) =>
-		# console.log "provisionResource req.body", req.body
-		data =
-  			heroku_id: req.body.heroku_id
-  			plan: req.body.plan
-  			callback_url: req.body.callback_url
-  		# callback_url unused for the moment
-
-		registerHerokuAppUser data, (err, user) =>
-			# console.log "user", user
-			res.send 404 if err
-			createDefaultApp user.id, (err, app) =>
-				# not working
-				# db.users.getApps user.id, (err, appkeys) ->
-				# 	console.log "appkeys", appkeys
-				subscribeEvent user, user.current_plan
-				result = 
-					id: 
-						user.heroku_id 
-					config: 
-						OAUTHIO_PUBLIC_KEY: app.key
-						# OAUTHIO_URL: user.heroku_url
-				stringifyResult = JSON.stringify(result)
-				# console.log "stringifyResult", stringifyResult
-				res.setHeader 'Content-Type', 'application/json'
-				res.end stringifyResult
 
 	# Heroku will call your service via a POST to /heroku/resources 
 	# in order to provision a new resource.

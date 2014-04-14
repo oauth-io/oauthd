@@ -367,6 +367,71 @@ exports.getApps = check 'int', (iduser, callback) ->
 			return callback err if err
 			return callback null, appkeys
 
+# get FULL apps array owned by a user
+exports.getAppsArray = check 'int', (iduser, callback) ->
+	db.redis.smembers 'u:' + iduser + ':apps', (err, apps_id) ->
+		return callback err if err
+		return callback new check.Error 'Unknown mail' if not apps_id
+		return callback null, [] if not apps_id.length
+
+		apps = []
+		tasks = []
+		for app_id in apps_id 
+			do (app_id) ->
+				tasks.push (cb) -> 
+					prefix = 'a:' + app_id + ':'
+					db.redis.mget [ prefix + 'name',
+						prefix + 'owner',
+						prefix + 'secret',
+						prefix + 'date',
+						prefix + 'key' ]
+					, (err, replies) ->
+						return callback err if err
+						apps.push replies
+						cb()
+
+		async.series tasks, (err) ->
+			return callback err if err
+			return callback null, apps
+
+# get FULL apps object owned by a user
+exports.getAppsObject = check 'int', (iduser, callback) ->
+	db.redis.smembers 'u:' + iduser + ':apps', (err, apps_id) ->
+		return callback err if err
+		return callback new check.Error 'Unknown mail' if not apps_id
+		return callback null, [] if not apps_id.length
+
+		apps = []
+		tasks = []
+		for app_id in apps_id 
+			do (app_id) ->
+				tasks.push (cb) -> 
+					prefix = 'a:' + app_id + ':'
+					db.redis.mget [ prefix + 'name',
+						prefix + 'owner',
+						prefix + 'secret',
+						prefix + 'date',
+						prefix + 'key' ]
+					, (err, replies) ->
+						return callback err if err
+						app =
+							id:app_id,
+							name:replies[0],
+							owner:replies[1],
+							secret:replies[2],
+							date:replies[3],
+							key:replies[4],
+						db.redis.smembers [ prefix + 'domains' ]
+						, (err, replies) ->
+							return callback err if err
+							app.domains = replies
+							apps.push app
+							cb()
+
+		async.series tasks, (err) ->
+			return callback err if err
+			return callback null, apps
+
 exports.getPlan = check 'int', (iduser, callback) ->
 	db.redis.get "u:#{iduser}:current_plan", (err, plan_id) =>
 		return callback err if err
