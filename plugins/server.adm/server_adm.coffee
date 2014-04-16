@@ -55,13 +55,14 @@ exports.setup = (callback) ->
 				cmds.push ['smembers', 'u:' + iduser + ':apps']
 				cmds.push ['get', 'u:' + iduser + ':key']
 				cmds.push ['get', 'u:' + iduser + ':validated']
+				cmds.push ['get', 'u:' + iduser + ':heroku_id']
 				cmds.push ['get', 'u:' + iduser + ':platform']
 				cmds.push ['get', 'u:' + iduser + ':platform_admin']
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
 				for mail,iduser of users
-					users[mail] = email:mail, id:iduser, date_inscr:r[i*6], apps:r[i*6+1], key:r[i*6+2], validated:r[i*6+3], platform:r[i*6+4], platform_admin:r[i*6+5]
+					users[mail] = email:mail, id:iduser, date_inscr:r[i*7], apps:r[i*7+1], key:r[i*7+2], validated:r[i*7+3], heroku_id:r[i*7+4], platform:r[i*7+5], platform_admin:r[i*7+6]
 					i++
 				res.send users
 				next()
