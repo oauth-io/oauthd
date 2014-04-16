@@ -9,6 +9,8 @@ Mailer = require '../../lib/mailer'
 exports.setup = (callback) ->
 
 	@db.heroku = require './../server.heroku/db_heroku'
+	@db.platforms = require './../server.platforms/db_platforms'
+
 	require('./adm_statistics').setup.call @
 	require('./adm_scopes').setup.call @
 	require('./adm_updates').setup.call @
@@ -42,7 +44,7 @@ exports.setup = (callback) ->
 
 	@server.post @config.base_api + '/adm/users/:id/invite', @auth.adm, (req, res, next) =>
 		@userInvite req.params.id, @server.send(res, next)
-
+		
 	# get users list
 	@server.get @config.base_api + '/adm/users', @auth.adm, (req, res, next) =>
 		@db.redis.hgetall 'u:mails', (err, users) =>
@@ -53,11 +55,13 @@ exports.setup = (callback) ->
 				cmds.push ['smembers', 'u:' + iduser + ':apps']
 				cmds.push ['get', 'u:' + iduser + ':key']
 				cmds.push ['get', 'u:' + iduser + ':validated']
+				cmds.push ['get', 'u:' + iduser + ':platform']
+				cmds.push ['get', 'u:' + iduser + ':platform_admin']
 			@db.redis.multi(cmds).exec (err, r) =>
 				return next err if err
 				i = 0
 				for mail,iduser of users
-					users[mail] = email:mail, id:iduser, date_inscr:r[i*4], apps:r[i*4+1], key:r[i*4+2], validated:r[i*4+3]
+					users[mail] = email:mail, id:iduser, date_inscr:r[i*6], apps:r[i*6+1], key:r[i*6+2], validated:r[i*6+3], platform:r[i*6+4], platform_admin:r[i*6+5]
 					i++
 				res.send users
 				next()
@@ -102,6 +106,7 @@ exports.setup = (callback) ->
 	@server.post @config.base_api + '/adm/wishlist/setStatus', @auth.adm, (req, res, next) =>
 		@db.wishlist.setStatus req.body.provider, req.body.status , @server.send(res, next)
 
+	##################### heroku
 	# get all heroku apps
 	@server.get @config.base_api + '/adm/getAllAppsHeroku', @auth.adm, (req, res, next) =>
 		@db.heroku.getAllApps @server.send(res, next)
@@ -110,4 +115,31 @@ exports.setup = (callback) ->
 	@server.get @config.base_api + '/adm/getAppInfoHeroku/:heroku_id', @auth.adm, (req, res, next) =>
 		@db.heroku.getAppInfo req.params.heroku_id, @server.send(res, next)
 
+	##################### platforms
+	# get platforms
+	@server.get @config.base_api + '/adm/platforms', @auth.adm, (req, res, next) =>
+		@db.platforms.getAll @server.send(res, next)
+	
+	# add platform
+	@server.post @config.base_api + '/adm/platforms/:platform_name', @auth.adm, (req, res, next) =>
+		@db.platforms.add req.params.platform_name, @server.send(res, next)
+	
+	# remove platform
+	@server.del @config.base_api + '/adm/platforms/:idplatform', @auth.adm, (req, res, next) =>
+		@db.platforms.remove req.params.idplatform, @server.send(res, next)
+
+	# add admin to platform
+	@server.post @config.base_api + '/adm/platforms/:idplatform/addAdmin/:iduser', @auth.adm, (req, res, next) =>
+		@db.platforms.addAdmin req.params.idplatform, req.params.iduser, @server.send(res, next)
+
+	# get admins of platforms
+	@server.get @config.base_api + '/adm/platforms/getAdmins', @auth.adm, (req, res, next) =>
+		@db.platforms.getAdmins @server.send(res, next)
+
+	# remove admin of platforms
+	@server.del @config.base_api + '/adm/platforms/removeAdmin/:iduser', @auth.adm, (req, res, next) =>
+		@db.platforms.removeAdmin req.params.iduser, @server.send(res, next)
+
 	callback()
+
+
