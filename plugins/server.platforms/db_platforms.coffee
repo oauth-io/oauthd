@@ -52,6 +52,24 @@ exports.add = (platform_name, callback) ->
 				platform = id:val, name:platform_name, date_creation:date_now
 				return callback null, platform
 
+exports.removeAdminsOfPlatform = (platform_name, callback) ->
+	db.redis.hgetall 'u:platforms_admin', (err, users) =>
+		return next err if err
+		tasks = []
+		for iduser, p_name of users
+			if p_name is platform_name
+				do (iduser) ->
+					tasks.push (cb) -> 
+						db.redis.multi([
+							['del', "u:" + iduser + ":platform_admin" ]
+							[ 'hdel', 'u:platforms_admin', iduser ]
+						]).exec (err, res) -> 
+							return callback err if err
+							cb()
+		async.series tasks, (err) ->
+			return callback err if err
+			return callback null
+
 exports.remove = check 'int', (idplatform, callback) ->
 	return callback new check.Error 'Unknown platform id' unless idplatform
 	prefix = 'p:' + idplatform + ':'
@@ -63,7 +81,8 @@ exports.remove = check 'int', (idplatform, callback) ->
 			[ 'del', prefix+'name', prefix+'date_creation' ]
 		]).exec (err, replies) ->
 			return callback err if err
-			shared.emit 'platform.remove', name:name
+			platform = id:idplatform, name:name
+			shared.emit 'platform.remove', platform
 			return callback null, replies
 
 exports.addAdmin = (idplatform, iduser, callback) ->
@@ -76,7 +95,7 @@ exports.addAdmin = (idplatform, iduser, callback) ->
 			return callback new check.Error 'Unknown platform' unless platform
 			db.redis.multi([
 				['set', "u:" + iduser + ":platform_admin", platform.name ]
-				[ 'hset', 'u:platforms_admin', platform.name, iduser ]
+				[ 'hset', 'u:platforms_admin', iduser, platform.name ]
 			]).exec (err, res) ->
 				return callback err if err 
 				return callback null, res
@@ -86,7 +105,7 @@ exports.getAdmins = (callback) ->
 		return next err if err
 		admins = []
 		tasks = []
-		for platform_name,iduser of users
+		for iduser, platform_name of users
 			do (iduser) ->
 				tasks.push (cb) -> 
 					db.users.get iduser, (err, user) -> 
@@ -99,15 +118,12 @@ exports.getAdmins = (callback) ->
 		
 exports.removeAdmin = check 'int', (iduser, callback) ->
 	return callback new check.Error 'Unknown user id' unless iduser
-	db.users.get iduser, (err, user) ->
-		return callback err if err or not user?
-		platform_admin = user.profile.platform_admin
-		db.redis.multi([
-			['del', "u:" + iduser + ":platform_admin" ]
-			[ 'hdel', 'u:platforms_admin', platform_admin ]
-		]).exec (err, res) -> 
-			return callback err if err
-			return callback null, res
+	db.redis.multi([
+		['del', "u:" + iduser + ":platform_admin" ]
+		[ 'hdel', 'u:platforms_admin', iduser ]
+	]).exec (err, res) -> 
+		return callback err if err
+		return callback null, res
 
 
 

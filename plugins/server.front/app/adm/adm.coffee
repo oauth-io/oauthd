@@ -78,7 +78,6 @@ hooks.config = (app, apiRequest) ->
 				api "adm/platforms", success, error
 
 			addPlatform: (platform_name, success, error) ->
-				console.log "adm addPlatform", platform_name
 				api "adm/platforms/#{platform_name}", success, error, method:'post'
 
 			removePlatform: (idplatform, success, error) ->
@@ -167,8 +166,9 @@ hooks.config = (app, apiRequest) ->
 					$scope.pagination.current = page if page
 				), 0
 
-		AdmService.getUsers ((u)->refreshUsersList u.data,1), (error) -> console.log "error", error
-
+		admRefreshUsersList = () ->
+			AdmService.getUsers ((u)->refreshUsersList u.data,1), (error) -> console.log "error", error
+		admRefreshUsersList()
 		
 
 		# Stats graphs
@@ -548,6 +548,8 @@ hooks.config = (app, apiRequest) ->
 						console.log "removePlatform error", res
 					else
 						refreshPlatformsList()
+						refreshPlatformsAdminsList()
+						admRefreshUsersList()
 
 		# Get admins of platforms
 		refreshPlatformsAdminsList = () ->
