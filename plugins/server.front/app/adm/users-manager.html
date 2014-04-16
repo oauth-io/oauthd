@@ -18,6 +18,8 @@ $('#navTab a').click(function (e) {
 			<li ng-class="{active: tabShow == 'rankings'}"><a ng-click="tabShow = 'rankings'">Rankings</a></li>
 			<li ng-class="{active: tabShow == 'wishlist'}"><a ng-click="tabShow = 'wishlist'">Wishlist</a></li>
 			<li ng-class="{active: tabShow == 'heroku'}"><a ng-click="tabShow = 'heroku'">Heroku</a></li>
+			<li ng-class="{active: tabShow == 'platforms'}"><a ng-click="tabShow = 'platforms'">Platforms</a></li>
+			<li ng-class="{active: tabShow == 'platforms_admins'}"><a ng-click="tabShow = 'platforms_admins'">Platforms Admins</a></li>
 		</ul>
 	</div>
 
@@ -88,12 +90,17 @@ $('#navTab a').click(function (e) {
 							<th>#</th>
 							<th>Email</th>
 							<th>Created at</th>
+							<th>Admin of platform</th>
 							<th colspan="3" style="text-align:center;">Action</th>
 						</tr>
 						<tr ng-repeat="user in filtered | startFrom:(pagination.current-1)* pagination.nbPerPage | limitTo:pagination.nbPerPage" ng-model="users">
 							<td>{{user.id}}</td>
 							<td>{{user.email}}</td>
 							<td style="min-width:250px;width:250px;">{{user.date_inscr|date:'MMMM d, yyyy'}}</td>
+							<td>
+								<a href="#myModalPlatformsAdmin" role="button" ng-show="!user.platform_admin || user.platform_admin == 'null'" class="btn btn-small btn-primary" data-toggle="modal" ng-click="showPlatformsAdminModal(user)">Set as Platform Admin</a>
+								<span ng-show="user.platform_admin && user.platform_admin != 'null'">{{user.platform_admin}}</span>
+							</td>
 							<td>
 								<button ng-show="user.validated == '0'" class="btn btn-small btn-success" ng-click="sendRequest(user)">Invite</button>
 								<button ng-show="user.validated == '2'" class="btn btn-small btn-warning" ng-click="sendRequest(user)">Reinvite</button>
@@ -501,7 +508,7 @@ $('#navTab a').click(function (e) {
 						<th>Callback_url</th>
 						<th>Get info</th>
 					</tr>
-						<tr ng-repeat="herokuApp in herokuApps track by $index">
+					<tr ng-repeat="herokuApp in herokuApps track by $index">
 						<td>{{herokuApp.heroku_id}}</td>
 						<td>{{herokuApp.provider_id}}</td>
 						<td>{{herokuApp.plan}}</td>
@@ -511,11 +518,58 @@ $('#navTab a').click(function (e) {
 						</td>
 					</tr>
 				</table>
-				<div>
-
-				</div>
 			</div>
 		</div>
+
+
+		<!-- platforms -->
+		<div ng-show="tabShow == 'platforms'">
+			<div class="col-lg-8">
+				<div class="row">
+					<div class="input-group col-lg-12">
+						<input type="text" ng-model="platformInput">
+						<button class="btn btn-default" ng-click="addPlatform()">Add platform</button>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-12">
+				<table class="table table-striped">
+					<tr>
+						<th>Name</th>
+						<th>Creation date</th>
+						<th>Remove</th>
+					</tr>
+					<tr ng-repeat="platform in platforms">
+						<td>{{platform.name}}</td>
+						<td>{{platform.date_creation|date:'MMMM d, yyyy'}}</td>
+						<td><button class="btn btn-default" ng-click="removePlatform(platform)">remove</button></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<!-- Platforms Admins -->
+		<div ng-show="tabShow == 'platforms_admins'">
+			<div class="col-lg-12">
+				<table class="table table-striped">
+					<tr>
+						<th>Email</th>
+						<th>Name</th>
+						<th>Created at</th>
+						<th>Admin of platform</th>
+						<th>Remove</th>
+					</tr>
+					<tr ng-repeat="platformAdmin in platformsAdmins">
+						<td>{{platformAdmin.mail}}</td>
+						<td>{{platformAdmin.name}}</td>
+						<td>{{platformAdmin.date_inscr|date:'MMMM d, yyyy'}}</td>
+						<td>{{platformAdmin.platform_admin}}</td>
+						<td><button class="btn btn-default" ng-click="removePlatformAdmin(platformAdmin)">remove</button></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
 	</div>
 </div>
 
@@ -568,3 +622,35 @@ $('#navTab a').click(function (e) {
 		</div>
 	</div>
 </div>
+
+
+<div class="modal fade" id="myModalPlatformsAdmin">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Give admin right to ({{platformsAdminModalUser.email}}) on a platform : </h4>
+			</div>
+			<div>
+				<table class="table table-striped">
+					<tr>
+						<th></th>
+						<th>Name</th>
+						<th>Creation date</th>
+					</tr>
+					<tr ng-repeat="platform in platforms">
+						<td><button class="btn btn-default" ng-show="!platformsAdminModalUser.platformAdmin" ng-click="addAdmin(platformsAdminModalUser, platform)">Set Admin</button>
+						<span ng-show="platformsAdminModalUser.platform_name == platform.name">Admin</span></td>
+						<td>{{platform.name}}</td>
+						<td>{{platform.date_creation|date:'MMMM d, yyyy'}}</td>
+					</tr>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
