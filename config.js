@@ -83,6 +83,7 @@ module.exports = {
         'server.zendesk',
         'server.oauth_io',
         'server.payments',
+        'server.platforms',
         'server.mailjet',
         'server.wishlist',
         'server.customer_io',
