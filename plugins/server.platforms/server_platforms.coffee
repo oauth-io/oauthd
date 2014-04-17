@@ -33,14 +33,14 @@ exports.setup = (callback) ->
 
 	# get info on a platform user
 	@server.get @config.base_api + '/platforms/users/:mail', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_users.getInfo req.params.mail, req.body.data, req.user, (err, user) =>
+		@db.platforms_users.getDetails req.params.mail, req.body.data, req.user, (err, user) =>
 			return next(err) if err
 			res.send user
 			next()
 
 	# get infos on all the platform users
 	@server.get @config.base_api + '/platforms/users', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_users.getAllInfo req.body.data, req.user, (err, users) =>
+		@db.platforms_users.getAllDetails req.body.data, req.user, (err, users) =>
 			return next(err) if err
 			res.send users
 			next()
@@ -56,22 +56,22 @@ exports.setup = (callback) ->
 			next()
 
 	# get an application details
-	@server.get @config.base_api + '/platforms/apps/infos/:key', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.getInfo req.params.key, req.body.data, req.user, (err, app) =>
+	@server.get @config.base_api + '/platforms/apps/:key', @auth.platformAdm, (req, res, next) =>
+		@db.platforms_apps.getDetails req.params.key, req.body.data, req.user, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 
 	# update an application details
 	@server.post @config.base_api + '/platforms/apps/:key', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.getInfo req.params.key, req.body.data, req.user, (err, app) =>
+		@db.platforms_apps.update req.params.key, req.body.data, req.user, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 	
 	# delete an application 
 	@server.del @config.base_api + '/platforms/apps/:key', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.del req.params.key, req.body.data, req.user, (err, app) =>
+		@db.platforms_apps.remove req.params.key, req.body.data, req.user, (err, app) =>
 			return next(err) if err
 			res.send 200, "Application removed."
 			next()

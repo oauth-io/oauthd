@@ -61,3 +61,10 @@ exports.remove = (mail, data, admin, callback) ->
 			callback()
 
 
+exports.getDetails = (mail, data, admin, callback) ->
+
+
+exports.getAllDetails = (data, admin, callback) ->
+
+
+
