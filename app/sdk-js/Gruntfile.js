@@ -62,7 +62,7 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    './dist/oauth.min.js': ['../js/oauth.js']
+                    './dist/oauth.min.js': ['dist/oauth.js']
                 }
             }
         },
