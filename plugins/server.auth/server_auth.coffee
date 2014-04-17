@@ -19,6 +19,7 @@ hooks =
 			return cb null, false if err
 			exports.generateToken id:res.id, mail:res.mail, validated:res.validated, cb
 	authenticateToken: (token, cb) ->
+		console.log "authenticateToken token", token
 		shared.db.redis.hgetall 'session:' + token, (err, res) ->
 			return cb err if err
 			return cb null, false if not res
@@ -54,6 +55,23 @@ exports.needed = (req, res, next) ->
 			return next new restify.NotAuthorizedError "You have not access to this app" if not res
 		next()
 
+exports.platformAdm = (req, res, next) ->
+	if not req.clientId 
+		return next new restify.UnauthorizedError "You need authentication"
+	req.user = req.clientId
+	if not req.user.validated
+		return next new restify.UnauthorizedError "You need authentication"
+	shared.db.redis.expire 'session:' + req.token, _config.expire
+	req.body ?= {}
+	shared.db.users.get req.user.id, (err, user) ->
+		return next err if err
+		return callback err if err or not user?
+		if not user.profile.platform_admin or not user.profile.validated
+			return next new restify.NotAuthorizedError "You must be a platform administrator to access this methods." 
+		else
+			req.user.platform_admin = user.profile.platform_admin
+			next()
+	
 exports.adm = (req, res, next) ->
 	exports.needed req, res, (e) ->
 		return next e if e
