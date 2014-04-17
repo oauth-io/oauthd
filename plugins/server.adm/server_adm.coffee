@@ -10,6 +10,7 @@ exports.setup = (callback) ->
 
 	@db.heroku = require './../server.heroku/db_heroku'
 	@db.platforms = require './../server.platforms/db_platforms'
+	@db.platforms_admins = require './../server.platforms/db_platforms_admins'
 
 	require('./adm_statistics').setup.call @
 	require('./adm_scopes').setup.call @
@@ -131,15 +132,15 @@ exports.setup = (callback) ->
 
 	# add admin to platform
 	@server.post @config.base_api + '/adm/platforms/:idplatform/addAdmin/:iduser', @auth.adm, (req, res, next) =>
-		@db.platforms.addAdmin req.params.idplatform, req.params.iduser, @server.send(res, next)
+		@db.platforms_admins.add req.params.idplatform, req.params.iduser, @server.send(res, next)
 
 	# get admins of platforms
 	@server.get @config.base_api + '/adm/platforms/getAdmins', @auth.adm, (req, res, next) =>
-		@db.platforms.getAdmins @server.send(res, next)
+		@db.platforms_admins.getAll @server.send(res, next)
 
 	# remove admin of platforms
 	@server.del @config.base_api + '/adm/platforms/removeAdmin/:iduser', @auth.adm, (req, res, next) =>
-		@db.platforms.removeAdmin req.params.iduser, @server.send(res, next)
+		@db.platforms_admins.remove req.params.iduser, @server.send(res, next)
 
 	callback()
 
