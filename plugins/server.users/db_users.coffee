@@ -27,9 +27,8 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 
 			arr = ['mset', prefix+'mail', data.mail,
 				prefix+'key', key,
-				prefix+'validated', 0,
 				prefix+'pass', pass,
-				prefix+'salt', dynsalt
+				prefix+'salt', dynsalt,
 				prefix+'date_inscr', date_inscr,
 				prefix+'name', data.name ]
 
@@ -37,6 +36,14 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 				arr.push prefix + 'company'
 				arr.push data.company
 
+			if data.platform
+				arr.push prefix + 'platform'
+				arr.push data.platform
+				arr.push prefix + 'validated'
+				arr.push 1
+			else
+				arr.push prefix + 'validated'
+				arr.push 0
 			db.redis.multi([
 				arr,
 				[ 'hset', 'u:mails', data.mail, val ]
@@ -344,7 +351,7 @@ exports.remove = check 'int', (iduser, callback) ->
 				db.redis.multi([
 					[ 'hdel', 'u:mails', mail ]
 					[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
-							, prefix+'apps', prefix+'date_inscr' ]
+							, prefix+'apps', prefix+'date_inscr', prefix+'platform', prefix+'platform_admin' ]
 				]).exec (err, replies) ->
 					return callback err if err
 					shared.emit 'user.remove', mail:mail
