@@ -7,13 +7,13 @@
 restify = require 'restify'
 {config,check,db} = shared = require '../shared'
 
-# name - Required - string
+# data.name - Required - string
 # The name of the user.
-# mail - Required - string
+# data.mail - Required - string
 # The mail of the user.
-# pass - Required - string
+# data.pass - Required - string
 # The password of the user.
-# platform - Required - string
+# data.platform - Required - string
 # The name of your platform.
 exports.create = (data, admin, callback) ->
 	console.log "db_platforms_users create data", data
@@ -42,9 +42,10 @@ exports.create = (data, admin, callback) ->
 
 # mail - Required - string
 # The mail of the user.
-# platform - Required - string
+# data.platform - Required - string
 # The name of your platform.
 exports.remove = (mail, data, admin, callback) ->
+	console.log "db_platforms_users remove mail", mail
 	console.log "db_platforms_users remove data", data
 	console.log "db_platforms_users remove admin", admin
 	if not data?
@@ -56,14 +57,37 @@ exports.remove = (mail, data, admin, callback) ->
 
 	db.redis.hget 'u:mails', mail, (err, iduser) ->
 		return callback new restify.InvalidArgumentError "You need to specify a valid mail." unless iduser
+		return callback err if err
 		db.users.remove iduser, (err) -> 
 			return callback err if err
 			callback()
 
 
+# mail - Required - string
+# The mail of the user.
+# data.platform - Required - string
+# The name of your platform.
 exports.getDetails = (mail, data, admin, callback) ->
+	console.log "db_platforms_users getDetails mail", mail
+	console.log "db_platforms_users getDetails data", data
+	console.log "db_platforms_users getDetails admin", admin
+	if not data?
+		return callback new restify.MissingParameterError ""
+	if not mail?
+		return callback new restify.InvalidArgumentError "You need to specify a mail."
 
+	db.redis.hget 'u:mails', mail, (err, iduser) ->
+		return callback new restify.InvalidArgumentError "You need to specify a valid mail." unless iduser
+		return callback err if err
+		db.users.get iduser, (err, user) =>
+			return callback err if err
+			db.users.getApps user.profile.id, (err, appkeys) ->
+				return callback err if err
+				user.apps = appkeys
+				return callback null, user
 
+# data.platform - Required - string
+# The name of your platform.
 exports.getAllDetails = (data, admin, callback) ->
 
 
