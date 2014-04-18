@@ -44,12 +44,13 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 			else
 				arr.push prefix + 'validated'
 				arr.push 0
+
 			db.redis.multi([
 				arr,
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				user = id:val, mail:data.mail, name: data.name, company: data.company, date_inscr:date_inscr, key:key
+				user = id:val, mail:data.mail, name: data.name, company: data.company, date_inscr:date_inscr, key:key, platform:data.platform
 				shared.emit 'user.register', user
 				return callback null, user
 
@@ -557,11 +558,11 @@ shared.on 'connect.auth.new_mid', (data) ->
 			shared.emit 'user.update_nbmid', user, "#{year}-#{month+1}", nb
 
 ## Event: add app to user when created
-shared.on 'app.create', (req, app) ->
-	if req.user?.id
-		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
-		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
-			shared.emit 'user.update_nbapps', req.user, nbapps
+shared.on 'app.create', (user, app) ->
+	if user?.id
+		db.redis.sadd 'u:' + user.id + ':apps', app.id
+		db.redis.scard 'u:' + user.id + ':apps', (e, nbapps) ->
+			shared.emit 'user.update_nbapps', user, nbapps
 
 
 ## Event: remove app from user when deleted

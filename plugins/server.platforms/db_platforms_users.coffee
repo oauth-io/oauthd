@@ -5,103 +5,63 @@
 # For private use only.
 
 restify = require 'restify'
+async = require 'async'
 {config,check,db} = shared = require '../shared'
 
-# data.name - Required - string
+# Data:
+# name - Required - string
 # The name of the user.
-# data.mail - Required - string
+# mail - Required - string
 # The mail of the user.
-# data.pass - Required - string
+# pass - Required - string
 # The password of the user.
-# data.platform - Required - string
-# The name of your platform.
-exports.create = (data, admin, callback) ->
+exports.create = (data, platform, callback) ->
+	console.log "db_platforms_users create"
 	console.log "db_platforms_users create data", data
-	console.log "db_platforms_users create admin", admin
+	console.log "db_platforms_users create platform", platform
+	console.log ""
 	if not data?
-		return callback new restify.MissingParameterError ""
+		return next new restify.MissingParameterError "Missing data."
 	if not data.mail?
 		return callback new restify.InvalidArgumentError "You need to specify a mail."
 	if not data.name?
 		return callback new restify.InvalidArgumentError "You need to specify a name."
 	if not data.pass?
 		return callback new restify.InvalidArgumentError "You need to specify a pass."
-	if not data.platform? or data.platform isnt admin.platform_admin
-		return callback new restify.InvalidArgumentError "You need to specify your platform name."
-	data:
-		email: data.mail
+	db_user_data = 
+		mail: data.mail
 		pass: data.pass
 		name: data.name
-		platform: data.platform
-	db.users.register data, (err, user) -> 
-		console.log "db_platforms_users register err", err
-		console.log "db_platforms_users register user", user
+		platform: platform
+	db.users.register db_user_data, (err, user) -> 
 		return callback err if err
-		returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr
+
+		returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr, platform:user.platform
 		return callback null, returnedUser
 
-# mail - Required - string
-# The mail of the user.
-# data.platform - Required - string
-# The name of your platform.
-exports.remove = (mail, data, admin, callback) ->
-	console.log "db_platforms_users remove mail", mail
-	console.log "db_platforms_users remove data", data
-	console.log "db_platforms_users remove admin", admin
-	if not data?
-		return callback new restify.MissingParameterError ""
-	if not data.platform? or data.platform isnt admin.platform_admin
-		return callback new restify.InvalidArgumentError "You need to specify your platform name."
-	if not mail?
-		return callback new restify.InvalidArgumentError "You need to specify a mail."
-
-	db.redis.hget 'u:mails', mail, (err, iduser) ->
-		return callback new restify.InvalidArgumentError "You need to specify a valid mail." unless iduser
+exports.remove = (platform_user, callback) ->
+	console.log "db_platforms_users remove"
+	console.log "db_platforms_users remove platform_user", platform_user
+	console.log ""
+	db.users.remove platform_user.id, (err) -> 
 		return callback err if err
-		db.users.remove iduser, (err) -> 
-			return callback err if err
-			callback()
+		callback()
 
 
-# mail - Required - string
-# The mail of the user.
-# data.platform - Required - string
-# The name of your platform.
-exports.getDetails = (mail, data, admin, callback) ->
-	console.log "db_platforms_users getDetails mail", mail
-	console.log "db_platforms_users getDetails data", data
-	console.log "db_platforms_users getDetails admin", admin
-	if not data?
-		return callback new restify.MissingParameterError ""
-	if not data.platform? or data.platform isnt admin.platform_admin
-		return callback new restify.InvalidArgumentError "You need to specify your platform name."
-	if not mail?
-		return callback new restify.InvalidArgumentError "You need to specify a mail."
-
-	db.redis.hget 'u:mails', mail, (err, iduser) ->
-		return callback new restify.InvalidArgumentError "You need to specify a valid mail." unless iduser
+exports.getDetails = (platform_user, callback) ->
+	console.log "db_platforms_users getDetails"
+	console.log "db_platforms_users getDetails platform_user", platform_user
+	console.log ""
+	db.users.getApps platform_user.id, (err, appkeys) ->
 		return callback err if err
-		db.users.get iduser, (err, user) ->
-			return callback err if err
-			if not user.profile.platform? or user.profile.platform isnt admin.platform_admin
-				return callback new restify.InvalidArgumentError "You need to specify a valid mail."
-			else
-				db.users.getApps user.profile.id, (err, appkeys) ->
-					return callback err if err
-					user.apps = appkeys
-					return callback null, user
+		platform_user.apps = appkeys
+		return callback null, platform_user
 
 
-# data.platform - Required - string
-# The name of your platform.
-exports.getAllDetails = (data, admin, callback) ->
-	console.log "db_platforms_users getAllDetails data", data
-	console.log "db_platforms_users getAllDetails admin", admin
-	if not data?
-		return callback new restify.MissingParameterError ""
-	if not data.platform? or data.platform isnt admin.platform_admin
-		return callback new restify.InvalidArgumentError "You need to specify your platform name."
-	
+exports.getAllDetails = (admin, callback) ->
+	console.log "db_platforms_users getAllDetails"
+	console.log "db_platforms_users getAllDetails admin", admin	
+	console.log ""
 	db.redis.hgetall 'u:mails', (err, users) =>
 		return callback err if err
 		platforms_users = []
@@ -116,7 +76,9 @@ exports.getAllDetails = (data, admin, callback) ->
 								return callback err if err
 								user.apps = appkeys
 								platforms_users.push user
-						cb()
+								cb()
+						else
+							cb()
 		async.series tasks, (err) ->
 			return callback err if err
 			return callback null, platforms_users

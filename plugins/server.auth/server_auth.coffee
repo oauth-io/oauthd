@@ -19,7 +19,6 @@ hooks =
 			return cb null, false if err
 			exports.generateToken id:res.id, mail:res.mail, validated:res.validated, cb
 	authenticateToken: (token, cb) ->
-		console.log "authenticateToken token", token
 		shared.db.redis.hgetall 'session:' + token, (err, res) ->
 			return cb err if err
 			return cb null, false if not res
@@ -58,20 +57,50 @@ exports.needed = (req, res, next) ->
 exports.platformAdm = (req, res, next) ->
 	if not req.clientId 
 		return next new restify.UnauthorizedError "You need authentication"
-	req.user = req.clientId
-	if not req.user.validated
+	req.admin = req.clientId
+	if not req.admin.validated
 		return next new restify.UnauthorizedError "You need authentication"
+	if not req.params.platform?
+		return next new restify.InvalidArgumentError "You need to specify your platform name."
 	shared.db.redis.expire 'session:' + req.token, _config.expire
 	req.body ?= {}
-	shared.db.users.get req.user.id, (err, user) ->
+	shared.db.users.get req.admin.id, (err, user) ->
+		return next new restify.UnauthorizedError "Bad id." unless user
 		return next err if err
-		return callback err if err or not user?
-		if not user.profile.platform_admin or not user.profile.validated
+		if not user.profile.platform_admin? or not user.profile.validated?
 			return next new restify.NotAuthorizedError "You must be a platform administrator to access this methods." 
-		else
-			req.user.platform_admin = user.profile.platform_admin
-			next()
+		req.admin.platform_admin = user.profile.platform_admin
+		if req.params.platform isnt req.admin.platform_admin
+			return next new restify.InvalidArgumentError "You need to specify your platform name."
+		next()
 	
+exports.platformManageUser = (req, res, next) ->
+	if not req.params.mail?
+		return next new restify.InvalidArgumentError "You need to specify a valid mail."	
+	shared.db.redis.hget 'u:mails', req.params.mail, (err, iduser) ->
+		return next new restify.InvalidArgumentError "You need to specify a valid mail." unless iduser
+		return next err if err
+		shared.db.users.get iduser, (err, user) ->
+			return next new restify.UnauthorizedError "Bad id." unless user
+			return next err if err
+			
+			platform_user = user.profile
+			if not platform_user.platform? or platform_user.platform isnt req.admin.platform_admin
+				return next new restify.InvalidArgumentError "You need to specify a valid mail."
+			else
+				req.platform_user = platform_user
+				next()
+
+exports.checkPlatformUserHasAccessToAppKey = (req, res, next) ->
+	if not req.params.key?
+		return next new restify.InvalidArgumentError "You need to specify the app's public key."
+	shared.db.users.hasApp req.platform_user.id, req.params.key, (err, res) ->
+		return next err if err
+		return next new restify.NotAuthorizedError "You have not access to this app" if not res
+		console.log "checkPlatformUserHasAccessToAppKey res", res
+		# req.app = res
+		next()
+
 exports.adm = (req, res, next) ->
 	exports.needed req, res, (e) ->
 		return next e if e
