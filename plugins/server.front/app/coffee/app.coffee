@@ -38,7 +38,7 @@ define [
 				hooks.config app, apiRequest if hooks?.config
 
 				$routeProvider.when '/',
-					templateUrl: '/templates/landing-new.html'
+					templateUrl: '/templates/landing-new2.html'
 					controller: 'IndexCtrl'
 
 				$routeProvider.when '/providers',

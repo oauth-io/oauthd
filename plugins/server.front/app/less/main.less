@@ -5,6 +5,70 @@
 @colorErr: red;
 @fFamily: 'Century Gothic', Monaco, Menlo !important;
 
+@import "../lib/bootstrap-3.1.1/less/variables";
+
+
+
+.titlebox {
+  text-align: center;
+  color: white;
+  padding: 30px;
+  background-color: #3399ff;
+  background-image: url(/img/bg-parallax.png);
+  background-position: center -11px;
+  h1,h2,h3 {
+    font-family: 'Lato', sans-serif;
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  h2 {
+    font-weight: 100;
+    font-size: 25px;
+  }
+  @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+    h1 { font-size: 39px; }
+    h2 { font-size: 24px; }
+  }
+  @media (max-width: @screen-xs-max) {
+    h1 { font-size: 24px; }
+    h2 { font-size: 15px; }
+  }
+}
+
+.try-it {
+  .toolbar {
+    padding: 4px 10px 2px;
+    background-color: #333;
+    min-height: 32px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    img {
+      cursor: pointer;
+    }
+    .btn-group {
+      margin-top: 3px;
+    }
+  }
+  pre {
+    margin:0;
+    padding:0;
+    background-color: #272822;
+    color: #DDD;
+    border-radius:0;
+    border-color: #333;
+  }
+  .btn-try {
+    margin: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background-color: #333;
+    color: white
+  }
+  .btn-try:hover {
+    background-color: #555;
+  }
+}
 
 blockquote {
 	font-size: 18px;
@@ -63,6 +127,7 @@ p {
 ul {
 	list-style-type: none;
 	margin: 0;
+  padding: 0;
 }
 
 .public-key-text {
@@ -729,3 +794,4 @@ pre .comment {
 }
 
 @import "./provider-page";
+@import "./landing";

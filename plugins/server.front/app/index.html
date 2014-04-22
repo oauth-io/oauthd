@@ -25,15 +25,18 @@ src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
     <link rel="canonical" href="https://oauth.io{{location}}" />
 
     <link rel="stylesheet" href="/lib/bootstrap-3.1.1/css/bootstrap.css" type="text/css" />
-    <link rel="stylesheet" href="/lib/bootstrap-3.1.1/css/bootstrap-theme.css" type="text/css" />
     <link rel="stylesheet" href="/css/main.css" type="text/css" />
     <link rel="stylesheet" href="/lib/select2/select2.css" type="text/css" />
     <link rel="icon" type="image/png" href="/img/favicon.png" />
     <script src="/lib/jquery/jquery2.js"></script>
     <script src="/lib/jquery-ui/jquery-ui.js"></script>
+
+    <link rel="stylesheet" href="/lib/highlight/monokai.min.css">
+    <script src="/lib/highlight/highlight.pack.js"></script>
+
     <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
     <script src="https://checkout.stripe.com/checkout.js"></script>
-    <script src="/lib/angular/angular-1.2.12.min.js"></script>
+    <script src="/lib/angular/angular-1.2.16.min.js"></script>
     <script src="/lib/angular/angular-route.min.js"></script>
 
     <script src="/lib/angular-ui-bootstrap/ui-bootstrap-tpls-0.10.0.min.js"></script>
@@ -109,7 +112,7 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
 </head>
 <body style="-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;">
     <div google-analytics></div>
-    <div class="navbar navbar-default" style="background-color: transparent; font-size: 1.0em">
+    <div class="navbar" style="margin-bottom: 0;background-color: transparent; font-size: 1.0em">
       <div class="container">
         <!-- .navbar-toggle is used as the toggle for collapsed navbar content -->
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">

@@ -1,0 +1,58 @@
+<link href='https://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+
+<div id="landing">
+	<div class="titlebox">
+		<h2>Social logins and authorizations can be annoying. So we made</h2>
+		<h1>The fastest way to integrate OAuth</h1>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-7 col-md-6 col-lg-5 col-md-offset-1 col-lg-offset-2">
+				<div class="try-it">
+					<div class="toolbar">
+						<img id="demo-facebook" ng-click="demoProvider('facebook')" width="32" src="/img/homepageicon/facebookactive.png" alt="">
+						<img id="demo-twitter" ng-click="demoProvider('twitter')" width="32" src="/img/homepageicon/twitterblack.png" alt="">
+						<img id="demo-google" ng-click="demoProvider('google')" width="32" src="/img/homepageicon/googleblack.png" alt="">
+						<img id="demo-github" ng-click="demoProvider('github')" width="32" src="/img/homepageicon/githubblack.png" alt="">
+						<img id="demo-linkedin" ng-click="demoProvider('linkedin')" width="32" src="/img/homepageicon/linkedinblack.png" alt="">
+						<div class="btn-group pull-right">
+							<button type="button" class="btn btn-xs btn-inverse dropdown-toggle" data-toggle="dropdown">
+								Javascript <span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" role="menu">
+								<li><a href="#">Javascript</a></li>
+								<li><a href="#">Phonegap</a></li>
+								<li><a href="#">IOS</a></li>
+								<li><a href="#">Android</a></li>
+							</ul>
+						</div>
+					</div>
+					<pre><code>//Authorize your user to facebook
+OAuth.popup('facebook').done(function(facebook) {
+  //Get your user's personal data
+  facebook.me().done(function(me) {
+    alert(me.name)
+  })
+})</code></pre>
+					<button ng-click="tryIt()" id="landing-try-it" class="btn btn-block btn-try">Try it</button>
+				</div>
+			</div>
+			<div class="col-sm-5 col-md-4 col-lg-5">
+				<ul id="landing-features">
+					<li><img src="/img/100providers.png" alt=""><span>100+ OAuth providers</span></li>
+					<li><img src="/img/sdk.png" alt=""><span>Web & Mobile SDKs</span></li>
+					<li><img src="/img/90sec.png" alt=""><span>90 seconds process</span></li>
+				</ul>
+			</div>
+		</div>
+		<div class="row c2a">
+			<div class="col-md-3 col-md-offset-3 col-xs-6">
+				<button class="btn btn-block btn-lg btn-default">LEARN MORE</button>
+			</div>
+			<div class="col-md-3 col-xs-6">
+				<a href="/signup" class="btn btn-block btn-lg btn-success">SIGN UP FOR FREE</a>
+				<p class="text-center"><strong>No hidden fees.</strong></p>
+			</div>
+		</div>
+	</div>
+</div>

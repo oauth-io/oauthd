@@ -69,6 +69,7 @@ module.exports = function(gruntConf) {
 	gruntConf.less['front-compile'] = { files: {} };
 	gruntConf.less['front-compile'].files[__dirname + "/app/css/main.css"] = __dirname + "/app/less/main.less"
 	gruntConf.less['front-compile'].files[__dirname + "/app/css/provider-page.css"] = __dirname + "/app/less/provider-page.less"
+	gruntConf.less['front-compile'].files[__dirname + "/app/css/landing.css"] = __dirname + "/app/less/landing.less"
 
 	return function() {
 		this.loadNpmTasks('grunt-contrib-less');

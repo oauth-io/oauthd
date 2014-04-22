@@ -10,30 +10,29 @@ define [], () ->
 		# if UserService.isLogin()
 		# 	$location.path '/key-manager'
 
-		mixpanel.track_links "#landing-contribute", "landing contribute"
-		mixpanel.track_links "#landing-see-demo", "landing see demo"
+		mixpanel.track_links "#landing-signup", "landing signup"
 		mixpanel.track_links "#landing-learn-more", "landing learn more"
-		mixpanel.track_links "#landing-try-it", "landing try it"
-		mixpanel.track_links "#landing-try-it2", "landing try it2"
-		$scope.demoTwiConnect = () ->
-			OAuth.initialize window.demoKey
-			OAuth.popup 'twitter', (err, res) ->
-				if err
-					alert JSON.stringify err
-					return
-				res.get('/1.1/account/verify_credentials.json').done (data) ->
-					alert 'Hello ' + data.name
-			mixpanel.track "landing demo tw"
 
-		$scope.demoFbConnect = () ->
+		$scope.tryIt = () ->
 			OAuth.initialize window.demoKey
-			OAuth.popup 'facebook', (err, res) ->
+			OAuth.popup $scope.provider, (err, res) ->
 				if err
 					alert JSON.stringify err
 					return
 				res.get('/me').done (data) ->
 					alert 'Hello ' + data.name
-			mixpanel.track "landing demo fb"
+			mixpanel.track "landing demo"
+			return false
+
+		$scope.provider = 'facebook'
+		$scope.demoProvider = (provider) ->
+			$("#demo-" + $scope.provider).attr('src', '/img/homepageicon/' + $scope.provider + 'black.png')
+			$("#demo-" + provider).attr('src', '/img/homepageicon/' + provider + 'active.png')
+			$('pre code').html $('pre code').html().replace(/facebook|twitter|github|google|linkedin/gi, provider)
+			$scope.provider = provider
+
+		$('pre code').each (i, e) -> hljs.highlightBlock e
+
 
 	return [
 		"$scope",
