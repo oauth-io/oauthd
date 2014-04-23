@@ -126,30 +126,30 @@ exports.setup = (callback) ->
 
 	# list keysets for an app.
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
-		@db.platforms_apps.getKeysets req.params.key, req.body, req.admin, (err, app) =>
+		@db.platforms_apps.getKeysets req.params.key, (err, keysets) =>
 			return next(err) if err
-			res.send app
+			res.send keysets
 			next()
 	
 	# get a keyset for an app and a provider. Returns null if the keyset does not exists.
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
-		@db.platforms_apps.getKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
+		@db.platforms_apps.getKeyset req.params.key, req.params.provider, (err, keyset) =>
 			return next(err) if err
-			res.send app
+			res.send keyset
 			next()
 	
 	# add or update a keyset for an app and a provider. If the keyset already exists, it will be replaced.
 	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
-		@db.platforms_apps.addKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
+		@db.platforms_apps.addKeyset req.params.key, req.params.provider, req.body, (err, keyset) =>
 			return next(err) if err
-			res.send app
+			res.send keyset
 			next()
 
 	# remove a keyset from an app by provider's name.
 	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
-		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
+		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, (err, keyset) =>
 			return next(err) if err
-			res.send app
+			res.send keyset
 			next()
 
 

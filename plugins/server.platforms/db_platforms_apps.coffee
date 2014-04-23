@@ -149,16 +149,57 @@ exports.removeDomain = (key, domain, callback) ->
 
 #### KEYSETS
 
-exports.getKeysets = (key, data, admin, callback) ->
+exports.getKeysets = (key, callback) ->
+	console.log "db_platforms_apps getKeysets"
+	console.log "db_platforms_apps getKeysets key", key
+	db.apps.getKeysets key, (err, keysets) ->
+		return callback err if err
+		return callback null, keysets
 
+exports.getKeyset = (key, provider, callback) ->
+	console.log "db_platforms_apps getKeyset"
+	console.log "db_platforms_apps getKeyset key", key
+	console.log "db_platforms_apps getKeyset provider", provider
+	if not provider?
+		return callback new restify.InvalidArgumentError "You need to specify a valid provider name."
+	db.apps.getKeyset key, provider, (err, keyset) ->
+		return callback err if err
+		return callback null, keyset
 
-exports.getKeyset = (key, provider, data, admin, callback) ->
+exports.addKeyset = (key, provider, body, callback) ->
+	console.log "db_platforms_apps addKeyset"
+	console.log "db_platforms_apps addKeyset key", key
+	console.log "db_platforms_apps addKeyset provider", provider
+	console.log "db_platforms_apps addKeyset body", body
+	if not provider?
+		return callback new restify.InvalidArgumentError "You need to specify a valid provider name."
+	if not body?
+		return callback new restify.InvalidArgumentError "Missing body."
+	if not body.parameters?
+		return callback new restify.InvalidArgumentError "You need to specify the parameters of the keyset, according to the provider's configuration."
+	if not body.response_type?
+		return callback new restify.InvalidArgumentError "You need to specify the response type, it can be \"token\" (client-side), \"code\" (server-side), or \"both\""
+	data = 
+		parameters: body.parameters
+		response_type: body.response_type
 
+	db.apps.addKeyset key, provider, data, (err) ->
+		return callback err if err
+		db.apps.getKeyset key, provider, (err, keyset) ->
+			return callback err if err
+			return callback null, keyset
 
-exports.addKeyset = (key, provider, data, admin, callback) ->
-
-
-exports.removeKeyset = (key, provider, data, admin, callback) ->
+exports.removeKeyset = (key, provider, callback) ->
+	console.log "db_platforms_apps removeKeyset"
+	console.log "db_platforms_apps removeKeyset key", key
+	console.log "db_platforms_apps removeKeyset provider", provider
+	if not provider?
+		return callback new restify.InvalidArgumentError "You need to specify a valid provider name."
+	db.apps.remKeyset key, provider, (err) -> 
+		return callback err if err
+		db.apps.getKeyset key, provider, (err, keyset) ->
+			return callback err if err
+			return callback null, keyset
 
 
 
