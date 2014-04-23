@@ -104,7 +104,7 @@ exports.platformManageUser = (req, res, next) ->
 				req.platform_user = platform_user
 				next()
 
-exports.checkPlatformUserHasAccessToAppKey = (req, res, next) ->
+exports.platformUserManageApp = (req, res, next) ->
 	if not req.params.key?
 		return next new restify.InvalidArgumentError "You need to specify the app's public key."
 	shared.db.users.hasApp req.platform_user.id, req.params.key, (err, res) ->

@@ -60,7 +60,7 @@ exports.setup = (callback) ->
 			next()
 
 	# get an application details
-	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm, @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm, @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
 		@db.platforms_apps.getDetails req.params.key, (err, app) =>
 			return next(err) if err
 			res.setHeader 'Content-Type', 'application/json'
@@ -68,7 +68,7 @@ exports.setup = (callback) ->
 			next()
 
 	# update an application details
-	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
 		@db.platforms_apps.update req.params.key, req.body, (err, app) =>
 			return next(err) if err
 			res.setHeader 'Content-Type', 'application/json'
@@ -76,14 +76,14 @@ exports.setup = (callback) ->
 			next()
 	
 	# delete an application 
-	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
 		@db.platforms_apps.remove req.params.key, req.platform_user, (err) =>
 			return next(err) if err
 			res.send 200, "Application removed."
 			next()
 
 	# reset an app's public and secret keys.
-	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/reset', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/reset', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
 		@db.platforms_apps.resetKeys req.params.key, (err, app) =>
 			return next(err) if err
 			res.setHeader 'Content-Type', 'application/json'
