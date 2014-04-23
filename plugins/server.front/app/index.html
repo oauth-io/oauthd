@@ -21,6 +21,7 @@ font-family: "Century Gothic";
 font-style:normal;
 src: url('/lib/bootstrap-3.1.1/fonts/gothic.ttf');
 }</style>
+    <link href='https://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
     <link rel="publisher" href="https://plus.google.com/114197621848884111231" />
     <link rel="canonical" href="https://oauth.io{{location}}" />
 
@@ -131,6 +132,7 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
           <ul class="nav navbar-nav">
           </ul>
           <ul class="nav navbar-nav pull-right ng-cloak">
+            <li ng-hide="UserService.isLogin()" ng-class="{active: selectedMenu == '/features'}" ><a href="/features">Features</a></li>
             <li ng-class="{active: selectedMenu == '/providers'}" ><a href="/providers">Providers</a></li>
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
 <!--             <li ng-class="{active: selectedMenu == '/features'}" ng-hide="UserService.isLogin()"><a href="/features">Features</a></li> -->
