@@ -8,7 +8,7 @@ restify = require 'restify'
 async = require 'async'
 {config,check,db} = shared = require '../shared'
 
-# Data:
+# Body:
 # name - Required - string
 # The name of the user.
 # mail - Required - string
@@ -16,10 +16,9 @@ async = require 'async'
 # pass - Required - string
 # The password of the user.
 exports.create = (body, platform, callback) ->
-	console.log "db_platforms_users create"
-	console.log "db_platforms_users create body", body
-	console.log "db_platforms_users create platform", platform
-	console.log ""
+	# console.log "db_platforms_users create"
+	# console.log "db_platforms_users create body", body
+	# console.log "db_platforms_users create platform", platform
 	if not body?
 		return next new restify.MissingParameterError "Missing body."
 	if not body.mail?
@@ -35,34 +34,30 @@ exports.create = (body, platform, callback) ->
 		platform: platform
 	db.users.register data, (err, user) -> 
 		return callback err if err
-
 		returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr, platform:user.platform
 		return callback null, returnedUser
 
+
 exports.remove = (platform_user, callback) ->
-	console.log "db_platforms_users remove"
-	console.log "db_platforms_users remove platform_user", platform_user
-	console.log ""
+	# console.log "db_platforms_users remove"
+	# console.log "db_platforms_users remove platform_user", platform_user
 	db.users.remove platform_user.id, (err) -> 
 		return callback err if err
 		callback()
 
 
 exports.getDetails = (platform_user, callback) ->
-	console.log "db_platforms_users getDetails"
-	console.log "db_platforms_users getDetails platform_user", platform_user
-	console.log ""
+	# console.log "db_platforms_users getDetails"
+	# console.log "db_platforms_users getDetails platform_user", platform_user
 	db.users.getApps platform_user.id, (err, appkeys) ->
 		return callback err if err
-		console.log "appkeys", appkeys
 		platform_user.apps = appkeys
 		return callback null, platform_user
 
 
 exports.getAllDetails = (admin, callback) ->
-	console.log "db_platforms_users getAllDetails"
-	console.log "db_platforms_users getAllDetails admin", admin	
-	console.log ""
+	# console.log "db_platforms_users getAllDetails"
+	# console.log "db_platforms_users getAllDetails admin", admin	
 	db.redis.hgetall 'u:mails', (err, users) =>
 		return callback err if err
 		platforms_users = []
