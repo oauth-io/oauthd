@@ -118,7 +118,6 @@ exports.raw = ->
 					async.eachSeries content.fetch, (item, cb) -> 
 						if typeof item == 'object'
 							url = item.url
-
 							apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
@@ -149,7 +148,7 @@ exports.raw = ->
 												cb()
 						if typeof item == 'function'
 							url = item(user_fetcher)
-							apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
+							apiRequest {apiUrl: url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
 								
