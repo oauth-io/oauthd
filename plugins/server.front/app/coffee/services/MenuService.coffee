@@ -12,18 +12,48 @@ define [], () ->
 				), 100
 
 			loaded: ->
-				h = $(window).height()
-				t = $('body').height()
-				h2 = $('#content').height()
-				console.log h, h2, t, h < t
-				if h > t
-					n = $('#content .flexible').length
-					m = (h - t) / (2 * n)
-					$('.flexible').css 'margin', m + 'px 0px'
-				else if h + 90 > t
-					n = $('#content .flexible').length
-					m = (h + 90 - t) / (2 * n)
-					$('.flexible').css 'margin', m + 'px 0px'
+				n = $('#content .flexible').length
+
+				winHeight = $(window).height()
+				bodyHeight = $('body').height() - 42
+
+				sup = 90
+				if winHeight > 900
+					sup = 0
+
+				m = winHeight - bodyHeight + sup
+				m = 400 if m > 400
+
+				console.log 'start', n, m
+				console.log 'winHeight', winHeight
+				console.log 'bodyHeight', bodyHeight
+
+				if m > 0 && n > 0
+					@lastMargin = m
+					$('#content .flexible').css 'margin', (m / (2 * n)) + 'px 0px'
+				else
+					@lastMargin = 0
+
+				if n > 0
+					$(window).on 'resize', =>
+						n = $('#content .flexible').length
+						winHeight = $(window).height()
+						bodyHeight = $('body').height() - @lastMargin
+
+						sup = 90
+						if winHeight > 900
+							sup = 0
+
+						m = winHeight - bodyHeight + sup
+						m = 400 if m > 400
+						console.log 'resize', n, m
+						console.log 'winHeight', winHeight
+						console.log 'bodyHeight', bodyHeight
+						if m > 0 && n > 0
+							@lastMargin = m
+							$('#content .flexible').css 'margin', (m / (2 * n)) + 'px 0px'
+						else
+							@lastMargin = 0
 
 		return obj
 	return ["$http", "$rootScope", "$location", MenuService]
