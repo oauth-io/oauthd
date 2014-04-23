@@ -6,7 +6,7 @@
 
 define [], () ->
 	IndexCtrl = ($scope, $rootScope, $http, $location, UserService, MenuService) ->
-		MenuService.changed()
+		MenuService.changed false
 		# if UserService.isLogin()
 		# 	$location.path '/key-manager'
 
@@ -19,7 +19,8 @@ define [], () ->
 				if err
 					alert JSON.stringify err
 					return
-				res.get('/me').done (data) ->
+				res.me().done (data) ->
+					console.log data
 					alert 'Hello ' + data.name
 			mixpanel.track "landing demo"
 			return false

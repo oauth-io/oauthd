@@ -2,17 +2,28 @@ define [], () ->
 	MenuService = ($http, $rootScope, $location) ->
 		$rootScope.selectedMenu = $location.path()
 
-		return changed: ->
-			p = $location.path()
+		obj =
+			changed: (async) ->
+				p = $location.path()
 
-			if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-				$('body').css('background-color', "#FFF")
-			else
-				$('body').css('background-color', '#FFF')
+				$rootScope.selectedMenu = $location.path()
+				setTimeout (=>
+					@loaded() if not async
+				), 100
 
-			$('body > .navbar span, #footer').css('color', '#777777')
-			$('#wsh-powered').attr('src', '/img/webshell-logo.png')
-			$('body > .navbar li a').css('color', '#777777').css('font-weight', 'normal')
+			loaded: ->
+				h = $(window).height()
+				t = $('body').height()
+				h2 = $('#content').height()
+				console.log h, h2, t, h < t
+				if h > t
+					n = $('#content .flexible').length
+					m = (h - t) / (2 * n)
+					$('.flexible').css 'margin', m + 'px 0px'
+				else if h + 90 > t
+					n = $('#content .flexible').length
+					m = (h + 90 - t) / (2 * n)
+					$('.flexible').css 'margin', m + 'px 0px'
 
-			$rootScope.selectedMenu = $location.path()
+		return obj
 	return ["$http", "$rootScope", "$location", MenuService]
