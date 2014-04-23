@@ -23,7 +23,7 @@ exports.create = (data, platform, callback) ->
 	if not data?
 		return next new restify.MissingParameterError "Missing data."
 	if not data.mail?
-		return callback new restify.InvalidArgumentError "You need to specify a mail."
+		return callback new restify.InvalidArgumentError "You need to specify a email."
 	if not data.name?
 		return callback new restify.InvalidArgumentError "You need to specify a name."
 	if not data.pass?
