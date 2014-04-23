@@ -12,14 +12,16 @@ restify = require 'restify'
 exports.setup = (callback) ->
 
 	@db.platforms_users = require './db_platforms_users'
+	@db.platforms_apps = require './db_platforms_apps'
 	
 
 	#### PLATFORMS USERS
 
 	# create a platform user
 	@server.post @config.base_api + '/platforms/:platform/users', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_users.create req.body.data, req.params.platform, (err, user) =>
+		@db.platforms_users.create req.body, req.params.platform, (err, user) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send user
 			next()
 
@@ -34,6 +36,7 @@ exports.setup = (callback) ->
 	@server.get @config.base_api + '/platforms/:platform/users/:mail', @auth.platformAdm, @auth.platformManageUser, (req, res, next) =>
 		@db.platforms_users.getDetails req.platform_user, (err, user) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send user
 			next()
 
@@ -41,6 +44,7 @@ exports.setup = (callback) ->
 	@server.get @config.base_api + '/platforms/:platform/users', @auth.platformAdm, (req, res, next) =>
 		@db.platforms_users.getAllDetails req.admin, (err, users) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send users
 			next()
 
@@ -49,36 +53,40 @@ exports.setup = (callback) ->
 
 	# create an application
 	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps', @auth.platformAdm, @auth.platformManageUser, (req, res, next) =>
-		@db.platforms_apps.create req.body.data, req.platform_user, req.admin, (err, app) =>
+		@db.platforms_apps.create req.body, req.platform_user, req.admin, (err, app) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send app
 			next()
 
 	# get an application details
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm, @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
-		@db.platforms_apps.getDetails req.params.key, req.platform_user, req.admin, (err, app) =>
+		@db.platforms_apps.getDetails req.params.key, (err, app) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send app
 			next()
 
 	# update an application details
-	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.update req.params.key, req.body.data, req.admin, (err, app) =>
+	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+		@db.platforms_apps.update req.params.key, req.body, (err, app) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send app
 			next()
 	
 	# delete an application 
-	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.remove req.params.key, req.body.data, req.admin, (err, app) =>
+	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+		@db.platforms_apps.remove req.params.key, req.platform_user, (err) =>
 			return next(err) if err
 			res.send 200, "Application removed."
 			next()
 
 	# reset an app's public and secret keys.
-	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/reset', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.resetKeys req.params.key, req.body.data, req.admin, (err, app) =>
+	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/reset', @auth.platformAdm,  @auth.platformManageUser, @auth.checkPlatformUserHasAccessToAppKey, (req, res, next) =>
+		@db.platforms_apps.resetKeys req.params.key, (err, app) =>
 			return next(err) if err
+			res.setHeader 'Content-Type', 'application/json'
 			res.send app
 			next()
 
@@ -87,28 +95,28 @@ exports.setup = (callback) ->
 
 	# list valid domains for an app.
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key/domains', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.listDomain req.params.key, req.body.data, req.admin, (err, domains) =>
+		@db.platforms_apps.listDomain req.params.key, req.body, req.admin, (err, domains) =>
 			return next(err) if err
 			res.send domains
 			next()
 
 	# update valid domains for an app.
 	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/domains', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.updateDomains req.params.key, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.updateDomains req.params.key, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 	
 	# add a valid domain for an app.
 	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/domains/:domain', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.addDomain req.params.key, req.params.domain, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.addDomain req.params.key, req.params.domain, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 	
 	# remove a valid domain for an app.
 	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key/domains/:domain', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.removeDomain req.params.key, req.params.domain, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.removeDomain req.params.key, req.params.domain, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
@@ -118,28 +126,28 @@ exports.setup = (callback) ->
 
 	# list keysets for an app.
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.getKeysets req.params.key, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.getKeysets req.params.key, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 	
 	# get a keyset for an app and a provider. Returns null if the keyset does not exists.
 	@server.get @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.getKeyset req.params.key, req.params.provider, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.getKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 	
 	# add or update a keyset for an app and a provider. If the keyset already exists, it will be replaced.
 	@server.post @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.addKeyset req.params.key, req.params.provider, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.addKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()
 
 	# remove a keyset from an app by provider's name.
 	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm, (req, res, next) =>
-		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, req.body.data, req.admin, (err, app) =>
+		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, req.body, req.admin, (err, app) =>
 			return next(err) if err
 			res.send app
 			next()

@@ -14,43 +14,89 @@ async = require 'async'
 # The new name of the application, 3 to 50 chars.
 # data.domains - Required - array of strings
 # Array of valid urls scheme/domain/port/path. You can choose the url detail level to use.
-exports.create = (data, platform_user, admin, callback) ->
+exports.create = (body, platform_user, admin, callback) ->
 	console.log "db_platforms_apps create"
-	console.log "db_platforms_apps create data", data
+	console.log "db_platforms_apps create body", body
 	console.log "db_platforms_apps create platform_user", platform_user
 	console.log "db_platforms_apps create admin", admin
 	console.log ""
-	if not data.name?
+	if not body?
+		return callback new restify.MissingParameterError "Missing body."
+	if not body.name?
 		return callback new restify.InvalidArgumentError "You need to specify the new name of the application."
-	if not data.domains?
+	if not body.domains?
 		return callback new restify.InvalidArgumentError "You need to specify an array of valid urls scheme/domain/port/path."
-	
-	db.apps.create data, platform_user, (err, res) ->
-		return next(err) if err
-		plugins.data.emit 'app.create', req, res
-		app = name:res.name, key:res.key, domains:res.domains
+	data = 
+		name: body.name
+		domains: body.domains
+	db.apps.create data, platform_user, (err, app) ->
+		return callback err if err
+		shared.emit 'app.create', platform_user, app
+		app = name:app.name, key:app.key, domains:app.domains
 		return callback null, app
 
 
 # key - Required - string
 # The app's public key
-exports.getDetails = (key, platform_user, admin, callback) ->
+exports.getDetails = (key, callback) ->
 	console.log "db_platforms_apps getDetails"
 	console.log "db_platforms_apps getDetails key", key
-	console.log "db_platforms_apps getDetails platform_user", platform_user
-	console.log "db_platforms_apps getDetails admin", admin
 	console.log ""
+	async.parallel [
+		(cb) -> db.apps.get key, cb
+		(cb) -> db.apps.getDomains key, cb
+		(cb) -> db.apps.getKeysets key, cb
+	], (err, res) ->
+		return callback err if err
+		app = name:res[0].name, key:res[0].key, secret:res[0].secret, domains:res[1], keysets:res[2]
+		return callback null, app
+
+
+exports.update = (key, body, callback) ->
+	console.log "db_platforms_apps update"
+	console.log "db_platforms_apps update key", key
+	console.log "db_platforms_apps update body", body
+	console.log ""
+	if not body?
+		return callback new restify.MissingParameterError "Missing body."
+	if body.name? and body.domains?
+		data = 
+			name: body.name
+			domains: body.domains
+	else
+		if body.name?
+			data = 
+				name: body.name
+		if body.domains?
+			data = 
+				domains: body.domains
+
+	db.apps.update key, data, (err) ->
+		return callback err if err
+		db.platforms_apps.getDetails key, (err, app) ->
+			return callback err if err
+			return callback null, app
+
 	
-	
+exports.remove = (key, platform_user, callback) ->
+	console.log "db_platforms_apps remove"
+	console.log "db_platforms_apps remove key", key
+	console.log "db_platforms_apps remove platform_user", platform_user
+	db.apps.get key, (err, app) ->
+		return callback err if err
+		db.apps.remove key, (err, r) ->
+			return callback err if err
+			shared.emit 'app.remove', platform_user, app
+			return callback null
 
-
-
-exports.update = (key, data, admin, callback) ->
-
-exports.remove = (key, data, admin, callback) ->
-
-exports.resetKeys = (key, data, admin, callback) ->
-
+exports.resetKeys = (key, callback) ->
+	console.log "db_platforms_apps resetKeys"
+	console.log "db_platforms_apps resetKeys key", key
+	db.apps.resetKey key, (err, keys) ->
+		return callback err if err
+		db.platforms_apps.getDetails keys.key, (err, app) ->
+			return callback err if err
+			return callback null, app
 
 #### DOMAINS
 

@@ -385,7 +385,7 @@ server.del config.base_api + '/apps/:key', auth.needed, (req, res, next) ->
 		return next(e) if e
 		db.apps.remove req.params.key, (e, r) ->
 			return next(e) if e
-			plugins.data.emit 'app.remove', req, app
+			plugins.data.emit 'app.remove', req.user, app
 			res.send check.nullv
 			next()
 

@@ -109,9 +109,7 @@ exports.checkPlatformUserHasAccessToAppKey = (req, res, next) ->
 		return next new restify.InvalidArgumentError "You need to specify the app's public key."
 	shared.db.users.hasApp req.platform_user.id, req.params.key, (err, res) ->
 		return next err if err
-		return next new restify.NotAuthorizedError "You have not access to this app" if not res
-		console.log "checkPlatformUserHasAccessToAppKey res", res
-		# req.app = res
+		return next new restify.InvalidArgumentError "Unknown key" if not res? or not res
 		next()
 
 exports.adm = (req, res, next) ->

@@ -15,25 +15,25 @@ async = require 'async'
 # The mail of the user.
 # pass - Required - string
 # The password of the user.
-exports.create = (data, platform, callback) ->
+exports.create = (body, platform, callback) ->
 	console.log "db_platforms_users create"
-	console.log "db_platforms_users create data", data
+	console.log "db_platforms_users create body", body
 	console.log "db_platforms_users create platform", platform
 	console.log ""
-	if not data?
-		return next new restify.MissingParameterError "Missing data."
-	if not data.mail?
+	if not body?
+		return next new restify.MissingParameterError "Missing body."
+	if not body.mail?
 		return callback new restify.InvalidArgumentError "You need to specify a email."
-	if not data.name?
+	if not body.name?
 		return callback new restify.InvalidArgumentError "You need to specify a name."
-	if not data.pass?
+	if not body.pass?
 		return callback new restify.InvalidArgumentError "You need to specify a pass."
-	db_user_data = 
-		mail: data.mail
-		pass: data.pass
-		name: data.name
+	data = 
+		mail: body.mail
+		pass: body.pass
+		name: body.name
 		platform: platform
-	db.users.register db_user_data, (err, user) -> 
+	db.users.register data, (err, user) -> 
 		return callback err if err
 
 		returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr, platform:user.platform
@@ -54,6 +54,7 @@ exports.getDetails = (platform_user, callback) ->
 	console.log ""
 	db.users.getApps platform_user.id, (err, appkeys) ->
 		return callback err if err
+		console.log "appkeys", appkeys
 		platform_user.apps = appkeys
 		return callback null, platform_user
 
