@@ -100,18 +100,52 @@ exports.resetKeys = (key, callback) ->
 
 #### DOMAINS
 
-exports.listDomain = (key, data, admin, callback) ->
+exports.listDomain = (key, callback) ->
+	console.log "db_platforms_apps listDomain"
+	console.log "db_platforms_apps listDomain key", key
+	db.apps.getDomains key, (err, domains) ->
+		return callback err if err
+		return callback null, domains
 
 
-exports.updateDomains = (key, data, admin, callback) ->
+exports.updateDomains = (key, body, callback) ->
+	console.log "db_platforms_apps updateDomains"
+	console.log "db_platforms_apps updateDomains key", key
+	console.log "db_platforms_apps updateDomains body", body
+	if not body?
+		return callback new restify.MissingParameterError "Missing body."
+	if not body.domains?
+		return callback new restify.InvalidArgumentError "You need to specify an array of valid urls scheme/domain/port/path."
+	db.apps.updateDomains key, body.domains, (err) ->
+		return callback err if err
+		db.platforms_apps.listDomain key, (err, domains) ->
+			return callback err if err
+			return callback null, domains
 
 
-exports.addDomain = (key, domain, data, admin, callback) ->
+exports.addDomain = (key, domain, callback) ->
+	console.log "db_platforms_apps addDomain"
+	console.log "db_platforms_apps addDomain key", key
+	console.log "db_platforms_apps addDomain domain", domain
+	if not domain?
+		return callback new restify.InvalidArgumentError "You need to specify a valid urls scheme/domain/port/path."
+	db.apps.addDomain key, domain, (err) ->
+		return callback err if err
+		db.platforms_apps.listDomain key, (err, domains) ->
+			return callback err if err
+			return callback null, domains
 
-
-exports.removeDomain = (key, domain, data, admin, callback) ->
-
-
+exports.removeDomain = (key, domain, callback) ->
+	console.log "db_platforms_apps removeDomain"
+	console.log "db_platforms_apps removeDomain key", key
+	console.log "db_platforms_apps removeDomain domain", domain
+	if not domain?
+		return callback new restify.InvalidArgumentError "You need to specify a valid urls scheme/domain/port/path."
+	db.apps.remDomain key, domain, (err) ->
+		return callback err if err
+		db.platforms_apps.listDomain key, (err, domains) ->
+			return callback err if err
+			return callback null, domains
 
 #### KEYSETS
 
