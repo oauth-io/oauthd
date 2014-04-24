@@ -53,10 +53,10 @@ exports.setup = (callback) ->
 	@on 'heroku_user.unsubscribe', (heroku_user) =>
 		sendEvent heroku_user, 'heroku_user_unsubscribe'
 
-	@on 'app.create', (req, app) =>
-		sendEvent req.user, 'app.create', app
-	@on 'app.remove', (req, app) =>
-		sendEvent req.user, 'app.remove', app
+	@on 'app.create', (user, app) =>
+		sendEvent user, 'app.create', app
+	@on 'app.remove', (user, app) =>
+		sendEvent user, 'app.remove', app
 	@on 'user.update_nbapps', (user, nb) =>
 		updateUser user, nb_apps: nb
 	@on 'user.update_nbproviders', (user, nb) =>

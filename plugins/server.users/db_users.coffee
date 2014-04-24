@@ -27,9 +27,8 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 
 			arr = ['mset', prefix+'mail', data.mail,
 				prefix+'key', key,
-				prefix+'validated', 0,
 				prefix+'pass', pass,
-				prefix+'salt', dynsalt
+				prefix+'salt', dynsalt,
 				prefix+'date_inscr', date_inscr,
 				prefix+'name', data.name ]
 
@@ -37,12 +36,21 @@ exports.register = check mail:check.format.mail, pass:/^.{6,}$/, (data, callback
 				arr.push prefix + 'company'
 				arr.push data.company
 
+			if data.platform
+				arr.push prefix + 'platform'
+				arr.push data.platform
+				arr.push prefix + 'validated'
+				arr.push 1
+			else
+				arr.push prefix + 'validated'
+				arr.push 0
+
 			db.redis.multi([
 				arr,
 				[ 'hset', 'u:mails', data.mail, val ]
 			]).exec (err, res) ->
 				return callback err if err
-				user = id:val, mail:data.mail, name: data.name, company: data.company, date_inscr:date_inscr, key:key
+				user = id:val, mail:data.mail, name: data.name, company: data.company, date_inscr:date_inscr, key:key, platform:data.platform
 				shared.emit 'user.register', user
 				return callback null, user
 
@@ -289,7 +297,9 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'state',
 		prefix + 'country',
 		prefix + 'mail_changed',
-		prefix + 'validated' ]
+		prefix + 'validated',
+		prefix + 'platform',
+		prefix + 'platform_admin' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -313,8 +323,10 @@ exports.get = check 'int', (iduser, callback) ->
 			use_profile_for_billing: replies[16] == "true" ? true : false
 			state : replies[17],
 			country : replies[18],
-			mail_changed: replies[19]
-			validated: replies[20]
+			mail_changed: replies[19],
+			validated: replies[20],
+			platform: replies[21],
+			platform_admin: replies[22]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 
@@ -340,7 +352,7 @@ exports.remove = check 'int', (iduser, callback) ->
 				db.redis.multi([
 					[ 'hdel', 'u:mails', mail ]
 					[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
-							, prefix+'apps', prefix+'date_inscr' ]
+							, prefix+'apps', prefix+'date_inscr', prefix+'platform', prefix+'platform_admin' ]
 				]).exec (err, replies) ->
 					return callback err if err
 					shared.emit 'user.remove', mail:mail
@@ -546,19 +558,19 @@ shared.on 'connect.auth.new_mid', (data) ->
 			shared.emit 'user.update_nbmid', user, "#{year}-#{month+1}", nb
 
 ## Event: add app to user when created
-shared.on 'app.create', (req, app) ->
-	if req.user?.id
-		db.redis.sadd 'u:' + req.user.id + ':apps', app.id
-		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
-			shared.emit 'user.update_nbapps', req.user, nbapps
+shared.on 'app.create', (user, app) ->
+	if user?.id
+		db.redis.sadd 'u:' + user.id + ':apps', app.id
+		db.redis.scard 'u:' + user.id + ':apps', (e, nbapps) ->
+			shared.emit 'user.update_nbapps', user, nbapps
 
 
 ## Event: remove app from user when deleted
-shared.on 'app.remove', (req, app) ->
-	if req.user?.id
-		db.redis.srem 'u:' + req.user.id + ':apps', app.id
-		db.redis.scard 'u:' + req.user.id + ':apps', (e, nbapps) ->
-			shared.emit 'user.update_nbapps', req.user, nbapps
+shared.on 'app.remove', (user, app) ->
+	if user?.id
+		db.redis.srem 'u:' + user.id + ':apps', app.id
+		db.redis.scard 'u:' + user.id + ':apps', (e, nbapps) ->
+			shared.emit 'user.update_nbapps', user, nbapps
 
 updateProviders_byapp = (data) ->
 	db.apps.getOwner data.app, (e, user) ->

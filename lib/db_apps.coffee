@@ -14,18 +14,13 @@ check = require './check'
 plugins = require './plugins'
 
 # create a new app
-exports.create = (req, callback) ->
-
-	data = req.body
+exports.create = (data, user, callback) ->
 	err = new check.Error
-
-	# console.log req.body, req.user
-
 	err.check data, name:/^.{3,50}$/,domains:['none','array']
 	return callback err if err.failed()
 
-	db.users.getPlan req.user.id, (err, plan) ->
-		db.users.getApps req.user.id, (err, apps) ->
+	db.users.getPlan user.id, (err, plan) ->
+		db.users.getApps user.id, (err, apps) ->
 			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
 			# return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
 
@@ -44,7 +39,7 @@ exports.create = (req, callback) ->
 						prefix+'name', data.name,
 						prefix+'key', key,
 						prefix+'secret', secret,
-						prefix+'owner', req.user.id,
+						prefix+'owner', user.id,
 						prefix+'date', (new Date).getTime() ],
 					[ 'hset', 'a:keys', key, idapp ]
 				]

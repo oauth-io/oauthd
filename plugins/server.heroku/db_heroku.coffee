@@ -173,15 +173,14 @@ exports.destroy_resource = (resource, callback) ->
 
 
 exports.createDefaultApp = (userid, callback) =>
-	appreq = 
-		body: 
-			domains:["localhost"]
-			name:"Heroku default app"
-		user:
-			id:userid
-	db.apps.create appreq, (err, app) ->
+	data =
+		domains:["localhost"]
+		name:"Heroku default app"
+	user =
+		id:userid
+	db.apps.create data, user, (err, app) ->
 		return callback err if err or not app?
-		shared.emit 'app.create', appreq, app
+		shared.emit 'app.create', user, app
 		return callback null, app
 
 

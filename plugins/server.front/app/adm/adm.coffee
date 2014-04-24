@@ -73,6 +73,24 @@ hooks.config = (app, apiRequest) ->
 
 			getAppInfoHeroku: (heroku_id, success, error) ->
 				api "adm/getAppInfoHeroku/#{heroku_id}", success, error
+
+			getPlatforms: (success, error) ->
+				api "adm/platforms", success, error
+
+			addPlatform: (platform_name, success, error) ->
+				api "adm/platforms/#{platform_name}", success, error, method:'post'
+
+			removePlatform: (idplatform, success, error) ->
+				api "adm/platforms/#{idplatform}", success, error, method:'delete'
+
+			addAdmin: (idplatform, iduser, success, error) ->
+				api "adm/platforms/#{idplatform}/addAdmin/#{iduser}", success, error, method:'post'
+
+			getAdmins: (success, error) ->
+				api "adm/platforms/getAdmins", success, error
+
+			removePlatformAdmin: (iduser, success, error) ->
+				api "adm/platforms/removeAdmin/#{iduser}", success, error, method:'delete'
 		}
 
 	#################################
@@ -115,12 +133,13 @@ hooks.config = (app, apiRequest) ->
 		$scope.users = []
 		$scope.nbUsers = 0
 		$scope.nbUnvalidatedUser = 0
-
+		
 		countUnvalidatedUser = () ->
 			$scope.nbUnvalidatedUser = 0
 			for i of $scope.users
 				if $scope.users[i].validated == '0'
 					$scope.nbUnvalidatedUser++
+
 
 		refreshUsersList = (users, page) ->
 			$scope.users = users
@@ -147,11 +166,10 @@ hooks.config = (app, apiRequest) ->
 					$scope.pagination.current = page if page
 				), 0
 
-		AdmService.getUsers ((u)->refreshUsersList u.data,1), (error) -> console.log "error", error
-
-
-
-
+		admRefreshUsersList = () ->
+			AdmService.getUsers ((u)->refreshUsersList u.data,1), (error) -> console.log "error", error
+		admRefreshUsersList()
+		
 
 		# Stats graphs
 
@@ -221,7 +239,7 @@ hooks.config = (app, apiRequest) ->
 
 		$scope.removeUser = (user)->
 			$scope.info = {}
-			if confirm('are you sure to remove this user ?')
+			if confirm('Are you sure you want to remove the user ' + user.mail + ' ?')
 				AdmService.removeUser user.id, (->
 					delete $scope.users[user.email]
 					refreshUsersList $scope.users
@@ -477,8 +495,17 @@ hooks.config = (app, apiRequest) ->
 				, (error) ->
 					$scope.info = error
 
+		refreshProvidersList = (provider) ->
+			for i of $scope.wishListProviders
+				if $scope.wishListProviders[i].name == provider.name
+					$scope.wishListProviders[i].status = provider.status
+
+		##################### heroku
 		# Get Heroku Apps Info
 		$scope.getAllAppsHeroku = () ->
+			refreshHerokuApps()
+
+		refreshHerokuApps = () ->
 			AdmService.getAllAppsHeroku (success) ->
 				$scope.herokuApps = JSON.parse(success.data)
 				$scope.herokuAppsPagination =
@@ -486,19 +513,83 @@ hooks.config = (app, apiRequest) ->
 					nbItems: $scope.herokuApps.length
 					current: 15
 					max: 5
+		
+		refreshHerokuApps()
 
 		# Get a Heroku App Info
 		$scope.getAppInfoHeroku = (herokuApp) ->
 			AdmService.getAppInfoHeroku herokuApp.heroku_id, (success, error) ->
 				$scope.herokuApp = JSON.parse(success.data)
-				
-		refreshProvidersList = (provider) ->
-			for i of $scope.wishListProviders
-				if $scope.wishListProviders[i].name == provider.name
-					$scope.wishListProviders[i].status = provider.status
 
+		##################### platforms
+		refreshPlatformsList = () ->
+			AdmService.getPlatforms (success, res) ->
+				if res != 200
+					console.log "getPlatforms error", res
+				else
+					$scope.platforms = success.data
+		
+		refreshPlatformsList()
 
+		# Adm add a platform by name
+		$scope.addPlatform = () ->
+			AdmService.addPlatform $scope.platformInput, (success, res) ->
+				if res != 200
+					console.log "addPlatform error", res
+				else
+					addedPlatform = success.data
+					refreshPlatformsList()
 
+		# Adm remove a platform by id
+		$scope.removePlatform = (platform) ->
+			if confirm('Are you sure you want to remove the platform ' + platform.name + ' ?')
+				AdmService.removePlatform platform.id, (success, res) ->
+					if res != 200
+						console.log "removePlatform error", res
+					else
+						refreshPlatformsList()
+						refreshPlatformsAdminsList()
+						admRefreshUsersList()
+
+		# Get admins of platforms
+		refreshPlatformsAdminsList = () ->
+			AdmService.getAdmins (success, res) ->
+				if res != 200
+					console.log "getAdmins error", res
+				else
+					$scope.platformsAdmins = success.data
+
+		refreshPlatformsAdminsList()
+
+		# Adm add user as admin of a platform with ids
+		$scope.addAdmin = (user, platform) ->
+			if confirm('Are you sure to give administration right to ' + user.email + ' on the platform ' + platform.name + ' ?')
+				AdmService.addAdmin platform.id, user.id, (success, res) ->
+					if res != 200
+						console.log "addAdmin error", res
+					else
+						$scope.platformsAdminModalUser.platformAdmin = true
+						$scope.platformsAdminModalUser.platform_name = platform.name
+						$scope.users[user.email].platform_admin = platform.name
+						refreshUsersList $scope.users
+						refreshPlatformsAdminsList()
+
+		# Adm remove a platform by id
+		$scope.removePlatformAdmin = (platformAdmin) ->
+			if confirm('Are you sure you want to remove the platform administration right of the user ' + platformAdmin.name + ' ?')
+				AdmService.removePlatformAdmin platformAdmin.id, (success, res) ->
+					if res != 200
+						console.log "removePlatformAdmin error", res
+					else
+						refreshPlatformsAdminsList()
+						$scope.users[platformAdmin.mail].platform_admin = null
+						refreshUsersList $scope.users
+
+		# Modal platform's admin scope refresh
+		$scope.showPlatformsAdminModal = (user) ->
+			$scope.platformsAdminModalUser = user
+			$scope.platformsAdminModalUser.platformAdmin = false
+			refreshPlatformsList()
 
 
 

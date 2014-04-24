@@ -358,9 +358,9 @@ server.get config.base + '/:provider', (req, res, next) ->
 
 # create an application
 server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
-	db.apps.create req, (e, r) ->
+	db.apps.create req.body, req.user, (e, r) ->
 		return next(e) if e
-		plugins.data.emit 'app.create', req, r
+		plugins.data.emit 'app.create', req.user, r
 		res.send name:r.name, key:r.key, domains:r.domains
 		next()
 
@@ -385,7 +385,7 @@ server.del config.base_api + '/apps/:key', auth.needed, (req, res, next) ->
 		return next(e) if e
 		db.apps.remove req.params.key, (e, r) ->
 			return next(e) if e
-			plugins.data.emit 'app.remove', req, app
+			plugins.data.emit 'app.remove', req.user, app
 			res.send check.nullv
 			next()
 

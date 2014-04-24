@@ -54,6 +54,64 @@ exports.needed = (req, res, next) ->
 			return next new restify.NotAuthorizedError "You have not access to this app" if not res
 		next()
 
+exports.validPlatformName = (platform_name, callback) ->
+	shared.db.redis.hgetall 'p:platforms_name', (err, platforms) =>
+		return callback err if err
+		for name,idplatform of platforms
+			if name is platform_name
+				return callback null, true
+		return callback null, false
+
+exports.platformAdm = (req, res, next) ->
+	if not req.clientId 
+		return next new restify.UnauthorizedError "You need authentication"
+	req.admin = req.clientId
+	if not req.admin.validated
+		return next new restify.UnauthorizedError "You need authentication"
+	if not req.params.platform?
+		return next new restify.InvalidArgumentError "You need to specify a valid platform name."
+	exports.validPlatformName req.params.platform, (err, valid) ->
+		return next err if err
+		if not valid
+			return next new restify.InvalidArgumentError "You need to specify a valid platform name."
+	
+	shared.db.redis.expire 'session:' + req.token, _config.expire
+	req.body ?= {}
+	shared.db.users.get req.admin.id, (err, user) ->
+		return next new restify.UnauthorizedError "Bad id." unless user
+		return next err if err
+		if not user.profile.platform_admin? or not user.profile.validated?
+			return next new restify.NotAuthorizedError "You must be a platform administrator to access this methods." 
+		req.admin.platform_admin = user.profile.platform_admin
+		if req.params.platform isnt req.admin.platform_admin
+			return next new restify.InvalidArgumentError "You need to specify a valid platform name."
+		next()
+	
+exports.platformManageUser = (req, res, next) ->
+	if not req.params.mail?
+		return next new restify.InvalidArgumentError "You need to specify a valid email."	
+	shared.db.redis.hget 'u:mails', req.params.mail, (err, iduser) ->
+		return next new restify.InvalidArgumentError "You need to specify a valid email." unless iduser
+		return next err if err
+		shared.db.users.get iduser, (err, user) ->
+			return next new restify.UnauthorizedError "Bad id." unless user
+			return next err if err
+			
+			platform_user = user.profile
+			if not platform_user.platform? or platform_user.platform isnt req.admin.platform_admin
+				return next new restify.InvalidArgumentError "You need to specify a valid email."
+			else
+				req.platform_user = platform_user
+				next()
+
+exports.platformUserManageApp = (req, res, next) ->
+	if not req.params.key?
+		return next new restify.InvalidArgumentError "You need to specify the app's public key."
+	shared.db.users.hasApp req.platform_user.id, req.params.key, (err, res) ->
+		return next err if err
+		return next new restify.InvalidArgumentError "Unknown key" if not res? or not res
+		next()
+
 exports.adm = (req, res, next) ->
 	exports.needed req, res, (e) ->
 		return next e if e
