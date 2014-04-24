@@ -155,6 +155,8 @@ exports.getKeyset = (key, provider, callback) ->
 		return callback new restify.InvalidArgumentError "You need to specify a valid provider name."
 	db.apps.getKeyset key, provider, (err, keyset) ->
 		return callback err if err
+		if (k for own k of keyset.parameters).length is 0
+			return callback new check.Error 'provider', 'You have no keyset for ' + provider
 		return callback null, keyset
 
 exports.addKeyset = (key, provider, body, callback) ->
@@ -185,11 +187,16 @@ exports.removeKeyset = (key, provider, callback) ->
 	# console.log "db_platforms_apps removeKeyset provider", provider
 	if not provider?
 		return callback new restify.InvalidArgumentError "You need to specify a valid provider name."
-	db.apps.remKeyset key, provider, (err) -> 
+	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
-		db.apps.getKeyset key, provider, (err, keyset) ->
+		return callback new check.Error 'Unknown key' unless idapp
+		db.apps.remKeyset key, provider, (err) -> 
 			return callback err if err
-			return callback null, keyset
-
+			db.redis.exists 'a:' + idapp + ':k:' + provider, (err, res) ->
+				return callback err if err
+				if res
+					return callback new restify.InternalError "Error: keyset was not removed."
+				else
+					return callback null
 
 
