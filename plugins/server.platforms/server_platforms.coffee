@@ -157,7 +157,7 @@ exports.setup = (callback) ->
 
 	@on 'platform.remove', (platform) =>
 		if platform? and platform.name? and platform.id?
-			db.platforms_admins.removeAdminsOfPlatform platform.name, (err) ->
+			db.platforms_admins.removeAllFrom platform.name, (err) ->
 				console.log "Error removing admins of platform " + platform.name + " with id " + platform.id + ".", err
 		else
 			console.log "Missing informations to remove admins of platform." 
