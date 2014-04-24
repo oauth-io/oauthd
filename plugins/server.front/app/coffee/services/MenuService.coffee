@@ -15,7 +15,7 @@ define [], () ->
 				n = $('#content .flexible').length
 				return false if n == 0
 				winHeight = $(window).height()
-				bodyHeight = $('body').height() - 42
+				bodyHeight = $('body').height() - 25
 
 				sup = 90
 				if winHeight > 900

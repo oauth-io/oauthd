@@ -1,0 +1,59 @@
+{
+	"js": {
+		"facebook": "//Authorize your user to facebook\nOAuth.popup('facebook').done(function(facebook) {\n    //Get your user's personal data\n    facebook.me().done(function(me) {\n        alert(me.name)\n    })\n})",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	},
+	"ios": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	},
+	"android": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	}
+}

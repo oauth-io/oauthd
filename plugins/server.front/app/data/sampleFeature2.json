@@ -1,0 +1,59 @@
+{
+	"js": {
+		"facebook": "//Authorize your user to facebook\nOAuth.popup('facebook')\n     .done(function(facebook) {\n\n  //Get your user's personal feed\n  facebook.get('/user/feed')\n          .done(function(feeds) {\n    console.log(feeds)\n  })\n\n  //...or post a message\n  facebook.post({\n    url: '/user/feed',\n    data: {\n      status: \"Hello world!!\"\n    }\n  })\n})",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	},
+	"ios": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	},
+	"android": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	}
+}
