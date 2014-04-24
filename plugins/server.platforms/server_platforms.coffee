@@ -147,9 +147,9 @@ exports.setup = (callback) ->
 
 	# remove a keyset from an app by provider's name.
 	@server.del @config.base_api + '/platforms/:platform/users/:mail/apps/:key/keysets/:provider', @auth.platformAdm,  @auth.platformManageUser, @auth.platformUserManageApp, (req, res, next) =>
-		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, (err, keyset) =>
+		@db.platforms_apps.removeKeyset req.params.key, req.params.provider, (err) =>
 			return next(err) if err
-			res.send keyset
+			res.send 200, "Keyset removed."
 			next()
 
 

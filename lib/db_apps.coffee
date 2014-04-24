@@ -202,7 +202,7 @@ exports.remKeyset = check check.format.key, 'string', (key, provider, callback) 
 	db.redis.hget 'a:keys', key, (err, idapp) ->
 		return callback err if err
 		return callback new check.Error 'Unknown key' unless idapp
-		db.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, (err, res) ->
+		db.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, 'a:' + idapp + ':kdate:' + provider, (err, res) ->
 			return callback err if err
 			return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
 			plugins.data.emit 'app.remkeyset', provider:provider, app:key, id:idapp
