@@ -57,7 +57,6 @@ server.use restify.queryParser()
 server.use restify.bodyParser mapParams:false
 
 server.opts /^\/api\/.*$/, (req, res, next) ->
-	console.log req.url, req.method
 	res.setHeader "Access-Control-Allow-Origin", "*"
 	res.setHeader "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
 	res.setHeader "Access-Control-Allow-Headers", "Authorization, Content-Type"
