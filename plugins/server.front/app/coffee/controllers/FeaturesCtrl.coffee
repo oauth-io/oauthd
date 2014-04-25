@@ -13,6 +13,7 @@ define [], () ->
 					if err
 						alert JSON.stringify err
 						return
+					alert res.access_token || res.oauth_token
 					res.me().done (data) ->
 						alert 'Hello ' + data.name
 				mixpanel.track "feature demo 1"

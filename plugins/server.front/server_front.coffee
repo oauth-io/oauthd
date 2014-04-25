@@ -10,7 +10,7 @@ restify = require 'restify'
 fs = require 'fs'
 Url = require 'url'
 proxy = require './proxy/js'
-# content = require './lib/content'
+content = require './lib/content'
 {db} = shared = require '../shared'
 
 cache = {}
@@ -122,11 +122,15 @@ exports.setup = (callback) ->
 			res.send 301
 			next()
 
-		#@server.get /^\/templates\/.*/, content.serve
-		#	directory: __dirname + '/app'
-		#	maxAge: 1
+		@server.get /^\/templates\/.*\.html/, content.serve
+			owner: 'oauth-io'
+			repo: 'content'
+			mode: 'draft'
+			user: 'thyb'
+			password: 'gi#1271187/ub'
+			directory: __dirname + '/app'
 
-		@server.get /^\/(lib|data|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(lib|data|css|js|img)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 
