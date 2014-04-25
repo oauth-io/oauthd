@@ -7,7 +7,7 @@ define [], () ->
 			$scope.docTemplate = "/templates/partials/docs/getting-started.html"
 			return
 
-		pages = ['getting-started','tutorial','api','faq','oauthd','security','oauthio_api', 'mobiles']
+		pages = ['getting-started','tutorial','api','faq','oauthd','security','oauthio_api', 'partners_api', 'mobiles']
 		if pages.indexOf($routeParams.page) >= 0
 			$scope.page = $routeParams.page
 			$scope.docTemplate = "/templates/partials/docs/" + $routeParams.page + ".html"
