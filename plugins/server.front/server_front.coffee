@@ -126,8 +126,8 @@ exports.setup = (callback) ->
 			owner: 'oauth-io'
 			repo: 'content'
 			mode: 'draft'
-			user: 'thyb'
-			password: 'gi#1271187/ub'
+			user: @config.github_login
+			password: @config.github_pass
 			directory: __dirname + '/app'
 
 		@server.get /^\/(lib|data|css|js|img)\/.*/, bootPathCache(), restify.serveStatic
