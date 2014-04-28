@@ -10,7 +10,7 @@ restify = require 'restify'
 fs = require 'fs'
 Url = require 'url'
 proxy = require './proxy/js'
-content = require './lib/content'
+contentify = require 'contentify'
 {db} = shared = require '../shared'
 
 cache = {}
@@ -122,7 +122,7 @@ exports.setup = (callback) ->
 			res.send 301
 			next()
 
-		@server.get /^\/templates\/.*\.html/, content.serve
+		@server.get /^\/templates\/.*\.html/, contentify.serve
 			owner: 'oauth-io'
 			repo: 'content'
 			mode: 'draft'

@@ -1,53 +1,54 @@
 {
-    "name": "oauthd",
-    "description": "OAuth that just works.",
-    "private": true,
-    "version": "0.1.2",
-    "homepage": "https://oauth.io",
-    "author": "OAuth team <team@oauth.io>",
-    "repository": {
-        "type": "git",
-        "url": "gitolite@91.121.120.153:oauthd"
-    },
-    "licenses": "proprietary",
-    "main": "lib/oauthd.coffee",
-    "engines": {
-        "node": ">= 0.8.0"
-    },
-    "scripts": {
-        "test": "grunt test && coffee test/providers_check.coffee"
-    },
-    "devDependencies": {
-        "zlib": "~1.0.5"
-    },
-    "keywords": [],
-    "directories": {
-        "test": "test"
-    },
-    "dependencies": {
-        "grunt-nodemon": "~0.1.2",
-        "hiredis": "~0.1.15",
-        "redis": "~0.8.3",
-        "restify": "~2.5.1",
-        "async": "~0.2.9",
-        "request": "~2.33.0",
-        "nodemailer": "~0.4.4",
-        "underscore": "~1.4.4",
-        "grunt-contrib-jshint": "latest",
-        "grunt-contrib-nodeunit": "latest",
-        "grunt-contrib-watch": "latest",
-        "grunt-contrib-coffee": "latest",
-        "grunt-contrib-less": "latest",
-        "grunt-concurrent": "latest",
-        "grunt": "~0.4.4",
-        "restify-oauth2-oauthd": "~2.1.0",
-        "jayschema": "~0.2.0",
-        "jsonlint": "~1.6.0",
-        "prerender-node": "~0.1.15",
-        "ua-parser-js": "~0.6.2",
-        "stripe": "~2.4.1",
-        "grunt-contrib-requirejs": "latest",
-        "grunt-subgrunt": "~0.3.0",
-        "marked":"~0.3.2"
-    }
+  "name": "oauthd",
+  "description": "OAuth that just works.",
+  "private": true,
+  "version": "0.1.2",
+  "homepage": "https://oauth.io",
+  "author": "OAuth team <team@oauth.io>",
+  "repository": {
+    "type": "git",
+    "url": "gitolite@91.121.120.153:oauthd"
+  },
+  "licenses": "proprietary",
+  "main": "lib/oauthd.coffee",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test && coffee test/providers_check.coffee"
+  },
+  "devDependencies": {
+    "zlib": "~1.0.5"
+  },
+  "keywords": [],
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "grunt-nodemon": "~0.1.2",
+    "hiredis": "~0.1.15",
+    "redis": "~0.8.3",
+    "restify": "~2.5.1",
+    "async": "~0.2.9",
+    "request": "~2.33.0",
+    "nodemailer": "~0.4.4",
+    "underscore": "~1.4.4",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-nodeunit": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-coffee": "latest",
+    "grunt-contrib-less": "latest",
+    "grunt-concurrent": "latest",
+    "grunt": "~0.4.4",
+    "restify-oauth2-oauthd": "~2.1.0",
+    "jayschema": "~0.2.0",
+    "jsonlint": "~1.6.0",
+    "prerender-node": "~0.1.15",
+    "ua-parser-js": "~0.6.2",
+    "stripe": "~2.4.1",
+    "grunt-contrib-requirejs": "latest",
+    "grunt-subgrunt": "~0.3.0",
+    "marked": "~0.3.2",
+    "contentify": "0.0.1"
+  }
 }
