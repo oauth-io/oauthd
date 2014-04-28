@@ -139,13 +139,16 @@ class OAuthBase
 			data[extra] = request.params[extra] if request.params[extra]
 
 	_buildHeaders: (configuration, headerParameters = {}) ->
-		shortFormats = { json: 'application/json', url: 'application/x-www-form-urlencoded' }
 		headers = {}
-		headers["Accept"] = shortFormats[configuration.format] || configuration.format if configuration.format
+		headers["Accept"] = @_getAcceptFormat(configuration)
 		for name, value of configuration.headers
 			param = @_replaceParam(value, headerParameters)
 			headers[name] = param if param
 		return headers
+
+	_getAcceptFormat: (configuration) ->
+			shortFormats = { json: 'application/json', url: 'application/x-www-form-urlencoded' }
+			return shortFormats[configuration.format] || configuration.format if configuration.format
 
 	_buildRequestOptions: (configuration, headers, query) ->
 		method = configuration.method?.toUpperCase() || 'POST'

@@ -53,7 +53,8 @@ class OAuth2 extends OAuthBase
 		# do request to access_token
 		request options, (e, r, body) =>
 			return callback(e) if e
-			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
+			acceptFormat = @_getAcceptFormat(configuration)
+			responseParser = new OAuth2ResponseParser(r, body, acceptFormat, 'access_token')
 			responseParser.parse (err, response) =>
 				return callback err if err
 
@@ -81,7 +82,8 @@ class OAuth2 extends OAuthBase
 		# request new token
 		request options, (e, r, body) =>
 			return callback e if e
-			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'refresh token')
+			acceptFormat = @_getAcceptFormat(configuration)
+			responseParser = new OAuth2ResponseParser(r, body, acceptFormat, 'refresh token')
 			responseParser.parse (err, response) ->
 				return callback err if err
 

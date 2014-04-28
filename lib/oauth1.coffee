@@ -46,10 +46,11 @@ class OAuth1 extends OAuthBase
 		# do request to request_token
 		request options, (err, response, body) =>
 			return callback err if err
-			@_parseGetRequestTokenResponse(response, body, opts, headers, state, callback)
+			@_parseGetRequestTokenResponse(response, body, opts, state, callback)
 
-	_parseGetRequestTokenResponse: (response, body, opts, headers, state, callback) ->
-		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
+	_parseGetRequestTokenResponse: (response, body, opts, state, callback) ->
+		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.request_token)
+		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'request_token')
 		responseParser.parse (err, response) =>
 			return callback err if err
 			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
@@ -98,7 +99,8 @@ class OAuth1 extends OAuthBase
 		# do request to access_token
 		request options, (e, r, body) =>
 			return callback(e) if e
-			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
+			acceptFormat = @_getAcceptFormat(configuration)
+			responseParser = new OAuth1ResponseParser(r, body, acceptFormat, 'access_token')
 			responseParser.parse (err, response) =>
 				return callback err if err
 
