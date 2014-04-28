@@ -63,8 +63,12 @@ class OAuthBase
 			query[parameterName] = param if param
 		return query
 
-	_buildAuthorizeUrl: (url, query, stateId) ->
-		url = @_replaceParam(url, {})
+	_buildAuthorizeUrl: (opts, stateId, setAdditionalQueryParams) ->
+		configuration = @_oauthConfiguration.authorize
+		placeholderValues = { state: stateId, callback: @_serverCallbackUrl }
+		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
+		setAdditionalQueryParams(query) if setAdditionalQueryParams
+		url = @_replaceParam(configuration.url, {})
 		url += "?" + querystring.stringify(query)
 		return { url: url, state: stateId }
 

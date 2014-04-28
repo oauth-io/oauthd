@@ -54,11 +54,8 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 				return callback err if err
-				configuration = @_oauthConfiguration.authorize
-				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
-				query.oauth_token = response.oauth_token
-				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
+				callback null, @_buildAuthorizeUrl opts, state.id, (query) ->
+					query.oauth_token = response.oauth_token
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error

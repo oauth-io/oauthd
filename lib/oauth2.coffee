@@ -27,10 +27,8 @@ class OAuth2 extends OAuthBase
 	authorize: (opts, callback) ->
 		@_createState opts, (err, state) =>
 			return callback err if err
-			configuration = @_oauthConfiguration.authorize
-			placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-			query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
-			callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
+
+			callback null, @_buildAuthorizeUrl(opts, state.id)
 
 	access_token: (state, req, response_type, callback) ->
 		# manage errors in callback
