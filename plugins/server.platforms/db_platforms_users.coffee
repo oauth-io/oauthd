@@ -51,8 +51,16 @@ exports.getDetails = (platform_user, callback) ->
 	# console.log "db_platforms_users getDetails platform_user", platform_user
 	db.users.getApps platform_user.id, (err, appkeys) ->
 		return callback err if err
-		platform_user.apps = appkeys
-		return callback null, platform_user
+		resUser = 
+			mail:platform_user.mail
+			name:platform_user.name
+			date_inscr:platform_user.date_inscr
+			location:platform_user.location
+			company:platform_user.company
+			website:platform_user.website
+			platform:platform_user.platform
+			apps:appkeys
+		return callback null, resUser
 
 
 exports.getAllDetails = (admin, callback) ->
@@ -70,8 +78,16 @@ exports.getAllDetails = (admin, callback) ->
 						if user.profile.platform? and user.profile.platform is admin.platform_admin
 							db.users.getApps user.profile.id, (err, appkeys) ->
 								return callback err if err
-								user.apps = appkeys
-								platforms_users.push user
+								resUser = 
+									mail:user.profile.mail
+									name:user.profile.name
+									date_inscr:user.profile.date_inscr
+									location:user.profile.location
+									company:user.profile.company
+									website:user.profile.website
+									platform:user.profile.platform
+									apps:appkeys
+								platforms_users.push resUser
 								cb()
 						else
 							cb()
