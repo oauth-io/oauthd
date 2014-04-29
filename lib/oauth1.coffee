@@ -28,13 +28,15 @@ class OAuth1 extends OAuthBase
 	authorize: (opts, callback) ->
 		@_createState opts, (err, state) =>
 			return callback err if err
-			@_getRequestToken state.id, opts, (err, parsedResponse) =>
+			@_getRequestToken state.id, opts, (err, response, body) =>
 				return callback err if err
-				@_saveRequestTokenSecret state.id, parsedResponse.oauth_token_secret, opts, (err) =>
+				@_parseGetRequestTokenResponse response, body, opts, state.id, (err, parsedResponse) =>
 					return callback err if err
-					authorizeUrl = @_buildAuthorizeUrl opts, state.id, (query) ->
-						query.oauth_token = parsedResponse.oauth_token
-					callback null, authorizeUrl
+					@_saveRequestTokenSecret state.id, parsedResponse.oauth_token_secret, opts, (err) =>
+						return callback err if err
+						authorizeUrl = @_buildAuthorizeUrl opts, state.id, (query) ->
+							query.oauth_token = parsedResponse.oauth_token
+						callback null, authorizeUrl
 
 	_getRequestToken: (stateId, opts, callback) ->
 		configuration = @_oauthConfiguration.request_token
@@ -52,7 +54,7 @@ class OAuth1 extends OAuthBase
 		# do request to request_token
 		request options, (err, response, body) =>
 			return callback err if err
-			@_parseGetRequestTokenResponse(response, body, opts, stateId, callback)
+			callback(null, response, body)
 
 	_parseGetRequestTokenResponse: (response, body, opts, stateId, callback) ->
 		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.request_token)
