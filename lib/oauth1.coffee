@@ -28,11 +28,11 @@ class OAuth1 extends OAuthBase
 	authorize: (opts, callback) ->
 		@_createState opts, (err, state) =>
 			return callback err if err
-			@_getRequestToken state, opts, callback
+			@_getRequestToken state.id, opts, callback
 
-	_getRequestToken: (state, opts, callback) ->
+	_getRequestToken: (stateId, opts, callback) ->
 		configuration = @_oauthConfiguration.request_token
-		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+		placeholderValues = { state: stateId, callback: @_serverCallbackUrl }
 		query = @_buildQuery(configuration.query, placeholderValues, opts.options?.request_token)
 		headers = @_buildHeaders(configuration)
 		options = @_buildRequestOptions(configuration, headers, query)
@@ -46,21 +46,23 @@ class OAuth1 extends OAuthBase
 		# do request to request_token
 		request options, (err, response, body) =>
 			return callback err if err
-			@_parseGetRequestTokenResponse(response, body, opts, state, callback)
+			@_parseGetRequestTokenResponse(response, body, opts, stateId, callback)
 
-	_parseGetRequestTokenResponse: (response, body, opts, state, callback) ->
+	_parseGetRequestTokenResponse: (response, body, opts, stateId, callback) ->
 		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.request_token)
 		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'request_token')
 		responseParser.parse (err, response) =>
 			return callback err if err
-			@_saveRequestToken(state.id, response, opts, callback)
+			@_saveRequestToken stateId, response, opts, (err) =>
+				return callback err if err
+				authorizeUrl = @_buildAuthorizeUrl opts, stateId, (query) ->
+					query.oauth_token = response.oauth_token
+				callback null, authorizeUrl
 
 	_saveRequestToken: (stateId, response, opts, callback) ->
-		db.states.setToken stateId, response.oauth_token_secret, (err, returnCode) =>
+		db.states.setToken stateId, response.oauth_token_secret, (err, returnCode) ->
 			return callback err if err
-			authorizeUrl = @_buildAuthorizeUrl opts, stateId, (query) ->
-				query.oauth_token = response.oauth_token
-			callback null, authorizeUrl
+			callback()
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
