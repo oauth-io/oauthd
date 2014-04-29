@@ -49,9 +49,6 @@ class OAuth1 extends OAuthBase
 			consumer_key: @_parameters.client_id
 			consumer_secret: @_parameters.client_secret
 		}
-		delete query.oauth_callback
-
-		# do request to request_token
 		request options, (err, response, body) =>
 			return callback err if err
 			callback(null, response, body)
@@ -111,17 +108,16 @@ class OAuth1 extends OAuthBase
 			return callback(e) if e
 			acceptFormat = @_getAcceptFormat(configuration)
 			responseParser = new OAuth1ResponseParser(r, body, acceptFormat, 'access_token')
-			responseParser.parse (err, response) =>
+			responseParser.parse (err, parsedResponse) =>
 				return callback err if err
-
-				expire = @_getExpireParameter(response)
+				expire = @_getExpireParameter(parsedResponse)
 				requestclone = @_cloneRequest()
 				result =
-					oauth_token: response.oauth_token
-					oauth_token_secret: response.oauth_token_secret
+					oauth_token: parsedResponse.oauth_token
+					oauth_token_secret: parsedResponse.oauth_token_secret
 					expires_in: expire
 					request: requestclone
-				@_setExtraResponseParameters(configuration, response, result)
+				@_setExtraResponseParameters(configuration, parsedResponse, result)
 				@_setExtraRequestAuthorizeParameters(req, result)
 				callback null, result
 
