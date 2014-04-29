@@ -30,7 +30,7 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			@_getRequestToken state.id, opts, (err, response, body) =>
 				return callback err if err
-				@_parseGetRequestTokenResponse response, body, opts, state.id, (err, parsedResponse) =>
+				@_parseGetRequestTokenResponse response, body, (err, parsedResponse) =>
 					return callback err if err
 					@_saveRequestTokenSecret state.id, parsedResponse.oauth_token_secret, opts, (err) =>
 						return callback err if err
@@ -53,7 +53,7 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			callback(null, response, body)
 
-	_parseGetRequestTokenResponse: (response, body, opts, stateId, callback) ->
+	_parseGetRequestTokenResponse: (response, body, callback) ->
 		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.request_token)
 		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'request_token')
 		responseParser.parse (err, parsedResponse) =>
