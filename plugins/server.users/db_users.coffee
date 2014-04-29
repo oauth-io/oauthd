@@ -351,8 +351,8 @@ exports.remove = check 'int', (iduser, callback) ->
 
 				db.redis.multi([
 					[ 'hdel', 'u:mails', mail ]
-					[ 'del', prefix+'mail', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
-							, prefix+'apps', prefix+'date_inscr', prefix+'platform', prefix+'platform_admin' ]
+					[ 'del', prefix+'mail', prefix+'name', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
+							, prefix+'apps', prefix+'date_inscr', prefix+'date_ready', prefix+'platform', prefix+'platform_admin' ]
 				]).exec (err, replies) ->
 					return callback err if err
 					shared.emit 'user.remove', mail:mail
