@@ -30,7 +30,8 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			@_getRequestToken state.id, opts, (err, response, body) =>
 				return callback err if err
-				@_parseGetRequestTokenResponse response, body, (err, parsedResponse) =>
+				configuration = @_oauthConfiguration.request_token
+				@_parseTokenResponse response, body, configuration, 'request_token', (err, parsedResponse) =>
 					return callback err if err
 					@_saveRequestTokenSecret state.id, parsedResponse.oauth_token_secret, opts, (err) =>
 						return callback err if err
@@ -53,9 +54,9 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			callback(null, response, body)
 
-	_parseGetRequestTokenResponse: (response, body, callback) ->
-		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.request_token)
-		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'request_token')
+	_parseTokenResponse: (response, body, configuration, tokenType, callback) ->
+		acceptFormat = @_getAcceptFormat(configuration)
+		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, tokenType)
 		responseParser.parse (err, parsedResponse) =>
 			return callback err if err
 			callback(null, parsedResponse)
@@ -104,19 +105,12 @@ class OAuth1 extends OAuthBase
 		delete query.oauth_callback
 
 		# do request to access_token
-		request options, (e, r, body) =>
-			return callback(e) if e
-			@_parseAccessTokenResponse r, body, (err, parsedResponse) =>
+		request options, (err, response, body) =>
+			return callback(err) if err
+			@_parseTokenResponse response, body, configuration, 'access_token', (err, parsedResponse) =>
 				return callback err if err
 				accessTokenResult = @_buildAccessTokenResult(parsedResponse, req)
 				callback null, accessTokenResult
-
-	_parseAccessTokenResponse: (response, body, callback) ->
-		acceptFormat = @_getAcceptFormat(@_oauthConfiguration.access_token)
-		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'access_token')
-		responseParser.parse (err, parsedResponse) =>
-			return callback err if err
-			callback(null, parsedResponse)
 
 	_buildAccessTokenResult: (parsedResponse, serverRequest) ->
 		configuration = @_oauthConfiguration.access_token
