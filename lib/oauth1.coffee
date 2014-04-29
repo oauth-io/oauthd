@@ -67,50 +67,52 @@ class OAuth1 extends OAuthBase
 			callback(null)
 
 	access_token: (state, req, response_type, callback) ->
+		@_checkAccessTokenRequestErrors req, (err) =>
+			return callback(err) if err
+
+			configuration = @_oauthConfiguration.access_token
+			placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+			@_setExtraRequestAuthorizeParameters(req, placeholderValues)
+			query = @_buildQuery(configuration.query, placeholderValues)
+			headers = @_buildHeaders(configuration)
+			options = @_buildRequestOptions(configuration, headers, query)
+			options.oauth = {
+				callback: query.oauth_callback
+				consumer_key: @_parameters.client_id
+				consumer_secret: @_parameters.client_secret
+				token: req.params.oauth_token
+				token_secret: state.token
+			}
+			if @_oauthConfiguration.authorize.ignore_verifier != true
+				options.oauth.verifier = req.params.oauth_verifier
+			else
+				options.oauth.verifier = ''
+			delete query.oauth_callback
+
+			# do request to access_token
+			request options, (err, response, body) =>
+				return callback(err) if err
+				@_parseTokenResponse response, body, configuration, 'access_token', (err, parsedResponse) =>
+					return callback err if err
+					accessTokenResult = @_buildAccessTokenResult(parsedResponse, req)
+					callback null, accessTokenResult
+
+	_checkAccessTokenRequestErrors: (req, callback) ->
 		if not req.params.oauth_token && not req.params.error
 			req.params.error_description ?= 'Authorization refused'
-
-		# manage errors in callback
 		if req.params.error || req.params.error_description
 			err = new check.Error
 			err.error req.params.error_description || 'Error while authorizing'
 			err.body.error = req.params.error if req.params.error
 			err.body.error_uri = req.params.error_uri if req.params.error_uri
 			return callback err
-
 		err = new check.Error
 		if @_oauthConfiguration.authorize.ignore_verifier == true
 			err.check req.params, oauth_token:'string'
 		else
 			err.check req.params, oauth_token:'string', oauth_verifier:'string'
 		return callback err if err.failed()
-
-		configuration = @_oauthConfiguration.access_token
-		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
-		query = @_buildQuery(configuration.query, placeholderValues)
-		headers = @_buildHeaders(configuration)
-		options = @_buildRequestOptions(configuration, headers, query)
-		options.oauth = {
-			callback: query.oauth_callback
-			consumer_key: @_parameters.client_id
-			consumer_secret: @_parameters.client_secret
-			token: req.params.oauth_token
-			token_secret: state.token
-		}
-		if @_oauthConfiguration.authorize.ignore_verifier != true
-			options.oauth.verifier = req.params.oauth_verifier
-		else
-			options.oauth.verifier = ''
-		delete query.oauth_callback
-
-		# do request to access_token
-		request options, (err, response, body) =>
-			return callback(err) if err
-			@_parseTokenResponse response, body, configuration, 'access_token', (err, parsedResponse) =>
-				return callback err if err
-				accessTokenResult = @_buildAccessTokenResult(parsedResponse, req)
-				callback null, accessTokenResult
+		callback(null)
 
 	_buildAccessTokenResult: (parsedResponse, serverRequest) ->
 		configuration = @_oauthConfiguration.access_token
