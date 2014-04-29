@@ -63,7 +63,7 @@
 							<tr>
 								<td>
 									<strong> grant_type </strong>
-									<p class="text-danger" >Required</p>
+									<p class="text-danger" >Required params</p>
 								</td>
 								<td>
 									<strong>string</strong>
@@ -73,12 +73,12 @@
 							<tr>
 								<td>
 									<strong> Authorization header </strong>
-									<p class="text-danger" >Required</p>
+									<p class="text-danger" >Required header</p>
 								</td>
 								<td>
 									<strong>string</strong>
 									<p> 
-									 An HTTP Basic authentication, your login and password of your OAuth.io account, concatenated using a “:” colon and then Base64 encoded. This value is then used as part of the Authorization request header.</p>
+									 An HTTP Basic authentication, the login and password of your OAuth.io account, concatenated using a “:” colon and then Base64 encoded. This value is then used as part of the Authorization request header.</p>
 								</td>
 							</tr>
 						</tbody>
@@ -142,8 +142,8 @@ request(apiAuthentication, function(error, response, body) {
 							<tbody class="table-hover">
 								<tr>
 									<td>
-										<strong> platform_name (url) </strong>
-										<p class="text-danger" >Required</p>
+										<strong> platform_name </strong>
+										<p class="text-danger" >Required in url</p>
 									</td>
 									<td>
 										<strong>string</strong>
@@ -153,7 +153,7 @@ request(apiAuthentication, function(error, response, body) {
 								<tr>
 									<td>
 										<strong> mail </strong>
-										<p class="text-danger" >Required</p>
+										<p class="text-danger" >Required params</p>
 									</td>
 									<td>
 										<strong>string</strong>
@@ -163,7 +163,7 @@ request(apiAuthentication, function(error, response, body) {
 								<tr>
 									<td>
 										<strong> name </strong>
-										<p class="text-danger" >Required</p>
+										<p class="text-danger" >Required params</p>
 									</td>
 									<td>
 										<strong>string</strong>
@@ -173,7 +173,7 @@ request(apiAuthentication, function(error, response, body) {
 								<tr>
 									<td>
 										<strong> pass </strong>
-										<p class="text-danger" >Required</p>
+										<p class="text-danger" >Required params</p>
 									</td>
 									<td>
 										<strong>string</strong>
