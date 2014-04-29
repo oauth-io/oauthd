@@ -57,13 +57,13 @@ class OAuth1 extends OAuthBase
 		responseParser = new OAuth1ResponseParser(response, body, acceptFormat, 'request_token')
 		responseParser.parse (err, response) =>
 			return callback err if err
-			@_saveRequestToken stateId, response, opts, (err) =>
+			@_saveRequestTokenSecret stateId, response.oauth_token_secret, opts, (err) =>
 				return callback err if err
 				callback(null, response)
 
 
-	_saveRequestToken: (stateId, response, opts, callback) ->
-		db.states.setToken stateId, response.oauth_token_secret, (err, returnCode) ->
+	_saveRequestTokenSecret: (stateId, requestTokenSecret, opts, callback) ->
+		db.states.setToken stateId, requestTokenSecret, (err, returnCode) ->
 			return callback err if err
 			callback(null)
 
