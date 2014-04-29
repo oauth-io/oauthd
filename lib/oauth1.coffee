@@ -28,7 +28,11 @@ class OAuth1 extends OAuthBase
 	authorize: (opts, callback) ->
 		@_createState opts, (err, state) =>
 			return callback err if err
-			@_getRequestToken state.id, opts, callback
+			@_getRequestToken state.id, opts, (err, response) =>
+				return callback err if err
+				authorizeUrl = @_buildAuthorizeUrl opts, state.id, (query) ->
+					query.oauth_token = response.oauth_token
+				callback null, authorizeUrl
 
 	_getRequestToken: (stateId, opts, callback) ->
 		configuration = @_oauthConfiguration.request_token
@@ -55,14 +59,13 @@ class OAuth1 extends OAuthBase
 			return callback err if err
 			@_saveRequestToken stateId, response, opts, (err) =>
 				return callback err if err
-				authorizeUrl = @_buildAuthorizeUrl opts, stateId, (query) ->
-					query.oauth_token = response.oauth_token
-				callback null, authorizeUrl
+				callback(null, response)
+
 
 	_saveRequestToken: (stateId, response, opts, callback) ->
 		db.states.setToken stateId, response.oauth_token_secret, (err, returnCode) ->
 			return callback err if err
-			callback()
+			callback(null)
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
