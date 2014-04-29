@@ -8,35 +8,34 @@
 	</div>
 	<h3>What is it?</h3>
 	<div class="alert alert-grey">
-	<p>Throught the OAuth.io Partners REST API, you will be able to create and manage users on OAuth.io, thus making you a partner of our service. We provide a set of endpoints that allow you to create, remove and get information about your OAuth.io users. Then, you can manage their apps, domains, keysets and receive the providers' configurations of their apps. </p>
+	<p>Through the OAuth.io Partners REST API, you will be able to create and manage users on OAuth.io, thus making you a partner of our service. We provide a set of endpoints that allow you to create, remove and get information about your OAuth.io users. Then, you can manage their apps, domains, keysets and receive the providers' configurations of their apps. </p>
 	</div>
 	<h3>How to become a partner?</h3>
 	<div class="alert alert-grey">
-	<p>In order to do so, you will have to follow these simple steps: </p>
-	<p>- Create a standard user account on OAuth.io </p>
-	<p>- Take contact with our team and ask to become a partner</p>
-	<p>- Our team will choose with you a <code>platform_name</code> </p>
-	<p>- You will be granted administration right over every user you create (using your <code>platform_name</code> to make request to our Partner API endpoints).</p>
-	</div>
-	<div class="alert alert-warning">
-		<p>This API is not a required part of the authentication or authorization feature: You cannot use this API to auth to a provider or any related feature about their access tokens. To do so, use the <a href="https://oauth.io/docs/api">Javascript API</a>.</p>
+	<p>To become a partner, follow these simple steps: </p>
+	<p>- Subscribe on OAuth.io </p>
+	<p>- Contact us on partners-support@oauth.io</p>
+	<p>- We will choose a <code>platform_name</code> for you together</p>
+	<p>- Using this <code>platform_name</code> to make requests to our Partner API endpoints, you will be able to create users You will be granted administration rights over every user you create (using your <code>platform_name</code> to make requests to our Partner API endpoints).</p>
 	</div>
 	<h3>How to use <code>OAuth.io</code> endpoints?</h3>
 	<div class="alert alert-grey">
-	<p>Every request shoud be authorized with a bearer token. </p>
-	<p>You can receive it by using the <code>/auth/token</code> endpoint, and authorize your request by setting the http header <code>Authorization: Bearer <em>YOUR_TOKEN</em></code></p>
+	<p>Each described endpoint below is relative to <a href="https://oauth.io">https://oauth.io</a>.</p>
+	<p>Every request shoud be authorized with a bearer token. You can receive it by using the <code>/auth/token</code> endpoint, and authorize your request by setting the http header <code>Authorization: Bearer <em>YOUR_TOKEN</em></code></p>
 	<p>If not, you will receive a <code>401 Unauthorized response</code>.</p>
-	<p>Check the authentication endpoint for more informations!</p>
+	</br>
+	<p>
+		The <code>platform_name</code> refers to your partner name id, given to you when you become a partner.
+	</p>
+	<p>The <code>user_email</code> refers to the email of the user you are managing. You have to give a valid email to each user you create.</p>
 	</div>
 	<div class="alert alert-grey">
 	<p><em>Some common notes about the methods below:</em></p>
-	<p>Each described endpoints below are relative to <a href="https://oauth.io">https://oauth.io</a>. Every endpoints beginning with <code>/api</code> always reply a response structure according to <a href="http://labs.omniti.com/labs/jsend">JSend</a>: The field <code>status</code> can have the values <code>success</code>, <code>fail</code>, <code>error</code>, depending on the error type. Beside the <code>status</code> field, you can find the field <code>message</code> when an error is present, and <code>data</code> in case of success or when a parameter is invalid.</p>
-	<p>Every POST request should send JSON in its body with the HTTP header <code>Content-Type</code> set to <code>application/json</code>. Some endpoints can accept <code>application/x-www-form-urlencoded</code>, but we recommand to always use JSON.</p>
-	</br>
-	<p>
-		The <code>platform_name</code> refers to you partner name id, given to you when you become a partner.
-	</p>
-	<p>The <code>user_email</code> refers to the email of the user you are managing. You have to give a valid email to each user you create.</p>
+	<p>Every POST request’s body should be formatted in JSON, and have the header <code>Content-Type</code> set to <code>application/json</code>.</p>
+	<p>The response will contain the following fields :</p>
+	<p>- status, that can hold <code>success</code>, <code>fail</code> or <code>error</code></p>
+	<p>- message, if an error occurred, with more details</p>
+	<p>- data, which contains the response</p>
 	</div>
 	<div class="panel-group" id="apiaccordion">
   <div class="panel panel-default">
@@ -78,7 +77,8 @@
 								</td>
 								<td>
 									<strong>string</strong>
-									<p> An HTTP Basic authentication, thus base64(login + ":" + password) with your login and password of your OAuth.io account. </p>
+									<p> 
+									 An HTTP Basic authentication, your login and password of your OAuth.io account, concatenated using a “:” colon and then Base64 encoded. This value is then used as part of the Authorization request header.</p>
 								</td>
 							</tr>
 						</tbody>
