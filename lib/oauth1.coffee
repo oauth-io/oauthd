@@ -110,16 +110,21 @@ class OAuth1 extends OAuthBase
 			responseParser = new OAuth1ResponseParser(r, body, acceptFormat, 'access_token')
 			responseParser.parse (err, parsedResponse) =>
 				return callback err if err
-				expire = @_getExpireParameter(parsedResponse)
-				requestclone = @_cloneRequest()
-				result =
-					oauth_token: parsedResponse.oauth_token
-					oauth_token_secret: parsedResponse.oauth_token_secret
-					expires_in: expire
-					request: requestclone
-				@_setExtraResponseParameters(configuration, parsedResponse, result)
-				@_setExtraRequestAuthorizeParameters(req, result)
-				callback null, result
+				accessTokenResult = @_buildAccessTokenResult(parsedResponse, req)
+				callback null, accessTokenResult
+
+	_buildAccessTokenResult: (parsedResponse, serverRequest) ->
+		configuration = @_oauthConfiguration.access_token
+		expire = @_getExpireParameter(parsedResponse)
+		requestclone = @_cloneRequest()
+		result =
+			oauth_token: parsedResponse.oauth_token
+			oauth_token_secret: parsedResponse.oauth_token_secret
+			expires_in: expire
+			request: requestclone
+		@_setExtraResponseParameters(configuration, parsedResponse, result)
+		@_setExtraRequestAuthorizeParameters(serverRequest, result)
+		return result
 
 	request: (req, callback) ->
 		if ! @_parameters.oauthio.oauth_token || ! @_parameters.oauthio.oauth_token_secret
