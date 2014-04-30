@@ -239,7 +239,7 @@ hooks.config = (app, apiRequest) ->
 
 		$scope.removeUser = (user)->
 			$scope.info = {}
-			if confirm('Are you sure you want to remove the user ' + user.mail + ' ?')
+			if confirm('Are you sure you want to remove the user ' + user.email + ' ?')
 				AdmService.removeUser user.id, (->
 					delete $scope.users[user.email]
 					refreshUsersList $scope.users

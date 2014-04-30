@@ -343,10 +343,12 @@ exports.remove = check 'int', (iduser, callback) ->
 			db.heroku.get_resource_by_id heroku_id, (err, resource) =>
 				if not err
 					db.heroku.destroy_resource resource, (err, resource) =>
+						return callback err if err
 						shared.emit 'heroku_user.unsubscribe', resource
+						callback()
 		else
 			db.redis.get prefix+'mail', (err, mail) ->
-				return callback err if error
+				return callback err if err
 				return callback new check.Error 'Unknown user' unless mail
 				exports.getApps iduser, (err, appkeys) ->
 					tasks = []
