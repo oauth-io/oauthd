@@ -350,6 +350,11 @@ exports.remove = check 'int', (iduser, callback) ->
 			db.redis.get prefix+'mail', (err, mail) ->
 				return callback err if err
 				return callback new check.Error 'Unknown user' unless mail
+				db.redis.get prefix + 'platform', (err, platform) -> 
+					return callback err if err
+					if platform
+						shared.emit 'platform_user.remove', platform, mail
+
 				exports.getApps iduser, (err, appkeys) ->
 					tasks = []
 					for key in appkeys
