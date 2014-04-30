@@ -338,25 +338,32 @@ exports.get = check 'int', (iduser, callback) ->
 # delete a user account
 exports.remove = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
-	db.redis.get prefix+'mail', (err, mail) ->
-		return callback err if error
-		return callback new check.Error 'Unknown user' unless mail
-		exports.getApps iduser, (err, appkeys) ->
-			tasks = []
-			for key in appkeys
-				do (key) ->
-					tasks.push (cb) -> db.apps.remove key, cb
-			async.series tasks, (err) ->
-				return callback err if err
+	db.redis.get prefix+'heroku_id', (err, heroku_id) ->
+		if not err and heroku_id?
+			db.heroku.get_resource_by_id heroku_id, (err, resource) =>
+				if not err
+					db.heroku.destroy_resource resource, (err, resource) =>
+						shared.emit 'heroku_user.unsubscribe', resource
+		else
+			db.redis.get prefix+'mail', (err, mail) ->
+				return callback err if error
+				return callback new check.Error 'Unknown user' unless mail
+				exports.getApps iduser, (err, appkeys) ->
+					tasks = []
+					for key in appkeys
+						do (key) ->
+							tasks.push (cb) -> db.apps.remove key, cb
+					async.series tasks, (err) ->
+						return callback err if err
 
-				db.redis.multi([
-					[ 'hdel', 'u:mails', mail ]
-					[ 'del', prefix+'mail', prefix+'name', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
-							, prefix+'apps', prefix+'date_inscr', prefix+'date_ready', prefix+'platform', prefix+'platform_admin' ]
-				]).exec (err, replies) ->
-					return callback err if err
-					shared.emit 'user.remove', mail:mail
-					callback()
+						db.redis.multi([
+							[ 'hdel', 'u:mails', mail ]
+							[ 'del', prefix+'mail', prefix+'name', prefix+'pass', prefix+'salt', prefix+'validated', prefix+'key'
+									, prefix+'apps', prefix+'date_inscr', prefix+'date_ready', prefix+'platform', prefix+'platform_admin' ]
+						]).exec (err, replies) ->
+							return callback err if err
+							shared.emit 'user.remove', mail:mail
+							callback()
 
 # get a user by his mail
 exports.getByMail = check check.format.mail, (mail, callback) ->
