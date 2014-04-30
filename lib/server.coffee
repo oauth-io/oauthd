@@ -55,9 +55,25 @@ plugins.runSync 'raw'
 server.use restify.authorizationParser()
 server.use restify.queryParser()
 server.use restify.bodyParser mapParams:false
+
+server.opts /^\/api\/.*$/, (req, res, next) ->
+	res.setHeader "Access-Control-Allow-Origin", "*"
+	res.setHeader "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
+	res.setHeader "Access-Control-Allow-Headers", "Authorization, Content-Type"
+	res.send(200);
+
+server.use (req, res, next) ->
+	if (req.url.match(/^\/api\/.*$/))
+		res.setHeader "Access-Control-Allow-Origin", "*"
+		res.setHeader "Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"
+		res.setHeader "Access-Control-Allow-Headers", "Authorization, Content-Type"
+	next()
+
 server.use (req, res, next) ->
 	res.setHeader 'Content-Type', 'application/json'
 	next()
+
+
 
 # add server to shared plugins data and run init
 plugins.runSync 'init'

@@ -40,7 +40,7 @@
         "grunt-contrib-less": "latest",
         "grunt-concurrent": "latest",
         "grunt": "~0.4.4",
-        "restify-oauth2-oauthd": "~2.1.0",
+        "restify-oauth2-oauthd": "~2.2.0",
         "jayschema": "~0.2.0",
         "jsonlint": "~1.6.0",
         "prerender-node": "~0.1.15",

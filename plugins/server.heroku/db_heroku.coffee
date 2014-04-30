@@ -163,7 +163,13 @@ exports.destroy_resource = (resource, callback) ->
 						prefix + 'validated',
 						prefix + 'date_inscr',
 						prefix + 'date_validate',
-						prefix + 'apps' ]
+						prefix + 'apps',
+						prefix+'name', 
+						prefix+'pass', 
+						prefix+'salt',
+						prefix+'date_ready', 
+						prefix+'platform', 
+						prefix+'platform_admin' ]
 				]).exec (err, replies) ->
 					return callback err if err
 					shared.emit 'user.remove', mail:resource.mail
