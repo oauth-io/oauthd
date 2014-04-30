@@ -163,4 +163,12 @@ exports.setup = (callback) ->
 		else
 			console.log "Missing informations to remove platform's admins." 
 
+	@on 'platform_user.remove', (platform, mail) =>
+		if platform? and mail? 
+			db.redis.hdel 'u:' + platform, mail, (err, res) ->
+				if err
+					console.log "Error removing user of platform " + platform + " with mail " + mail + "."
+		else
+			console.log "Missing informations to remove platform's user." 
+
 	callback()
