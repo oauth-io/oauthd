@@ -34,8 +34,11 @@ exports.create = (body, platform, callback) ->
 		platform: platform
 	db.users.register data, (err, user) -> 
 		return callback err if err
-		returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr, platform:user.platform
-		return callback null, returnedUser
+		key = 'u:' + user.platform + ':'
+		db.redis.hset 'u:' + user.platform, user.mail, user.id, (err, res) ->
+			return callback err if err
+			returnedUser = mail:user.mail, name:user.name, date_inscr:user.date_inscr, platform:user.platform
+			return callback null, returnedUser
 
 
 exports.remove = (platform_user, callback) ->
@@ -43,7 +46,9 @@ exports.remove = (platform_user, callback) ->
 	# console.log "db_platforms_users remove platform_user", platform_user
 	db.users.remove platform_user.id, (err) -> 
 		return callback err if err
-		callback()
+		db.redis.hdel 'u:' + platform_user.platform, platform_user.mail, (err, res) ->
+			return callback err if err
+			callback()
 
 
 exports.getDetails = (platform_user, callback) ->
@@ -66,7 +71,7 @@ exports.getDetails = (platform_user, callback) ->
 exports.getAllDetails = (admin, callback) ->
 	# console.log "db_platforms_users getAllDetails"
 	# console.log "db_platforms_users getAllDetails admin", admin	
-	db.redis.hgetall 'u:mails', (err, users) =>
+	db.redis.hgetall 'u:' + admin.platform_admin, (err, users) =>
 		return callback err if err
 		platforms_users = []
 		tasks = []
