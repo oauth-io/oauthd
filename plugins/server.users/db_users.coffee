@@ -339,7 +339,7 @@ exports.get = check 'int', (iduser, callback) ->
 exports.remove = check 'int', (iduser, callback) ->
 	prefix = 'u:' + iduser + ':'
 	db.redis.get prefix+'mail', (err, mail) ->
-		return callback err if err
+		return callback err if error
 		return callback new check.Error 'Unknown user' unless mail
 		exports.getApps iduser, (err, appkeys) ->
 			tasks = []
@@ -449,6 +449,7 @@ exports.getPlan = check 'int', (iduser, callback) ->
 		return callback err if err
 		return callback null if not plan_id
 		plan = db.plans[plan_id]
+		return callback null if not plan?
 		plan_id = plan_id.substr 0, plan_id.length - 3  if plan_id.substr(plan_id.length - 2, 2) is 'fr'
 
 		return callback null,
