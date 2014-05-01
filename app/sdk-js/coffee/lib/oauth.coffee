@@ -66,12 +66,12 @@ module.exports = (window, document, jQuery, navigator) ->
 		
 		# create popup
 		delayedFunctions = ($) ->
-			oauthio.request = require("./oauthio_requests")($, config, client_states, cache)
+			oauthio.request = require("./oauthio_requests")($, config, client_states, cache, providers_api)
 			providers_api.fetchDescription = (provider) ->
 				return  if providers_desc[provider]
 				providers_desc[provider] = true
 				$.ajax(
-					url: config.oauthd_base + config.oauthd_api + "/providers/" + provider
+					url: config.oauthd_api + "/providers/" + provider
 					data:
 						extend: true
 
@@ -331,7 +331,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					providers_api.fetchDescription.apply providers_api, arguments
 					return
 				)
-				oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache)
+				oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache, providers_api)
 			else
 				delayedFunctions window.jQuery
 		return
