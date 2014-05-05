@@ -73,7 +73,7 @@ exports.raw = ->
 
 		req.apiUrl = decodeURIComponent(req.params[1])
 
-		@db.apps.checkDomain oauthio.k, ref, (err, domaincheck) ->
+		@db.apps.checkDomain oauthio.k, ref, (err, domaincheck) =>
 			return cb err if err
 			if ! domaincheck
 				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
