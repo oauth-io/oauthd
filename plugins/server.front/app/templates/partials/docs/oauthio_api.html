@@ -911,7 +911,7 @@
 								</tr>
 							</tbody>
 						</table>
-						<p>You must include the "oauthio" HTTP header inside your request, which is a <code>application/x-www-form-urlencoded</code> hash containing:
+						<p>You must include the "<strong>oauthio</strong>" HTTP header inside your request, which is a <code>application/x-www-form-urlencoded</code> hash containing:
   						<p>- <strong> k</strong>: the public OAuth.io key of your app. If the http header Origin or Referer is set, this will be checked against your app’s whitelist. If none are present, you must accept the “localhost” domain in your OAuthio’s app.</p>
 					  	<p>- <strong> oauth_token</strong>: OAuth1 public token.</p>
   						<p>- <strong> oauth_secret_token</strong>: OAuth1 secret token.</p>
@@ -924,7 +924,7 @@
 						<pre>
 GET /request/twitter/%2F1.1%2Faccount%2Fverify_credentials.json HTTP/1.1
 Host: oauth.io
-oauthio: k=OAUTHIO_PUBLIC_KEY&oauthv=1&oauth_token=TWITTER_PUBLIC_TOKEN&oauth_token_secret=TWITTER_SECRET_TOKEN
+oauthio: k=<strong>OAUTHIO_PUBLIC_KEY</strong>&oauthv=1&oauth_token=<strong>TWITTER_PUBLIC_TOKEN</strong>&oauth_token_secret=<strong>TWITTER_SECRET_TOKEN</strong>
 Referer: https://whitelisted_domain_in_oauthio/
 						</pre>
 					</div>
