@@ -10,13 +10,26 @@
 		<p>This API is not a required part of the authentication or authorization feature: You cannot use this API to auth to a provider or any related feature about their access tokens. To do so, use the <a href="https://oauth.io/docs/api">Javascript API</a></p>
 		<p>The REST API is only used to manage your actions on OAuth.io: you can manage your apps, domains, keysets, receive the providers' configuration or your account informations.</p>
 	</div>
-	<h3><code>OAuth</code> endpoints</h3>
+	<h3>How to use<code>OAuth.io</code> endpoints</h3>
 	<div class="alert alert-grey">
+	<p>Each described endpoint below is relative to <a href="https://oauth.io">https://oauth.io</a>.</p>
+	<p>Every request shoud be authorized with a bearer token. You can receive it by using the <code>/auth/token</code> endpoint, and authorize your request by setting the http header <code>Authorization: Bearer <em>YOUR_TOKEN</em></code></p>
+	<p>If not, you will receive a <code>401 Unauthorized response</code>.</p>
+	</div>
+	<div class="alert alert-grey">
+	<p><em>Some common notes about the methods below:</em></p>
+	<p>Every POST request’s body should be formatted in JSON, and have the header <code>Content-Type</code> set to <code>application/json</code>.</p>
+	<p>The response will contain the following fields :</p>
+	<p>- status, that can hold <code>success</code>, <code>fail</code> or <code>error</code></p>
+	<p>- message, if an error occurred, with more details</p>
+	<p>- data, which contains the response</p>
+	</div>
+	<!-- <div class="alert alert-grey">
 		<p><em>Some common notes about the methods below:</em></p>
 		<p>Each described endpoints below are relative to <a href="https://oauth.io">https://oauth.io</a>. Every endpoints beginning with <code>/api</code> always reply a response structure according to <a href="http://labs.omniti.com/labs/jsend">JSend</a>: The field <code>status</code> can have the values <code>success</code>, <code>fail</code>, <code>error</code>, depending on the error type. Beside the <code>status</code> field, you can find the field <code>message</code> when an error is present, and <code>data</code> in case of success or when a parameter is invalid.</p>
 		<p>Every POST request should send JSON in its body with the HTTP header <code>Content-Type</code> set to <code>application/json</code>. Some endpoints can accept <code>application/x-www-form-urlencoded</code>, but we recommand to always use JSON.</p>
 		<p>Finally, every request shoud be authorized with a bearer token (if not, you will receive a 401 Unauthorized response): You can receive it by using the <code>/auth/token</code> endpoint, and authorize your request by setting the http header <code>Authorize: Bearer <em>YOUR_TOKEN</em></code>
-	</div>
+	</div> -->
 	<div class="panel-group" id="apiaccordion">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -853,5 +866,70 @@
 				</div>
 			</div>
 		</div>
+	</div>
+	<div class="panel panel-default">
+	    <div class="panel-heading">
+	      	<h4 class="panel-title">
+	        	<a class="accordion-toggle" data-toggle="collapse" data-parent="#apiaccordion" href="#collapseProxyApi">
+	         		 Proxy API
+	       		</a>
+	      	</h4>
+	    </div>
+	    <div id="collapseProxyApi" class="panel-collapse collapse">
+	      	<div class="panel-body">
+	      		<div class="panel panel-primary">
+					<div class="panel-heading">
+						<span class="label label-info">HTTP</span> <span class="label label-success">GET</span><span class="label label-warning">POST</span><span class="label label-primary">PUT</span><span class="label label-danger">DELETE</span><span class="label label-default">PATCH</span> /request/{provider}/{url}
+					</div>
+					<div class="panel-body">
+						<p></p>
+						<table class="table">
+							<thead>
+								<th style="width:20%"></th>
+								<th style="width:80%"></th>
+							</thead>
+							<tbody class="table-hover">
+								<tr>
+									<td>
+										<strong> provider </strong>
+										<p class="text-danger" >Required in url</p>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> The provider's name (e.g. "facebook") </p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<strong> request_url </strong>
+										<p class="text-danger" >Required in url</p>
+									</td>
+									<td>
+										<strong>string</strong>
+										<p> the api request's url, can be relative to the main api domain (e.g api.facebook.com) or absolute. This url must be urlencoded. </p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>You must include the "oauthio" HTTP header inside your request, which is a <code>application/x-www-form-urlencoded</code> hash containing:
+  						<p>- <strong> k</strong>: the public OAuth.io key of your app. If the http header Origin or Referer is set, this will be checked against your app’s whitelist. If none are present, you must accept the “localhost” domain in your OAuthio’s app.</p>
+					  	<p>- <strong> oauth_token</strong>: OAuth1 public token.</p>
+  						<p>- <strong> oauth_secret_token</strong>: OAuth1 secret token.</p>
+  						<p>- <strong> access_token</strong>: OAuth2 token.</p>
+  						<p>- <strong> oauthv </strong> (optional): when a provider supports both OAuth1 and OAuth2, this can be set to “1” or “2” to desambiguate the version of OAuth to use.</p>
+						</br>	
+						<p><u>Example of Proxy API requests:</u></p>
+						<p><a href="https://api.twitter.com/1.1/account/verify_credentials.json">https://api.twitter.com/1.1/account/verify_credentials.json</a></p>
+						<p><u>Response example:</u></p>
+						<pre>
+GET /request/twitter/%2F1.1%2Faccount%2Fverify_credentials.json HTTP/1.1
+Host: oauth.io
+oauthio: k=OAUTHIO_PUBLIC_KEY&oauthv=1&oauth_token=TWITTER_PUBLIC_TOKEN&oauth_token_secret=TWITTER_SECRET_TOKEN
+Referer: https://whitelisted_domain_in_oauthio/
+						</pre>
+					</div>
+				</div>
+	      	</div>
+	    </div>
 	</div>
 </div>
