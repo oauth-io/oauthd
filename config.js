@@ -95,6 +95,7 @@ module.exports = {
         //'server.tests',
         'server.statistics',
         'server.request',
+        'server.provider_testing',
 
         /* --- only for oauth.io --- */
         'server.front'
