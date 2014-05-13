@@ -11,9 +11,18 @@ exports.config =
 			password: 'jeanrene4'
 		}
 		permissions_buttons: [
-			'.setup-main form'
+			{
+				selector: '.setup-main button',
+				type: 'click'
+			}
 		]
+	auth: {
+		validate: (error, response) ->
+			return typeof response?.access_token is 'string'
+		message: 'Access token retrieval'
+	}
 	requests: [
+					name: "Get basic user information"
 					method: "get",
 					params: ['/user'],
 					validate: (error, data)  ->

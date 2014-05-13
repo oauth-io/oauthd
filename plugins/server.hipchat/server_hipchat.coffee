@@ -14,6 +14,8 @@ exports.setup = (callback) ->
 	if not @config.hipchat?.token
 		console.log 'Warning: hipchat plugin is not configured'
 		return callback()
+	else
+		console.log 'hipchat plugin token : ' + @config.hipchat.token
 
 	hipchat = (data, cb) =>
 		request {
@@ -23,10 +25,11 @@ exports.setup = (callback) ->
 				auth_token: @config.hipchat.token
 			form:
 				room_id: data.room
-				from: @config.hipchat.name
+				from: data.from || @config.hipchat.name
 				message: data.message.replace(/\n/g,'<br/>')
 				message_format: 'html'
 				notify: '1'
+				color: data.color || 'yellow'
 		}, (e, r, body) ->
 			cb() if cb
 
@@ -53,6 +56,10 @@ exports.setup = (callback) ->
 		msg = heroku_user.mail + '[' + heroku_user.id + ']'
 		msg += ' unsubscribe from heroku oauthio addon.'
 		hipchat room:@config.hipchat.room_activities, message: msg
+
+	@on 'provider_testing.failure', (provider, messages) =>
+		msg = 'Tests on provider "' + provider + '" failed on the following step(s) :' + "\n" + messages.join("\n")
+		hipchat room:@config.hipchat.room_activities, message: msg, color: 'red', from: 'Provider tester'
 
 	if @config.hipchat.crash_monitor
 		exit.push 'crash monitor', (callback) =>

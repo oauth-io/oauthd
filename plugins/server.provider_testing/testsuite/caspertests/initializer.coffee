@@ -11,5 +11,4 @@ exports.initialize = (casper, config) ->
 		,
 			config: config
 		)
-		@.test.assert init_worked, "Initialize method : set and callable"
 		return
