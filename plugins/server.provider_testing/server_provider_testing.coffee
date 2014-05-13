@@ -24,6 +24,7 @@ launch_testsuite = require './testsuite/tester'
 Path = require 'path'
 
 fs = require 'fs'
+shared = require '../shared'
 
 files = fs.readdirSync Path.join(__dirname, 'testsuite', 'caspertests', 'providers')
 providers = []
@@ -34,13 +35,16 @@ for k of files
 run_tests = (providers, k) ->
 	k = k || 0
 	if (k < providers.length)
-		console.log 'Testing provider : ' + providers[k]
 		launch_testsuite(providers[k])
-		.then ->
+		.then (data) ->
+			test_passed = data.passed
+			result = data.messages
+			if (not test_passed)
+				shared.emit 'provider_testing.failure', providers[k], result
 			run_tests providers, k + 1
 
 exports.raw = ->
-	setTimeout (->
+	run_tests providers
+	setInterval (->
 		run_tests providers
-		
-	), 3000
+	), 1800000

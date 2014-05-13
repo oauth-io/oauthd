@@ -8,11 +8,23 @@ local_data = {
 waitformyselector = (selectors, callback, index) ->
 	index = index || 0
 	
-	@waitForSelector selectors[index], (=>
+	selector = {
+
+	}
+	if (typeof selectors[index] is 'object')
+		selector = selectors[index]
+	if (typeof selectors[index] is 'string')
+		selector.selector = selectors[index]
+		selector.type = 'form'
+
+	@waitForSelector selector.selector, (=>
 		#Accepting permissions
 		if (@cli.options.screenshots)
 			@capture './pictures/' + local_data.provider.provider_name + '_form' + (new Date().getTime()) + '.png'
-		@fill selectors[index], {}, true
+		if selector.type == 'click'
+			@click selector.selector
+		if selector.type == 'form'
+			@fill selectors[index].selector, {}, true
 		if (@cli.options.verbose)
 			@echo "validated step " + (index + 1) + " of scope "
 		casper.__clearPopup()
@@ -32,6 +44,7 @@ waitformyselector = (selectors, callback, index) ->
 
 
 exports.tests = (casper, provider, global_conf, utils) ->
+
 	clearPopup = ->
 		popup.loaded = false
 		popup.page = undefined
@@ -90,11 +103,11 @@ exports.tests = (casper, provider, global_conf, utils) ->
 				utils.dump error
 			if response
 				utils.dump response
-		@.test.assert launch_popup, "Popup method : defined and callable"
+		
 		return
 
 	casper.waitForPopup new RegExp(provider.domain_regexp), (->
-		@test.assertEquals @popups.length, 1, "Popup method : popup showing"
+		# @test.assertEquals @popups.length, 1, "Popup method : popup showing"
 		return
 	), (->
 	), 1000
@@ -148,5 +161,10 @@ exports.tests = (casper, provider, global_conf, utils) ->
 				@echo "Received post OAuth response object"
 				utils.dump response
 
-			@test.assert typeof response == "object" and response != null and !error, "Popup response available"
-	), (-> return), 20000
+		# @test.assert typeof response == "object" and response != null and !error, "Popup response available"
+		if (provider.auth?.validate?)
+			@test.assert provider.auth.validate(error, response), provider.auth.message || "OAuth response retrieved"
+	), (-> 
+		@test.assert false, 'Failed OAuth step (timeout)' 
+		return
+	), 20000
