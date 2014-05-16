@@ -11,12 +11,9 @@ exports.launch = (casper, provider, global_conf, utils) ->
 			OAuth = base.evaluate(->
 				return window.OAuth
 			)
-			base.test.assert OAuth isnt null, "OAuth is defined"
 			version = base.evaluate(->
 				return window.OAuth.getVersion()
 			)
-			
-			base.test.assert typeof version is "string", "OAuth.version is defined"
 
 		require('./initializer').initialize casper, global_conf, utils
 		
@@ -26,10 +23,12 @@ exports.launch = (casper, provider, global_conf, utils) ->
 		else
 			require("./popup").tests casper, provider, global_conf, utils
 
-		databag = {}
-		for request in provider.requests
-			request.provider = provider.provider_name
-			require('./requester').request casper, request, utils, databag		
+
+		# Uncomment this to test requests
+		# databag = {}
+		# for request in provider.requests
+		# 	request.provider = provider.provider_name
+		# 	require('./requester').request casper, request, utils, databag		
 		
 		casper.run()
 		return

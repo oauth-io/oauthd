@@ -8,6 +8,10 @@ var me = {
     ],
     params: {},
     fields: {
+        id: '=',
+        avatar: function (me) {
+            return 'https://graph.facebook.com/' + me.id + '/picture';
+        },
         name: '=',
         firstname: 'first_name',
         lastname: 'last_name',

@@ -18,9 +18,20 @@ exports.config =
 		},
 		validate_button: "#u_0_1"
 		permissions_buttons: [
-			'#platformDialogForm',
-			'#platformDialogForm'
+			{
+				selector: '#platformDialogForm',
+				type: 'form'
+			},
+			{
+				selector: '#platformDialogForm',
+				type: 'form'
+			}
 		]
+	auth: {
+		validate: (error, response) ->
+			return typeof response?.access_token is 'string'
+		message: 'Access token retrieval'
+	}
 	requests: [
 					name: "Basic user info through GET"
 					method: "get",
