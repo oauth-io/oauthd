@@ -21,6 +21,7 @@ font-family: "Century Gothic";
 font-style:normal;
 src: url('/fonts/gothic.ttf');
 }</style>
+    <link href='http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700,200' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
     <link rel="publisher" href="https://plus.google.com/114197621848884111231" />
     <link rel="canonical" href="https://oauth.io{{location}}" />
@@ -123,7 +124,7 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
           <span class="icon-bar"></span>
         </button>
         <!-- Be sure to leave the brand out there if you want it shown -->
-        <a class="navbar-brand" style="font-family: 'YanoneKLight', sans-serif; font-size: 1.8em; color: #6d6c6c" href="/">
+        <a class="navbar-brand" style="font-family: 'Yanone Kaffeesatz', sans-serif;font-weight:700; font-size: 1.8em; color: #6d6c6c" href="/">
           <img class="pull-left" src="/img/logo_text.png" style="margin-top: -20px; top: 8px;position: relative; z-index:5" height="45" alt="OAuth.io logo">
         </a>
 
@@ -133,15 +134,17 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
           <ul class="nav navbar-nav">
           </ul>
           <ul class="nav navbar-nav pull-right ng-cloak">
-            <li ng-hide="UserService.isLogin()" ng-class="{active: selectedMenu == '/features'}" ><a href="/features">Features</a></li>
+            <li ng-class="{active: selectedMenu == '/features'}" ><a href="/features">Features</a></li>
             <li ng-class="{active: selectedMenu == '/providers'}" ><a href="/providers">Providers</a></li>
-            <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
+
 <!--             <li ng-class="{active: selectedMenu == '/features'}" ng-hide="UserService.isLogin()"><a href="/features">Features</a></li> -->
             <li ng-class="{active: selectedMenu.substr(0,5) == '/docs'}"><a href="/docs">Documentation</a></li>
             {{if herokuUser}}<li style="margin-right: 20px" ng-class="{active: selectedMenu.substr(0,8) == '/pricing'}"><a href="/pricing">Pricing</a></li>{{endif}}
+
             {{if admin}}<li ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></li>{{endif}}
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
+            <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
             <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer">Account</a></li>
             <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="javascript:void(0);"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
             <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
