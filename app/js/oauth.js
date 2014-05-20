@@ -1,8 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports = {
-  oauthd_url: "{{auth_url}}",
-  oauthd_api: "{{api_url}}",
-  version: "web-0.1.7",
+  oauthd_url: "https://oauth.io",
+  oauthd_api: "https://oauth.io/api",
+  version: "web-0.2.0",
   options: {}
 };
 
@@ -90,14 +90,14 @@ module.exports = function(window, document, jQuery, navigator) {
   return function(exports) {
     var delayedFunctions, delayfn, e, _preloadcalls;
     delayedFunctions = function($) {
-      oauthio.request = require("./oauthio_requests")($, config, client_states, cache);
+      oauthio.request = require("./oauthio_requests")($, config, client_states, cache, providers_api);
       providers_api.fetchDescription = function(provider) {
         if (providers_desc[provider]) {
           return;
         }
         providers_desc[provider] = true;
         $.ajax({
-          url: config.oauthd_base + config.oauthd_api + "/providers/" + provider,
+          url: config.oauthd_api + "/providers/" + provider,
           data: {
             extend: true
           },
@@ -160,7 +160,7 @@ module.exports = function(window, document, jQuery, navigator) {
           return res;
         },
         popup: function(provider, opts, callback) {
-          var defer, frm, getMessage, res, url, wnd, wndTimeout, wnd_options, wnd_settings;
+          var defer, frm, getMessage, res, url, wnd, wndTimeout, wnd_options, wnd_settings, _ref;
           getMessage = function(e) {
             if (e.origin !== config.oauthd_base) {
               return;
@@ -174,7 +174,7 @@ module.exports = function(window, document, jQuery, navigator) {
           wnd = void 0;
           frm = void 0;
           wndTimeout = void 0;
-          defer = $ != null ? $.Deferred() : void 0;
+          defer = (_ref = window.jQuery) != null ? _ref.Deferred() : void 0;
           opts = opts || {};
           if (!config.key) {
             if (defer != null) {
@@ -182,7 +182,7 @@ module.exports = function(window, document, jQuery, navigator) {
             }
             return callback(new Error("OAuth object must be initialized"));
           }
-          if (arguments.length === 2) {
+          if (arguments.length === 2 && typeof opts === 'function') {
             callback = opts;
             opts = {};
           }
@@ -329,14 +329,17 @@ module.exports = function(window, document, jQuery, navigator) {
           window.location_operations.changeHref(url);
         },
         callback: function(provider, opts, callback) {
-          var defer, res;
-          defer = $ != null ? $.Deferred() : void 0;
-          if (arguments.length === 1) {
+          var defer, res, _ref;
+          defer = (_ref = window.jQuery) != null ? _ref.Deferred() : void 0;
+          if (arguments.length === 1 && typeof provider === "function") {
             callback = provider;
             provider = undefined;
             opts = {};
           }
-          if (arguments.length === 2) {
+          if (arguments.length === 1 && typeof provider === "string") {
+            opts = {};
+          }
+          if (arguments.length === 2 && typeof opts === "function") {
             callback = opts;
             opts = {};
           }
@@ -349,18 +352,20 @@ module.exports = function(window, document, jQuery, navigator) {
               if (callback) {
                 return callback(new Error("You must set a provider when using the cache"));
               } else {
-                return;
+                return defer != null ? defer.promise() : void 0;
               }
             }
-            if (callback) {
-              if (res) {
-                return callback(null, res);
+            if (res) {
+              if (callback) {
+                if (res) {
+                  return callback(null, res);
+                }
+              } else {
+                if (defer != null) {
+                  defer.resolve(res);
+                }
+                return defer != null ? defer.promise() : void 0;
               }
-            } else {
-              if (defer != null) {
-                defer.resolve(res);
-              }
-              return;
             }
           }
           if (!oauth_result) {
@@ -429,7 +434,7 @@ module.exports = function(window, document, jQuery, navigator) {
         providers_api.fetchDescription = delayfn(function() {
           providers_api.fetchDescription.apply(providers_api, arguments);
         });
-        oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache);
+        oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache, providers_api);
       } else {
         delayedFunctions(window.jQuery);
       }
@@ -444,7 +449,6 @@ var Url,
 Url = require('../tools/url')();
 
 module.exports = function($, config, client_states, cache) {
-  console.log('GOT JQUERY', $);
   return {
     http: function(opts) {
       var defer, desc_opts, doRequest, i, options;
@@ -497,7 +501,6 @@ module.exports = function($, config, client_states, cache) {
             }
           }
           delete options.oauthio;
-          console.log(options);
           return $.ajax(options);
         }
       };
@@ -652,7 +655,15 @@ module.exports = function($, config, client_states, cache) {
         return;
       }
       if (opts.provider && data.provider.toLowerCase() !== opts.provider.toLowerCase()) {
-        return;
+        err = new Error("Returned provider name does not match asked provider");
+        if (defer != null) {
+          defer.reject(err);
+        }
+        if (opts.callback && typeof opts.callback === "function") {
+          return opts.callback(err);
+        } else {
+          return;
+        }
       }
       if (data.status === "error" || data.status === "fail") {
         err = new Error(data.message);
@@ -803,6 +814,8 @@ module.exports = {
 };
 
 },{}],6:[function(require,module,exports){
+
+/* istanbul ignore next */
 module.exports = {
   init: function(config, document) {
     this.config = config;
@@ -847,6 +860,9 @@ var b64pad, hexcase;
 hexcase = 0;
 
 b64pad = "";
+
+
+/* istanbul ignore next */
 
 module.exports = {
   hex_sha1: function(s) {
