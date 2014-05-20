@@ -16,7 +16,7 @@ define [], () ->
 		$('.try-it').tryIt
 			url: '/data/sampleLandingPage.json'
 			providers: ['facebook', 'twitter', 'google', 'github', 'linkedin']
-			languages: ['js', 'ios', 'android']
+			languages: ['js']
 			tryIt: (lang, provider) =>
 				OAuth.initialize window.demoKey
 				OAuth.popup provider, (err, res) ->

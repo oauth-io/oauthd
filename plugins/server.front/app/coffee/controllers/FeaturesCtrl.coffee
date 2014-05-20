@@ -1,12 +1,14 @@
 "use strict"
 define [], () ->
-	FeaturesCtrl = (UserService, MenuService, $scope) ->
+	FeaturesCtrl = (UserService, MenuService, $scope, $anchorScroll) ->
 		MenuService.changed()
+
+		$anchorScroll()
 
 		$('#try1').tryIt
 			url: '/data/sampleFeature1.json'
 			providers: ['facebook', 'twitter', 'google', 'github', 'linkedin']
-			languages: ['js', 'ios', 'android']
+			languages: ['js']
 			tryIt: (lang, provider) =>
 				OAuth.initialize window.demoKey
 				OAuth.popup provider, (err, res) ->
@@ -21,22 +23,14 @@ define [], () ->
 
 		$('#try2').tryIt
 			url: '/data/sampleFeature2.json'
-			providers: ['facebook', 'twitter', 'google', 'github', 'linkedin']
-			languages: ['js', 'ios', 'android']
-			tryIt: (lang, provider) =>
-				OAuth.initialize window.demoKey
-				OAuth.popup provider, (err, res) ->
-					if err
-						alert JSON.stringify err
-						return
-					res.me().done (data) ->
-						alert 'Hello ' + data.name
-				mixpanel.track "feature demo 2"
-				return false
+			providers: ['facebook', 'twitter']
+			languages: ['js']
+			tryButton: false
 
 	return [
 		'UserService'
 		'MenuService'
 		'$scope'
+		'$anchorScroll'
 		FeaturesCtrl
 	]
