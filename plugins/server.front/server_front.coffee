@@ -125,7 +125,7 @@ exports.setup = (callback) ->
 		@server.get /^\/templates\/.*\.html/, contentify.serve
 			owner: 'oauth-io'
 			repo: 'content'
-			mode: 'draft'
+			mode: 'release'
 			user: @config.github_login
 			password: @config.github_pass
 			directory: __dirname + '/app'

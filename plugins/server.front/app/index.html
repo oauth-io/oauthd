@@ -141,7 +141,6 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
             <li ng-class="{active: selectedMenu.substr(0,5) == '/docs'}"><a href="/docs">Documentation</a></li>
             {{if herokuUser}}<li style="margin-right: 20px" ng-class="{active: selectedMenu.substr(0,8) == '/pricing'}"><a href="/pricing">Pricing</a></li>{{endif}}
 
-            {{if admin}}<li ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></li>{{endif}}
             <li ng-class="{active: selectedMenu == '/signin'}" ng-hide="UserService.isLogin()"><a href="/signin">Log in</a></li>
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
@@ -153,6 +152,8 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
         </div><!-- /.nav-collapse -->
       </div><!-- /.container -->
     </div><!-- /.navbar -->
+    {{if admin}}<div style="width: 40px; height:20px;position:fixed;top:0;right:0" ng-class="{active: selectedMenu == '/adm'}" ng-show="UserService.isLogin()"><a href="/adm">Admin</a></div>{{endif}}
+
     <did id="container">
       <div id="content" ng-view class="ng-cloak"></div>
     </div>
