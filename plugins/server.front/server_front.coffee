@@ -130,7 +130,7 @@ exports.setup = (callback) ->
 			password: @config.github_pass
 			directory: __dirname + '/app'
 
-		@server.get /^\/(lib|data|css|js|img)\/.*/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(lib|data|css|js|img|fonts)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 
