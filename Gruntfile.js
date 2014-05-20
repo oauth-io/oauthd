@@ -63,8 +63,8 @@ module.exports = function(grunt) {
                 }
             },
         },
-        taskDefault: ['coffee', 'requirejs', 'subgrunt:default'],
-        taskServer: ['watch', 'nodemon:server', 'subgrunt:default']
+        taskDefault: ['coffee', 'requirejs'],
+        taskServer: ['watch', 'nodemon:server']
     };
 
 

@@ -10,7 +10,7 @@ restify = require 'restify'
 fs = require 'fs'
 Url = require 'url'
 proxy = require './proxy/js'
-
+contentify = require 'contentify'
 {db} = shared = require '../shared'
 
 cache = {}
@@ -85,7 +85,7 @@ exports.setup = (callback) ->
 				data = data.replace /\{\{if logged\}\}([\s\S]*?)\{\{endif\}\}/g, if req.token then '$1' else ''
 				res.end data
 				next()
-			
+
 			data = data.replace /\{\{if herokuNavData\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '$1' else ''
 			data = data.replace /\{\{if herokuUser\}\}([\s\S]*?)\{\{endif\}\}/g, if req.herokuNavData then '' else '$1'
 			data = data.replace /\{\{heroku_app\}\}/g, req.herokuBodyApp
@@ -122,7 +122,15 @@ exports.setup = (callback) ->
 			res.send 301
 			next()
 
-		@server.get /^\/(lib|data|css|js|img|templates)\/.*/, bootPathCache(), restify.serveStatic
+		@server.get /^\/templates\/.*\.html/, contentify.serve
+			owner: 'oauth-io'
+			repo: 'content'
+			mode: 'draft'
+			user: @config.github_login
+			password: @config.github_pass
+			directory: __dirname + '/app'
+
+		@server.get /^\/(lib|data|css|js|img)\/.*/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 

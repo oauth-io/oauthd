@@ -128,7 +128,6 @@ define ["stubborn"], (stubborn) ->
 			return dir
 		]
 
-
 		# app.register.directive 'paymentform', () ->
 		# 	def =
 		# 		restrict: 'E'

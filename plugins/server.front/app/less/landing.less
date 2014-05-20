@@ -1,0 +1,52 @@
+@import "../lib/bootstrap-3.1.1/less/variables";
+
+#landing {
+	> .container {
+		padding-top: 30px;
+	}
+	#landing-features {
+		margin: 0;
+		padding: 0;
+		@media (max-width: @screen-sm-min) {
+			li {
+				margin-left: 30px;
+			}
+		}
+		li {
+			margin-top: 15px;
+			span {
+				position: relative;
+				left: 15px;
+				top: 2px;
+				font-size: 22px;
+			    font-family: 'Lato', sans-serif;
+			    font-weight: 400;
+			}
+		}
+	}
+	.try-it {
+
+	}
+	.c2a {
+		padding-top: 30px;
+	}
+	@media (max-width: @screen-sm-min) {
+		#featured-by .row > div {
+			text-align: center !important;
+		}
+	}
+	#featured-by {
+		margin-top: 20px;
+		background-color: #f8f8f8;
+		min-height: 70px;
+		.text-right {
+			margin: 8px 0;
+		}
+		.text-left {
+			margin: 12px 0;
+		}
+		img {
+			margin: 0px 20px;
+		}
+	}
+}
