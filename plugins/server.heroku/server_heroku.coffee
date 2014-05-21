@@ -129,9 +129,11 @@ exports.raw = ->
 		# callback_url unused for the moment
 
 		db.heroku.registerHerokuAppUser data, (err, user) =>
+			console.log "err", err
 			res.send 404 if err
 			if not err
 				db.heroku.createDefaultApp user.id, (err, app) =>
+					console.log "err", err
 					res.send 404 if err
 					if not err
 						subscribeEvent user, user.current_plan
@@ -152,7 +154,7 @@ exports.raw = ->
 						checkProvisionning user, app, (err, res) ->
 							if err
 								db.heroku.destroy_resource user, (err, resource) =>
-									console.log "Cannot deprovision heroku resource" if err
+									console.log "Cannot deprovision heroku resource: ", err.message if err
 									if not err and resource?
 										console.log "Cannot access resource on heroku servers: resource deprovisioned."
 										shared.emit 'heroku_user.unsubscribe', resource 
