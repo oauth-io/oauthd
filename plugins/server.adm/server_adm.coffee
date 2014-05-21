@@ -26,22 +26,6 @@ exports.setup = (callback) ->
 			return callback err if err
 			if replies[2] == '1'
 				return callback new check.Error "not validable"
-			###
-			options =
-				templateName:"mail_validation"
-				templatePath:"./app/template/"
-				to:
-					email: replies[0]
-				from:
-					name: 'OAuth.io'
-					email: 'team@oauth.io'
-				subject: 'Validate your OAuth.io account'
-			data =
-				url: 'https://' + @config.url.host + '/validate/' + iduser + '/' + replies[1]
-			mailer = new Mailer options, data
-			mailer.send (err, result) =>
-				console.error 'error while sending validation mail !', err if err
-			###
 			@db.redis.set prefix+'validated', '2'
 			callback()
 
