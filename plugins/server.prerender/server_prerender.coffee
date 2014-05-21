@@ -29,8 +29,15 @@ exports.init = ->
 		req.get = (k) -> req.headers[k.toLowerCase()]
 		next()
 
+	@server.use (req, res, next) ->
+		res.setHeader 'Content-Type', 'text/html'
+		next()
+
 	@server.use prerender
 
+	@server.use (req, res, next) ->
+		res.setHeader 'Content-Type', 'application/json'
+		next()
 
 exports.setup = (callback) ->
 
