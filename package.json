@@ -48,6 +48,9 @@
     "stripe": "~2.4.1",
     "grunt-contrib-requirejs": "latest",
     "grunt-subgrunt": "~0.3.0",
-    "q": "^1.0.1"
+    "q": "^1.0.1",
+    "marked": "~0.3.2",
+    "contentify": "0.0.1",
+    "express": "^4.2.0"
   }
 }

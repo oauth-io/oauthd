@@ -57,10 +57,6 @@ exports.setup = (callback) ->
 		msg += ' unsubscribe from heroku oauthio addon.'
 		hipchat room:@config.hipchat.room_activities, message: msg
 
-	@on 'provider_testing.failure', (provider, messages) =>
-		msg = 'Tests on provider "' + provider + '" failed on the following step(s) :' + "\n" + messages.join("\n")
-		hipchat room:@config.hipchat.room_activities, message: msg, color: 'red', from: 'Provider tester'
-
 	if @config.hipchat.crash_monitor
 		exit.push 'crash monitor', (callback) =>
 			return callback() if not exit.err

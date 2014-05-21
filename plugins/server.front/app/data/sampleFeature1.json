@@ -1,0 +1,59 @@
+{
+	"js": {
+		"facebook": "//Authorize your user to facebook\nOAuth.popup('facebook')\n     .done(function(facebook) {\n\n    // Display the access token\n    alert(\"token:\"+ facebook.access_token)\n\n    // Retrieve your user info\n    facebook.me().done(function(me) {\n        alert(me.name)\n    })\n})",
+		"twitter": {
+			"replace": ["facebook", "access_token"],
+			"by": ["twitter", "oauth_token"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook", "access_token"],
+			"by": ["linkedin", "oauth_token"]
+		}
+	},
+	"ios": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	},
+	"android": {
+		"facebook": "blablabla",
+		"twitter": {
+			"replace": ["facebook"],
+			"by": ["twitter"]
+		},
+		"google": {
+			"replace": ["facebook"],
+			"by": ["google"]
+		},
+		"github": {
+			"replace": ["facebook"],
+			"by": ["github"]
+		},
+		"linkedin": {
+			"replace": ["facebook"],
+			"by": ["linkedin"]
+		}
+	}
+}

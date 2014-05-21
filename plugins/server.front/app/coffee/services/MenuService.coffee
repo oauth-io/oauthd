@@ -2,17 +2,50 @@ define [], () ->
 	MenuService = ($http, $rootScope, $location) ->
 		$rootScope.selectedMenu = $location.path()
 
-		return changed: ->
-			p = $location.path()
+		obj =
+			changed: (async) ->
+				p = $location.path()
 
-			if ['/signin','/signup','/help','/feedback','/faq','/pricing'].indexOf(p) != -1 or p.substr(0, 8) == '/payment'
-				$('body').css('background-color', "#FFF")
-			else
-				$('body').css('background-color', '#FFF')
+				$rootScope.selectedMenu = $location.path()
+				setTimeout (=>
+					@loaded() if not async
+				), 100
 
-			$('body > .navbar span, #footer').css('color', '#777777')
-			$('#wsh-powered').attr('src', '/img/webshell-logo.png')
-			$('body > .navbar li a').css('color', '#777777').css('font-weight', 'normal')
+			loaded: ->
+				n = $('#content .flexible').length
+				return false if n == 0
+				winHeight = $(window).height()
+				bodyHeight = $('body').height() - 25
 
-			$rootScope.selectedMenu = $location.path()
+				sup = 90
+				if winHeight > 900
+					sup = 10
+
+				m = winHeight - bodyHeight + sup
+				m = 400 if m > 400
+
+				if m > 0
+					@lastMargin = m
+					$('#content .flexible').css 'margin', (m / (2 * n)) + 'px 0px'
+				else
+					@lastMargin = 0
+
+				$(window).on 'resize', =>
+					n = $('#content .flexible').length
+					winHeight = $(window).height()
+					bodyHeight = $('body').height() - @lastMargin
+
+					sup = 90
+					if winHeight > 900
+						sup = 0
+
+					m = winHeight - bodyHeight + sup
+					m = 400 if m > 400
+					if m > 0 && n > 0
+						@lastMargin = m
+						$('#content .flexible').css 'margin', (m / (2 * n)) + 'px 0px'
+					else
+						@lastMargin = 0
+
+		return obj
 	return ["$http", "$rootScope", "$location", MenuService]

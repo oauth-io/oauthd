@@ -39,6 +39,17 @@ exports.setup = (callback) ->
 	@on 'user.pay', (data) =>
 		sendEvent data.user.profile, 'user.pay', invoice:data.invoice, customer:data.customer
 
+	@on 'cohort.inscr', (user) =>
+		sendEvent user, 'cohort.inscr'
+	@on 'cohort.validate', (user) =>
+		sendEvent user, 'cohort.validate'
+	@on 'cohort.activation', (user) =>
+		sendEvent user, 'cohort.activation'
+	@on 'cohort.development', (user) =>
+		sendEvent user, 'cohort.development'
+	@on 'cohort.production', (user) =>
+		sendEvent user, 'cohort.production'
+
 	@on 'user.pay.failed', (data) =>
 		sendEvent data.user.profile, 'user.pay.failed', invoice:data.invoice, customer:data.customer
 

@@ -1,0 +1,52 @@
+{
+  "name": "OAuth.io",
+  "description": "OAuth.io is an API that enables developers to integrate 3rd-parties OAuth in a unified way",
+  "image": "https://oauth.io/img/logo.png",
+  "url": "https://oauth.io",
+  "apis": [
+    {
+      "name": "API Commons",
+      "description": "An API for adding and pulling APIs that are in the commons.",
+      "image": "https://oauth.io/img/logo.png",
+      "human-url": "https://oauth.io",
+      "machine-url": "",
+      "tags": "API, OAuth",
+      "urls": [
+        {
+          "type": "signup",
+          "url": "https://oauth.io/signup"
+        }
+      ],
+      "contact": [
+        {
+          "type": "email",
+          "url": "support@oauth.io"
+        },
+        {
+          "type": "twitter",
+          "url": "https://twitter.com/oauth_io"
+        }
+      ],
+      "meta": [
+        {
+          "key": "interface-license",
+          "vallue": "AGPL"
+        },
+        {
+          "type": "pricing",
+          "url": "Freemium"
+        }
+      ]
+    }
+  ],
+  "include": [],
+  "maintainers": [
+    {
+      "OrganizationName": "OAuth.io",
+      "email": "support@oauth.io",
+      "twitter": "https://twitter.com/oauth_io/"
+    }
+  ],
+  "tags": "api, oauth",
+  "modified": "05/20/2014"
+}

@@ -18,9 +18,12 @@ exports.create = (data, user, callback) ->
 	err = new check.Error
 	err.check data, name:/^.{3,50}$/,domains:['none','array']
 	return callback err if err.failed()
-
 	db.users.getPlan user.id, (err, plan) ->
 		db.users.getApps user.id, (err, apps) ->
+			if apps.length > 0
+				db.redis.get 'u:' + user.id + ':heroku_id', (err, heroku_id) ->
+					if not err and heroku_id? 
+						return callback new check.Error('Sorry, Heroku users can\'t have multiple apps on their OAuth.io account.')
 			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
 			# return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
 

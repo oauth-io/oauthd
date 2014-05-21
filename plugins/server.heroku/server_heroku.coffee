@@ -129,20 +129,23 @@ exports.raw = ->
 		# callback_url unused for the moment
 
 		db.heroku.registerHerokuAppUser data, (err, user) =>
+			console.log "err", err
 			res.send 404 if err
 			if not err
 				db.heroku.createDefaultApp user.id, (err, app) =>
+					console.log "err", err
 					res.send 404 if err
 					if not err
 						subscribeEvent user, user.current_plan
-						conf_var = 
-							name:app.name,
-							public_key:app.key
+						# conf_var = 
+						# 	name:app.name,
+						# 	public_key:app.key
 						result = 
 							id: 
 								user.heroku_id 
 							config: 
-								OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
+								OAUTHIO_PUBLIC_KEY: app.key
+								# OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
 								# OAUTHIO_URL: user.heroku_url
 
 						stringifyResult = JSON.stringify(result)
@@ -151,7 +154,7 @@ exports.raw = ->
 						checkProvisionning user, app, (err, res) ->
 							if err
 								db.heroku.destroy_resource user, (err, resource) =>
-									console.log "Cannot deprovision heroku resource" if err
+									console.log "Cannot deprovision heroku resource: ", err.message if err
 									if not err and resource?
 										console.log "Cannot access resource on heroku servers: resource deprovisioned."
 										shared.emit 'heroku_user.unsubscribe', resource 
