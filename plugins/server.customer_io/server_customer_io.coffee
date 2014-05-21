@@ -44,6 +44,7 @@ exports.setup = (callback) ->
 
 	@on 'cohort.inscr', (user, now) =>
 		updateUser user, date_inscr:timestamp(now), created_at:timestamp(now), key:user.key
+		sendEvent user, 'cohort.inscr'
 	@on 'cohort.validate', (user, now) =>
 		updateUser user, date_validate:timestamp(now)
 	@on 'cohort.activation', (user, now) =>
