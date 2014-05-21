@@ -134,13 +134,14 @@ exports.setup = (callback) ->
 			directory: __dirname + '/app'
 			maxAge: 1
 
-		@server.get /^\/(robots.txt|sitemap.xml|loaderio-66375ef31c0db14063ea59a1240b59be\.txt)/, bootPathCache(), restify.serveStatic
+		@server.get /^\/(api\.json|robots\.txt|sitemap\.xml|loaderio-66375ef31c0db14063ea59a1240b59be\.txt)/, bootPathCache(), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
 
 		@server.get /^\/adm\/.*/, needAdmin, bootPathCache(admin:true), restify.serveStatic
 			directory: __dirname + '/app'
 			maxAge: 1
+
 
 		@server.get /^\/50[2-3]/, addExtension, bootPathCache(path:'/errors'), restify.serveStatic
 			directory: __dirname + '/errors'
