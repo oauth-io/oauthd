@@ -21,7 +21,7 @@ define [], () ->
 				OAuth.initialize window.demoKey
 				OAuth.popup provider, (err, res) ->
 					if err
-						alert JSON.stringify err
+						# alert JSON.stringify err
 						return
 					res.me().done (data) ->
 						alert 'Hello ' + data.name
