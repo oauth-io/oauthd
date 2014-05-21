@@ -166,7 +166,7 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 					</div>
 				</div>
 			</div>
-			<a class="btn btn-default btn-lg" style="cursor: pointer" href="/app-create">Create a new application</a>
+			<a class="btn btn-default btn-lg" ng-show="!me.heroku_id || (me.heroku_id && me.apps.length < 1)" style="cursor: pointer" href="/app-create">Create a new application</a>
 		</div>
 	</div>
 </div>
