@@ -18,38 +18,42 @@ exports.create = (data, user, callback) ->
 	err = new check.Error
 	err.check data, name:/^.{3,50}$/,domains:['none','array']
 	return callback err if err.failed()
+	prefix = 'u:' + user.id + ':'
+	db.redis.get prefix+'heroku_id', (err, heroku_id) ->
+		if not err and heroku_id?
+			return callback new check.Error('Sorry, Heroku users can\'t have multiple apps on their OAuth.io account.')
+		else
+			db.users.getPlan user.id, (err, plan) ->
+				db.users.getApps user.id, (err, apps) ->
+					# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
+					# return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
 
-	db.users.getPlan user.id, (err, plan) ->
-		db.users.getApps user.id, (err, apps) ->
-			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
-			# return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
-
-			key = db.generateUid()
-			secret = db.generateUid()
-			err = new check.Error
-			if data.domains
-				for domain in data.domains
-					err.check 'domains', domain, 'string'
-			return callback err if err.failed()
-			db.redis.incr 'a:i', (err, idapp) ->
-				return callback err if err
-				prefix = 'a:' + idapp + ':'
-				cmds = [
-					[ 'mset',
-						prefix+'name', data.name,
-						prefix+'key', key,
-						prefix+'secret', secret,
-						prefix+'owner', user.id,
-						prefix+'date', (new Date).getTime() ],
-					[ 'hset', 'a:keys', key, idapp ]
-				]
-				if data.domains
-					# todo: in redis >= 2.4, sadd accepts multiple members
-					for domain in data.domains
-						cmds.push [ 'sadd', prefix + 'domains', domain ]
-				db.redis.multi(cmds).exec (err, res) ->
-					return callback err if err
-					callback null, id:idapp, name:data.name, key:key
+					key = db.generateUid()
+					secret = db.generateUid()
+					err = new check.Error
+					if data.domains
+						for domain in data.domains
+							err.check 'domains', domain, 'string'
+					return callback err if err.failed()
+					db.redis.incr 'a:i', (err, idapp) ->
+						return callback err if err
+						prefix = 'a:' + idapp + ':'
+						cmds = [
+							[ 'mset',
+								prefix+'name', data.name,
+								prefix+'key', key,
+								prefix+'secret', secret,
+								prefix+'owner', user.id,
+								prefix+'date', (new Date).getTime() ],
+							[ 'hset', 'a:keys', key, idapp ]
+						]
+						if data.domains
+							# todo: in redis >= 2.4, sadd accepts multiple members
+							for domain in data.domains
+								cmds.push [ 'sadd', prefix + 'domains', domain ]
+						db.redis.multi(cmds).exec (err, res) ->
+							return callback err if err
+							callback null, id:idapp, name:data.name, key:key
 
 # get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->

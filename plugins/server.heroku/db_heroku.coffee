@@ -48,17 +48,21 @@ exports.updateConfigVar = (user, callback) =>
 	db.heroku.get_resource_by_id user.mail, (err, resource) =>
 		if not err
 			db.users.getAppsObject user.id, (err, apps) ->
-				conf_var = []
+				# conf_var = []
+				appkey = ""
 				for app in apps
-					var_domains = JSON.stringify(app.domains)
-					var_app	=
-						name:app.name,
-						public_key:app.key,
-						domains:app.domains
-					conf_var.push var_app
+					appkey = app.key
+					break
+					# var_domains = JSON.stringify(app.domains)
+					# var_app	=
+					# 	name:app.name,
+					# 	public_key:app.key,
+					# 	domains:app.domains
+					# conf_var.push var_app
 				reqbody =  
 					config: 
-						OAUTHIO_APPLICATIONS:JSON.stringify(conf_var)
+						OAUTHIO_PUBLIC_KEY: appkey
+						# OAUTHIO_APPLICATIONS:JSON.stringify(conf_var)
 				options =
 					uri: "https://" + config.heroku.heroku_user + ":" + config.heroku.heroku_password + "@api.heroku.com/vendor/apps/" + resource.heroku_id,
 					method: 'PUT',

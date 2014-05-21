@@ -135,14 +135,15 @@ exports.raw = ->
 					res.send 404 if err
 					if not err
 						subscribeEvent user, user.current_plan
-						conf_var = 
-							name:app.name,
-							public_key:app.key
+						# conf_var = 
+						# 	name:app.name,
+						# 	public_key:app.key
 						result = 
 							id: 
 								user.heroku_id 
 							config: 
-								OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
+								OAUTHIO_PUBLIC_KEY: app.key
+								# OAUTHIO_APPLICATIONS: JSON.stringify(conf_var)
 								# OAUTHIO_URL: user.heroku_url
 
 						stringifyResult = JSON.stringify(result)

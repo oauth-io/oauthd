@@ -299,7 +299,8 @@ exports.get = check 'int', (iduser, callback) ->
 		prefix + 'mail_changed',
 		prefix + 'validated',
 		prefix + 'platform',
-		prefix + 'platform_admin' ]
+		prefix + 'platform_admin',
+		prefix + 'heroku_id' ]
 	, (err, replies) ->
 		return callback err if err
 		profile =
@@ -326,7 +327,8 @@ exports.get = check 'int', (iduser, callback) ->
 			mail_changed: replies[19],
 			validated: replies[20],
 			platform: replies[21],
-			platform_admin: replies[22]
+			platform_admin: replies[22],
+			heroku_id: replies[22]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 

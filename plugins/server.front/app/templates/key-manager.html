@@ -166,7 +166,9 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 					</div>
 				</div>
 			</div>
-			<a class="btn btn-default btn-lg" style="cursor: pointer" href="/app-create">Create a new application</a>
+			<a class="btn btn-default btn-lg" ng-show="!me.heroku_id || (me.heroku_id && me.apps.length < 1)" style="cursor: pointer" href="/app-create">Create a new application</a> 
+			<a class="btn btn-default btn-lg" ng-show="me.heroku_id && me.apps.length > 0" style="cursor: pointer; text-decoration: line-through;" tooltip="Sorry, Heroku users cannot have multiple apps on their OAuth.io account."
+        tooltip-placement="right">Create a new application</a> 
 		</div>
 	</div>
 </div>
