@@ -8,7 +8,7 @@
       "name": "API Commons",
       "description": "An API for adding and pulling APIs that are in the commons.",
       "image": "https://oauth.io/img/logo.png",
-      "human-url": "https://oauth.io",
+      "human-url": "https://oauth.io/docs",
       "machine-url": "",
       "tags": "API, OAuth",
       "urls": [
