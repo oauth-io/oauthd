@@ -215,7 +215,7 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 		uaparser.setUA req.headers['user-agent']
 		browser = uaparser.getBrowser()
 		chromeext = data.origin.match(/chrome-extension:\/\/([^\/]+)/)
-		if browser.name.substr(0,2) == 'IE'
+		if browser.name?.substr(0,2) == 'IE'
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 			view += 'function createCookie(name, value) {\n'
 			view += '	var date = new Date();\n'
@@ -375,6 +375,8 @@ server.get config.base + '/:provider', (req, res, next) ->
 # create an application
 server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
 	db.apps.create req.body, req.user, (e, r) ->
+		console.log "server /apps error", e
+		console.log "server /apps res", r
 		return next(e) if e
 		plugins.data.emit 'app.create', req.user, r
 		res.send name:r.name, key:r.key, domains:r.domains
