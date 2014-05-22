@@ -4,6 +4,7 @@
 # Copyright (c) 2013 thyb, bump
 # Licensed under the MIT license.
 
+restify = require 'restify'
 Url = require 'url'
 
 async = require 'async'
@@ -17,15 +18,18 @@ plugins = require './plugins'
 exports.create = (data, user, callback) ->
 	err = new check.Error
 	err.check data, name:/^.{3,50}$/,domains:['none','array']
-	return callback err if err.failed()
+	if err.failed()
+		return callback new check.Error "You must specify a name and at least one domain for your application."
+
 	db.users.getPlan user.id, (err, plan) ->
 		db.users.getApps user.id, (err, apps) ->
-			if apps.length > 0
+			if apps?.length > 0
 				db.redis.get 'u:' + user.id + ':heroku_id', (err, heroku_id) ->
 					if not err and heroku_id? 
-						return callback new check.Error('Sorry, Heroku users can\'t have multiple apps on their OAuth.io account.')
-			# console.log apps, plan, apps.length, plan and apps.length >= 2 or plan?.nbApp <= apps.length
-			# return callback new check.Error('upgrade_plan') if not plan and apps?.length >= 2 or apps?.length >= plan?.nbApp
+						return callback new check.Error 'Sorry, Heroku users can\'t have multiple apps on their OAuth.io account.'
+			if (not plan and apps?.length >= 2) or apps?.length >= plan?.nbApp
+				if not ((user.mail.match /.*@oauth\.io$/)? and user.validated)
+					return callback new restify.NotAuthorizedError 'You must upgrade your plan to get more apps!'
 
 			key = db.generateUid()
 			secret = db.generateUid()
@@ -33,7 +37,8 @@ exports.create = (data, user, callback) ->
 			if data.domains
 				for domain in data.domains
 					err.check 'domains', domain, 'string'
-			return callback err if err.failed()
+			if err.failed()
+				return callback new check.Error "You must specify a name and at least one domain for your application."
 			db.redis.incr 'a:i', (err, idapp) ->
 				return callback err if err
 				prefix = 'a:' + idapp + ':'
