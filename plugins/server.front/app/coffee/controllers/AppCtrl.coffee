@@ -33,7 +33,10 @@ define [], () ->
 			if newV == false && $location.path() == '/key-manager' and (not $rootScope.me.apps or $rootScope.me.apps.length == 0)
 				createDefaultApp()
 			if newV == false && $location.path().substr(0, 11) == '/app-create'
-				$scope.callback = '/provider/' + $routeParams.provider + '/app'
+				if $routeParams.provider?
+					$scope.callback = '/provider/' + $routeParams.provider + '/app'
+				else
+					$scope.callback = '/key-manager/'
 
 		$scope.editMode = false
 		$scope.appCreateTemplate = "/templates/partials/create-app.html"
@@ -97,7 +100,7 @@ define [], () ->
 				callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
 				$location.path callback
 			), (error)->
-				# console.log "AppCtrl error", error
+				console.log "AppCtrl error", error
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
 				if error.status == "fail"
