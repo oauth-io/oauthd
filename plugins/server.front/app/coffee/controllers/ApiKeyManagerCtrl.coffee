@@ -199,7 +199,11 @@ define [
 
 				), (error) ->
 
-			if ($routeParams.provider)
+			$rootScope.$watch 'loading', (newV, old) ->
+				if newV == false and $routeParams.provider and $rootScope.me.apps and $rootScope.me.apps.length > 0
+					$scope.keyFormOpen $routeParams.provider
+			
+			if ($routeParams.provider and $rootScope.me.apps and $rootScope.me.apps.length > 0)
 				$scope.keyFormOpen $routeParams.provider
 
 
