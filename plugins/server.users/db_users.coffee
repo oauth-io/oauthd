@@ -328,7 +328,7 @@ exports.get = check 'int', (iduser, callback) ->
 			validated: replies[20],
 			platform: replies[21],
 			platform_admin: replies[22],
-			heroku_id: replies[22]
+			heroku_id: replies[23]
 		for field of profile
 			profile[field] = '' if profile[field] == 'undefined'
 
