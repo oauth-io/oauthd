@@ -97,7 +97,7 @@ define [], () ->
 				callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
 				$location.path callback
 			), (error)->
-				# console.log error
+				# console.log "AppCtrl error", error
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
 				if error.status == "fail"
