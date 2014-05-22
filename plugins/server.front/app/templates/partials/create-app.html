@@ -6,7 +6,7 @@
 	<div class="row" style="font-size: 1.2em">
 		<label style="text-align: right;position:relative; top: 2px; font-weight: normal" class="col-lg-4" for="createapp-name">Application name</label>
 		<div class="col-lg-8">
-			<input style="font-size: 1.0em" class="form-control" type="text" placeholder="Name of your app" ng-model="createAppForm.name" id="createapp-name" name="createapp-name" required>
+			<input style="font-size: 1.0em" class="form-control" type="text" placeholder="Name of your app" ng-model="createAppForm.name" ng-minlength="3" id="createapp-name" name="createapp-name" required>
 		</div>
 	</div>
 	<div class="row" style="margin-top: 15px;font-size: 1.2em">

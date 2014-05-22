@@ -96,10 +96,8 @@ define [], () ->
 			AppService.add $scope.createAppForm, (->
 				callback = "/key-manager"
 				callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
-				console.log "AppCtrl success callback", callback
 				$location.path callback
 			), (error)->
-				console.log "AppCtrl error", error
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
 				$rootScope.error.message = error.message
@@ -154,6 +152,12 @@ define [], () ->
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
 				$rootScope.error.message = "You must specify a name and at least one domain for your application"
+				return
+
+			if not $scope.createAppForm.name? or $scope.createAppForm.name < 3
+				$rootScope.error.state = true
+				$rootScope.error.type = "CREATE_APP"
+				$rootScope.error.message = "You must specify a valid name."
 				return
 
 			AppService.edit key, $scope.createAppForm, (->
