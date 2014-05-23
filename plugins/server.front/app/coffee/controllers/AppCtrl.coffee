@@ -33,8 +33,9 @@ define [], () ->
 			if newV == false && $location.path() == '/key-manager' and (not $rootScope.me.apps or $rootScope.me.apps.length == 0)
 				createDefaultApp()
 			if newV == false && $location.path().substr(0, 11) == '/app-create'
-				$scope.callback = '/provider/' + $routeParams.provider + '/app'
-
+				callback = "/key-manager"
+				callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
+				
 		$scope.editMode = false
 		$scope.appCreateTemplate = "/templates/partials/create-app.html"
 
@@ -97,13 +98,10 @@ define [], () ->
 				callback = "/provider/" + $routeParams.provider + '/app' if $routeParams.provider
 				$location.path callback
 			), (error)->
-				# console.log "AppCtrl error", error
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
-				if error.status == "fail"
-					$rootScope.error.message = "You must specify a name and at least one domain for your application"
-				else
-					$rootScope.error.message = 'You must upgrade your plan to get more apps. <a href="/pricing">Check the pricing</a>'
+				$rootScope.error.message = error.message
+				$rootScope.error.pricing = error.code is 403
 
 		setKeysField = (app, provider)->
 			if not app.keysField?[provider]?
@@ -154,6 +152,12 @@ define [], () ->
 				$rootScope.error.state = true
 				$rootScope.error.type = "CREATE_APP"
 				$rootScope.error.message = "You must specify a name and at least one domain for your application"
+				return
+
+			if not $scope.createAppForm.name? or $scope.createAppForm.name < 3
+				$rootScope.error.state = true
+				$rootScope.error.type = "CREATE_APP"
+				$rootScope.error.message = "You must specify a valid name."
 				return
 
 			AppService.edit key, $scope.createAppForm, (->

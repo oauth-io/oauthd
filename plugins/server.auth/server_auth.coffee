@@ -50,8 +50,8 @@ exports.needed = (req, res, next) ->
 		return next()
 	shared.db.users.hasApp req.user.id, req.params.key, (err, res) ->
 		return next err if err
-		if not (req.user.mail.match /.*@oauth\.io$/ and req.user.validated)
-			return next new restify.NotAuthorizedError "You have not access to this app" if not res
+		if (not res) and not ((user.mail.match /.*@oauth\.io$/)? and user.validated)
+			return next new restify.NotAuthorizedError "You have not access to this app"
 		next()
 
 exports.validPlatformName = (platform_name, callback) ->

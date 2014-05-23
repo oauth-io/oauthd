@@ -375,6 +375,8 @@ server.get config.base + '/:provider', (req, res, next) ->
 # create an application
 server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
 	db.apps.create req.body, req.user, (e, r) ->
+		console.log "server /apps error", e
+		console.log "server /apps res", r
 		return next(e) if e
 		plugins.data.emit 'app.create', req.user, r
 		res.send name:r.name, key:r.key, domains:r.domains
