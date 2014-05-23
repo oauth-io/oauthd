@@ -11,13 +11,23 @@ define [], () ->
 			languages: ['js']
 			tryIt: (lang, provider) =>
 				OAuth.initialize window.demoKey
-				OAuth.popup provider, (err, res) ->
-					if err
-						alert JSON.stringify err
-						return
-					alert res.access_token || res.oauth_token
-					res.me().done (data) ->
-						alert 'Hello ' + data.name
+				if provider == 'facebook'
+					OAuth.popup provider, {authorize:{display:'popup'}}, (err, res) ->
+						if err
+							# alert JSON.stringify err
+							return
+						alert res.access_token || res.oauth_token
+						res.me().done (data) ->
+							alert 'Hello ' + data.name
+				else
+					OAuth.popup provider, (err, res) ->
+						if err
+							# alert JSON.stringify err
+							return
+						alert res.access_token || res.oauth_token
+						res.me().done (data) ->
+							alert 'Hello ' + data.name
+
 				mixpanel.track "feature demo 1"
 				return false
 
