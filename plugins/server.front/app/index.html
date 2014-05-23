@@ -129,7 +129,7 @@ mixpanel.init("{{config.mixpanel.token}}");</script><!-- end Mixpanel -->
             <li ng-class="{active: selectedMenu == '/signup'}" ng-hide="UserService.isLogin()"><a href="/signup"><strong>Sign up</strong></a></li>
             <li ng-class="{active: selectedMenu == '/key-manager'}" ng-show="UserService.isLogin()"><a href="/key-manager">Key manager</a></li>
             <li ng-class="{active: selectedMenu == '/account'}" ng-show="UserService.isLogin()"><a href="/account" style="cursor: pointer">Account</a></li>
-            <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="javascript:void(0);"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #FFF;" class="badge">{{notifications.length}}</span></a></li>
+            <li ng-show="UserService.isLogin() && notifications.length > 0" ng-click="openNotifications()"><a id="notification" href="javascript:void(0);"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-bell"></i> <span style="background-color: #FFF; border: 2px solid rgb(0, 121, 166); color: #666;" class="badge">{{notifications.length}}</span></a></li>
             <li ng-class="{active: selectedMenu == '/logout'}" ng-show="UserService.isLogin()"><a href="/logout" style="cursor: pointer"><i style="position: relative; top: 3px; font-size: 16px" class="glyphicon glyphicon-off"></i> Sign out</a></li>
           </ul>
   <!--         <button style="position:relative; left: 15px; top: 4px;" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Add a Key</button> -->
