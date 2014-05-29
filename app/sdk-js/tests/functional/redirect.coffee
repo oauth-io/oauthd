@@ -6,10 +6,10 @@ waitformyselector = (selectors, callback, index) ->
 		#Accepting permissions
 		@fill selectors[index], {}, true
 		if (selectors.length > index + 1)
-			@wait 2000, =>
+			@wait 5000, =>
 				waitformyselector.call @, selectors, callback, index + 1
 		else
-			@wait 2000, =>
+			@wait 5000, =>
 				callback.apply @
 
 exports.tests = (casper, provider, global_conf, utils) ->
@@ -33,7 +33,7 @@ exports.tests = (casper, provider, global_conf, utils) ->
 	casper.wait 3000, ->
 		
 
-	casper.waitForUrl new RegExp(provider.popup_domain), ->
+	casper.waitForUrl new RegExp(provider.domain), ->
 		form_exists = @evaluate ((selector) ->
 			__utils__.exists(selector)
 		), {
@@ -46,7 +46,7 @@ exports.tests = (casper, provider, global_conf, utils) ->
 		@capture("facebookstuff.png")
 
 	casper.then ->
-		if (@getCurrentUrl().match(provider.popup_domain))
+		if (@getCurrentUrl().match(provider.domain))
 			waitformyselector.apply @, [provider.form.permissions_buttons, => @echo "Clicked accept permission"]
 
 	casper.waitForUrl  new RegExp(global_conf.urlCallback), ->

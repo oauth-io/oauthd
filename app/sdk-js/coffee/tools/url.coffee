@@ -1,4 +1,4 @@
-module.exports = ->
+module.exports = (document) ->
 	getAbsUrl: (url) ->
 		return url  if url.match(/^.{2,5}:\/\//)
 		return document.location.protocol + "//" + document.location.host + url  if url[0] is "/"

@@ -1,6 +1,6 @@
 exports.config = 
 	provider_name: "facebook"
-	popup_domain: "facebook.com"
+	domain: "facebook.com"
 	test_suite_name: "Facebook test suite"
 	client_id: "773865389304244"
 	client_secret: "02fff42a5f3b1f61bd768b8ce2dc987d"

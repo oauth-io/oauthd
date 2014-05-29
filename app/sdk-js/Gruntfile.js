@@ -46,7 +46,7 @@ module.exports = function(grunt) {
             }
         },
 
-        taskDefault: ['coffee', 'browserify'],
+        taskDefault: ['coffee', 'browserify', 'uglify'],
     };
 
     grunt.initConfig(gruntConf);
@@ -58,17 +58,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
-    // grunt.registerMultiTask('shimcreate', '', function() {
-    //     var fs = require('fs');
-    //     var Path = require('path');
-
-    //     fs.readFile(path.join('..', 'js', 'oauth.js'), 'UTF-8', function(e, r) {
-    //         if (e) return e;
-    //         grunt.log.writeln(r);
-    //     });
-    // });
     // Default task.
     grunt.registerTask('default', gruntConf.taskDefault);
-
-
 };
