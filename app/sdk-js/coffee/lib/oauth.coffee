@@ -140,7 +140,8 @@ module.exports = (window, document, jQuery, navigator) ->
 					wnd = undefined
 					frm = undefined
 					wndTimeout = undefined
-					defer = $?.Deferred()
+					defer = window.jQuery?.Deffered()
+
 					opts = opts or {}
 					unless config.key
 						defer?.reject new Error("OAuth object must be initialized")
@@ -224,7 +225,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					else
 						defer?.reject new Error("Could not open a popup")
 						opts.callback new Error("Could not open a popup")  if opts.callback and typeof opts.callback == "function"
-					defer?.promise()
+					return defer?.promise()
 
 				redirect: (provider, opts, url) ->
 					if arguments.length is 2
@@ -249,7 +250,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					return
 
 				callback: (provider, opts, callback) ->
-					defer = $?.Deferred()
+					defer = window.jQuery?.Deffered()
 					if arguments.length is 1
 						callback = provider
 						provider = `undefined`
