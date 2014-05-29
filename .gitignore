@@ -23,4 +23,5 @@ app/sdk-js/dist
 app/sdk-js/coverage
 keys/local*
 **/*.DS_Store
-app/sdk-js/**/pictures/**/*
+plugins/server.provider_testing/**/pictures/**/*
+plugins/server.provider_testing/**/node_modules
