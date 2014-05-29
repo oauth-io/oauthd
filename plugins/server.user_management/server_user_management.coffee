@@ -105,7 +105,7 @@ exports.raw = ->
 		@db.providers.getMeMapping provider, (err, content) =>
 			if !err
 				if content.url
-					@apiRequest apiUrl: content.url, provider, oauthio, (err, options) =>
+					@apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 						return sendAbsentFeatureError(req, res, 'me()') if err
 						options.json = true
 						request options, (err, response, body) =>
@@ -118,8 +118,7 @@ exports.raw = ->
 					async.eachSeries content.fetch, (item, cb) -> 
 						if typeof item == 'object'
 							url = item.url
-
-							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
+							apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
 								rq = request options, (err, response, body) =>
@@ -149,7 +148,7 @@ exports.raw = ->
 												cb()
 						if typeof item == 'function'
 							url = item(user_fetcher)
-							apiRequest apiUrl: url, provider, oauthio, (err, options) =>
+							apiRequest {apiUrl: url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 								return sendAbsentFeatureError(req, res, 'me()') if err
 								options.json = true
 								
