@@ -38,6 +38,14 @@ module.exports = function(grunt) {
                 }
             }
         },
+        uglify: {
+            my_target: {
+                files: {
+                    '../js/oauth.min.js': ['../js/oauth.js']
+                }
+            }
+        },
+
         taskDefault: ['coffee', 'browserify'],
     };
 
@@ -48,8 +56,19 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
+    // grunt.registerMultiTask('shimcreate', '', function() {
+    //     var fs = require('fs');
+    //     var Path = require('path');
+
+    //     fs.readFile(path.join('..', 'js', 'oauth.js'), 'UTF-8', function(e, r) {
+    //         if (e) return e;
+    //         grunt.log.writeln(r);
+    //     });
+    // });
     // Default task.
     grunt.registerTask('default', gruntConf.taskDefault);
-    grunt.registerTask('test', ['nodeunit']);
+
+
 };
