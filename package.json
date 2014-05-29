@@ -55,6 +55,7 @@
     "grunt-concurrent": "~0.4.1",
     "grunt": "~0.4.1",
     "jayschema": "~0.2.0",
-    "jsonlint": "~1.6.0"
+    "jsonlint": "~1.6.0",
+    "grunt-contrib-requirejs": "~0.4.1"
   }
 }
