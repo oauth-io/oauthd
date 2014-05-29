@@ -74,9 +74,7 @@ exports.raw = ->
 
 	@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), cors_middleware, (req, res, next) =>
 		cb = @server.send res, next
-		console.log('found GET endpoint');
 		provider = req.params[0]
-		console.log 'getting mapping'
 		@db.providers.getMeMapping provider, (err, content) =>
 			if !err
 				if content.url
@@ -86,13 +84,11 @@ exports.raw = ->
 					oauthio = qs.parse(oauthio)
 					if ! oauthio.k
 						return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
-					console.log 'about to apiRequest'
 					@apiRequest apiUrl: content.url, provider, oauthio, (err, options) =>
 						return sendAbsentFeatureError(req, res, 'me()') if err
 						options.json = true
 						request options, (err, response, body) =>
 							return sendAbsentFeatureError(req, res, 'me()') if err
-							console.log 'almost there'
 							res.send body
 				else
 					return sendAbsentFeatureError(req, res, 'me()')

@@ -432,6 +432,7 @@
             } else return doRequest();
 
             function doRequest() {
+                var defer = $.Deferred();
                 var request = options.oauthio.request || {};
                 options.url = config.oauthd_url + '/auth/' + options.oauthio.provider + '/me';
                 options.headers = options.headers || {};
@@ -442,17 +443,16 @@
                 var promise = $.ajax(options);
                 $.when(promise)
                     .done(function(data) {
-                        promise.resolve(data.data);
+                        defer.resolve(data.data);
                     })
                     .fail(function(data) {
-                        if (data.responseJSON)
-                            console.error(data.responseJSON.data);
-                        else {
-                            console.log(data);
-                            console.error('An error occured while trying to access the resource');
+                        if (data.responseJSON) {
+                            defer.reject(data.responseJSON.data);
+                        } else {
+                            defer.reject(new Error('An error occured while trying to access the resource'));
                         }
                     });
-                return promise;
+                return defer.promise();
             }
         };
 
