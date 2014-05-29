@@ -1,6 +1,6 @@
 Url = require('../tools/url')()
 
-module.exports = ($, config, client_states, cache) ->
+module.exports = ($, config, client_states, cache, providers_api) ->
 	http: (opts) ->
 		doRequest = ->
 			request = options.oauthio.request or {}
