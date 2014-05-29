@@ -1,17 +1,14 @@
 {
-  "name": "SDKTester",
+  "name": "oauthjs_functional_tests",
   "version": "0.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "test.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "oauth.io",
-  "license": "ISC",
-  "dependencies": {
-    "express": "~4.0.x"
-  },
+  "license": "Apache2",
   "devDependencies": {
-    "express": "~4.0.0-rc3"
+    "express": "^3.5.1"
   }
 }

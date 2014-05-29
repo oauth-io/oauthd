@@ -22,11 +22,13 @@ exports.config =
 			'#platformDialogForm'
 		]
 	requests: [
+					name: "Basic user info through GET"
 					method: "get",
 					params: ["/me"],
 					validate: (error, data)  ->
 						return (error == undefined or error == null) and data.first_name == "Jean-René"
 				,
+					name: "Posting to user's wall"
 					method: "post"
 					params: 
 						[
@@ -40,9 +42,17 @@ exports.config =
 						if data and data.id
 							databag.facebookid = data.id
 				,
+					name: "Deleting previously posted message"
 					method: "del"
 					params: (databag) ->
 						return ["/" + databag.facebookid]
 					validate: (error, data) ->
 						return (error == undefined or error == null) and data == true
-		]
+				,
+					name: "Revoking permissions"
+					method: "del"
+					params: (databag) ->
+						return ["/me/permissions"]
+					validate: (error, data) ->
+						return not error? and data == true
+	]

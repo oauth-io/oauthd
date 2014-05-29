@@ -12,7 +12,8 @@ waitformyselector = (selectors, callback, index) ->
 		if (selectors.length > index + 1)
 			@wait 5000, =>
 				@echo "recursive call"
-				waitformyselector.apply @, [selectors, callback, index + 1]
+				if (not popup_gone)
+					waitformyselector.apply @, [selectors, callback, index + 1]
 		else
 			@wait 5000, =>
 				@echo "end callback"
@@ -87,12 +88,15 @@ exports.tests = (casper, provider, global_conf, utils) ->
 		if (casper.cli.options.screenshots)
 			@capture './pictures/' + provider.provider_name + '_form' + (new Date().getTime()) + '.png'
 		@fill provider.form.selector, provider.form.fields, true
+		@click provider.form.validate_button
 		@echo "Filled login form and clicked login button, now waiting 5"
-		@wait 5000, ->
+		@wait 7000, ->
 			if popup_gone
 				@echo "Permissions already validated"
 			else
 				@echo "Going through permissions validation"
+				if (casper.cli.options.screenshots)
+					@capture './pictures/' + provider.provider_name + '_popup_after_form' + (new Date().getTime()) + '.png'
 				waitformyselector.apply @, [provider.form.permissions_buttons, => @echo "Clicked accept permission"]
 
 	
