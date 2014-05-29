@@ -10,6 +10,11 @@ exports.config =
 			session_key: 'jeanrenedupont86@gmail.com',
 			session_password: 'jeanrene'
 		}
+	auth: {
+		validate: (error, response) ->
+			return error is null and typeof response?.oauth_token is 'string' and typeof response?.oauth_token_secret is 'string'
+		message: 'Access token retrieval'
+	}
 	requests: [
 					name: "Get basic user information"
 					method: "me",

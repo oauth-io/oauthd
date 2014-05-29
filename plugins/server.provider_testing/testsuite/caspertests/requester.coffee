@@ -21,7 +21,7 @@ exports.request = (casper, request, utils, databag) ->
 						return
 					.fail (error) ->
 						window.__flag = true
-						window.__error = e
+						window.__error = error
 						window.__flagerror = true
 						return
 				return true
