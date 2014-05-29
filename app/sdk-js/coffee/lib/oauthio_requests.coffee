@@ -152,7 +152,7 @@ module.exports = ($, config, client_states, datastore) ->
 			err = new Error(data.message)
 			err.body = data.data
 			defer.reject err
-			if opts.callback
+			if opts.callback and typeof opts.callback == "function"
 				return opts.callback(err)
 			else
 				return
@@ -160,13 +160,13 @@ module.exports = ($, config, client_states, datastore) ->
 			err = new Error()
 			err.body = data.data
 			defer.reject err
-			if opts.callback
+			if opts.callback and typeof opts.callback == "function"
 				return opts.callback(err)
 			else
 				return
 		if not data.state or client_states.indexOf(data.state) is -1
 			defer.reject new Error("State is not matching")
-			if opts.callback
+			if opts.callback and typeof opts.callback == "function"
 				return opts.callback(new Error("State is not matching"))
 			else
 				return
@@ -185,7 +185,7 @@ module.exports = ($, config, client_states, datastore) ->
 				oauth_token_secret: res.oauth_token_secret
 		unless request
 			defer.resolve res
-			if opts.callback
+			if opts.callback and typeof opts.callback == "function"
 				return opts.callback(null, res)
 			else
 				return
@@ -202,7 +202,7 @@ module.exports = ($, config, client_states, datastore) ->
 		res.del = make_res("DELETE")
 		res.me = base.mkHttpMe(data.provider, tokens, request, "GET")
 		defer.resolve res
-		if opts.callback
+		if opts.callback and typeof opts.callback == "function"
 			opts.callback null, res
 		else
 			return

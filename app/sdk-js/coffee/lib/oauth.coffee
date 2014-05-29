@@ -191,7 +191,8 @@ module.exports = (exports) ->
 					document.body.appendChild frm
 				wndTimeout = setTimeout(->
 					defer.reject new Error("Authorization timed out")
-					opts.callback new Error("Authorization timed out")  if opts.callback
+					if opts.callback and typeof opts.callback == "function"
+						opts.callback new Error("Authorization timed out")  
 					try
 						wnd.close()
 					return
@@ -201,7 +202,7 @@ module.exports = (exports) ->
 					wnd.focus()
 				else
 					defer.reject new Error("Could not open a popup")
-					opts.callback new Error("Could not open a popup")  if opts.callback
+					opts.callback new Error("Could not open a popup")  if opts.callback and typeof opts.callback == "function"
 				defer.promise()
 
 			redirect: (provider, opts, url) ->
@@ -227,6 +228,8 @@ module.exports = (exports) ->
 				return
 
 			callback: (provider, opts, callback) ->
+				console.log 'OAUTH RESULT', oauth_result
+				defer = $.Deferred()
 				if arguments.length is 1
 					callback = provider
 					provider = `undefined`
@@ -235,17 +238,26 @@ module.exports = (exports) ->
 					callback = opts
 					opts = {}
 				if datastore.cache.cacheEnabled(opts.cache) or oauth_result is "cache"
-					return callback(new Error("You must set a provider when using the cache"))  if oauth_result is "cache" and (typeof provider isnt "string" or not provider)
 					res = datastore.cache.tryCache(provider, opts.cache)
-					return callback(null, res)  if res
+					if oauth_result is "cache" and (typeof provider isnt "string" or not provider)
+						defer.reject new Error("You must set a provider when using the cache")
+						if callback
+							return callback(new Error("You must set a provider when using the cache"))
+						else
+							return
+					if callback
+						return callback(null, res)  if res
+					else
+						defer.resolve res
+						return
 				return  unless oauth_result
-				oauthio.request.sendCallback
+				oauthio.request.sendCallback {
 					data: oauth_result
 					provider: provider
 					cache: opts.cache
-					callback: callback
+					callback: callback }, defer
 
-				return
+				return defer
 
 			clearCache: (provider) ->
 				datastore.cookies.eraseCookie "oauthio_provider_" + provider
