@@ -53,6 +53,7 @@
     "grunt-contrib-coffee": "latest",
     "grunt-contrib-less": "latest",
     "grunt-concurrent": "latest",
+    "grunt-subgrunt": "~0.3.0",
     "grunt": "~0.4.4",
     "jayschema": "~0.2.0",
     "jsonlint": "~1.6.0",

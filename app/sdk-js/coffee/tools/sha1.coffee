@@ -1,3 +1,4 @@
+
 #
 # * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
 # * in FIPS 180-1
@@ -18,6 +19,7 @@ b64pad = "" # base-64 pad character. "=" for strict RFC compliance
 # * These are the functions you'll usually want to call
 # * They take string arguments and return either hex or base-64 encoded strings
 # 
+### istanbul ignore next ###
 module.exports =
 	hex_sha1: (s) ->
 		@rstr2hex @rstr_sha1(@str2rstr_utf8(s))
