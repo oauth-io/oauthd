@@ -90,7 +90,7 @@ module.exports = (window, document, jQuery, navigator) ->
 				return
 
 			return
-		unless exports.OAuth
+		unless exports.OAuth?
 			exports.OAuth =
 				initialize: (public_key, options) ->
 					config.key = public_key
@@ -140,10 +140,10 @@ module.exports = (window, document, jQuery, navigator) ->
 					wnd = undefined
 					frm = undefined
 					wndTimeout = undefined
-					defer = $.Deferred()
+					defer = $?.Deferred()
 					opts = opts or {}
 					unless config.key
-						defer.reject new Error("OAuth object must be initialized")
+						defer?.reject new Error("OAuth object must be initialized")
 						return callback(new Error("OAuth object must be initialized"))
 					if arguments.length is 2
 						callback = opts
@@ -151,7 +151,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					if cache.cacheEnabled(opts.cache)
 						res = cache.tryCache(exports.OAuth, provider, opts.cache)
 						if res
-							defer.resolve res
+							defer?.resolve res
 							if callback
 								return callback(null, res)
 							else
@@ -199,7 +199,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					if typeof chrome isnt "undefined" and chrome.runtime and chrome.runtime.onMessageExternal
 						chrome.runtime.onMessageExternal.addListener (request, sender, sendResponse) ->
 							request.origin = sender.url.match(/^.{2,5}:\/\/[^/]+/)[0]
-							defer.resolve()
+							defer?.resolve()
 							getMessage request
 
 					if not frm and (navigator.userAgent.indexOf("MSIE") isnt -1 or navigator.appVersion.indexOf("Trident/") > 0)
@@ -211,7 +211,7 @@ module.exports = (window, document, jQuery, navigator) ->
 						frm.style.visibility = "hidden"
 						document.body.appendChild frm
 					wndTimeout = setTimeout(->
-						defer.reject new Error("Authorization timed out")
+						defer?.reject new Error("Authorization timed out")
 						if opts.callback and typeof opts.callback == "function"
 							opts.callback new Error("Authorization timed out")  
 						try
@@ -222,9 +222,9 @@ module.exports = (window, document, jQuery, navigator) ->
 					if wnd
 						wnd.focus()
 					else
-						defer.reject new Error("Could not open a popup")
+						defer?.reject new Error("Could not open a popup")
 						opts.callback new Error("Could not open a popup")  if opts.callback and typeof opts.callback == "function"
-					defer.promise()
+					defer?.promise()
 
 				redirect: (provider, opts, url) ->
 					if arguments.length is 2
@@ -249,7 +249,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					return
 
 				callback: (provider, opts, callback) ->
-					defer = $.Deferred()
+					defer = $?.Deferred()
 					if arguments.length is 1
 						callback = provider
 						provider = `undefined`
@@ -260,7 +260,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					if cache.cacheEnabled(opts.cache) or oauth_result is "cache"
 						res = cache.tryCache(exports.OAuth, provider, opts.cache)
 						if oauth_result is "cache" and (typeof provider isnt "string" or not provider)
-							defer.reject new Error("You must set a provider when using the cache")
+							defer?.reject new Error("You must set a provider when using the cache")
 							if callback
 								return callback(new Error("You must set a provider when using the cache"))
 							else
@@ -268,7 +268,7 @@ module.exports = (window, document, jQuery, navigator) ->
 						if callback
 							return callback(null, res)  if res
 						else
-							defer.resolve res
+							defer?.resolve res
 							return
 					return  unless oauth_result
 					oauthio.request.sendCallback {
@@ -277,7 +277,7 @@ module.exports = (window, document, jQuery, navigator) ->
 						cache: opts.cache
 						callback: callback }, defer
 
-					return defer
+					return defer?.promise()
 
 				clearCache: (provider) ->
 					cookies.eraseCookie "oauthio_provider_" + provider
@@ -291,10 +291,10 @@ module.exports = (window, document, jQuery, navigator) ->
 					oauthio.request.http opts  if oauthio.request.http
 					return
 
-			if typeof jQuery is "undefined"
+			if typeof window.jQuery is "undefined"
 				_preloadcalls = []
 				delayfn = undefined
-				if typeof chrome isnt "undefined" and chrome.runtime
+				if typeof chrome isnt "undefined" and chrome.extension
 					delayfn = ->
 						->
 							throw new Error("Please include jQuery before oauth.js")
@@ -304,7 +304,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					e.src = "//code.jquery.com/jquery.min.js"
 					e.type = "text/javascript"
 					e.onload = ->
-						delayedFunctions jQuery
+						delayedFunctions window.jQuery
 						for i of _preloadcalls
 							_preloadcalls[i].fn.apply(null, _preloadcalls[i].args)
 						return
@@ -328,7 +328,7 @@ module.exports = (window, document, jQuery, navigator) ->
 					providers_api.fetchDescription.apply providers_api, arguments
 					return
 				)
-				oauthio.request = require("./oauthio_requests")(jQuery, config, client_states, cache)
+				oauthio.request = require("./oauthio_requests")(window.jQuery, config, client_states, cache)
 			else
-				delayedFunctions jQuery
+				delayedFunctions window.jQuery
 		return
