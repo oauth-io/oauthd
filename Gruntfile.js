@@ -45,8 +45,6 @@ module.exports = function(grunt) {
                 }
             }
         },
-        requirejs: {
-        },
         nodemon: {
             server: {
                 options: {
@@ -68,7 +66,7 @@ module.exports = function(grunt) {
             }
         },
 
-        taskDefault: ['coffee', 'requirejs'],
+        taskDefault: ['coffee'],
         taskServer: ['watch', 'nodemon:server']
     };
 
@@ -105,7 +103,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-nodemon');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     for (var i in tasks)
         tasks[i].call(this);
