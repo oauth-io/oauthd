@@ -11,6 +11,7 @@ exports.config =
 			session_password: 'jeanrene'
 		}
 	requests: [
+					name: "Get basic user information"
 					method: "me",
 					params: [],
 					validate: (error, data)  ->

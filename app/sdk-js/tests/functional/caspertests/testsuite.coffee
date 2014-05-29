@@ -3,10 +3,10 @@ exports.launch = (casper, provider, global_conf, utils) ->
 		casper.start ->
 			window.__flag = false
 			return
-		console.log global_conf.test_server
 		casper.thenOpen global_conf.test_server, ->
 			base = this
-			@capture './pictures/start' + (new Date().getTime()) + '.png'
+			if @cli.options.screenshots
+				@capture './pictures/start' + (new Date().getTime()) + '.png'
 			#Testing OAuth
 			OAuth = base.evaluate(->
 				return window.OAuth

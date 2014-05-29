@@ -72,7 +72,7 @@ class OAuth2 extends OAuthBase
 				@_setExtraRequestAuthorizeParameters(req, result)
 				callback null, result
 
-	refresh: (token, callback) ->
+	refresh: (token, keyset, callback) ->
 		configuration = @_oauthConfiguration.refresh
 		placeholderValues = { refresh_token: token }
 		query = @_buildQuery(configuration.query, placeholderValues)

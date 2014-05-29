@@ -1,14 +1,67 @@
 module.exports = function() {
     jquery = {
-        ajax: function() {
-
+        ajaxOptionsHandler: undefined,
+        setAjaxOptionsHandler: function(callback) {
+            jquery.ajaxOptionsHandler = callback;
         },
-        get: function() {
-
+        ajax: function(options) {
+            var ret = {
+                methods: {
+                    success: {
+                        arguments: undefined,
+                        method: undefined
+                    },
+                    failure: {
+                        arguments: undefined,
+                        method: undefined
+                    }
+                },
+                reject: function() {
+                    ret.methods.failure.arguments = arguments;
+                    if (ret.methods.failure.method) {
+                        ret.methods.failure.method.apply(this, ret.methods.failure.arguments);
+                    }
+                },
+                resolve: function() {
+                    ret.methods.success.arguments = arguments;
+                    if (ret.methods.success.method) {
+                        ret.methods.success.method.apply(this, ret.methods.success.arguments);
+                    }
+                },
+                promise: function() {
+                    return {
+                        done: function(f) {
+                            ret.methods.success.method = f;
+                            if (ret.methods.success.arguments) {
+                                ret.methods.success.method.apply(this, ret.methods.success.arguments);
+                            }
+                            return ret.promise();
+                        },
+                        fail: function(f) {
+                            ret.methods.failure.method = f;
+                            if (ret.methods.failure.arguments) {
+                                ret.methods.failure.method.apply(this, ret.methods.failure.arguments);
+                            }
+                            return ret.promise();
+                        }
+                    };
+                }
+            };
+            var handling_method = jquery.ajaxOptionsHandler || function() {
+                    return {
+                        __success : false
+                    };
+                };
+            var handled = jquery.ajaxOptionsHandler(options);
+            if (handled.__status) {
+                ret.resolve(handled);
+            } else {
+                ret.reject(handled);
+            }
+            return ret.promise();
         },
-        post: function() {
-
-        },
+        get: function() {},
+        post: function() {},
         Deferred: function() {
             var def = {
                 methods: {
@@ -53,6 +106,9 @@ module.exports = function() {
                 }
             };
             return def;
+        },
+        when: function (promise) {
+            return promise;
         }
     };
     return jquery;

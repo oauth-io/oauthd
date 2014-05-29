@@ -1,3 +1,4 @@
+### istanbul ignore next ###
 module.exports =
 	init: (config, document) ->
 		@config = config
