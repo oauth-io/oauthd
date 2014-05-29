@@ -67,8 +67,21 @@ module.exports = function(grunt) {
                 }
             }
         },
-        taskDefault: ['coffee', 'requirejs'],
-        taskServer: ['watch', 'nodemon:server']
+        subgrunt: {
+            options: {
+                // Task-specific options go here.
+            },
+            default: {
+                options: {
+                    // Target-specific options
+                },
+                projects: {
+                    'app/sdk-js': 'default'
+                }
+            },
+        },
+        taskDefault: ['coffee', 'requirejs', 'subgrunt:default'],
+        taskServer: ['watch', 'nodemon:server', 'subgrunt:default']
     };
 
     var tasks = [];
@@ -104,6 +117,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-concurrent');
     grunt.loadNpmTasks('grunt-nodemon');
+    grunt.loadNpmTasks('grunt-subgrunt');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
 
     for (var i in tasks)
