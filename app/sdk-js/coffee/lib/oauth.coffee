@@ -250,10 +250,12 @@ module.exports = (window, document, jQuery, navigator) ->
 					return
 
 				callback: (provider, opts, callback) ->
-					defer = window.jQuery?.Deffered()
-					if arguments.length is 1
+					defer = window.jQuery?.Deferred()
+					if arguments.length is 1 and typeof provider == "function"
 						callback = provider
 						provider = `undefined`
+						opts = {}
+					if arguments.length is 1 and typeof provider == "string"
 						opts = {}
 					if arguments.length is 2
 						callback = opts

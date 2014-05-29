@@ -1,9 +1,7 @@
-var sinon = require('sinon');
-
 var appended_elements = [];
 
-module.exports = function() {
-    return {
+module.exports = function(jQuery, window, options) {
+    var obj = {
         getAppendedElements: function() {
             return appended_elements;
         },
@@ -13,7 +11,7 @@ module.exports = function() {
             }
         },
         location: {
-            hash: '',
+            hash: options && options.hash ? options.hash : '',
             href: '',
             reload: function() {
 
@@ -31,22 +29,25 @@ module.exports = function() {
                     }
                 };
 
-                setTimeout(function() {
-                    elt.onload({});
-                }, 500);
-
                 return elt;
             }
 
         },
         getElementsByTagName: function(tagname) {
+
             if (tagname == "head") {
                 return [{
                     appendChild: function(elt) {
+
                         appended_elements.push(elt);
+                        if (elt.tag == 'script' && elt.src.match(/jquery/)) {
+                            window.jQuery = jQuery;
+                            elt.onload();
+                        }
                     }
                 }];
             }
         }
     };
+    return obj;
 };

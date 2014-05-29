@@ -1,7 +1,7 @@
 var events = require('events');
 var eventEmitter = new events.EventEmitter();
-
-module.exports = function(document, config) {
+var document = {};
+module.exports = function(config) {
     return {
         popup: {},
         open: function(url, name, options) {
@@ -34,6 +34,9 @@ module.exports = function(document, config) {
         },
         emitEvent: function(eventName) {
             eventEmitter.emit(eventName);
+        },
+        setDocument: function(doc) {
+            document = doc;
         }
     };
 };
