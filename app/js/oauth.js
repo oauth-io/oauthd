@@ -99,7 +99,9 @@ module.exports = function(exports) {
       });
     };
   };
-  if (!exports.OAuth) {
+  if (exports.OAuth) {
+    datastore.setOAuth(exports.OAuth);
+  } else {
     exports.OAuth = {
       initialize: function(public_key, options) {
         var i;
@@ -163,7 +165,7 @@ module.exports = function(exports) {
         defer = $.Deferred();
         opts = opts || {};
         if (!config.key) {
-          defer.rejet(new Error("OAuth object must be initialized"));
+          defer.reject(new Error("OAuth object must be initialized"));
           return callback(new Error("OAuth object must be initialized"));
         }
         if (arguments.length === 2) {
@@ -306,7 +308,6 @@ module.exports = function(exports) {
       },
       callback: function(provider, opts, callback) {
         var defer, res;
-        console.log('OAUTH RESULT', oauth_result);
         defer = $.Deferred();
         if (arguments.length === 1) {
           callback = provider;
@@ -361,6 +362,7 @@ module.exports = function(exports) {
         }
       }
     };
+    datastore.setOAuth(exports.OAuth);
     if (typeof jQuery === "undefined") {
       _preloadcalls = [];
       delayfn = void 0;
@@ -699,78 +701,82 @@ require('./lib/oauth')(window || this);
 },{"./lib/oauth":2}],5:[function(require,module,exports){
 module.exports = function(config) {
   var m;
-  m = {
-    cookies: {
-      createCookie: function(name, value, expires) {
-        var date;
-        m.cookies.eraseCookie(name);
-        date = new Date();
-        date.setTime(date.getTime() + (expires || 1200) * 1000);
-        expires = "; expires=" + date.toGMTString();
-        document.cookie = name + "=" + value + expires + "; path=/";
-      },
-      readCookie: function(name) {
-        var c, ca, i, nameEQ;
-        nameEQ = name + "=";
-        ca = document.cookie.split(";");
-        i = 0;
-        while (i < ca.length) {
-          c = ca[i];
-          while (c.charAt(0) === " ") {
-            c = c.substring(1, c.length);
-          }
-          if (c.indexOf(nameEQ) === 0) {
-            return c.substring(nameEQ.length, c.length);
-          }
-          i++;
-        }
-        return null;
-      },
-      eraseCookie: function(name) {
-        var date;
-        date = new Date();
-        date.setTime(date.getTime() - 86400000);
-        document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
-      }
+  m = {};
+  m.setOAuth = (function(_this) {
+    return function(o) {
+      return m.OAuth = o;
+    };
+  })(this);
+  m.cookies = {
+    createCookie: function(name, value, expires) {
+      var date;
+      m.cookies.eraseCookie(name);
+      date = new Date();
+      date.setTime(date.getTime() + (expires || 1200) * 1000);
+      expires = "; expires=" + date.toGMTString();
+      document.cookie = name + "=" + value + expires + "; path=/";
     },
-    cache: {
-      tryCache: function(provider, cache) {
-        var e, i, res;
-        if (m.cache.cacheEnabled(cache)) {
-          cache = m.cookies.readCookie("oauthio_provider_" + provider);
-          if (!cache) {
-            return false;
-          }
-          cache = decodeURIComponent(cache);
+    readCookie: function(name) {
+      var c, ca, i, nameEQ;
+      nameEQ = name + "=";
+      ca = document.cookie.split(";");
+      i = 0;
+      while (i < ca.length) {
+        c = ca[i];
+        while (c.charAt(0) === " ") {
+          c = c.substring(1, c.length);
         }
-        if (typeof cache === "string") {
-          try {
-            cache = JSON.parse(cache);
-          } catch (_error) {
-            e = _error;
-            return false;
-          }
+        if (c.indexOf(nameEQ) === 0) {
+          return c.substring(nameEQ.length, c.length);
         }
-        if (typeof cache === "object") {
-          res = {};
-          for (i in cache) {
-            if (i !== "request" && typeof cache[i] !== "function") {
-              res[i] = cache[i];
-            }
-          }
-          return exports.OAuth.create(provider, res, cache.request);
-        }
-        return false;
-      },
-      storeCache: function(provider, cache) {
-        m.cookies.createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
-      },
-      cacheEnabled: function(cache) {
-        if (typeof cache === "undefined") {
-          return config.options.cache;
-        }
-        return cache;
+        i++;
       }
+      return null;
+    },
+    eraseCookie: function(name) {
+      var date;
+      date = new Date();
+      date.setTime(date.getTime() - 86400000);
+      document.cookie = name + "=; expires=" + date.toGMTString() + "; path=/";
+    }
+  };
+  m.cache = {
+    tryCache: function(provider, cache) {
+      var e, i, res;
+      if (m.cache.cacheEnabled(cache)) {
+        cache = m.cookies.readCookie("oauthio_provider_" + provider);
+        if (!cache) {
+          return false;
+        }
+        cache = decodeURIComponent(cache);
+      }
+      if (typeof cache === "string") {
+        try {
+          cache = JSON.parse(cache);
+        } catch (_error) {
+          e = _error;
+          return false;
+        }
+      }
+      if (typeof cache === "object") {
+        res = {};
+        for (i in cache) {
+          if (i !== "request" && typeof cache[i] !== "function") {
+            res[i] = cache[i];
+          }
+        }
+        return m.OAuth.create(provider, res, cache.request);
+      }
+      return false;
+    },
+    storeCache: function(provider, cache) {
+      m.cookies.createCookie("oauthio_provider_" + provider, encodeURIComponent(JSON.stringify(cache)), cache.expires_in - 10 || 3600);
+    },
+    cacheEnabled: function(cache) {
+      if (typeof cache === "undefined") {
+        return config.options.cache;
+      }
+      return cache;
     }
   };
   return m;

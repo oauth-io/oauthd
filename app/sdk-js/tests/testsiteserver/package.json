@@ -1,0 +1,17 @@
+{
+  "name": "SDKTester",
+  "version": "0.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "oauth.io",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.0.x"
+  },
+  "devDependencies": {
+    "express": "~4.0.0-rc3"
+  }
+}

@@ -69,7 +69,9 @@ module.exports = (exports) ->
 			return
 
 		return
-	unless exports.OAuth
+	if exports.OAuth
+		datastore.setOAuth exports.OAuth
+	else
 		exports.OAuth =
 			initialize: (public_key, options) ->
 				config.key = public_key
@@ -122,7 +124,7 @@ module.exports = (exports) ->
 				defer = $.Deferred()
 				opts = opts or {}
 				unless config.key
-					defer.rejet new Error("OAuth object must be initialized")
+					defer.reject new Error("OAuth object must be initialized")
 					return callback(new Error("OAuth object must be initialized"))
 				if arguments.length is 2
 					callback = opts
@@ -228,7 +230,6 @@ module.exports = (exports) ->
 				return
 
 			callback: (provider, opts, callback) ->
-				console.log 'OAUTH RESULT', oauth_result
 				defer = $.Deferred()
 				if arguments.length is 1
 					callback = provider
@@ -270,6 +271,7 @@ module.exports = (exports) ->
 			http: (opts) ->
 				oauthio.request.http opts  if oauthio.request.http
 				return
+		datastore.setOAuth exports.OAuth
 
 		if typeof jQuery is "undefined"
 			_preloadcalls = []

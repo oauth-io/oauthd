@@ -15,3 +15,4 @@
 !/lib/*.js
 !/lib/*.map
 !/plugins/**/*.map
+/app/sdk-js/tests/testsiteserver/node_modules
