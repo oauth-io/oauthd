@@ -172,12 +172,12 @@ exports.getKeyset = check check.format.key, 'string', (key, provider, callback) 
 		db.redis.mget 'a:' + idapp + ':k:' + provider
 			, 'a:' + idapp + ':ktype:' + provider, (err, res) ->
 				return callback err if err
-				return callback() if not res[0]
-				try
-					res[0] = JSON.parse(res[0])
-				catch e
-					return callback e
-				callback null, parameters:res[0], response_type:(res[1] || 'token')
+				if res[0]
+					try
+						res[0] = JSON.parse(res[0])
+					catch e
+						return callback err if err
+				callback null, parameters:(res[0] || {}), response_type:(res[1] || 'token')
 
 
 # get keys infos of an app for a provider

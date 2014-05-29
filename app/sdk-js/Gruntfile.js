@@ -80,7 +80,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.registerTask('bower', 'Creates an updated bower.json to the dist folder', function() {
-        console.log("READING FILE");
         var done = this.async();
         fs.readFile('./templates/bower.json', 'UTF-8', function(e, text) {
             if (e) {
@@ -91,14 +90,13 @@ module.exports = function(grunt) {
             text = text.replace('{{sdk_version}}', package_info.version);
             text = text.replace('{{description}}', package_info.description);
             text = text.replace('{{license}}', package_info.license);
-            console.log("WRITING FILE");
             fs.writeFile('./dist/bower.json', text, function(e) {
                 if (e) {
                     console.err('A problem occured while creating bower.json');
                     done();
                     return;
                 }
-                console.log("DONE WRITING");
+                console.log("Wrote bower.json file in app/sdk-js/dist/");
                 done();
             });
         });

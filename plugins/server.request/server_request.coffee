@@ -40,7 +40,7 @@ exports.raw = ->
 			(callback) => @db.apps.checkDomain oauthio.k, ref, callback
 		], (err, results) =>
 			return callback err if err
-			[provider, {parameters}, domaincheck] = results
+			[provider, {parameters}] = results
 
 			req.apiUrl = decodeURIComponent(req.params[1])
 			if ! domaincheck
