@@ -25,3 +25,4 @@ keys/local*
 **/*.DS_Store
 plugins/server.provider_testing/**/pictures/**/*
 plugins/server.provider_testing/**/node_modules
+.DS_Store
