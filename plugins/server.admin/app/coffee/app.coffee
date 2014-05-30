@@ -137,7 +137,7 @@ app.controller 'SigninCtrl', ($scope, $rootScope, $location, UserService, MenuSe
 	$scope.userForm =
 		template: "/templates/userForm.html"
 
-app.controller 'ErrorCtrl', ($scope, $rootScope) ->
+app.controller 'ErrorCtrl', ($scope, $rootScope, $location) ->
 	if not global_err
 		return $location.path '/'
 
