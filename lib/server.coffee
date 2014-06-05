@@ -202,6 +202,10 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 			view += '	document.cookie = name+"="+value+expires+"; path=/";\n'
 			view += '}\n'
 			view += 'createCookie("oauthio_last",encodeURIComponent(msg));\n'
+			view += 'var opener = window.opener || window.parent.window.opener;\n'
+			view += 'if (opener)\n'
+			view += '\topener.postMessage(msg, "' + data.origin + '");\n'
+			view += '\twindow.close();\n'
 		else if (chromeext)
 			view += '\tchrome.runtime.sendMessage("' + chromeext[1] + '", {data:msg});\n'
 			view += '\twindow.close();\n'
