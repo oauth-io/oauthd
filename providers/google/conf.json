@@ -112,6 +112,7 @@
 					"https://www.googleapis.com/auth/apps.order": "For reseller administrators and users read/write access when testing in the API's sandbox, or read/write access when calling an API operation directly.",
 					"https://www.googleapis.com/auth/apps.order.readonly": "In addition to the overall read/write OAuth scope, use the read only OAuth scope when retrieving the customer's data.",
 					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome",
+					"https://www.googleapis.com/auth/glass.timeline": "glass timeline scope",
 					"https://www.google.com/m8/feeds": "read/write access to Contacts and Contact Groups",
 					"https://docs.google.com/feeds/": "Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
