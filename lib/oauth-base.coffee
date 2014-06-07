@@ -63,6 +63,9 @@ class OAuthBase
 			query[parameterName] = param if param?
 		return query
 
+	_buildResponseParameters: (configuration, placeholderValues, defaultParameters) ->
+		@_buildQuery configuration, placeholderValues, defaultParameters
+
 	_buildAuthorizeUrl: (url, query, stateId) ->
 		url = @_replaceParam(url, {})
 		url += "?" + querystring.stringify(query)
