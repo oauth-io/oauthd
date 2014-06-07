@@ -7,18 +7,24 @@ class OAuth1ResponseParser extends OAuthResponseParser
 		super response, body, format, tokenType
 
 	parse: (callback) ->
-		super (e, r) =>
+		@parseGenericResponse (e, r) =>
 			return callback e if e
 
-			if @body.error or @body.error_description
-				return callback @_setError @body.error_description || 'Error in response'
+			@parseOAuth1 callback
 
-			return callback @_setError 'oauth_token not found' if not @body.oauth_token
-			return callback @_setError 'oauth_token_secret not found' if not @body.oauth_token_secret?
+	parseGenericResponse: (callback) ->
+		OAuth1ResponseParser.__super__.parse.call @, callback
 
-			@oauth_token = @body.oauth_token
-			@oauth_token_secret = @body.oauth_token_secret
+	parseOAuth1: (callback) ->
+		if @body.error or @body.error_description
+			return callback @_setError @body.error_description || 'Error in response'
 
-			callback null, @
+		return callback @_setError 'oauth_token not found' if not @body.oauth_token
+		return callback @_setError 'oauth_token_secret not found' if not @body.oauth_token_secret?
+
+		@oauth_token = @body.oauth_token
+		@oauth_token_secret = @body.oauth_token_secret
+
+		callback null, @
 
 module.exports = OAuth1ResponseParser
