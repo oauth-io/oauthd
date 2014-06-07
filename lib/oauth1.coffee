@@ -61,7 +61,12 @@ class OAuth1 extends OAuthBase
 				db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 					return callback err if err
 					configuration = @_oauthConfiguration.authorize
-					placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+					placeholderValues = {
+						state: state.id
+						callback: @_serverCallbackUrl
+						oauth_token: response.oauth_token
+						oauth_token_secret: response.oauth_token_secret
+					}
 					query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 					query.oauth_token = response.oauth_token
 					callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
@@ -86,7 +91,12 @@ class OAuth1 extends OAuthBase
 		return callback err if err.failed()
 
 		configuration = @_oauthConfiguration.access_token
-		placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+		placeholderValues = {
+			state: state.id
+			callback: @_serverCallbackUrl
+			oauth_token: req.params.oauth_token
+			oauth_token_secret: req.params.oauth_token_secret
+		}
 		@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 		query = @_buildQuery(configuration.query, placeholderValues)
 		headers = @_buildHeaders(configuration)
