@@ -49,16 +49,22 @@ class OAuth1 extends OAuthBase
 			@_parseGetRequestTokenResponse(response, body, opts, headers, state, callback)
 
 	_parseGetRequestTokenResponse: (response, body, opts, headers, state, callback) ->
+		configuration = @_oauthConfiguration.request_token
 		responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
-		responseParser.parse (err, response) =>
+		responseParser.parseGenericResponse (err, response) =>
 			return callback err if err
-			db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
+
+			responseParser.body = @_buildResponseParameters configuration.response, response.body, response.body
+
+			responseParser.parseOAuth1 (err, response) =>
 				return callback err if err
-				configuration = @_oauthConfiguration.authorize
-				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
-				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
-				query.oauth_token = response.oauth_token
-				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
+				db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
+					return callback err if err
+					configuration = @_oauthConfiguration.authorize
+					placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+					query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
+					query.oauth_token = response.oauth_token
+					callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
 	access_token: (state, req, response_type, callback) ->
 		if not req.params.oauth_token && not req.params.error
@@ -102,19 +108,24 @@ class OAuth1 extends OAuthBase
 		request options, (e, r, body) =>
 			return callback(e) if e
 			responseParser = new OAuth1ResponseParser(r, body, headers["Accept"], 'access_token')
-			responseParser.parse (err, response) =>
+			responseParser.parseGenericResponse (err, response) =>
 				return callback err if err
 
-				expire = @_getExpireParameter(response)
-				requestclone = @_cloneRequest()
-				result =
-					oauth_token: response.oauth_token
-					oauth_token_secret: response.oauth_token_secret
-					expires_in: expire
-					request: requestclone
-				@_setExtraResponseParameters(configuration, response, result)
-				@_setExtraRequestAuthorizeParameters(req, result)
-				callback null, result
+				responseParser.body = @_buildResponseParameters configuration.response, response.body, response.body
+
+				responseParser.parseOAuth1 (err, response) =>
+					return callback err if err
+
+					expire = @_getExpireParameter(response)
+					requestclone = @_cloneRequest()
+					result =
+						oauth_token: response.oauth_token
+						oauth_token_secret: response.oauth_token_secret
+						expires_in: expire
+						request: requestclone
+					@_setExtraResponseParameters(configuration, response, result)
+					@_setExtraRequestAuthorizeParameters(req, result)
+					callback null, result
 
 	request: (req, callback) ->
 		if ! @_parameters.oauthio.oauth_token || ! @_parameters.oauthio.oauth_token_secret
