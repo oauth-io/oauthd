@@ -1,0 +1,54 @@
+{
+	"name": "Pocket",
+	"url": "https://getpocket.com/v3/oauth",
+	"oauth1": {
+		"request_token": {
+			"url": "/request",
+			"query": {
+				"consumer_key": "{consumer_key}",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}"
+			},
+			"response": {
+				"oauth_token": "{{code}}",
+				"oauth_token_secret": ""
+			},
+			"headers": {
+				"Content-Type": "application/x-www-form-urlencoded; charset=UTF8"
+			}
+		},
+		"authorize": {
+			"url": "https://getpocket.com/auth/authorize",
+			"query": {
+				"request_token": "{{oauth_token}}",
+				"redirect_uri": "{{callback}}?state={{state}}&oauth_token={{oauth_token}}"
+			},
+			"ignore_verifier": true
+		},
+		"access_token": {
+			"url": "/authorize",
+			"query": {
+				"consumer_key": "{consumer_key}",
+				"code": "{{oauth_token}}",
+				"oauth_token": "{{oauth_token}}"
+			},
+			"response": {
+				"oauth_token": "{{access_token}}",
+				"oauth_token_secret": ""
+			},
+			"headers": {
+				"Content-Type": "application/x-www-form-urlencoded; charset=UTF8"
+			}
+		},
+		"request": "https://getpocket.com/v3",
+		"parameters": {
+			"consumer_key": "string"
+		}
+	},
+	"href": {
+		"keys": "http://getpocket.com/developer/apps/new",
+		"docs": "http://getpocket.com/developer/docs/overview",
+		"apps": "http://getpocket.com/developer/apps/",
+		"provider": "https://getpocket.com"
+	}
+}
