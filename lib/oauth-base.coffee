@@ -60,7 +60,7 @@ class OAuthBase
 		# with matching placeholderValues's 'placeholder1' value
 		for parameterName, placeholder of configuration
 			param = @_replaceParam(placeholder, placeholderValues)
-			query[parameterName] = param if param
+			query[parameterName] = param if param?
 		return query
 
 	_buildAuthorizeUrl: (url, query, stateId) ->
