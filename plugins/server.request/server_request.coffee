@@ -30,21 +30,12 @@ exports.raw = ->
 
 	@apiRequest = (req, provider_name, oauthio, callback) =>
 		req.headers ?= {}
-		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
-		urlinfos = Url.parse(ref)
-		if not urlinfos.hostname
-			return next new restify.InvalidHeaderError 'Missing origin or referer.'
 		async.parallel [
 			(callback) => @db.providers.getExtended provider_name, callback
 			(callback) => @db.apps.getKeyset oauthio.k, provider_name, callback
-			(callback) => @db.apps.checkDomain oauthio.k, ref, callback
 		], (err, results) =>
 			return callback err if err
 			[provider, {parameters}] = results
-
-			req.apiUrl = decodeURIComponent(req.params[1])
-			if ! domaincheck
-				return callback new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
 
 			# select oauth version
 			oauthv = oauthio.oauthv && {
@@ -80,8 +71,18 @@ exports.raw = ->
 		else
 			origin = urlinfos.protocol + '//' + urlinfos.host
 
-		@apiRequest req, req.params[0], oauthio, (err, options) ->
+		req.apiUrl = decodeURIComponent(req.params[1])
+
+		@db.apps.checkDomain oauthio.k, ref, (err, domaincheck) =>
 			return cb err if err
+			if ! domaincheck
+				return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
+
+		@apiRequest req, req.params[0], oauthio, (err, options) =>
+			return cb err if err
+
+			@emit 'request', provider:req.params[0], key:oauthio.k
+
 			api_request = null
 
 			sendres = ->
@@ -105,7 +106,8 @@ exports.raw = ->
 				sendres()
 
 
-	@server.opts new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
+	# request's endpoints
+	@server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
 		origin = null
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 		urlinfos = Url.parse(ref)
@@ -122,9 +124,8 @@ exports.raw = ->
 		res.send 200
 		next false
 
-	@server.get new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.post new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.put new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.patch new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.del new RegExp('^' + @config.base + '/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-
+	@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
