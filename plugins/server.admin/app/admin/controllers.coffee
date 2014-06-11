@@ -120,10 +120,11 @@ hooks.config.push ->
 						app.showKeys = true
 						app.response_type[provider] = response_type
 						app.keys[provider] = data
-						if not $scope.apikeyUpdate
-							app.keysets.add provider
-							app.keysets.sort()
+
+						app.keysets.add provider
+						app.keysets.sort()
 						$scope.$broadcast 'btHide'
+					
 					), (error) ->
 						console.log "error", error
 				# add key
