@@ -10,7 +10,7 @@
 		},
 		"refresh": "/oauth/token",
 		"revoke": {
-		"url": "https://kapi.kakao.com/v1/user/logout",
+			"url": "https://kapi.kakao.com/v1/user/logout",
 			"headers": {
 				"Authorization": "Bearer {{token}}"
 			}
