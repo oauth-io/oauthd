@@ -6,6 +6,10 @@
     "authorize": "/siteowner/authorize",
     "access_token": "/token",
     "request": {
+      "url": "https://api.constantcontact.com/v2",
+      "query": {
+          "api_key": "{client_id}"
+      },
       "headers": {
         "Authorization": "Bearer {{token}}"
       }
