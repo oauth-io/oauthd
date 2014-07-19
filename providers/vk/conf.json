@@ -47,9 +47,9 @@
 					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
 					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
 					"notifications": "Access to the notifications",
-					"stats": "Statistics access to the user's groups and applications",
 					"offline": "Access to API at any time from an external server.",
-					"ads": "Access to advanced methods for Ads API."
+					"ads": "Access to advanced methods for Ads API.",
+					"email": "Access to user email"
 				}
 			}
 		}
