@@ -43,6 +43,8 @@
 				"values": {
 					"https://www.googleapis.com/auth/admin.reports.audit.readonly": "View audit reports of Google Apps for your domain",
 					"https://www.googleapis.com/auth/admin.reports.usage.readonly": "View usage reports of Google Apps for your domain",
+					"https://www.googleapis.com/auth/admin.directory.user.readonly": "View users of Google Apps for your domain",
+					"https://www.googleapis.com/auth/admin.directory.user": "Retrieve users of Google Apps for your domain",
 					"openid": "Access to your id",
 					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
 					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
