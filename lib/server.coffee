@@ -499,18 +499,18 @@ server.del config.base_api + '/apps/:key/backend', auth.needed, (req, res, next)
 	db.apps.remBackend req.params.key, send(res,next)
 
 # get a provider config
-server.get config.base_api + '/providers/:provider', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
+server.get config.base_api + '/providers/:provider', bootPathCache(), plugins.data.hooks["api_cors_middleware"][0], (req, res, next) ->
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config's extras
-server.get config.base_api + '/providers/:provider/settings', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
+server.get config.base_api + '/providers/:provider/settings', bootPathCache(), plugins.data.hooks["api_cors_middleware"][0], (req, res, next) ->
 	db.providers.getSettings req.params.provider, send(res,next)
 
 # get the provider me.json mapping configuration
-server.get config.base_api + '/providers/:provider/user-mapping', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
+server.get config.base_api + '/providers/:provider/user-mapping', bootPathCache(), plugins.data.hooks["api_cors_middleware"][0], (req, res, next) ->
 	db.providers.getMeMapping req.params.provider, send(res,next)
 
 # get a provider logo
