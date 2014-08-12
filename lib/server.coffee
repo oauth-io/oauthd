@@ -1,8 +1,18 @@
-# oauthd
-# http://oauth.io
+# OAuth daemon
+# Copyright (C) 2013 Webshell SAS
 #
-# Copyright (c) 2013 thyb, bump
-# Licensed under the MIT license.
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 'use strict'
 
@@ -219,8 +229,8 @@ server.post config.base + '/access_token', (req, res, next) ->
 clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
 	if not e and data.redirect_uri
 		redirect_infos = Url.parse fixUrl(data.redirect_uri), true
-		if redirect_infos.hostname == config.url.hostname
-			e = new check.Error 'OAuth.redirect url must NOT be "' + config.url.host + '"'
+		if redirect_infos.hostname == 'oauth.io'
+			e = new check.Error 'OAuth.redirect url must NOT be "oauth.io"'
 	body = formatters.build e || r
 	body.state = data.state if data.state
 	body.provider = data.provider.toLowerCase() if data.provider
