@@ -1,0 +1,37 @@
+{
+	"name": "Instagram",
+    "desc": "Instagram is a photo sharing iPhone app and service. Users take photos and can share them with Instagram contacts, as well as friends on other social networks like Twitter and Facebook. The Instagram API provides access to user authentication, friend connections, photos and all the other elements of the iPhone app--including uploading new media.",
+	"url": "https://api.instagram.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/access_token",
+			"extra": [
+				"user"
+			]
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"relationships": "to follow and unfollow users on a user’s behalf",
+					"likes": "to like and unlike items on a user’s behalf",
+					"comments": "to create or delete comments on a user’s behalf",
+					"basic": "to read any and all data related to a user (e.g. following/followed-by lists, photos, etc.) (granted by default)"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://instagram.com/developer/clients/register/",
+		"docs": "http://instagram.com/developer/",
+		"apps": "http://instagram.com/developer/clients/manage/",
+		"provider": "http://instagram.com"
+	}
+}

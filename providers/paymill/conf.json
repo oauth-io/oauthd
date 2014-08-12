@@ -1,0 +1,56 @@
+{
+	"name": "Paymill",
+	"desc": "Paymill is a credit/debit card payment processing API. It allows businesses to develop simple and cost-effective credit card payment solution with their existing technology.",
+	"url": "https://api.paymill.com/",
+	"oauth2": {
+		"authorize": "https://connect.paymill.com/authorize",
+		"access_token": {
+			"url": "https://connect.paymill.com/token",
+			"extra": ["merchant_id", "is_active", "methods", "currencies", "payment_methods", "livemode", "public_key"]
+		},
+		"refresh": "https://connect.stripe.com/oauth/token",
+		"request": {
+			"headers": {
+				"Authorization": "Basic !BASE64{{token}}:!BASE64"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"clients_r": "Read-only access for clients",
+					"clients_w": "Write access for clients",
+					"clients_rw": "Read and write access for clients", 
+					"payments_r": "Read-only access for payments",
+					"payments_w": "Write access for payments",
+					"payments_rw": "Read and write access for payments",
+					"preauthorizations_r": "Read-only access for preauthorizations",
+					"preauthorizations_w": "Write access for preauthorizations",
+					"preauthorizations_rw": "Read and write access for preauthorizations",
+					"transactions_r": "Read-only access for transactions",
+					"transactions_w": "Write access for transactions",
+					"transactions_rw": "Read and write access for transactions",
+					"refunds_r": "Read-only access for refunds",
+					"refunds_w": "Write access for refunds",
+					"refunds_rw": "Read and write access for refunds",
+					"offers_r": "Read-only access for offers",
+					"offers_w": "Write access for offers",
+					"offers_rw": "Read and write access for offers",
+					"subscriptions_r": "Read-only access for subscriptions",
+					"subscriptions_w": "Write access for subscriptions",
+					"subscriptions_rw": "Read and write access for subscriptions",
+					"webhooks_r": "Read-only access for webhooks",
+					"webhooks_w": "Write access for webhooks",
+					"webhooks_rw": "Read and write access for webhooks"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://app.paymill.com/en-us/#!/settings",
+		"docs": "https://www.paymill.com/en-gb/documentation-3/reference/api-reference/",
+		"apps": "https://app.paymill.com/en-us/#!/settings",
+		"provider": "https://www.paymill.com"
+	}
+}

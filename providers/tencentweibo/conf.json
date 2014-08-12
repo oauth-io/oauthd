@@ -1,0 +1,36 @@
+{
+	"name": "SinaWeibo",
+    "desc": "Tencent Weibo is a Chinese microblogging (weibo) website launched by Tencent in April 2010, and is still currently under beta testing. Users may broadcast a message including 140 Chinese characters at most through the web, SMS or smartphone.",
+	"url": "https://open.t.qq.com/cgi-bin/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"extra": [
+				"openid",
+				"openkey"
+			]
+		},
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"oauth_consumer_key": "{client_id}",
+				"access_token": "{{token}}",
+				"openid": "{{openid}}",
+				"oauth_version": "2.a"
+			}
+		},
+		"refresh": "/access_token",
+		"parameters": {
+			"client_id": {
+				"scope": "public"
+			},
+			"client_secret": "string"
+		}
+	},
+	"href": {
+		"keys": "http://dev.t.qq.com/apps/add/1",
+		"docs": "http://wiki.open.t.qq.com/index.php/",
+		"apps": "http://dev.t.qq.com/development",
+		"provider": "http://t.qq.com"
+	}
+}

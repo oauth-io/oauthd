@@ -1,0 +1,19 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.flickr.com/services/apps/create/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://www.flickr.com/services/apps/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.flickr.com/",
+				"docs": "http://www.flickr.com/services/api/"
+			}
+		},
+		"jsfiddle": "http://jsfiddle.net/thyb/8dHd4/embedded/"
+	}
+}

@@ -1,0 +1,64 @@
+{
+	"name": "Renren",
+    "desc": "Renren is a Chinese social network to find old friends and meet new ones. The Renren API is an open platform based on Open Social. After authenticating, developers can retrieve friend lists and check friend status between users. The API also has access to notifications and invitations. Two of the more unique services provided by the API lets users pay for certain applications and allows developers to register new users.",
+	"url": "http://graph.renren.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"user"
+			]
+		},
+		"request": {
+			"url": "https://api.renren.com",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"read_user_blog": "read_user_blog",
+					"read_user_checkin": "read_user_checkin",
+					"read_user_feed": "read_user_feed",
+					"read_user_guestbook": "read_user_guestbook",
+					"read_user_invitation": "read_user_invitation",
+					"read_user_like_history": "read_user_like_history",
+					"read_user_message": "read_user_message",
+					"read_user_notification": "read_user_notification",
+					"read_user_photo": "read_user_photo",
+					"read_user_status": "read_user_status",
+					"read_user_album": "read_user_album",
+					"read_user_comment": "read_user_comment",
+					"read_user_share": "read_user_share",
+					"read_user_request": "read_user_request",
+					"publish_blog": "publish_blog",
+					"publish_checkin": "publish_checkin",
+					"publish_feed": "publish_feed",
+					"publish_share": "publish_share",
+					"publish_comment": "publish_comment",
+					"write_guestbook": "write_guestbook",
+					"send_invitation": "send_invitation",
+					"send_request": "send_request",
+					"send_message": "send_message",
+					"send_notification": "send_notification",
+					"photo_upload": "photo_upload",
+					"status_update": "status_update",
+					"create_album": "create_album",
+					"operate_like": "operate_like",
+					"admin_page": "admin_page"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://app.renren.com/developers/createAppNew",
+		"docs": "http://wiki.dev.renren.com/wiki/",
+		"apps": "http://app.renren.com/developers/newapp",
+		"provider": "http://renren.com"
+	}
+}

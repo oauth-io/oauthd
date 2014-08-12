@@ -1,0 +1,26 @@
+{
+	"name": "Withings",
+	"desc": "Withings is a company focusing on the development of connected measuring devices, such as scales and blood pressure monitors, that can send health information directly to the internet. Withings Body metrics Services API (WBS API) is a set of webservices allowing developers and third parties limited access to users' data. The API uses RESTful calls and responses are formatted in JSON.",
+	"url": "http://wbsapi.withings.net",
+	"oauth1": {
+		"request_token": "https://oauth.withings.com/account/request_token",
+		"authorize": {
+			"url": "https://oauth.withings.com/account/authorize",
+			"extra": [
+				"userid"
+			]
+		},
+		"access_token": {
+			"url": "https://oauth.withings.com/account/access_token",
+			"query": {
+				"userid": "{{userid}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://oauth.withings.com/partner/dashboard",
+		"docs": "https://oauth.withings.com/partner/add",
+		"apps": "https://oauth.withings.com/partner/dashboard",
+		"provider": "https://www.withings.com"
+	}
+}

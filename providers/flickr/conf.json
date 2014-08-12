@@ -1,0 +1,39 @@
+{
+    "name": "Flickr",
+    "desc": "The Flickr API can be used to retrieve photos from the Flickr photo sharing service using a variety of feeds - public photos and videos, favorites, friends, group pools, discussions, and more. The API can also be used to upload photos and video.The Flickr API supports many protocols including REST, SOAP, XML-RPC. Responses can be formatted in XML, XML-RPC, JSON and PHP. Documentation is included for 14 API Kit libraries.",
+    "url": "http://www.flickr.com/services/oauth",
+    "oauth1": {
+        "request_token": "/request_token",
+        "authorize": {
+            "url": "/authorize",
+            "query": {
+                "perms": "{permissions}"
+            }
+        },
+        "access_token": "/access_token",
+        "request": {
+            "query": {
+                "api_key": "{client_id}",
+                "format": "json"
+            }
+        },
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "permissions": {
+                "values": {
+                    "read": "Read access to the api",
+                    "write": "Read and write access to the api",
+                    "delete": "Read, write and deletion access to the api"
+                },
+                "cardinality": "1"
+            }
+        }
+    },
+    "href": {
+        "keys": "http://www.flickr.com/services/apps/create/",
+        "docs": "http://www.flickr.com/services/api/",
+        "apps": "http://www.flickr.com/services/apps/",
+        "provider": "http://www.flickr.com/"
+    }
+}

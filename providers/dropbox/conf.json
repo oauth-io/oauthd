@@ -1,0 +1,28 @@
+{
+	"name": "Dropbox",
+    "desc": "Dropbox is a storage service that syncs files online and across your computers via installed software. The API allows read/write access to the same files, piggybacking on Dropbox's file synchronization and storage.",
+	"url": "https://api.dropbox.com/1/oauth/",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": {
+			"url": "https://www.dropbox.com/1/oauth/authorize",
+			"ignore_verifier": true
+		},
+		"access_token": "/access_token"
+	},
+	"oauth2": {
+		"authorize": "https://www.dropbox.com/1/oauth2/authorize",
+		"access_token": "https://api.dropbox.com/1/oauth2/token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://www.dropbox.com/developers/apps/create",
+		"docs": "https://www.dropbox.com/developers/reference/api",
+		"apps": "https://www.dropbox.com/developers/apps",
+		"provider": "https://www.dropbox.com/"
+	}
+}

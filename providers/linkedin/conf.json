@@ -1,0 +1,21 @@
+{
+    "name": "Linkedin",
+    "desc": "LinkedIn is the worlds largest business social networking hub. \n LinkedIn actually provides 2 APIs: The JavaScript API that is a rich client library enabling you to build dynamic applications in the web browser. And the REST API that provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
+    "url": "https://api.linkedin.com/uas/oauth",
+    "oauth1": {
+        "request_token": "/requestToken",
+        "access_token": "/accessToken",
+        "authorize": {
+            "url": "/authenticate",
+            "query": {
+                "state": "{{state}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://www.linkedin.com/secure/developer?newapp=",
+        "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+        "apps": "https://www.linkedin.com/secure/developer",
+        "provider": "http://www.linkedin.com/"
+    }
+}

@@ -1,0 +1,28 @@
+{
+	"name": "MeetUp",
+    "desc": "From their site: The Meetup API allows developers to use the Topics, Groups and Events hosted and created on Meetup.com in their own applications and mashups. Any Meetup.com member can request an API key. The API is currently read only -- actions like RSVP'ing, joining groups or posting messages aren't supported yet.",
+	"url": "https://secure.meetup.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access",
+		"request": "https://api.meetup.com",
+		"refresh": "/access",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"messaging": "Enables Member to Member messaging",
+					"ageless": "Replaces the one hour expiry time from oauth2 tokens with a limit of up to two weeks",
+					"basic": "Access to Meetup group info, Everywhere API, creating and editing Events and RSVP's, posting photos"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://www.meetup.com/meetup_api/oauth_consumers/create/",
+		"docs": "http://www.meetup.com/meetup_api/",
+		"apps": "http://www.meetup.com/meetup_api/oauth_consumers/",
+		"provider": "http://www.meetup.com/"
+	}
+}

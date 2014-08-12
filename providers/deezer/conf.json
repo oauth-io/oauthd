@@ -1,0 +1,52 @@
+{
+	"name": "Deezer",
+    "desc": "Deezer is a web-based music streaming service operating out of France. Users can access their music via web browsers, mobile apps and offline. Currently the service offers a library of over 15 million songs. The service is not currently available in the United States. The API gives users access to the site's data making it available for use in third party web sites and applications. This data includes albums, artists, comments, editorials, folders, playlists, radio, searches, tracks and users. The API uses HTTP calls and responses are formatted in XML, JSON and PHP.",
+	"url": "https://connect.deezer.com/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/auth.php",
+			"query": {
+				"perms": "{perms}",
+				"redirect_uri": "{{callback}}",
+				"app_id": "{app_id}",
+				"response_type": "code"
+			}
+		},
+		"access_token": {
+			"url": "/access_token.php",
+			"query": {
+				"secret": "{secret}",
+				"code": "{{code}}",
+				"app_id": "{app_id}",
+				"grant_type": "authorization_code"
+			}
+		},
+		"request": {
+			"url": "https://api.deezer.com",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"app_id": "string",
+			"secret": "string",
+			"perms": {
+				"values": {
+					"delete_library": "Delete library items",
+					"basic_access": "Access users basic information",
+					"manage_library": "Manage users' library",
+					"offline_access": "Access user data any time",
+					"email": "Get the user's email",
+					"manage_community": "Manage users' friends"
+				},
+				"separator": ","
+			}
+		}
+	},
+	"href": {
+		"keys": "http://developers.deezer.com/myapps/create",
+		"docs": "http://developers.deezer.com",
+		"apps": "http://developers.deezer.com/myapps",
+		"provider": "http://www.deezer.com/"
+	}
+}

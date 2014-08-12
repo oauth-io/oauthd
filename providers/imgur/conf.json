@@ -1,0 +1,16 @@
+{
+	"name": "Imgur",
+    "desc": "Share photos using Imgur and its API. There are two options: anonymous upload or OAuth upload, which connects your photos to your account and gives your app twice the number of uploads per hour.",
+	"url": "https://api.imgur.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"refresh": "/token"
+	},
+	"href": {
+		"keys": "https://api.imgur.com/oauth2/addclient",
+		"docs": "http://api.imgur.com/",
+		"apps": "http://imgur.com/account/settings/apps",
+		"provider": "http://imgur.com/"
+	}
+}

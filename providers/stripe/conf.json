@@ -1,0 +1,35 @@
+{
+	"name": "Stripe",
+	"desc": "Stripe is a service that allows users to accept payments online, specifically developers. With the Stripe application, users can keep track of payments, search past payments, create recurring charges, and keep track of customers.",
+	"url": "https://api.stripe.com/",
+	"oauth2": {
+		"authorize": "https://connect.stripe.com/oauth/authorize",
+		"access_token": {
+			"url": "https://connect.stripe.com/oauth/token",
+			"extra": ["scope", "livemode", "stripe_publishable_key", "stripe_user_id"]
+		},
+		"request": {
+			"headers": {
+				"Authorization": "Basic !BASE64{{token}}:!BASE64"
+			}
+		},
+		"refresh": "https://connect.stripe.com/oauth/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"read_only": "Read-only access level",
+					"read_write": "Read and write access level"
+				},
+				"cardinality": "1"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://manage.stripe.com/account/applications/settings",
+		"docs": "https://stripe.com/docs",
+		"apps": "https://manage.stripe.com/account/applications/settings",
+		"provider": "https://stripe.com/"
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://oauth.yandex.ru/client/new"
+		},
+		"copyingKey": {
+			"url": "https://oauth.yandex.ru/client/my"
+		},
+		"install": {
+			"href": {
+				"provider": "http://yandex.ru/",
+				"docs": "http://api.yandex.ru/oauth/doc"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/me/"
+        }
+	}
+}

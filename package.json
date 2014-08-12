@@ -1,0 +1,51 @@
+{
+  "name": "oauthd",
+  "description": "OAuth that just works.",
+  "version": "0.4.0",
+  "homepage": "https://oauth.io",
+  "author": "OAuth team <team@oauth.io>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oauth-io/oauthd"
+  },
+  "licenses": "AGPLv3",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test && coffee test/providers_check.coffee"
+  },
+  "devDependencies": {
+    "grunt-browserify": "^2.1.3",
+    "browserify": "^4.2.1"
+  },
+  "keywords": [],
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "hiredis": "~0.1.15",
+    "redis": "~0.8.3",
+    "restify": "~2.5.1",
+    "async": "~0.2.9",
+    "request": "~2.33.0",
+    "nodemailer": "~0.4.4",
+    "underscore": "~1.4.4",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-coffee": "latest",
+    "grunt": "~0.4.4",
+    "restify-oauth2-oauthd": "~2.2.0",
+    "jayschema": "~0.2.0",
+    "jsonlint": "~1.6.0",
+    "prerender-node": "~0.1.15",
+    "ua-parser-js": "~0.6.2",
+    "grunt-contrib-requirejs": "latest",
+    "q": "^1.0.1",
+    "marked": "~0.3.2",
+    "express": "^4.2.0",
+    "liquid-node": "^0.3.1",
+    "sugar": "^1.4.1"
+  }
+}

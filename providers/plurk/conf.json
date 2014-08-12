@@ -1,0 +1,16 @@
+{
+    "name": "Plurk",
+    "desc": "Plurk is a site that allows you to showcase the events that make up your life, and follow the events of the people that matter to you, in short messages called plurks. The Plurk API provides a standard way of accessing and implementing applications on top of the Plurk platform. The API is a simple HTTP API that can be accessed from any language that supports creation of HTTP requests.",
+    "url": "https://www.plurk.com/OAuth",
+    "oauth1": {
+        "request_token": "/request_token",
+        "authorize": "/authorize",
+        "access_token": "/access_token"
+    },
+    "href": {
+        "keys": "http://www.plurk.com/PlurkApp/register",
+        "docs": "http://www.plurk.com/API#toc",
+        "apps": "http://www.plurk.com/PlurkApp/",
+        "provider": "http://www.plurk.com/"
+    }
+}

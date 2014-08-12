@@ -1,0 +1,15 @@
+{
+	"name": "Cheddar",
+    "desc": "Cheddar allows for task management with an emphasis on event syncing between multiple devices. Functions include: creating tasks, adding tags, setting due dates and assigning tasks to people. Cheddar simplifies the process through a simple usage of text. You type your task in the field, then press return and that's it. The task is created and shared between the user's devices. Users can also tag a task, using a hashtag like Twitter. The API utilizes a REST protocol with responses in JSON. Authentication is provided through OAuth2.",
+	"url": "https://api.cheddarapp.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token"
+	},
+	"href": {
+		"keys": "https://cheddarapp.com/developer/apps/new",
+		"docs": "https://cheddarapp.com/developer/",
+		"apps": "https://cheddarapp.com/developer/apps",
+		"provider": "https://cheddarapp.com/"
+	}
+}

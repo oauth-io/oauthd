@@ -1,0 +1,15 @@
+{
+	"name": "Asana",
+    "desc": "Asana is an online platform for teams to manage and share tasks. Asana offers both web and mobile applications for teams to organize, assign, and track task management items. The Asana API allows developers to access and integrate the functionality of Asana with other applications and to create new applications. Some example API methods include managing users, creating and managing tasks, and accessing projects and workspaces.",
+	"url": "https://app.asana.com/-",
+	"oauth2": {
+		"authorize": "/oauth_authorize",
+		"access_token": "/oauth_token"
+	},
+	"href": {
+		"keys": "http://app.asana.com/-/account_api",
+		"apps": "http://app.asana.com/-/account_api",
+		"docs": "http://developer.asana.com/documentation",
+		"provider": "https://asana.com"
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "Google Cloud",
+    "desc": "Google Cloud Storage is an Internet service to store data in Google's cloud. Google Cloud Storage allows world-wide storing and retrieval of any amount of data and at any time. It provides a simple programming interface which enables developers to take advantage of Google's own reliable and fast networking infrastructure to perform data operations in a secure and cost effective manner. If expansion needs arise, developers can benefit from the scalability provided by Google's infrastructure.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": "/token",
+		"request": "https://www.googleapis.com",
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/devstorage.full_control": "Manage your data and permissions in Google Cloud Storage",
+					"https://www.googleapis.com/auth/devstorage.read_only": "View your data in Google Cloud Storage",
+					"https://www.googleapis.com/auth/devstorage.read_write": "Manage your data in Google Cloud Storage",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

@@ -1,0 +1,39 @@
+{
+	"name": "Heroku",
+    "desc": "Heroku API is used for manually manipulating Heroku apps. Heroku is a cloud application platform for Ruby giving developers a new way of building and deploying web apps. The service lets app developers spend 100% of their time on their application code, not managing servers, deployment, ongoing operations, or scaling. The RESTful API lets users manage and deploy Rails apps to the Heroku platform. Responses are formatted in XML.",
+	"url": "https://id.heroku.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"refresh": "/token",
+		"request": "https://api.heroku.com",
+		"revoke": {
+			"url": "https://api.heroku.com/authorizations/{client_id}",
+			"method": "delete",
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"global": "Read and write access to all of your account, apps and resources.",
+					"identity": "Read-only access to your account information.",
+					"read": "Read-only access to all of your apps and resources, excluding account information and configuration variables.",
+					"read-protected": "Read-only access to all of your apps and resources, excluding account information. Includes configuration variables, which may include runtime secrets.",
+					"write": "Read and write access to all of your apps and resources, excluding account information and configuration variables.",
+					"write-protected": "Read and write access to all of your apps and resources, excluding account information. Includes configuration variables, which may include runtime secrets."
+				},
+				"cardinality": "1"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://dashboard.heroku.com/account#api-clients",
+		"docs": "https://devcenter.heroku.com/articles/oauth",
+		"apps": "https://dashboard.heroku.com/account#authorized-applications",
+		"provider": "https://heroku.com/"
+	}
+}

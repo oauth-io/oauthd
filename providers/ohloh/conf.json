@@ -1,0 +1,16 @@
+{
+	"name": "Ohloh",
+    "desc": "Ohloh is an open source network that connects people through the software they create and use. The Ohloh API is a free, REST-based programming interface to the Ohloh open source directory. You can use the Ohloh API to create your own applications and web services based on Ohloh data.",
+	"url": "http://www.ohloh.net/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authorize",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://www.ohloh.net/",
+		"docs": "http://meta.ohloh.net/reference/",
+		"apps": "https://www.ohloh.net/",
+		"provider": "https://www.ohloh.net/"
+	}
+}

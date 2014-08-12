@@ -1,0 +1,26 @@
+{
+    "name": "Google Enterprise Licence Manager",
+    "desc": "The Google Enterprise License Manager API allows developers to assign, update, retrieve, and delete user licenses through Googles API. The API uses OAuth 2.0 token authentication or an API key in every request made to the server. Calls to the API are made in JavaScript and returns are formatted in JSON-P.",
+    "url": "https://accounts.google.com/o/oauth2",
+    "oauth2": {
+        "authorize": "/auth",
+        "access_token": "/token",
+        "request": "https://www.googleapis.com",
+        "refresh": "/token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "https://www.googleapis.com/auth/apps.licensing": "Read/write access to License Manager API."
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://code.google.com/apis/console/",
+        "docs": "http://code.google.com/more/",
+        "apps": "https://code.google.com/apis/console/",
+        "provider": "http://google.com/"
+    }
+}

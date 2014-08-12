@@ -1,0 +1,17 @@
+{
+	"name": "Traxo",
+    "desc": "Traxo is an application to store digital and electronic travel information, a digital travel wallet. Traxo works with multiple travel sites so users can manage their travel information, travel rewards, and organize travel information.\nThe Traxo API allows developers to access and integrate the functionality of Traxo with other applications. Some example API methods include managing account information, creating and managing trips, retrieving travel information, and adding travel information.",
+	"url": "https://www.traxo.com/oauth",
+	"oauth2": {
+		"authorize": "/authenticate",
+		"access_token": "/token",
+		"refresh": "/token",
+		"request": "https://api.traxo.com"
+	},
+	"href": {
+		"keys": "https://developer.traxo.com",
+		"docs": "https://developer.traxo.com",
+		"apps": "https://developer.traxo.com",
+		"provider": "https://www.traxo.com"
+	}
+}

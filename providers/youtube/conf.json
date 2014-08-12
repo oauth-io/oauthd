@@ -1,0 +1,65 @@
+{
+    "name": "YouTube",
+    "desc": "The Data API gives users programmatic access to the video and user information stored on YouTube. This integration can be used for a variety of uses such as developing a web application allowing users to upload video to YouTube, or a device or desktop application that brings the YouTube experience to a new platform. This RESTful API provides responses in XML format. ",
+    "url": "https://accounts.google.com/o/oauth2",
+    "oauth2": {
+        "authorize": {
+            "url": "/auth",
+            "query": {
+                "client_id": "{client_id}",
+                "response_type": "code",
+                "redirect_uri": "{{callback}}",
+                "state": "{{state}}",
+                "scope": "{scope}",
+                "access_type": "{access_type}"
+            }
+        },
+        "access_token": {
+            "url": "/token",
+            "extra": [
+                "id_token"
+            ]
+        },
+        "request": "https://www.googleapis.com/",
+        "refresh": "/token",
+        "revoke": {
+            "url": "/revoke",
+            "method": "post",
+            "query": {
+                "token": "{{token}}"
+            }
+        },
+        "parameters": {
+            "client_id": "string",
+            "client_secret": "string",
+            "access_type": {
+                "values": {
+                    "online": "Will not provide a refresh_token",
+                    "offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+                },
+                "cardinality": "1"
+            },
+            "scope": {
+                "values": {
+                    "https://www.googleapis.com/auth/yt-analytics.readonly": "View YouTube Analytics reports for your YouTube content",
+                    "https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
+                    "https://www.googleapis.com/auth/youtubepartner": "View and manage your assets and associated content on YouTube",
+                    "https://www.googleapis.com/auth/youtube.upload": "Manage your YouTube videos",
+                    "https://www.googleapis.com/auth/youtube.readonly": "View your YouTube account",
+                    "https://www.googleapis.com/auth/yt-analytics-monetary.readonly": "View YouTube Analytics monetary reports for your YouTube content",
+                    "openid": "Access to your id",
+                    "email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+                    "profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+                    "https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome",
+                    "https://www.googleapis.com/auth/youtubepartner-channel-audit": "View private information of your YouTube channel relevant during the audit process with a YouTube partner"
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://code.google.com/apis/console/",
+        "docs": "https://developers.google.com/youtube/v3",
+        "apps": "https://code.google.com/apis/console/",
+        "provider": "http://google.com/"
+    }
+}

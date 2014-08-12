@@ -1,0 +1,29 @@
+{
+    "name": "Foursquare",
+    "desc": "Foursquare makes the real world easier to use. We build tools that help you keep up with friends, discover what’s nearby, save money and unlock deals. The foursquare APIs grants access to the company's database of locations as well as information on venue check in's. The APIs are: The Core API, Real-time API, Merchant Platform, Venues Platform. The APIs are RESTful and support XML, JSON, JSONP.",
+    "url": "https://foursquare.com/oauth2",
+    "oauth2": {
+        "authorize": {
+            "url": "/authenticate",
+            "query": {
+                "scope": "-",
+                "redirect_uri": "{{callback}}",
+                "response_type": "code",
+                "client_id": "{client_id}"
+            }
+        },
+        "access_token": "/access_token",
+        "request": {
+            "url": "https://api.foursquare.com",
+            "query": {
+                "oauth_token": "{{token}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://fr.foursquare.com/developers/register",
+        "docs": "https://developer.foursquare.com/overview/",
+        "apps": "https://foursquare.com/developers/apps",
+        "provider": "http://www.foursquare.com/"
+    }
+}

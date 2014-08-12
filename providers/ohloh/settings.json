@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.ohloh.net/",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.ohloh.net/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.ohloh.net/",
+				"docs": "http://meta.ohloh.net/reference/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/accounts/ACCOUNT_ID.xml"
+        }
+	}
+}

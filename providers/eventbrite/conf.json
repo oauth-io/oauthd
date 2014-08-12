@@ -1,0 +1,23 @@
+{
+    "name": "EventBrite",
+    "desc": "Eventbrite's API web services allows to create users and events as well as pull the associated events into your application. Access Eventbrite data and create, update, and get events. Get a list of attendees, transactions, venues and much more.",
+    "url": "https://www.eventbrite.com/oauth",
+    "oauth2": {
+        "authorize": {
+            "url": "/authorize",
+            "query": {
+                "redirect_uri": "{{callback}}",
+                "response_type": "code",
+                "client_id": "{client_id}"
+            }
+        },
+        "request": "https://www.eventbriteapi.com",
+        "access_token": "/token"
+    },
+    "href": {
+        "keys": "http://www.eventbrite.com/api/key/",
+        "docs": "http://developer.eventbrite.com/doc/",
+        "apps": "https://www.eventbrite.com/api/key",
+        "provider": "https://www.eventbrite.com/"
+    }
+}

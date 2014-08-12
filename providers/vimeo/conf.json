@@ -1,0 +1,16 @@
+{
+	"name": "Vimeo",
+    "desc": "The Vimeo API provides an interface to access much of the public data from Vimeo. Share videos with your friends. Access privacy settings to share videos with only select people. The API uses RESTful calls and responses are formatted in either XML, JSON, JSONP or serialized PHP.",
+	"url": "https://vimeo.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authorize",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://developer.vimeo.com/apps/new",
+		"docs": "http://developer.vimeo.com/apis",
+		"apps": "https://developer.vimeo.com/apps/",
+		"provider": "https://vimeo.com/"
+	}
+}

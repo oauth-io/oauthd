@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://dev.twitter.com/apps/new",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://oauth.withings.com/partner/dashboard",
+            "image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.withings.com",
+				"docs": "https://oauth.withings.com/partner/add"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/user?action=getbyuserid&userid=29"
+        }
+	}
+}

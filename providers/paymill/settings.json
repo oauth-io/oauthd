@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://app.paymill.com/en-us/#!/settings",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://app.paymill.com/en-us/#!/settings",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "hhttps://www.paymill.com",
+				"docs": "https://www.paymill.com/en-gb/documentation-3/reference/api-reference/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v2.1/clients"
+        }
+	}
+}

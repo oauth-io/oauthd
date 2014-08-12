@@ -1,0 +1,26 @@
+{
+    "name": "Google Contact",
+    "desc": "From their site: The Google Contacts Data API allows client applications to view and update Contacts content in the form of Google Data API feeds. Your client application can request a list of a user's contacts, edit or delete content in an existing contact, and query the content in an existing contact.",
+    "url": "https://accounts.google.com/o/oauth2",
+    "oauth2": {
+        "authorize": "/auth",
+        "access_token": "/token",
+        "request": "https://www.googleapis.com",
+        "refresh": "/token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "https://www.google.com/m8/feeds": "read/write access to Contacts and Contact Groups"
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://code.google.com/apis/console/",
+        "docs": "http://code.google.com/more/",
+        "apps": "https://code.google.com/apis/console/",
+        "provider": "http://google.com/"
+    }
+}

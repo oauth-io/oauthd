@@ -1,0 +1,15 @@
+{
+	"name": "Coinbase",
+    "desc": "",
+	"url": "https://coinbase.com/api/v1/",
+	"oauth2": {
+		"authorize": "https://coinbase.com/oauth/authorize",
+		"access_token": "https://coinbase.com/oauth/token"
+	},
+	"href": {
+		"keys": "https://coinbase.com/oauth/applications/new",
+		"docs": "https://coinbase.com/docs/api/overview",
+		"apps": "https://coinbase.com/oauth/applications",
+		"provider": "https://coinbase.com/"
+	}
+}

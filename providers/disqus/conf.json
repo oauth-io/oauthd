@@ -1,0 +1,39 @@
+{
+    "name": "Disqus",
+    "desc": "Disqus provides an API for users to interact with the Disqus backend. Disqus is the webwide discussion community where you carry your conversations with you. For Bloggers - Plug in and experience the best comment system, backed by your own forum. For Everyone - Claim and track your comments across blogs!",
+    "url": "https://disqus.com/api/oauth/2.0",
+    "oauth2": {
+        "authorize": "/authorize/",
+        "access_token": "/access_token/",
+        "request": {
+            "query": {
+                "access_token": "{{token}}",
+                "api_key": "{client_id}"
+            }
+        },
+        "refresh": "/access_token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "read": "Read access on data.",
+                    "write": "Write access on data.",
+                    "admin": "Forum moderation capabilities."
+                },
+                "separator": ","
+            }
+        }
+    },
+    "parameters": {
+        "client_id": {
+            "scope": "public"
+        }
+    },
+    "href": {
+        "keys": "http://disqus.com/api/applications/register/",
+        "docs": "http://disqus.com/api/docs/",
+        "apps": "http://disqus.com/api/applications/",
+        "provider": "http://disqus.com/"
+    }
+}

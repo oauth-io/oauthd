@@ -1,0 +1,16 @@
+{
+	"name": "Miso",
+    "desc": "The Miso platform lets people share what they are watching on TV in a fun and easy way. Miso's REST API enables developers to access relevant information in real time about shows, movies, users, checkins and more from their consumer website or mobile application. The Miso APIv1 gives you access to all of the data used by the Miso mobile application, such as the user, follower, media, and checkin information.",
+	"url": "http://gomiso.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authorize",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "http://gomiso.com/oauth_clients/new",
+		"docs": "http://gomiso.com/developers/endpoints",
+		"apps": "http://gomiso.com/oauth_clients",
+		"provider": "http://gomiso.com/"
+	}
+}

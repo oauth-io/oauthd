@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://api.23andme.com/apply",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://api.23andme.com/dev",
+            "image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://23andme.com/",
+				"docs": "https://api.23andme.com/docs"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/1/names/profile_id/"
+        }
+	}
+}

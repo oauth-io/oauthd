@@ -1,0 +1,31 @@
+{
+    "name": "QIP.ru",
+    "desc": "QIP is a multiprotocol instant messaging client. It is a closed source freeware program originally developed by Ilgam Zyulkorneev. In 2008 it was bought by RosBusinessConsulting media group and named most popular RBC service in 2009.",
+    "url": "https://openapi.qip.ru/oauth",
+    "oauth2": {
+        "authorize": "https://store.qip.ru/dialog/oauth",
+        "access_token": "/authorize",
+        "request": {
+            "query": {
+                "access_token": "{{token}}"
+            }
+        },
+        "parameters": {
+            "client_id": "string",
+            "client_secret": "string",
+            "scope": {
+                "values": {
+                    "user.about": "Основное право доступа, позволяющее приложению вызывать методы от имени пользователя и получать информацию о его профиле",
+                    "friends.about": "На основании этого права приложение может получить доступ к списку друзей пользователя и информации об их профиле."
+                },
+                "separator": ","
+            }
+        }
+    },
+    "href": {
+        "keys": "http://developers.store.qip.ru/applications/new",
+        "docs": "http://store.qip.ru/docs/OpenApi.credentials",
+        "apps": "http://developers.store.qip.ru/applications",
+        "provider": "http://qip.ru/"
+    }
+}

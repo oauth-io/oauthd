@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://manage.dev.live.com/Applications/Create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://manage.dev.live.com/Applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.live.com/",
+				"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v5.0/me"
+        }
+	}
+}

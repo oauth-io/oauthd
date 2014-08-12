@@ -1,0 +1,31 @@
+{
+	"name": "Stormz",
+    "desc": "Stormz builds collaborative technology empowering employees to collectively tackle corporate challenges. Stormz designs web based workshop sequences for brainstorming and problem solving. The Stormz API provides developer access to Stormz resources including Users, Workshops, and Activities. Data is transmitted over HTTPS and JSON formatted.",
+	"url": "https://stormz.me/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": {
+			"url": "https://api.stormz.me",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"read": "Read",
+					"write": "Write"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://stormz.me/oauth/applications/new",
+		"docs": "http://developer.stormz.me/",
+		"apps": "https://stormz.me/oauth/applications",
+		"provider": "https://stormz.me/"
+	}
+}

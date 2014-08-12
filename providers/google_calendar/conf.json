@@ -1,0 +1,60 @@
+{
+	"name": "Google Calendar",
+	"desc": "The Calendar Data API lets users perform most of the operations a normal Google Calendar user can on the Google Calendar website. Google Calendar allows client applications to view and update calendar events in the form of Google data API, GData, feeds. The Calendar Data API lets users incorporate Calendar functionality into their own application or website. Users can edit calendars, create and delete events, query for events that match particular criteria, send invitations, and more.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com/",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			},
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/calendar": "Manage your calendars",
+					"https://www.googleapis.com/auth/calendar.readonly": "View your calendars",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "https://developers.google.com/google-apps/calendar/firstapp",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

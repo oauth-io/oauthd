@@ -1,0 +1,16 @@
+{
+	"name": "Viadeo",
+    "desc": "The Viadeo Graph API is a simple way to bring a professional social context to websites, applications and services. Each object on Viadeo has a unique ID which can be used to call the information attached to it including any relationships or connections that exist between the objects. An object might be a member, an event or a job and connections might be professional relationships, shared articles or newsfeed comments.",
+	"url": "https://secure.viadeo.com/oauth-provider",
+	"oauth2": {
+		"authorize": "/authorize2",
+		"access_token": "/access_token2",
+		"request": "https://api.viadeo.com"
+	},
+	"href": {
+		"keys": "http://dev.viadeo.com/dashboard/",
+		"apps": "http://dev.viadeo.com/dashboard/",
+		"docs": "http://dev.viadeo.com/documentation/",
+		"provider": "https://www.viadeo.com"
+	}
+}

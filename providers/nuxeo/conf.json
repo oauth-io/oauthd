@@ -1,0 +1,19 @@
+{
+  "name": "Nuxeo",
+  "url": "https://{nuxeoserver}/oauth2",
+  "desc": "Nuxeo provides an Open Source Content Management Platform enabling architects and developers to easily build, deploy, and run content-centric business applications. URL parameter must constains domain name and application name without a trailling slash. For instance: 'demo.nuxeo.com/nuxeo'",
+  "oauth2": {
+    "authorize": "/authorization",
+    "access_token": "/token",
+    "refresh": "/token",
+    "parameters": {
+      "nuxeoserver": "string",
+      "client_secret": "string",
+      "client_id": "string"
+    }
+  },
+  "href": {
+    "docs": "http://doc.nuxeo.com/x/1IcZAQ",
+    "provider": "http://www.nuxeo.com/"
+  }
+}

@@ -1,0 +1,37 @@
+{
+	"name": "GitHub",
+    "desc": "GitHub is a repository of public open source and private business code. Is is a fast, efficient, distributed version control system ideal for the collaborative development of software. Use it to fork projects, send pull requests, monitor development.",
+	"url": "https://github.com/login/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": {
+			"url": "https://api.github.com",
+			"cors": true
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"public_repo": "Read/write access to public repos and organizations.",
+					"gist": "Write access to gists.",
+					"notifications": "Read access to a user’s notifications. repo is accepted too.",
+					"user:email": "Read access to a user’s email addresses.",
+					"repo:status": "Read/write access to public and private repository commit statuses. This scope is only necessary to grant other users or services access to private repository commit statuses without granting access to the code. The repo and public_repo scopes already include access to commit status for private and public repositories respectively.",
+					"repo": "Read/write access to public and private repos and organizations.",
+					"user:follow": "Access to follow or unfollow other users.",
+					"delete_repo": "Delete access to adminable repositories.",
+					"user": "Read/write access to profile info only. Note: this scope includes user:email and user:follow."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://github.com/settings/applications/new",
+		"docs": "http://developer.github.com/v3/",
+		"apps": "https://github.com/settings/applications",
+		"provider": "https://github.com/"
+	}
+}

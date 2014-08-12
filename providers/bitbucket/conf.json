@@ -1,0 +1,16 @@
+{
+	"name": "BitBucket",
+    "desc": "Bitbucket allows you to store all of your Git and Mercurial source code in one place with unlimited private repositories. Bitbucket includes issue tracking, wiki, and pull requests. \nThe Bitbucket API provides programmatic access to Bitbucket's services, allowing users to manage group repository permissions, group memberships, invitations to other users and manage user privileges. Bitbucket's REST API operates solely over HTTPS, and can respond in either JSON or XML.",
+    "url": "https://bitbucket.org/api/1.0/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authenticate",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://bitbucket.org/account",
+		"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs",
+		"apps": "https://bitbucket.org/account",
+		"provider": "https://bitbucket.org/"
+	}
+}

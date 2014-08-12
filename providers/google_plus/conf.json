@@ -1,0 +1,68 @@
+{
+	"name": "Google+",
+	"desc": "Google Plus is a service to share links, photos and other content. The Google Plus API allows developers to access publicly-available Google Plus content, including user information and publicly shared items.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com/",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			},
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/userinfo.profile": "View basic information about your account",
+					"https://www.googleapis.com/auth/plus.me": "Know who you are on Google",
+					"https://www.googleapis.com/auth/userinfo.email": "View your email address",
+					"https://www.googleapis.com/auth/plus.login": "Know your basic profile info and list of people in your circles.",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome",
+					"https://www.googleapis.com/auth/plus.circles.read": "View your circles and the people and pages in them",
+					"https://www.googleapis.com/auth/plus.circles.write": "Manage your circles and add people and pages, who will be notified and may appear on your public Google+ profile",
+					"https://www.googleapis.com/auth/plus.media.upload": "Send your photos and videos to Google+",
+					"https://www.googleapis.com/auth/plus.profiles.read": "View your own Google+ profile and profiles visible to you",
+					"https://www.googleapis.com/auth/plus.stream.read": "View your Google+ posts, comments, and stream",
+					"https://www.googleapis.com/auth/plus.stream.write": "Manage your Google+ posts, comments, and stream"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "https://developers.google.com/+/api/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

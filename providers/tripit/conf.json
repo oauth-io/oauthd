@@ -1,0 +1,19 @@
+{
+	"name": "Tripit",
+	"desc": "The TripIt API allows users to access the TripIt's information about travel and itineraries. TripIt facilitates integration and organization of travel information from many different sources. The TripIt API allows third parties to easily interface with this platform.",
+	"url": "https://api.tripit.com",
+	"oauth1": {
+		"request_token": "/oauth/request_token",
+		"authorize": {
+			"url": "https://www.tripit.com/oauth/authorize",
+			"ignore_verifier": true
+		},
+		"access_token": "/oauth/access_token"
+	},
+	"href": {
+		"keys": "https://www.tripit.com/developer/create",
+		"docs": "http://tripit.github.com/api/doc/v1/",
+		"apps": "https://www.tripit.com/developer",
+		"provider": "http://www.tripit.com/"
+	}
+}

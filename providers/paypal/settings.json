@@ -1,0 +1,20 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://developer.paypal.com/webapps/developer/applications/createapp"
+        },
+        "copyingKey": {
+            "url": "https://developer.paypal.com/webapps/developer/applications/myapps"
+        },
+        "install": {
+            "href": {
+                "provider": "https://www.paypal.com/",
+                "docs": "https://developer.paypal.com/docs"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v1/identity/openidconnect/userinfo/?schema=openid"
+        }
+    }
+}

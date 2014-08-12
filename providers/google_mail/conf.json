@@ -1,0 +1,30 @@
+{
+	"name": "Google Mail",
+    "desc": "Google Gmail now supports the standard IMAP and SMTP protocols for accessing and sending e-mail messages. The Gmail IMAP and SMTP servers have been extended to support authorization via the industry-standard OAuth protocol. This allows third party applications to access a user's email account with their permission.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": "/token",
+		"request": "https://www.googleapis.com",
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/userinfo.email": "View your email address",
+					"https://mail.google.com/": "The scope for IMAP and SMTP access",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"https://www.googleapis.com/auth/plus.login": "Know your name, basic info, and list of people you're connected to on Google+",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

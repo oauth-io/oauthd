@@ -1,0 +1,16 @@
+{
+	"name": "Skyrock",
+    "desc": "Skyrock offers an XML-RPC API that lets developers create apps that can manage their blogs. The API supports methods that interact with blogs on Blogger, metaWeblog, and Skyrock. For Skyrock partners, and API Key is used for authentication. For other developers and non-partners, a username/password must be sent with each API call, or a session string must be created.",
+	"url": "https://api.skyrock.com/v2/oauth",
+	"oauth1": {
+		"request_token": "/initiate",
+		"authorize": "/authorize",
+		"access_token": "/token"
+	},
+	"href": {
+		"keys": "https://www.skyrock.com/developer/application/application_create.php",
+		"docs": "http://www.skyrock.com/developer/documentation/",
+		"apps": "http://www.skyrock.com/developer/application/",
+		"provider": "http://www.skyrock.com/"
+	}
+}

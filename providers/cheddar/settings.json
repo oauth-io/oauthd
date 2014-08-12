@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://cheddarapp.com/developer/apps/new",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://cheddarapp.com/developer/apps",
+            "image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://cheddarapp.com/",
+				"docs": "https://cheddarapp.com/developer/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me"
+        }
+	}
+}

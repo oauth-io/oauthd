@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://vk.com/editapp?act=create",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://vk.com/apps?act=settings"
+        },
+        "install": {
+            "href": {
+                "provider": "https://vk.com/",
+                "docs": "https://vk.com/dev/main"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/method/users.get"
+        },
+        "jsfiddle": "http://jsfiddle.net/thyb/rXSjp/2/embedded/"
+    }
+}

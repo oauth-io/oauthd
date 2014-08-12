@@ -1,0 +1,29 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://github.com/settings/applications/new",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://github.com/settings/applications",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://github.com/",
+                "docs": "http://developer.github.com/v3/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/user"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/user"
+            }
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/2hb6B/embedded/"
+    }
+}

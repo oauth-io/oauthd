@@ -1,0 +1,21 @@
+{
+	"name": "DeviantArt",
+    "desc": "DeviantART is the largest online social network for artists and art enthusiasts with over 19 million registered members, attracting 45 million unique visitors per month. The site's social network environment receives over 100,000 daily uploads of original art works ranging from traditional media, such as painting and sculpture, to digital art, pixel art, films and anime.",
+	"url": "https://www.deviantart.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": "/token"
+	},
+	"href": {
+		"keys": "http://www.deviantart.com/submit/app/",
+		"docs": "http://www.deviantart.com/developers/",
+		"apps": "https://www.deviantart.com/settings/myapps",
+		"provider": "http://deviantart.com/"
+	}
+}

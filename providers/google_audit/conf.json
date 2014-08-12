@@ -1,0 +1,61 @@
+{
+	"name": "Google Enterprise Audit",
+	"desc": "With the Google Apps Admin Audit API you can survey the activities of all of your account's administrators. The API gives details about changes to a key subset of your Google Apps services and features settings including settings for Calendar, Chat, your delegated administrators, Docs, domain configuration, Gmail, Groups, mobile settings, organization hierarchy, Sites, and user settings. This API's functionality is a key building block for your Google Apps account's IT infrastructure.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com/",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			},
+			"scope": {
+				"values": {
+					"https://apps-apis.google.com/a/feeds/compliance/audit/": "Access to email Audit Api",
+					"https://www.googleapis.com/auth/apps/reporting/audit.readonly": "Access to the Admin Audit API ReadOnly",
+					"https://apps-apis.google.com/a/feeds/policies/": "Use this scope for OAuth access to the customerId operation",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "https://developers.google.com/google-apps/admin-audit/get_started",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

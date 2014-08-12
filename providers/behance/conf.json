@@ -1,0 +1,39 @@
+{
+	"name": "Behance",
+    "desc": "Behance is a website for creative professionals to share their work. Popular with photographers, artists and designers, the site allows its users to create portfolios of work and show current projects. The Behance API makes available much of the site's content. Developers can search and browse Behance users, discovering them by name, location or keyword. Completed projects and works in progress are also searchable via the API, which uses REST with all calls returned in JSONP.",
+	"url": "https://www.behance.net/v2/oauth",
+	"oauth2": {
+		"authorize": "/authenticate",
+		"access_token": "/token",
+		"request": {
+			"url": "https://behance.net",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"collection_read": "Able to read collections you have marked as private",
+					"collection_write": "Ability to create, manipulate and delete your collections.",
+					"invitations_write": "Respond to user's invitations.",
+					"invitations_read": "Get user's invitations.",
+					"project_read": "Read private projects",
+					"activity_read": "Allows access to read network activity feed",
+					"wip_write": "Able to post, manipulate and delete a work in progress on your behalf",
+					"wip_read": "Able to read works in progress marked as private",
+					"post_as": "may act on your behalf to comment, follow users, view and appreciate projects"
+				},
+				"separator": "|"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://www.behance.net/dev/register",
+		"docs": "http://www.behance.net/dev/api/endpoints/",
+		"apps": "http://www.behance.net/dev/apps",
+		"provider": "http://www.behance.net/"
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://soundcloud.com/you/apps/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://soundcloud.com/you/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://soundcloud.com",
+				"docs": "http://developers.soundcloud.com/docs/api/reference"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/me.json"
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/dPNz3/embedded/"
+	}
+}
