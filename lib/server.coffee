@@ -28,12 +28,6 @@ oauth =
 
 auth = plugins.data.auth
 
-
-cors_middleware = (req, res, next) ->
-	res.setHeader 'Access-Control-Allow-Origin', '*'
-	res.setHeader 'Access-Control-Allow-Methods', 'GET'
-	next()
-
 # build server options
 server_options =
 	name: 'OAuth Daemon'
@@ -75,8 +69,7 @@ server.use (req, res, next) ->
 
 
 
-# add server to shared plugins data and run init
-plugins.runSync 'init'
+
 
 # little help
 server.send = send = (res, next) -> (e, r) ->
@@ -114,6 +107,18 @@ bootPathCache = ->
 	return chain
 
 fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
+
+# add server to shared plugins data and run init
+plugins.runSync 'init'
+
+if not plugins.data.hooks["api_cors_middleware"]
+	plugins.data.addhook 'api_cors_middleware', (req, res, next) =>
+		next()
+
+cors_middleware = (req, res, next) ->
+	res.setHeader 'Access-Control-Allow-Origin', '*'
+	res.setHeader 'Access-Control-Allow-Methods', 'GET'
+	next()
 
 # generated js sdk
 server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
@@ -484,20 +489,18 @@ server.del config.base_api + '/apps/:key/backend', auth.needed, (req, res, next)
 	db.apps.remBackend req.params.key, send(res,next)
 
 # get a provider config
-server.get config.base_api + '/providers/:provider', bootPathCache(), (req, res, next) ->
-	res.setHeader 'Access-Control-Allow-Origin', '*'
-	res.setHeader 'Access-Control-Allow-Methods', 'GET'
+server.get config.base_api + '/providers/:provider', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
 	if req.query.extend
 		db.providers.getExtended req.params.provider, send(res,next)
 	else
 		db.providers.get req.params.provider, send(res,next)
 
 # get a provider config's extras
-server.get config.base_api + '/providers/:provider/settings', bootPathCache(), cors_middleware, (req, res, next) ->
+server.get config.base_api + '/providers/:provider/settings', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
 	db.providers.getSettings req.params.provider, send(res,next)
 
 # get the provider me.json mapping configuration
-server.get config.base_api + '/providers/:provider/user-mapping', bootPathCache(), cors_middleware, (req, res, next) ->
+server.get config.base_api + '/providers/:provider/user-mapping', bootPathCache(), plugins.data.hooks["api_cors_middleware"], (req, res, next) ->
 	db.providers.getMeMapping req.params.provider, send(res,next)
 
 # get a provider logo
