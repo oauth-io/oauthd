@@ -14,7 +14,7 @@ async = require 'async'
 restify = require 'restify'
 UAParser = require 'ua-parser-js'
 
-config = require './config'
+config = require '../config'
 db = require './db'
 plugins = require './plugins'
 exit = require './exit'
@@ -84,10 +84,7 @@ server.send = send = (res, next) -> (e, r) ->
 	res.send (if r? then r else check.nullv)
 	next()
 
-plugins.data.hooks =
-	'connect.auth': []
-	'connect.callback': []
-	'connect.backend': []
+plugins.data.hooks = {}
 
 plugins.data.callhook = -> # (name, ..., callback)
 	name = Array.prototype.slice.call(arguments)
@@ -95,6 +92,7 @@ plugins.data.callhook = -> # (name, ..., callback)
 	name = name[0]
 	callback = args.splice(-1)
 	callback = callback[0]
+	return callback() if not plugins.data.hooks[name]
 	cmds = []
 	args[args.length] = null
 	for hook in plugins.data.hooks[name]
@@ -103,6 +101,10 @@ plugins.data.callhook = -> # (name, ..., callback)
 				args[args.length - 1] = cb
 				hook.apply plugins.data, args
 	async.series cmds, callback
+
+plugins.data.addhook = (name, fn) ->
+	plugins.data.hooks[name] ?= []
+	plugins.data.hooks[name].push fn
 
 bootPathCache = ->
 	chain = restify.conditionalRequest()
