@@ -31,44 +31,33 @@ exports.create = (data, user, callback) ->
 	if err.failed()
 		return callback new check.Error "You must specify a name and at least one domain for your application."
 
-	db.users.getPlan user.id, (err, plan) ->
-		db.users.getApps user.id, (err, apps) ->
-			db.redis.get 'u:' + user.id + ':heroku_id', (err, heroku_id) ->
-				if apps?.length > 0
-					if not err and heroku_id? 
-						return callback new check.Error 'Sorry, Heroku users can\'t have multiple apps on their OAuth.io account.'
-					else
-						if (not plan and apps?.length >= 2) or apps?.length >= plan?.nbApp
-							if not ((user.mail.match /.*@oauth\.io$/)? and user.validated)
-								return callback new restify.NotAuthorizedError 'You must upgrade your plan to get more apps!'
-				
-				key = db.generateUid()
-				secret = db.generateUid()
-				err = new check.Error
-				if data.domains
-					for domain in data.domains
-						err.check 'domains', domain, 'string'
-				if err.failed()
-					return callback new check.Error "You must specify a name and at least one domain for your application."
-				db.redis.incr 'a:i', (err, idapp) ->
-					return callback err if err
-					prefix = 'a:' + idapp + ':'
-					cmds = [
-						[ 'mset',
-							prefix+'name', data.name,
-							prefix+'key', key,
-							prefix+'secret', secret,
-							prefix+'owner', user.id,
-							prefix+'date', (new Date).getTime() ],
-						[ 'hset', 'a:keys', key, idapp ]
-					]
-					if data.domains
-						# todo: in redis >= 2.4, sadd accepts multiple members
-						for domain in data.domains
-							cmds.push [ 'sadd', prefix + 'domains', domain ]
-					db.redis.multi(cmds).exec (err, res) ->
-						return callback err if err
-						return callback null, id:idapp, name:data.name, key:key
+	key = db.generateUid()
+	secret = db.generateUid()
+	err = new check.Error
+	if data.domains
+		for domain in data.domains
+			err.check 'domains', domain, 'string'
+	if err.failed()
+		return callback new check.Error "You must specify a name and at least one domain for your application."
+	db.redis.incr 'a:i', (err, idapp) ->
+		return callback err if err
+		prefix = 'a:' + idapp + ':'
+		cmds = [
+			[ 'mset',
+				prefix+'name', data.name,
+				prefix+'key', key,
+				prefix+'secret', secret,
+				prefix+'owner', user.id,
+				prefix+'date', (new Date).getTime() ],
+			[ 'hset', 'a:keys', key, idapp ]
+		]
+		if data.domains
+			# todo: in redis >= 2.4, sadd accepts multiple members
+			for domain in data.domains
+				cmds.push [ 'sadd', prefix + 'domains', domain ]
+		db.redis.multi(cmds).exec (err, res) ->
+			return callback err if err
+			return callback null, id:idapp, name:data.name, key:key
 
 # get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->
