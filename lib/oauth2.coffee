@@ -59,7 +59,6 @@ class OAuth2 extends OAuthBase
 			return callback(e) if e
 			responseParser = new OAuth2ResponseParser(r, body, headers["Accept"], 'access_token')
 			responseParser.parse (err, response) =>
-				logger.log "asana fail", err.message, err.body, options if @_provider.name == "Asana" and err?.body?.error == "unsupported_grant_type"
 				return callback err if err
 
 				expire = @_getExpireParameter(response)
