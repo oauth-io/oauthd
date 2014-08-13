@@ -76,16 +76,6 @@ exports.get = check check.format.key, (key, callback) ->
 			return callback err if err
 			callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3]
 
-# get the app's owner
-exports.getOwner = check check.format.key, (key, callback) ->
-	db.redis.hget 'a:keys', key, (err, idapp) ->
-		return callback err if err
-		return callback new check.Error 'Unknown key' unless idapp
-		prefix = 'a:' + idapp + ':'
-		db.redis.mget [prefix + 'owner'], (err, replies) ->
-			return callback err if err
-			callback null, id:idapp, owner:replies[0]
-
 # update app infos
 exports.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
 	db.redis.hget 'a:keys', key, (err, idapp) ->
