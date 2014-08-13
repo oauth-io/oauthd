@@ -124,11 +124,9 @@ plugins.runSync 'init'
 if not plugins.data.hooks["api_cors_middleware"]
 	plugins.data.addhook 'api_cors_middleware', (req, res, next) =>
 		next()
-
-cors_middleware = (req, res, next) ->
-	res.setHeader 'Access-Control-Allow-Origin', '*'
-	res.setHeader 'Access-Control-Allow-Methods', 'GET'
-	next()
+if not plugins.data.hooks["api_create_app_restriction"]
+	plugins.data.addhook 'api_create_app_restriction', (req, res, next) =>
+		next()
 
 # generated js sdk
 server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
@@ -413,7 +411,7 @@ server.get config.base + '/:provider', (req, res, next) ->
 		next()
 
 # create an application
-server.post config.base_api + '/apps', auth.needed, (req, res, next) ->
+server.post config.base_api + '/apps', auth.needed, plugins.data.hooks["api_create_app_restriction"][0], (req, res, next) ->
 	db.apps.create req.body, req.user, (error, result) =>
 		return next(error) if error
 		plugins.data.emit 'app.create', req.user, result
