@@ -17,7 +17,7 @@
 async = require 'async'
 config = require './config'
 
-shared = require process.cwd() + '/plugins/shared'
+shared = require './plugin_shared'
 shared.exit = require './exit'
 shared.check = require './check'
 shared.db = require './db'
