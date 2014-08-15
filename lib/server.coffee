@@ -268,7 +268,7 @@ clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redire
 	next()
 
 # oauth: handle callbacks
-server.get config.base + '/', (req, res, next) ->
+server.get config.base + '/auth', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
 	getState = (callback) ->
 		return callback null, req.params.state if req.params.state

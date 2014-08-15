@@ -17,7 +17,7 @@
 crypto = require 'crypto'
 restify = require 'restify'
 restifyOAuth2 = require 'restify-oauth2-oauthd'
-shared = require '../plugin_shared'
+shared = require '../../../bin/plugin_shared'
 {db,check} = shared
 
 _config =
@@ -98,6 +98,7 @@ exports.needed = (req, res, next) ->
 		cb()
 
 exports.optional = (req, res, next) ->
+	console.log 'hey'
 	cb = ->
 		req.user = req.clientId
 		req.body ?= {}

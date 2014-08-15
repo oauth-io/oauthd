@@ -41,9 +41,25 @@ exports.init = ->
 	
 	# Checking if auth plugin is present. Else uses default
 	if not shared.auth?
-		console.log 'using default auth'
-		auth_plugin = require './default_auth/auth'
+		console.log 'Using default auth'
+		auth_plugin = require '../default_plugins/auth/bin'
 		exports.plugin['auth'] = auth_plugin
+
+	# Loading front if not overriden
+	if not shared.front?
+		console.log 'Using default front'
+		front_plugin = require '../default_plugins/front/bin'
+		exports.plugin['front'] = front_plugin
+
+	# Loading request
+	request_plugin = require '../default_plugins/request/bin'
+	exports.plugin['request'] = request_plugin
+
+	# Loading me
+	me_plugin = require '../default_plugins/me/bin'
+	exports.plugin['me'] = me_plugin
+	
+
 	return
 
 exports.run = (name, args, callback) ->
