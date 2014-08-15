@@ -1,0 +1,14 @@
+{
+  "name": "oauthd-instance",
+  "version": "0.0.0",
+  "description": "oauthd instance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache2",
+  "dependencies": {
+    "oauthd": "^0.4.0"
+  }
+}

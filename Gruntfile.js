@@ -9,16 +9,30 @@ module.exports = function(grunt) {
                 nospawn: true
             },
             lib: {
-                files: ['lib/*.coffee'],
+                files: ['lib/**/*.coffee'],
                 tasks: ['coffee:lib']
+            },
+            cli: {
+                files: ['cli/**/*.coffee'],
+                tasks: ['coffee:cli']
             }
         },
         coffee: {
             lib: {
                 expand: true,
                 cwd: 'lib',
-                src: ['*.coffee'],
+                src: ['**/*.coffee'],
                 dest: 'bin',
+                ext: '.js',
+                options: {
+                    bare: true
+                }
+            },
+            cli: {
+                expand: true,
+                cwd: 'cli',
+                src: ['**/*.coffee'],
+                dest: 'cli/bin',
                 ext: '.js',
                 options: {
                     bare: true
