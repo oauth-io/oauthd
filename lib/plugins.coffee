@@ -38,6 +38,12 @@ exports.load = (plugin_name) ->
 exports.init = ->
 	for plugin in config.plugins
 		exports.load plugin
+	
+	# Checking if auth plugin is present. Else uses default
+	if not shared.auth?
+		console.log 'using default auth'
+		auth_plugin = require './default_auth/auth'
+		exports.plugin['auth'] = auth_plugin
 	return
 
 exports.run = (name, args, callback) ->
