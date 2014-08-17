@@ -129,7 +129,7 @@ if not plugins.data.hooks["api_create_app_restriction"]
 		next()
 
 # generated js sdk
-server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
+server.get config.base + '/auth/download/latest/oauth.js', bootPathCache(), (req, res, next) ->
 	sdk_js.get (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'
@@ -137,7 +137,7 @@ server.get config.base + '/download/latest/oauth.js', bootPathCache(), (req, res
 		next()
 
 # generated js sdk minified
-server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req, res, next) ->
+server.get config.base + '/auth/download/latest/oauth.min.js', bootPathCache(), (req, res, next) ->
 	sdk_js.getmin (e, r) ->
 		return next e if e
 		res.setHeader 'Content-Type', 'application/javascript'
@@ -145,7 +145,7 @@ server.get config.base + '/download/latest/oauth.min.js', bootPathCache(), (req,
 		next()
 
 # oauth: refresh token
-server.post config.base + '/refresh_token/:provider', (req, res, next) ->
+server.post config.base + '/auth/refresh_token/:provider', (req, res, next) ->
 	e = new check.Error
 	e.check req.body, key:check.format.key, secret:check.format.key, token:'string'
 	e.check req.params, provider:'string'
@@ -165,7 +165,7 @@ server.post config.base + '/refresh_token/:provider', (req, res, next) ->
 				oa.refresh req.body.token, keyset, send(res,next)
 
 # iframe injection for IE
-server.get config.base + '/iframe', (req, res, next) ->
+server.get config.base + '/auth/iframe', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
 	res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 	e = new check.Error
@@ -205,7 +205,7 @@ server.get config.base + '/iframe', (req, res, next) ->
 	next()
 
 # oauth: get access token from server
-server.post config.base + '/access_token', (req, res, next) ->
+server.post config.base + '/auth/access_token', (req, res, next) ->
 	e = new check.Error
 	e.check req.body, code:check.format.key, key:check.format.key, secret:check.format.key
 	return next e if e.failed()
@@ -319,7 +319,7 @@ server.get config.base + '/auth', (req, res, next) ->
 							callback null, r
 
 # oauth: popup or redirection to provider's authorization url
-server.get config.base + '/:provider', (req, res, next) ->
+server.get config.base + '/auth/:provider', (req, res, next) ->
 	res.setHeader 'Content-Type', 'text/html'
 
 	domain = null

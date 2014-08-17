@@ -10,7 +10,7 @@
 		<div class="container">
             <nav class="navbar navbar-default">
                 <div class="user-info">
-                    <ul class="nav navbar-nav navbar-right"  ng-show="logged_user != undefined">
+                    <ul class="nav navbar-nav navbar-right"  ng-show="accessToken != undefined">
                         <li><a ng-click="logout()" href="javascript:void(0);">Logout</a></li>
                     </ul>
                 </div>
@@ -19,11 +19,8 @@
                 </div>
             </nav>
 
-            <div ng-show="loading">
-                <loader />
-            </div>
             <div class="container-fluid">
-                <ui-view ng-show="!loading" />
+                <ui-view/>
             </div>
         </div>
 

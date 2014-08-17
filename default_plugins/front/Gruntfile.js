@@ -1,4 +1,4 @@
-// var config = require('../../config');
+var config = require('../../config');
 
 module.exports = function(grunt) {
 	grunt.initConfig({
@@ -32,8 +32,7 @@ module.exports = function(grunt) {
                     transform: [
                         [
                             'envify', {
-                                // oauthd_url: config.host_url,
-                                // api_url: config.host_url + '/api'
+                                host: config.host_url
                             }
                         ]
                     ]

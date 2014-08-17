@@ -65,7 +65,6 @@ module.exports = function(grunt) {
     for (var i in default_plg) {
         var plugin = default_plg[i];
         if (fs.existsSync(__dirname + '/default_plugins/' + plugin + '/gruntConfig.js')) {
-            console.log('whyyy');
             var task = require('./default_plugins/' + plugin + '/gruntConfig').call(this, gruntConf);
             if (task)
                 tasks.push(task);

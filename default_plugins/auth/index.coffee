@@ -89,8 +89,8 @@ exports.needed = (req, res, next) ->
 		next()
 	return cb() if db.redis.last_error
 	return cb() if req.clientId
-	token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
-	token = token?[1]
+	# token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
+	token = req.headers.accessToken
 	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not token
 	db.redis.hget 'session:' + token, 'date', (err, res) ->
 		return next new restify.ResourceNotFoundError req.url + ' does not exist' if not res
@@ -116,13 +116,16 @@ exports.optional = (req, res, next) ->
 exports.setup = (callback) ->
 	@server.post @config.base + '/signin', (req, res, next) =>
 		res.setHeader 'Content-Type', 'text/html'
+
 		hooks.grantClientToken req.body.name, req.body.pass, (e, token) =>
 			if not e and not token
 				e = new check.Error 'Invalid email or password'
 			if token
 				expireDate = new Date((new Date - 0) + _config.expire * 1000)
-				res.setHeader 'Set-Cookie', 'accessToken=%22' + token + '%22; Path=' + @config.base + '/admin; Expires=' + expireDate.toUTCString()
-				res.setHeader 'Location', @config.host_url + @config.base + "/admin/key-manager"
+				res.json {
+					accessToken: token,
+					expires: expireDate.getTime()
+				}
 
 			if e
 				if e.status == "fail"
@@ -130,8 +133,7 @@ exports.setup = (callback) ->
 						e = new check.Error "Invalid email format"
 					if e.body.pass
 						e = new check.Error "Invalid password format (must be 6 characters min)"
-				res.setHeader 'Location', @config.host_url + @config.base + "/admin#err=" + encodeURIComponent(e.message)
-			res.send 302
+				res.send 400, e.message
 			next()
 	callback()
 
