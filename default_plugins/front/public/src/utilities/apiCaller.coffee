@@ -14,8 +14,8 @@ module.exports = ($http, $rootScope) ->
 		
 		opts.headers = {} if not opts.headers?
 
-		if $rootScope.access_token
-			opts.headers.Authorization = "Bearer " + $rootScope.access_token
+		if $rootScope.accessToken
+			opts.headers.Authorization = "Bearer " + $rootScope.accessToken
 
 		if opts.method == "POST" || opts.method == "PUT"
 			opts.headers['Content-Type'] = 'application/json'
