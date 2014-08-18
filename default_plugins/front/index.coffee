@@ -9,7 +9,6 @@ exports.setup = (callback) ->
 				next()
 				return
 			else
-				console.log 'index service'
 				fs.readFile __dirname + '/public/index.html', {encoding: 'UTF-8'}, (err, data) ->
 					res.setHeader 'Content-Type', 'text/html'
 					res.send 200, data

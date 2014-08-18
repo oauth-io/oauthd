@@ -7,22 +7,8 @@
         <link rel="stylesheet" type="text/css" href="/style/main.css">
 	</head>
 	<body>
-		<div class="container">
-            <nav class="navbar navbar-default">
-                <div class="user-info">
-                    <ul class="nav navbar-nav navbar-right"  ng-show="accessToken != undefined">
-                        <li><a ng-click="logout()" href="javascript:void(0);">Logout</a></li>
-                    </ul>
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">oauthd</a>
-                </div>
-            </nav>
 
-            <div class="container-fluid">
-                <ui-view/>
-            </div>
-        </div>
+        <div ui-view></div>
 
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.22/angular.min.js"></script>

@@ -3,22 +3,29 @@
 
 app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRouterProvider", "$locationProvider",
 	($stateProvider, $urlRouterProvider, $locationProvider) ->
-		$stateProvider.state 'dashboard',
-			url: '/',
-			templateUrl: 'templates/dashboard.html'
-			# controller: 'LoginCtrl'
+		
 
 		$stateProvider.state 'login',
 			url: '/login',
-			templateUrl: 'templates/login.html'
+			templateUrl: '/templates/login.html'
 			controller: 'LoginCtrl'
 
-		$stateProvider.state 'apps',
-			url: '/apps',
-			templateUrl: 'templates/apps.html'
+		$stateProvider.state 'dashboard',
+			url: '/',
+			templateUrl: '/templates/dashboard.html'
+			controller: 'DashboardCtrl'
+
+		$stateProvider.state 'dashboard.apps',
+			url: 'apps',
+			templateUrl: '/templates/apps.html'
 			controller: 'AppsCtrl'
 
-		$urlRouterProvider.otherwise '/'
+		$stateProvider.state 'dashboard.apps.show',
+			url: '/:id',
+			templateUrl: '/templates/app-show.html'
+			controller: 'AppShowCtrl'
+
+		$urlRouterProvider.otherwise '/login' 
 
 		$locationProvider.html5Mode(true)
 ])
@@ -27,8 +34,10 @@ require('./filters/filters') app
 
 require('./services/UserService') app
 
+require('./controllers/DashboardCtrl') app
 require('./controllers/LoginCtrl') app
 require('./controllers/AppsCtrl') app
+require('./controllers/Apps/AppShowCtrl') app
 
 app.run(["$rootScope", "UserService",
 	($rootScope, UserService) ->
