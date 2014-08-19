@@ -90,7 +90,8 @@ exports.needed = (req, res, next) ->
 	return cb() if db.redis.last_error
 	return cb() if req.clientId
 	# token = req.headers.cookie?.match /accessToken=%22(.*?)%22/
-	token = req.headers.accessToken
+	token = req.headers.Authorization.replace /^Bearer /, ''
+	console.log 'token', token
 	return next new restify.ResourceNotFoundError req.url + ' does not exist' if not token
 	db.redis.hget 'session:' + token, 'date', (err, res) ->
 		return next new restify.ResourceNotFoundError req.url + ' does not exist' if not res
@@ -135,6 +136,9 @@ exports.setup = (callback) ->
 						e = new check.Error "Invalid password format (must be 6 characters min)"
 				res.send 400, e.message
 			next()
+	@server.get @config.base + '/api/apps', exports.needed, (req, res, next) ->
+		db.apps.getByOwner 'undefined', (err, apps) ->
+			res.json apps
 	callback()
 
 shared.auth = exports

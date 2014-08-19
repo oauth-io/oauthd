@@ -5,6 +5,13 @@ module.exports = (app) ->
 		($rootScope, $http) ->
 			api = require('../utilities/apiCaller')($http, $rootScope)
 			return {
+				all: () ->
+					defer = Q.defer()
+					api '/apps', (data) ->
+						defer.resolve data.data
+					, (e) ->
+						defer.reject e
+					return defer.promise
 				get: (key) ->
 					defer = Q.defer()
 					api '/apps/' + key, (data) ->

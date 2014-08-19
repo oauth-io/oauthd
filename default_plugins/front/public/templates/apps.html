@@ -1,3 +1,7 @@
-<h2>Apps</h2>
+<h3>
+	<a ui-sref="dashboard.apps.all">Apps</a> 
+	<span ng-show="app"> > <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name }}</a></span>
+	<span ng-show="provider_name"> > {{ provider_name }}</span>
+</h3>
 
 <div ui-view></div>

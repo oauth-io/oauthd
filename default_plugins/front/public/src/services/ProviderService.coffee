@@ -28,6 +28,15 @@ module.exports = (app) ->
 				defer.promise
 
 			provider_service =
+				getAll: () ->
+					defer = Q.defer()
+
+					api "/providers", (data) ->
+						defer.resolve data.data
+					, (e) ->
+						defer.reject e
+
+					return defer.promise
 				get: (name) ->
 					get_provider_conf name
 

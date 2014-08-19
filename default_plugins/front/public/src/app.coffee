@@ -17,13 +17,41 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 
 		$stateProvider.state 'dashboard.apps',
 			url: 'apps',
+			abstract: true,
 			templateUrl: '/templates/apps.html'
 			controller: 'AppsCtrl'
 
+		$stateProvider.state 'dashboard.apps.create',
+			url: '/new',
+			templateUrl: '/templates/app-create.html'
+			controller: 'AppCreateCtrl'
+
+		$stateProvider.state 'dashboard.apps.all',
+			url: '/all',
+			templateUrl: '/templates/apps-list.html'
+			controller: 'AppsIndexCtrl'
+
 		$stateProvider.state 'dashboard.apps.show',
-			url: '/:id',
+			url: '/:key',
 			templateUrl: '/templates/app-show.html'
 			controller: 'AppShowCtrl'
+
+		$stateProvider.state 'dashboard.apps.new_keyset',
+			url: '/:key/addProvider',
+			templateUrl: '/templates/app-new-keyset.html'
+			controller: 'AppProviderListCtrl'
+
+		$stateProvider.state 'dashboard.apps.keyset',
+			url: '/:key/:provider',
+			templateUrl: '/templates/app-keyset.html'
+			controller: 'AppKeysetCtrl'
+
+		
+
+		
+
+
+		$urlRouterProvider.when "/apps", "/apps/all"
 
 		$urlRouterProvider.otherwise '/login' 
 
@@ -31,13 +59,21 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 ])
 
 require('./filters/filters') app
+require('./directives/DomainsDir') app
 
 require('./services/UserService') app
+require('./services/AppService') app
+require('./services/KeysetService') app
+require('./services/ProviderService') app
 
 require('./controllers/DashboardCtrl') app
 require('./controllers/LoginCtrl') app
 require('./controllers/AppsCtrl') app
 require('./controllers/Apps/AppShowCtrl') app
+require('./controllers/Apps/AppCreateCtrl') app
+require('./controllers/Apps/AppsIndexCtrl') app
+require('./controllers/Apps/AppKeysetCtrl') app
+require('./controllers/Apps/AppProviderListCtrl') app
 
 app.run(["$rootScope", "UserService",
 	($rootScope, UserService) ->
@@ -45,6 +81,7 @@ app.run(["$rootScope", "UserService",
 		$rootScope.loading = true
 		$rootScope.logged_user = amplify.store('user')
 		$rootScope.accessToken = amplify.store('accessToken')
+		$rootScope.loginData = amplify.store('loginData')
 
 		$rootScope.$watch 'logged_user', () ->
 			if ($rootScope.logged_user?)
@@ -57,6 +94,12 @@ app.run(["$rootScope", "UserService",
 				amplify.store('accessToken', $rootScope.accessToken)
 			else
 				amplify.store('accessToken', null)
+
+		$rootScope.$watch 'loginData', () ->
+			if ($rootScope.loginData?)
+				amplify.store('loginData', $rootScope.loginData)
+			else
+				amplify.store('loginData', null)
 		
 		$rootScope.logout = () ->
 			UserService.logout()

@@ -15,7 +15,7 @@ module.exports = (app) ->
 					)
 					return defer.promise
 				,
-				save: (app_key, provider, keyset, auth_type) ->
+				save: (app_key, provider, keyset) ->
 					defer = Q.defer()
 					api('/apps/' + app_key + '/keysets/' + provider, (data) ->
 						defer.resolve(data.data)
@@ -23,7 +23,7 @@ module.exports = (app) ->
 						defer.reject(e)
 					, data:
 						parameters: keyset,
-						response_type: auth_type
+						response_type: 'token'
 					)
 					return defer.promise
 				,

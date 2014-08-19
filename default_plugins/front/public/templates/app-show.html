@@ -1,1 +1,42 @@
-<h5>App {{ app.id }}</h5>
+<div class="app-show">
+	<div class="alert alert-danger pull-right brief-message" ng-show="error">{{ error }}</div>
+	<div class="alert alert-success pull-right brief-message" ng-show="success">{{ success }}</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<strong>App key:</strong>
+			<div class="well">{{ app.key }}</div>
+			
+		</div>
+		<div class="col-md-6">
+			
+		<strong>App secret:</strong>
+		<div class="well">{{ app.secret }}</div>	
+		
+		</div>
+	</div>
+
+	<h5>Domains</h5>
+
+	<div class="form-group">
+		<label for="app_domains"></label>
+		<domains id="app_domains" control="domains_control" app="app" />
+	</div>
+
+	<h5>Mode</h5>
+
+	Back-end or front-end
+
+	<h5>Providers</h5>
+
+	<ul>
+		<li ng-repeat="provider in app.keysets">
+			<a ui-sref="dashboard.apps.keyset({ key: app.key, provider: provider })">{{ provider }}</a>
+		</li>
+	</ul>
+	<a ui-sref="dashboard.apps.new_keyset({ key: app.key })">Add a provider</a>
+	<div>
+		<button class="btn btn-success" ng-click="saveApp()">Save changes</button>
+		<button class="btn btn-danger" ng-click="deleteApp()">Delete app</button>
+	</div>	
+</div>

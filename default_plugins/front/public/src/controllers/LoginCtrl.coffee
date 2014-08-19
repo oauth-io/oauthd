@@ -11,6 +11,7 @@ module.exports = (app) ->
 					pass: $scope.user.pass
 				})
 					.then (user) ->
+						console.log user
 						$state.go('dashboard')
 					.fail (e) ->
 						$scope.error = e.message

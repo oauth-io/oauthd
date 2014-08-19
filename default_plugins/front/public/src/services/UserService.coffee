@@ -20,7 +20,14 @@ module.exports = (app) ->
 						.success((data) ->
 							data = data.data
 							$rootScope.accessToken = data.accessToken
+							$rootScope.loginData = {
+								token: data.accessToken,
+								expires: data.expires
+							}
+
 							defer.resolve(data)
+
+							
 						)
 						.error((e) ->
 							defer.reject(e)
@@ -33,6 +40,7 @@ module.exports = (app) ->
 					$rootScope.logged_user = undefined
 					$rootScope.accessToken = undefined
 					$location.path('/login')
+
 
 			user_service
 	])

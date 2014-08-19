@@ -1,6 +1,6 @@
 module.exports = (app) ->
 	app.controller('DashboardCtrl', ['$state', '$scope', '$rootScope', '$location', 'UserService',
 		($state, $scope, $rootScope, $location, UserService) ->
-			
-			$scope.lol = 'hello'
+			if not $rootScope.accessToken? || $rootScope.loginData.expires < new Date().getTime()
+				$state.go 'login'
 	])

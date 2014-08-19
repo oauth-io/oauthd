@@ -60,6 +60,30 @@ exports.create = (data, user, callback) ->
 			return callback null, id:idapp, name:data.name, key:key
 
 # get the app infos by its id
+exports.getByOwner = (owner_id, callback) ->
+	db.redis.keys 'a:*:key', (err, keys) ->
+		return callback err if err
+		apps = []
+		async.eachSeries keys, (item, next) ->
+			prefix = item.replace /key/, ''
+			db.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix+'owner'], (err, replies) ->
+				return callback err if err
+				app = {
+					name:replies[0], 
+					key:replies[1], 
+					secret:replies[2],
+					owner: replies[3]
+				}
+				if app.owner == owner_id
+					apps.push app
+				next()
+		, (err) ->
+			return callback err if err
+			callback(null, apps)
+
+			
+
+# get the app infos by its id
 exports.getById = check 'int', (idapp, callback) ->
 	prefix = 'a:' + idapp + ':'
 	db.redis.mget [prefix+'name', prefix+'key', prefix+'secret'], (err, replies) ->
