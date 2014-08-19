@@ -1,12 +1,11 @@
-<div class="keyset">
-	<div ng-repeat="(key, parameter) in available_parameters">
-	    <strong>{{ key }}:</strong>
-	    <input class="form-control" ng-if="parameter.values == undefined" placeholder="Enter the {{ key }} here" />
-	    
-	    <input type="text" data-parameter="{{ key }}" class="parameter_input parameter_input_{{ key }}" ng-if="parameter.values != undefined && (parameter.cardinality == undefined || parameter.cardinality == '*' || parameter.cardinality > 1)" >
-
-	    <select type="text" data-parameter="{{ key }}" class="parameter_input parameter_input_{{ key }}" ng-if="parameter.values != undefined && parameter.cardinality == 1"></select>
-	</div>	
+<div class="row">
+	<div class="keyset col-md-8">
+		<keyseteditor  provider="provider" control="keysetEditorControl"/>
+	</div>
+	<div class="col-md-4 well">
+		To add {{ provider }} to your app, you need to visit {{ provider }}'s website,
+		create an app there, and copy paste the keys that you get.
+	</div>
 </div>
 <div class="pull-right">
 	<button class="btn btn-success" ng-click="save()">Save this provider</button>

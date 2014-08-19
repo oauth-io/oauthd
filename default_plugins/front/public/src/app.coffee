@@ -60,6 +60,7 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 
 require('./filters/filters') app
 require('./directives/DomainsDir') app
+require('./directives/KeysetDir') app
 
 require('./services/UserService') app
 require('./services/AppService') app

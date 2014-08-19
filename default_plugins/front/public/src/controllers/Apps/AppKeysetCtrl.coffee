@@ -1,6 +1,11 @@
 module.exports = (app) ->
 	app.controller('AppKeysetCtrl', ['$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService', 'ProviderService', 'KeysetService',
 		($state, $scope, $rootScope, $location, UserService, $stateParams, AppService, ProviderService, KeysetService) ->
+			$scope.keyset = {
+				parameters: {}
+			}
+			$scope.keysetEditorControl = {}
+			$scope.provider = $stateParams.provider
 			AppService.get $stateParams.key
 				.then (app) ->
 					$scope.app = app
@@ -10,57 +15,30 @@ module.exports = (app) ->
 				.fail (e) ->
 					console.log e
 
-
-			KeysetService.get $stateParams.key, $stateParams.provider
-				.then (keyset) ->
+			# Filling the content
+			KeysetService.get $stateParams.key, $scope.provider
+				.then (keyset) ->	
 					$scope.keyset = keyset
-					$scope.apply()
+					$scope.keysetEditorControl.setKeyset $scope.keyset
+					return
 				.fail (e) ->
-					$scope.keyset = {}
+					$scope.keysetEditorControl.setKeyset $scope.keyset
 
-			ProviderService.get $stateParams.provider
-				.then (config) ->
-					$scope.available_parameters = config.oauth2?.parameters || config.oauth1?.parameters || config.parameters
-					
+			$scope.save = () ->
+				keyset = $scope.keysetEditorControl.getKeyset()
+				console.log 'TOSAVE', keyset
+				KeysetService.save $scope.app.key, $stateParams.provider, keyset.parameters
+					.then (data) ->
+						console.log 'success', data
+					.fail (e) ->
+						console.log 'error', e
 
-					console.log $scope.available_parameters.client_secret
-					$scope.$apply()
-
-					for k of $scope.available_parameters
-						if $scope.available_parameters[k]?.values?
-							values = []
-							for kk of $scope.available_parameters[k].values
-								vv = $scope.available_parameters[k].values[kk]
-								values.push {
-									name: kk,
-									value: vv
-								}
-
-							$scope.selectize_inputs[k] = $('.keyset').find('.parameter_input_' + k).selectize({
-									delimiter: ' '
-									persist: false
-									valueField: 'name',
-									labelField: 'value',
-									searchField: ['name', 'value'],
-									options: values,
-									render: {		
-										item: (item, escape) ->
-											return '<div>' + '<span class="name">' + item.name + '</span>' + '</div>';
-										,
-										option: (item, escape) ->
-											label = item.name
-											desc =  item.value
-											return '<div>' +
-												'<div class="scope_name">' + escape(label) + '</div>' +
-												'<div class="scope_desc">' + escape(desc) + '</div>' +
-											'</div>';
-										
-									},
-									create: (input) ->
-										return {
-											value: input,
-											text: input
-										}
-								})
+			$scope.delete = () ->
+				if confirm 'Are you sure you want to delete this keyset?'
+					KeysetService.del $scope.app.key, $stateParams.provider
+						.then (data) ->
+							console.log 'success', data
+						.fail (e) ->
+							console.log 'error', e
 
 	])	
