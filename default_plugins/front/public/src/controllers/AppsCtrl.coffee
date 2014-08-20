@@ -14,7 +14,7 @@ module.exports = (app) ->
 			$scope.clearArianne = () ->
 				$scope.app = undefined
 				$scope.provider_name = undefined
-				$scope.$apply()
+				# $scope.$apply()
 
 
 			

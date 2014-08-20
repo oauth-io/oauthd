@@ -15,6 +15,11 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 			templateUrl: '/templates/dashboard.html'
 			controller: 'DashboardCtrl'
 
+		$stateProvider.state 'dashboard.home',
+			url: 'home',
+			templateUrl: '/templates/dashboard/home.html'
+			controller: 'HomeCtrl'
+
 		$stateProvider.state 'dashboard.apps',
 			url: 'apps',
 			abstract: true,
@@ -50,7 +55,7 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 
 		
 
-
+		$urlRouterProvider.when "", "/home"
 		$urlRouterProvider.when "/apps", "/apps/all"
 
 		$urlRouterProvider.otherwise '/login' 
@@ -68,6 +73,7 @@ require('./services/KeysetService') app
 require('./services/ProviderService') app
 
 require('./controllers/DashboardCtrl') app
+require('./controllers/HomeCtrl') app
 require('./controllers/LoginCtrl') app
 require('./controllers/AppsCtrl') app
 require('./controllers/Apps/AppShowCtrl') app
