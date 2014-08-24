@@ -87,6 +87,11 @@ OAuth.redirect('<span class="api-text">{{keyProvider}}</span>', "<strong>callbac
 								<div ng-hide="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px">Not defined</div>
 								<div ng-show="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].result|json}}</pre></div>
 							</div>
+							<div class="row">
+								<label class="col col-lg-4 control-label">profile</label>
+								<div ng-hide="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px">Not defined</div>
+								<div ng-show="app.auth[keyProvider]" class="text-danger col col-lg-8" style="position: relative; top: 6px"><pre>{{app.auth[keyProvider].me|json}}</pre></div>
+							</div>
 							<hr />
 							<div class="alert alert-danger" ng-show="error.state && error.type == 'CREATE_KEY'">
 										{{error.message}}

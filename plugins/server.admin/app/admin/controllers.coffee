@@ -318,6 +318,11 @@ hooks.config.push ->
 					app.auth[provider] =
 						error: err
 						result: res
+					res.me()
+					.done (user_info) ->
+						$scope.$apply -> app.auth[provider].me = user_info
+					.fail (error) ->
+						$scope.$apply -> app.auth[provider].me = {errror: user_info}
 
 		$scope.addDomain = ->
 			if $scope.createAppForm.input != "" and $scope.createAppForm.domains.indexOf($scope.createAppForm.input) == -1
