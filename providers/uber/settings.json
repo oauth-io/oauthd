@@ -1,0 +1,27 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://login.uber.com/applications/new",
+        },
+        "copyingKey": {
+            "url": "https://login.uber.com/applications",
+        },
+        "install": {
+            "href": {
+                "provider": "https://uber.com/",
+                "docs": "https://developer.uber.com/v1/api-reference/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v1/me"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/v1/me"
+            }
+        },
+        "jsfiddle": "http://jsfiddle.net/willjcksn/2hb6B/embedded/"
+    }
+}
