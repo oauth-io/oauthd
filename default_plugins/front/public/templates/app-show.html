@@ -24,9 +24,15 @@
 	</div>
 
 	<h5>Mode</h5>
-
-	Back-end or front-end
-
+	Select a backend type:
+	<select ng-model="backend.name">
+		<option value="none">None</option>
+		<option value="node">Node.Js</option>
+		<option value="php">PHP</option>
+		<!-- <option value="firebase">Firebase</option> -->
+	</select>
+	<button class="btn btn-success" ng-click="setBackend()">Save backend</button>
+	<div class="alert alert-success" ng-show="backend.message">{{ backend.message }}</div>
 	<h5>Providers</h5>
 
 	<ul>

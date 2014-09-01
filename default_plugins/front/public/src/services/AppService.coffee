@@ -44,6 +44,38 @@ module.exports = (app) ->
 						data: app
 					}
 					return defer.promise
+				getBackend: (key) ->
+					defer = Q.defer()
+
+					api '/apps/' + key +  '/backend', (data) ->
+						defer.resolve (data.data)
+					, (e) ->
+						defer.reject e
+					, {
+						method: 'GET'
+					}
+
+					defer.promise
+				setBackend: (key, backend) ->
+					defer = Q.defer()
+
+					if backend? and backend != 'none'
+						api '/apps/' + key +  '/backend/' + backend, (data) ->
+							defer.resolve (data.data)
+						, (e) ->
+							defer.reject e
+						, {
+							method: 'POST'
+						}
+					else 
+						api '/apps/' + key + '/backend', (data) ->
+							defer.resolve data.data
+						, (e) ->
+							defer.reject e
+						, {
+							method: 'DELETE'
+						}
+					defer.promise
 				del: (app) ->
 					defer = Q.defer()
 					key = app.key if typeof app == 'object'

@@ -4,6 +4,9 @@ module.exports = (app) ->
 			$scope.domains_control = {}
 			$scope.error = undefined
 			$scope.setProvider undefined
+
+			$scope.backend = {}
+
 			AppService.get($stateParams.key)
 				.then (app) ->
 					$scope.app = app
@@ -14,6 +17,15 @@ module.exports = (app) ->
 				.fail (e) ->
 					console.log e
 					$scope.error = e.message
+
+			AppService.getBackend $stateParams.key
+				.then (backend) ->
+					$scope.backend.name = backend?.name
+					if not $scope.backend?.name
+						$scope.backend.name = 'none'
+					$scope.$apply()
+				.fail (e) ->
+
 			$scope.saveApp = () ->
 				AppService.update($scope.app)
 					.then () ->
@@ -25,6 +37,16 @@ module.exports = (app) ->
 						console.log 'error', e
 						$scope.error = e.message
 
+
+			$scope.setBackend = () ->
+				AppService.setBackend $stateParams.key, $scope.backend?.name
+					.then () ->
+						$scope.success = "Successfully changed backend to " + $scope.backend.name
+						$scope.$apply()
+					.fail (e) ->
+						$scope.error = "A problem occured while changing the backend"
+						console.log 'error', e
+
 			$scope.deleteApp = () ->
 				if confirm 'Are you sure you want to delete this app?'
 					AppService.del $scope.app
@@ -34,10 +56,22 @@ module.exports = (app) ->
 						.fail (e) ->
 							console.log 'error', e
 							$scope.error = e.message
-			
+			timeout = undefined
 			$scope.$watch 'success', () ->
-				setTimeout () ->
-					$scope.success = undefined
-					$scope.$apply()
-				, 3000
+				clearTimeout timeout
+				if $scope.success != undefined
+					timeout = setTimeout () ->
+						$scope.success = undefined
+						$scope.$apply()
+					, 3000
+
+			timeoute = undefined
+			$scope.$watch 'error', () ->
+				clearTimeout timeoute
+				if $scope.error != undefined
+					timeoute = setTimeout () ->
+						$scope.error = undefined
+						$scope.$apply()
+					, 3000
+
 	])	
