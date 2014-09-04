@@ -1,33 +1,73 @@
 .menu-panel {
 	width: 250px;
-	box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+	box-shadow: inset 0 0 10px rgba(0,0,0,1);
 	height: 100%;
-	position: absolute;
+	position: fixed;
+	background-color: rgba(0, 0, 0, 0.7);
+
+	.logo {
+		width: 25px;
+		margin-top: -3px;
+	}
 	
-	.section-header{
+	.header {
 		margin-top: 10px;
-		color: gray;
+		color: white;
 		font-weight: bold;
-		font-style: italic;
-		font-size: 1.1em;
+		font-size: 1.3em;
 		padding: 10px;
+		.normal {
+			font-weight: normal;
+			font-style: none;
+			font-size: 0.8em;
+		}
+	}
+
+	.logout-button {
+		a {
+			color: rgba(255,255,255,0.4);
+			&:hover {
+				color: #428bca;
+			}
+		}
+	}
+
+	.section-header{
+		margin-top: 3px;
+		color: white;
+		font-style: italic;
+		font-size: 1.05em;
+		padding: 10px;
+		background: rgba(0, 0, 0, 0.1);
+		.normal {
+			font-weight: normal;
+			font-style: none;
+			font-size: 0.9em;
+		}
 	}
 
 	.section {
 		.button {
 			display: block;
 			padding: 10px;
+			color: rgba(255,255,255,0.4);
 			&:hover {
 				box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+				color: #428bca;
+				border-bottom: 1px rgba(0, 150, 200, 1) solid;
 			}
-			border-bottom: 1px rgba(0, 150, 200, 1) solid;
+			border-bottom: 1px rgba(255, 255, 255, 0.3) solid;
+			&.active {
+				box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+				border-bottom: 1px rgba(0, 150, 200, 1) solid;
+				color: rgba(255,255,255,0.6);
+			}
 		}
 	}
 }
 
 .content {
-	width: ~"calc(100% - 250px)";
-	position: absolute;
-	left: 250px;
-	padding: 10px;
+
+	margin-left: 250px;
+	padding: 15px;
 }

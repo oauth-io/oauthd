@@ -12,6 +12,7 @@ module.exports = (app) ->
 				$elt = $($element[0])
 				$scope.control = $scope.control
 
+
 				update = () ->
 					
 					ProviderService.get $scope.provider
@@ -65,6 +66,7 @@ module.exports = (app) ->
 
 											selectize.on 'change', () ->
 												$scope.keyset.parameters[k] = this.getValue()
+												$scope.control.change()
 												
 
 									if param_config.cardinality? && param_config.cardinality == '1'
@@ -97,6 +99,7 @@ module.exports = (app) ->
 											selectize.addItem($scope.keyset?.parameters?[k])
 											selectize.on 'change', () ->
 												$scope.keyset.parameters[k] = this.getValue()
+												$scope.control.change()
 												
 								else
 									input = $(document.createElement('input'))
@@ -106,6 +109,7 @@ module.exports = (app) ->
 									do (k, input) ->
 										input.change () ->
 											$scope.keyset.parameters[k] = input.val()
+											$scope.control.change()
 
 
 						.fail (e) ->

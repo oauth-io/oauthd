@@ -1,9 +1,20 @@
-Apps list
-
-<ul>
-	<li ng-repeat="app in apps">
-		<a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name }}</a> <button class="btn btn-danger" ng-click="deleteApp(app.key)">Delete</button>
-	</li>
-</ul>
-
-<a ui-sref="dashboard.apps.create" class="btn btn-success" >New app</a>
+<div class="apps-list">
+    <h4>All your apps</h4>
+    <div class="row list">
+        <div class="col-md-4 app" ng-repeat="app in apps">
+            <div>
+                <h5>
+                <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name }}</a>
+                </h5>
+                <div><strong>{{ app.domains.length }}</strong> domains</div>
+                <div><strong>{{ app.keysets.length }}</strong> providers</div>
+                <div>
+                	<span ng-show="app.backend == null"><strong>Front-end</strong> authentication</span>
+                	<span ng-show="app.backend != null"><strong>Back-end</strong> authentication</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <a ui-sref="dashboard.apps.create" class="btn" ><span class="fa fa-plus"></span> Create a new app</a>
+</div>

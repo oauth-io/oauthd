@@ -19,7 +19,7 @@ module.exports = (app) ->
 			get_provider_settings = (name) ->
 				defer = Q.defer()
 				api "/providers/" + name + "/settings", ((data) ->
-					defer.resolve data.data
+					defer.resolve data.data.settings
 					return
 				), (e) ->
 					defer.reject e
@@ -48,6 +48,11 @@ module.exports = (app) ->
 
 				getCurrentProviderSettings: ->
 					get_provider_settings $rootScope.wd.provider
+				getProviderConfig: (name) ->
+					get_provider_conf name
+				getProviderSettings: (name) ->
+					get_provider_settings name
+
 
 			return provider_service
 	]

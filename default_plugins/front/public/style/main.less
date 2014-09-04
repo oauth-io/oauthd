@@ -1,5 +1,13 @@
+
+
+
 html, body {
-	height: 100%;
+	min-height: 100%;
+	background: none;
+}
+
+html{
+	background: rgba(0,0,0,0.1);
 }
 
 .ng-hide {
@@ -16,6 +24,40 @@ html, body {
 	}
 }
 
+.clear {
+	clear: both;
+}
+
+a {
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.title-parent {
+	margin-top: 20px;
+	.title {
+		&.one {
+			font-size: 1.9em;	
+		}
+		
+		&.two {
+			font-size: 1.5em;	
+		}
+
+		&.three {
+			font-size: 1.2em;	
+		}
+		
+		
+	}	
+}
+
+@import "homepage";
 @import "menu-panel";
+@import "dashboard";
 @import "apps/show";
+@import "apps/apps";
+@import "apps/keyset";
 @import "providers-list";
+@import "login";

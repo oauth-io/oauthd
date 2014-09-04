@@ -1,12 +1,22 @@
+async = require 'async'
+
 module.exports = (app) ->
 	app.controller('AppsIndexCtrl', ['$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService',
 		($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) ->
 			$scope.clearArianne()
+			$scope.apps = []
 			reloadApps = () ->
 				AppService.all()
 					.then (apps) ->
-						$scope.apps = apps
-						$scope.$apply()
+						async.each apps, (app, cb) ->
+							AppService.get app.key
+								.then (a) ->
+									$scope.apps.push a
+									cb()
+								.fail (e) ->
+									console.log 'err', e
+						, (err) ->
+							$scope.$apply()
 					.fail (e) ->
 						console.log e
 			reloadApps()

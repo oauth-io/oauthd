@@ -1,9 +1,9 @@
-<div class="_homepage">
-<h1>oauthd</h1>
-
-
-<div class="usage">You have <br><strong>{{ apps.length }} apps</strong>,<br> and use <br><strong>{{ providers | count }} providers</strong>.
-	<br>
-	<a ui-sref="dashboard.apps.all">Access your app list</a>
-</div>
+<div class="home-page">
+    <h3>Your apps</h3>
+    <div class="usage">You have <strong>{{ apps.length }} app<span ng-show="apps.length > 1">s</span></strong>, and use <strong>{{ providers | count }} provider<span ng-show="count(providers) > 1">s</span></strong>.
+        <br>
+        <a ui-sref="dashboard.apps.all">Access your app list</a>
+    </div>
+    <h3>Plugins</h3>
+    Here are widgets created by plugins.
 </div>

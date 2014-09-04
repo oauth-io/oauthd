@@ -6,6 +6,9 @@ module.exports = (app) ->
 			}
 			$scope.keysetEditorControl = {}
 			$scope.provider = $stateParams.provider
+
+			$scope.changed = false
+
 			AppService.get $stateParams.key
 				.then (app) ->
 					$scope.app = app
@@ -19,6 +22,9 @@ module.exports = (app) ->
 			KeysetService.get $stateParams.key, $scope.provider
 				.then (keyset) ->	
 					$scope.keyset = keyset
+					$scope.original = {}
+					for k,v of $scope.keyset.parameters
+						$scope.original[k] = v
 					$scope.keysetEditorControl.setKeyset $scope.keyset
 					return
 				.fail (e) ->
@@ -26,10 +32,11 @@ module.exports = (app) ->
 
 			$scope.save = () ->
 				keyset = $scope.keysetEditorControl.getKeyset()
-				console.log 'TOSAVE', keyset
 				KeysetService.save $scope.app.key, $stateParams.provider, keyset.parameters
 					.then (data) ->
-						console.log 'success', data
+						$state.go 'dashboard.apps.show', {
+							key: $stateParams.key
+						}
 					.fail (e) ->
 						console.log 'error', e
 
@@ -37,8 +44,20 @@ module.exports = (app) ->
 				if confirm 'Are you sure you want to delete this keyset?'
 					KeysetService.del $scope.app.key, $stateParams.provider
 						.then (data) ->
-							console.log 'success', data
+							$state.go 'dashboard.apps.show', {
+								key: $stateParams.key
+							}
 						.fail (e) ->
 							console.log 'error', e
+
+			ProviderService.getProviderSettings $stateParams.provider
+				.then (settings) ->
+					$scope.settings = settings
+				.fail (e) ->
+					consoe.log 'e', e
+
+			$scope.keysetEditorControl.change = () ->
+				$scope.changed = not angular.equals($scope.original, $scope.keysetEditorControl.getKeyset().parameters)
+				$scope.$apply()
 
 	])	

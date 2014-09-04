@@ -16,6 +16,9 @@ module.exports = (app) ->
 				$scope.provider_name = undefined
 				# $scope.$apply()
 
+			$scope.appModified = (v) ->
+				$scope.app_changed = v
+
 
 			
 	])

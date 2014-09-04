@@ -5,7 +5,11 @@ module.exports = (app) ->
 		($scope, $state, $rootScope, UserService, AppService) ->
 			$scope.providers = {}
 
-
+			$scope.count = (object) ->
+				count = 0
+				for k,v of object
+					count++
+				return count
 
 			AppService.all()
 				.then (apps) ->

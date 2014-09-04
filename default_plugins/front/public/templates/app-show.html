@@ -1,48 +1,55 @@
 <div class="app-show">
-	<div class="alert alert-danger pull-right brief-message" ng-show="error">{{ error }}</div>
-	<div class="alert alert-success pull-right brief-message" ng-show="success">{{ success }}</div>
+    <div class="alert alert-danger pull-right brief-message" ng-show="error">{{ error }}</div>
+    <div class="alert alert-success pull-right brief-message" ng-show="success">{{ success }}</div>
+    <div class="pull-right">
+        <button class="btn" ng-class="{'btn-success': changed}" ng-click="saveApp()" ng-disabled="!changed"><span class="fa fa-save"></span> Save changes</button>
+        <button class="btn btn-danger" ng-click="deleteApp()"><span class="fa fa-minus"></span> Delete app</button>
+    </div>
+    <div class="clear"></div>
+    <div class="row">
+        <div class="col-md-6">
+            <strong>App key:</strong>
+            <div class="key-container">{{ app.key }}</div>
+        </div>
+        <div class="col-md-6">
+            <strong>App secret:</strong>
+            <div class="key-container">{{ app.secret }}</div>
+        </div>
+        <div class="col-md-12">
+            <h5>Domains</h5>
+            <label for="app_domains"></label>
+            <domains id="app_domains" control="domains_control" app="app" />
+        </div>
+        <div class="col-md-12">
+            <h5>Application mode</h5>
+            <p>
+            If you are using OAuth.io from a back end, please set the application mode to <strong>Server-side authentication</strong>.
+            <br>
+            Otherwise set the mode to <strong>Client-side authentication.</strong>
+            </p>
+            <div>
+                <select ng-model="backend.name">
+                    <option value="none">Client side authentication</option>
+                    <option value="node">Server-side authentication</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+    <div class="title-parent">
+        <span class="title two">Providers</span>
+    </div>
 
-	<div class="row">
-		<div class="col-md-6">
-			<strong>App key:</strong>
-			<div class="well">{{ app.key }}</div>
-			
-		</div>
-		<div class="col-md-6">
-			
-		<strong>App secret:</strong>
-		<div class="well">{{ app.secret }}</div>	
-		
-		</div>
-	</div>
+    <ul class="provider-list">
+        <li class="provider-item" ng-repeat="provider in app.keysets">
+            <img src="/api/providers/{{ provider }}/logo" alt="{{ provider | capitalize }} logo">
+            &nbsp;
+            <a ui-sref="dashboard.apps.keyset({ key: app.key, provider: provider })">{{ provider | capitalize }}</a>
+        </li>
+    </ul>
+    <div class="clear"></div>
+    <a ui-sref="dashboard.apps.new_keyset({ key: app.key })"><span class="fa fa-plus"></span>&nbsp;&nbsp;Add a provider</a>
+    
 
-	<h5>Domains</h5>
-
-	<div class="form-group">
-		<label for="app_domains"></label>
-		<domains id="app_domains" control="domains_control" app="app" />
-	</div>
-
-	<h5>Mode</h5>
-	Select a backend type:
-	<select ng-model="backend.name">
-		<option value="none">None</option>
-		<option value="node">Node.Js</option>
-		<option value="php">PHP</option>
-		<!-- <option value="firebase">Firebase</option> -->
-	</select>
-	<button class="btn btn-success" ng-click="setBackend()">Save backend</button>
-	<div class="alert alert-success" ng-show="backend.message">{{ backend.message }}</div>
-	<h5>Providers</h5>
-
-	<ul>
-		<li ng-repeat="provider in app.keysets">
-			<a ui-sref="dashboard.apps.keyset({ key: app.key, provider: provider })">{{ provider }}</a>
-		</li>
-	</ul>
-	<a ui-sref="dashboard.apps.new_keyset({ key: app.key })">Add a provider</a>
-	<div>
-		<button class="btn btn-success" ng-click="saveApp()">Save changes</button>
-		<button class="btn btn-danger" ng-click="deleteApp()">Delete app</button>
-	</div>	
 </div>
