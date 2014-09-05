@@ -1,9 +1,7 @@
 <div class="login-page">
-    <h1 class="title">oauthd</h1>
+    <h1 class="title"><img src="/img/logo.png" alt="OAuth that just works!" class="logo"> oauthd</h1>
     <form role="form" action="javascript:void(0);" ng-submit="login()" class="login-form">
-        <h4>Please login to access oauthd's interface</h4>
-        <em>(first login creates your account)</em>
-        {{ error }}
+        <h4>Please log in</h4>
         <div class="alert alert-danger" ng-show="error">{{ error | capitalize }}</div>
         <div class="form-group">
             <label>Email: </label>
@@ -14,8 +12,10 @@
             <input class="form-control" type="password" placeholder="Enter your password" ng-model="user.pass">
         </div>
         <div class="form-group buttons">
+            <a target="_blank" class="pull-right" href="https://oauth.io/docs/oauthd">What's <strong>oauthd</strong>?</a>
             <button class="btn btn-success">Log in</button>
-            <a ui-sref="subscribe" class="btn btn-default">Subscribe</a>
         </div>
+        
+        <div class="clear"></div>
     </form>
 </div>
