@@ -88,5 +88,17 @@ module.exports = (app) ->
 						method: 'DELETE'
 					}
 					return defer.promise
+				resetKeys: (key) ->
+					defer = Q.defer()
+
+					api '/apps/' + key + '/reset', (data) ->
+						defer.resolve data.data
+					, (e) ->
+						defer.reject e
+					, {
+						method: 'POST'
+					}
+
+					defer.promise
 			}
 	])

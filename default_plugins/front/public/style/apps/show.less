@@ -1,3 +1,9 @@
+@font-face
+{
+    font-family: 'Menlo Regular';
+    src: url('/style/fonts/Menlo-Regular.ttf');
+}
+
 .app-show {
 	.brief-message {
 		position: absolute;
@@ -27,7 +33,36 @@
 
 	.key-container {
 		background-color: rgba(255,255,255,0.6);
-		padding: 20px;
+		padding: 10px;
+		position: relative;
+		.key {
+			font-family: 'Menlo Regular';
+			font-size: 0.85em;
+		}
+
+		.button-container {
+			position: absolute;
+			right: 0;
+			top:0;
+			bottom: 0;
+			height: 100%;
+			button {
+				background: rgba(255,255,255,0.8);;
+				border: none;
+				height: 100%;
+				top:0;
+				&:hover {
+					background: rgba(255,255,255,1);
+				}
+				&.reset {
+					background: rgba(255,200,200,0.8);	
+					&:hover {
+						background: rgba(255,200,200,1);	
+					}
+				}
+			}
+			
+		}
 
 	}
 }

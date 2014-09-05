@@ -10,23 +10,41 @@ module.exports = (app) ->
 			$scope.original_backend = {}
 			$scope.changed = false
 
+
 			$scope.$watch 'backend', () ->
 				if not angular.equals $scope.backend, $scope.original_backend
 					$scope.changed = true
 				$scope.appModified(not angular.equals $scope.backend, $scope.original_backend)
 			, true
+			$scope.show_secret = false
+			$scope.getAppInfo = (show_secret) ->
+				$scope.show_secret = show_secret
+				AppService.get($stateParams.key)
+					.then (app) ->
 
+						if not show_secret
+							app.secret = '••••••••••••••••'
+						$scope.app = app
+						$scope.setApp app
+						$scope.error = undefined
+						$scope.$apply()
+						$scope.domains_control.refresh()
+					.fail (e) ->
+						console.log e
+						$scope.error = e.message
+			
+			$scope.getAppInfo(false)
 
-			AppService.get($stateParams.key)
-				.then (app) ->
-					$scope.app = app
-					$scope.setApp app
-					$scope.error = undefined
-					$scope.$apply()
-					$scope.domains_control.refresh()
-				.fail (e) ->
-					console.log e
-					$scope.error = e.message
+			$scope.resetKeys = () ->
+				if confirm 'Are you sure you want to reset this app\'s keys? This will break the code using these keys.'
+					AppService.resetKeys($stateParams.key)
+						.then (data) ->
+							$state.go 'dashboard.apps.show', {
+								key: data.key
+							}
+						.fail () ->
+							console.log e
+							$scope.error = e.message
 
 			AppService.getBackend $stateParams.key
 				.then (backend) ->

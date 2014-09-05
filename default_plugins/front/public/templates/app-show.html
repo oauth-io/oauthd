@@ -9,11 +9,21 @@
     <div class="row">
         <div class="col-md-6">
             <strong>App key:</strong>
-            <div class="key-container">{{ app.key }}</div>
+            <div class="key-container">
+                <span class="key">{{ app.key }}</span>
+            </div>
         </div>
         <div class="col-md-6">
             <strong>App secret:</strong>
-            <div class="key-container">{{ app.secret }}</div>
+            <div class="key-container">
+                <div class="button-container">
+                    <button ng-click="getAppInfo(true)" ng-show="!show_secret">Show</button>
+                    <button ng-click="resetKeys()" class="reset" ng-show="show_secret">Reset</button><button ng-click="getAppInfo(false)" ng-show="show_secret">Hide</button>
+                </div>
+
+                <span class="key">{{ app.secret }}</span>
+
+            </div>
         </div>
         <div class="col-md-12">
             <h5>Domains</h5>
@@ -40,7 +50,6 @@
     <div class="title-parent">
         <span class="title two">Providers</span>
     </div>
-
     <ul class="provider-list">
         <li class="provider-item" ng-repeat="provider in app.keysets">
             <img src="/api/providers/{{ provider }}/logo" alt="{{ provider | capitalize }} logo">
@@ -50,6 +59,5 @@
     </ul>
     <div class="clear"></div>
     <a ui-sref="dashboard.apps.new_keyset({ key: app.key })"><span class="fa fa-plus"></span>&nbsp;&nbsp;Add a provider</a>
-    
 
 </div>

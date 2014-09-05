@@ -43,7 +43,7 @@ module.exports = function(grunt) {
 			all: {
 				expand: true,
 				cwd: './public/',
-				src: ['**/*.html', '**/*.map', '**/*.json', '**/*.png', 'libs/**/*.js','libs/**/*.css'],
+				src: ['**/*.html', '**/*.map', '**/*.json', '**/*.png', 'libs/**/*.js','libs/**/*.css', 'style/fonts/*'],
 				dest: 'bin/public'
 			}
 		},
