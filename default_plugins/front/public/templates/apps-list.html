@@ -1,20 +1,30 @@
 <div class="apps-list">
+    <a ui-sref="dashboard.apps.create" class="btn pull-right" ><span class="fa fa-plus"></span> Create a new app</a>
     <h4>All your apps</h4>
     <div class="row list">
         <div class="col-md-4 app" ng-repeat="app in apps">
             <div>
-                <h5>
-                <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name }}</a>
-                </h5>
-                <div><strong>{{ app.domains.length }}</strong> domains</div>
-                <div><strong>{{ app.keysets.length }}</strong> providers</div>
-                <div>
-                	<span ng-show="app.backend == null"><strong>Front-end</strong> authentication</span>
-                	<span ng-show="app.backend != null"><strong>Back-end</strong> authentication</span>
+                <div class="title">
+                <!-- <a ui-sref="dashboard.apps.show({ key: app.key })">{{ app.name | capitalize }}</a> -->
+                {{ app.name | capitalize }}
+                </div>
+                <div class="domains">
+                    <span ng-repeat="domain in app.domains | limitTo:2 track by $index"><span class="gray">{{ domain}}</span><span ng-show="$index < 1 && $index < app.domains.length - 1">, </span></span><span ng-show="app.domains.length > 2">, <span class="gray">+ {{ app.domains.length - 2 }} other<span ng-show="app.domains.length - 2 > 1">s</span></span></span>
+                </div>
+                <div class="provider-logos">
+                    <img title="{{ provider | capitalize }}" ng-repeat="provider in app.keysets" src="/api/providers/{{ provider }}/logo" alt="{{ provider | capitalize }} logo">
+                    <div class="grayer" ng-show="app.keysets.length == 0 ">No provider has been added yet</div>
+                </div>
+                <div class="auth-type gray">
+                	<span ng-show="app.backend == null"><strong>Front-end</strong> mode</span>
+                	<span ng-show="app.backend != null"><strong>Back-end</strong> mode</span>
+                </div>
+                <div class="actions">
+                    <a ui-sref="dashboard.apps.show({ key: app.key })"><span class="fa fa-chevron-circle-right"></span> View app's page</a>
                 </div>
             </div>
         </div>
     </div>
     <div class="clear"></div>
-    <a ui-sref="dashboard.apps.create" class="btn" ><span class="fa fa-plus"></span> Create a new app</a>
+    
 </div>
