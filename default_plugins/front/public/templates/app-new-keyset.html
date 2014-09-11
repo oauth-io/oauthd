@@ -1,7 +1,12 @@
-
+ <label>
+        <div> Search by name: </div>
+        <div> 
+            <i class="glyphicon glyphicon-search"></i> <input class="input-query" ng-disabled="loadingProviders" type="text" ng-model="query.name" ng-change="queryChange()" >
+        </div>
+    </label>
 <div class="providers-list">
 	<ul class="row">
-		<li ng-repeat="provider in providers" class="col-md-4">
+		<li ng-repeat="provider in selectedProviders" class="col-md-4">
 			<img src="/api/providers/{{ provider.provider }}/logo" alt="{{ provider.name }} logo"> 
 			&nbsp;&nbsp;<a ui-sref="dashboard.apps.keyset({ key: app.key, provider: provider.provider })">Add <strong>{{ provider.name }}</strong></a>
 		</li>
