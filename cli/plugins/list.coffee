@@ -8,7 +8,10 @@ module.exports = (cli) ->
 			if not obj?
 				console.log "There is no plugins installed yet!"
 			else
-				console.log "You have " + Object.keys(obj).length + " plugins installed. Their names are: "
+				if Object.keys(obj).length > 1
+					console.log "You have " + Object.keys(obj).length + " plugins installed: "
+				else
+					console.log "You have " + Object.keys(obj).length + " plugin installed: "
 				for key, value of obj
 					console.log "- '" + key + "'"
 	catch e

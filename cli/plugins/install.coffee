@@ -21,7 +21,7 @@ module.exports = (cli) ->
 				throw err if err
 				fs.rename process.cwd() + '/plugins/cloned', process.cwd() + '/plugins/' + plugin_data.name, (err) ->
 					throw err if err
-					console.log 'Plugins "' + plugin_data.name + '" installed in "'+ folder_name + '".'
+					console.log 'Plugin "' + plugin_data.name + '" successfully installed in "'+ folder_name + '".'
 					file =  process.cwd() + '/plugins.json'
 					jf.spaces = 4
 					jf.readFile file, (err, obj) ->
@@ -31,5 +31,6 @@ module.exports = (cli) ->
 						obj[plugin_data.name] = plugin_data.version
 						jf.writeFile file, obj, (err) ->
 							throw err if err
+							console.log 'Plugin "' + plugin_data.name + '" successfully added to the plugins list.'
 		catch e
 			console.log 'An error occured: ' + e.message
