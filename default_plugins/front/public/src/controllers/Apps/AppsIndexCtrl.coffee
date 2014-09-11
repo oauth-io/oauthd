@@ -4,6 +4,7 @@ module.exports = (app) ->
 	app.controller('AppsIndexCtrl', ['$state', '$scope', '$rootScope', '$location', 'UserService', '$stateParams', 'AppService',
 		($state, $scope, $rootScope, $location, UserService, $stateParams, AppService) ->
 			$scope.clearArianne()
+			$scope.loadingApps = true
 			$scope.apps = []
 			reloadApps = () ->
 				AppService.all()
@@ -19,6 +20,9 @@ module.exports = (app) ->
 							$scope.$apply()
 					.fail (e) ->
 						console.log e
+					.finally () ->
+						$scope.loadingApps = false
+						$scope.$apply()
 			reloadApps()
 
 			$scope.deleteApp = (key) ->

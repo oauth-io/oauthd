@@ -1,6 +1,8 @@
 module.exports = (app) ->
 	app.controller('AppProviderListCtrl', ['$state', '$scope', '$rootScope', '$location', '$timeout', '$filter', 'UserService', '$stateParams', 'AppService', 'ProviderService', 'KeysetService',
 		($state, $scope, $rootScope, $location, $timeout, $filter, UserService, $stateParams, AppService, ProviderService, KeysetService) ->
+			$scope.loadingProviders = true
+
 			AppService.get $stateParams.key
 				.then (app) ->
 					$scope.app = app
@@ -10,15 +12,16 @@ module.exports = (app) ->
 				.fail (e) ->
 					console.log e
 
-			$scope.loadingProviders = true
 			ProviderService.getAll()
 				.then (providers) ->
 					$scope.providers = providers
 					$scope.selectedProviders = providers
-					$scope.loadingProviders = false
 					$scope.$apply()
 				.fail (e) ->
 					console.log e
+				.finally () ->
+					$scope.loadingProviders = false
+					$scope.$apply()
 
 			$scope.queryChange = () ->
 				$timeout (->

@@ -1,6 +1,12 @@
 <div class="apps-list">
     <a ui-sref="dashboard.apps.create" class="btn pull-right" ><span class="fa fa-plus"></span> Create a new app</a>
     <h4>All your apps</h4>
+    <div class="col-lg-12">
+        <div class="spinner-round" ng-show="loadingApps">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+        </div>
+    </div>
     <div class="row list">
         <div class="col-md-4 app" ng-repeat="app in apps">
             <div>

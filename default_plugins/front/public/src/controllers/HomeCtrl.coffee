@@ -4,6 +4,7 @@ module.exports = (app) ->
 	app.controller 'HomeCtrl', ['$scope', '$state', '$rootScope', 'UserService', 'AppService',
 		($scope, $state, $rootScope, UserService, AppService) ->
 			$scope.providers = {}
+			$scope.loadingApps = true
 
 			$scope.count = (object) ->
 				count = 0
@@ -27,12 +28,11 @@ module.exports = (app) ->
 								console.log e
 								next()
 					, (err) ->
-
 						$scope.$apply()
-							
-
 				.fail (e) ->
 					console.log e
-
+				.finally () ->
+					$scope.loadingApps = false
+					$scope.$apply()
 
 	]
