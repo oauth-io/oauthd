@@ -79,7 +79,6 @@ module.exports = function(grunt) {
         }
     }
 
-
     grunt.initConfig(gruntConf);
 
     // These plugins provide necessary tasks.

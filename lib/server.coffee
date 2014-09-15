@@ -534,6 +534,18 @@ server.get config.base_api + '/providers/:provider/:file', bootPathCache(), ((re
 		directory: config.rootdir + '/providers'
 		maxAge: config.cacheTime
 
+# get the plugins list
+server.get config.base_api + '/plugins', auth.needed, (req, res, next) ->
+	plugins.list (err, list) ->
+		return next(err) if err
+		res.send list
+		next()
+
+# get host_url
+server.get config.base_api + '/host_url', auth.needed, (req, res, next) ->
+	res.send config.host_url
+	next()
+
 # listen
 exports.listen = (callback) ->
 	# tell plugins to configure the server if needed

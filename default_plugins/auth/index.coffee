@@ -17,6 +17,7 @@
 crypto = require 'crypto'
 restify = require 'restify'
 restifyOAuth2 = require 'restify-oauth2-oauthd'
+
 shared = require '../../../bin/plugin_shared'
 {db,check} = shared
 

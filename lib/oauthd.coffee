@@ -40,24 +40,25 @@ exports.init = () ->
 	# --
 
 	# initialize plugins
+	console.log "oauthd initialize plugins"
 	exports.plugins = plugins = require "./plugins"
-	plugins.init()
+	plugins.init (res) ->
+		# start server
+		console.log "oauthd start server"
+		exports.server = server = require './server'
+		async.series [
+			plugins.data.db.providers.getList,
+			server.listen
+		], (err) ->
+			if err
+				console.error 'Error while initialisation', err.stack.toString()
+				plugins.data.emit 'server', err
+				defer.reject err
+			else
+				console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
+				defer.resolve()
 
-	# start server
-	exports.server = server = require './server'
-	async.series [
-		plugins.data.db.providers.getList,
-		server.listen
-	], (err) ->
-		if err
-			console.error 'Error while initialisation', err.stack.toString()
-			plugins.data.emit 'server', err
-			defer.reject err
-		else
-			console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
-			defer.resolve()
-
-	return defer.promise
+		return defer.promise
 
 exports.mailer = require './mailer'
 exports.exit = require './exit'

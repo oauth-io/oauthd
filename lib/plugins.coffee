@@ -16,6 +16,7 @@
 
 async = require 'async'
 config = require './config'
+jf = require 'jsonfile'
 
 shared = require './plugin_shared'
 shared.exit = require './exit'
@@ -31,36 +32,56 @@ exports.plugin = {}
 exports.data = shared
 
 exports.load = (plugin_name) ->
-	plugin = require process.cwd() + '/plugins/' + plugin_name + '/' + plugin_name.replace(/\./g,'_')
+	console.log "Loading '" + plugin_name + "'."
+	config.plugins.push plugin_name
+	plugin_data = require(process.cwd() + '/plugins/' + plugin_name + '/plugin.json')
+	plugin = require process.cwd() + '/plugins/' + plugin_name + '/' + plugin_data.main
 	exports.plugin[plugin_name] = plugin
 	return
 
-exports.init = ->
+exports.init = (callback) ->
 	for plugin in config.plugins
 		exports.load plugin
-	
-	# Checking if auth plugin is present. Else uses default
-	if not shared.auth?
-		console.log 'Using default auth'
-		auth_plugin = require '../default_plugins/auth/bin'
-		exports.plugin['auth'] = auth_plugin
+	try
+		jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+			throw err if err
+			if not obj?
+				obj = {}
+			for pluginname, pluginversion of obj
+				exports.load pluginname
+		
+			# Checking if auth plugin is present. Else uses default
+			if not shared.auth?
+				console.log 'Using default auth'
+				auth_plugin = require '../default_plugins/auth/bin'
+				exports.plugin['auth'] = auth_plugin
 
-	# Loading front if not overriden
-	if not shared.front?
-		console.log 'Using default front'
-		front_plugin = require '../default_plugins/front/bin'
-		exports.plugin['front'] = front_plugin
+			# Loading front if not overriden
+			if not shared.front?
+				console.log 'Using default front'
+				front_plugin = require '../default_plugins/front/bin'
+				exports.plugin['front'] = front_plugin
 
-	# Loading request
-	request_plugin = require '../default_plugins/request/bin'
-	exports.plugin['request'] = request_plugin
+			# Loading request
+			request_plugin = require '../default_plugins/request/bin'
+			exports.plugin['request'] = request_plugin
 
-	# Loading me
-	me_plugin = require '../default_plugins/me/bin'
-	exports.plugin['me'] = me_plugin
-	
+			# Loading me
+			me_plugin = require '../default_plugins/me/bin'
+			exports.plugin['me'] = me_plugin
+			callback true
+	catch e
+		console.log 'An error occured: ' + e.message
+		callback true
 
-	return
+exports.list = (callback) ->
+	list = []
+	jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+		return callback err if err
+		if obj?
+			for key, value of obj
+				list.push key
+		return callback null, list
 
 exports.run = (name, args, callback) ->
 	if typeof args == 'function'

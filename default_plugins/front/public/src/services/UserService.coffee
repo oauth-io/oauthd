@@ -26,8 +26,6 @@ module.exports = (app) ->
 							}
 
 							defer.resolve(data)
-
-							
 						)
 						.error((e) ->
 							defer.reject(e)
@@ -40,7 +38,6 @@ module.exports = (app) ->
 					$rootScope.logged_user = undefined
 					$rootScope.accessToken = undefined
 					$location.path('/login')
-
 
 			user_service
 	])

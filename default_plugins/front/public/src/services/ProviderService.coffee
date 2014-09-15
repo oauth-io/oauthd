@@ -1,4 +1,5 @@
 Q = require("q")
+
 module.exports = (app) ->
 	app.factory "ProviderService", [
 		"$rootScope"

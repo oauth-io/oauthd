@@ -67,10 +67,11 @@ require('./filters/filters') app
 require('./directives/DomainsDir') app
 require('./directives/KeysetDir') app
 
-require('./services/UserService') app
 require('./services/AppService') app
 require('./services/KeysetService') app
+require('./services/PluginService') app
 require('./services/ProviderService') app
+require('./services/UserService') app
 
 require('./controllers/DashboardCtrl') app
 require('./controllers/HomeCtrl') app

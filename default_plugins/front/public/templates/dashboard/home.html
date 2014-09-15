@@ -13,5 +13,11 @@
 	    </div>
 	</div>
     <h3>Plugins</h3>
+
     Here are widgets created by plugins.
+    <div class="row list">
+        <div class="col-md-4 plugin" ng-repeat="plugin in plugins">
+            <iframe style="width: 1000px; height: 600px;" ng-src="{{plugin.url}}"></iframe>
+        </div>
+    </div>
 </div>

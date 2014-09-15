@@ -1,8 +1,8 @@
 async = require 'async'
 
 module.exports = (app) ->
-	app.controller 'HomeCtrl', ['$scope', '$state', '$rootScope', 'UserService', 'AppService',
-		($scope, $state, $rootScope, UserService, AppService) ->
+	app.controller 'HomeCtrl', ['$scope', '$state', '$rootScope', '$location', 'UserService', 'AppService', 'PluginService',
+		($scope, $state, $rootScope, $location, UserService, AppService, PluginService) ->
 			$scope.providers = {}
 			$scope.loadingApps = true
 
@@ -33,6 +33,19 @@ module.exports = (app) ->
 					console.log e
 				.finally () ->
 					$scope.loadingApps = false
+					$scope.$apply()
+
+			PluginService.getAll()
+				.then (plugins) ->
+					$scope.plugins = []
+					for name in plugins
+						plugin = {}
+						plugin.name = name
+						plugin.url = "/oauthd/plugins/" + name
+						$scope.plugins.push plugin
+				.fail (e) ->
+					console.log e
+				.finally () ->
 					$scope.$apply()
 
 	]

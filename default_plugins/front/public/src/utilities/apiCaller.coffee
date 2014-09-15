@@ -1,7 +1,6 @@
 module.exports = ($http, $rootScope) ->
 	return (url, success, error, opts) ->
 		opts = {} if not opts?
-
 		opts.url = process.env.host + "/api" + url
 		
 		if opts.data
@@ -10,8 +9,6 @@ module.exports = ($http, $rootScope) ->
 				opts.method = "POST"
 
 		opts.method = opts.method || "GET"
-		
-		
 		opts.headers = {} if not opts.headers?
 
 		if $rootScope.accessToken
@@ -23,8 +20,6 @@ module.exports = ($http, $rootScope) ->
 		req = $http(opts)
 		if success
 			req.success(success)
-
 		if error
 			req.error(error)
-
 
