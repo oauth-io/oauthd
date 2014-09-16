@@ -53,8 +53,6 @@ app = angular.module("oauthd", ["ui.router"]).config(["$stateProvider", "$urlRou
 
 		
 
-		
-
 		$urlRouterProvider.when "", "/home"
 		$urlRouterProvider.when "/apps", "/apps/all"
 
