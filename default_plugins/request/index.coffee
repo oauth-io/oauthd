@@ -107,7 +107,7 @@ exports.raw = ->
 
 
 	# request's endpoints
-	@server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
+	@server.options new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
 		origin = null
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 		urlinfos = Url.parse(ref)
@@ -128,4 +128,4 @@ exports.raw = ->
 	@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-	@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+	@server.delete new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
