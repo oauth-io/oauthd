@@ -3,58 +3,63 @@
 #
 # LICENCE HERE
 
-#libs
-express = require 'express'
-fs = require 'fs'
+module.exports = (env) ->
 
-#project requires
-datal = require('./dataLayer')
-businessl = require('./businessLayer')
-presl = require('./presentationLayer')
+	#libs
+	fs = require 'fs'
+	restify = require 'restify'
+	bodyParser = require "body-parser" 
+	cookieParser = require "cookie-parser"
+	session = require "express-session"
+	https = require 'https'
 
-plugins = require('./plugins')
-formatters = require './formatters'
-
-# engine initialization
-oauth =
-	oauth1: require './oauth1'
-	oauth2: require './oauth2'
-
-auth = plugins.data.auth
-
-config = require '../config'
-
-
-#server creation, population and launch
-
-server_options =
-	name: 'OAuth Daemon'
-	version: '1.0.0'
-
-server_options.formatters = formatters.formatters
-
-if config.ssl
-	server_options.key = fs.readFileSync Path.resolve(config.rootdir, process.cwd() + '/' + config.ssl.key)
-	server_options.certificate = fs.readFileSync Path.resolve(config.rootdir, process.cwd() + '/' +  config.ssl.certificate)
-	server_options.ca = fs.readFileSync Path.resolve(config.rootdir, config.ssl.ca) if config.ssl.ca
-	console.log 'SSL is enabled !'
-
-server = express(server_options)
-plugins.data.server = server
-plugins.runSync 'raw'
-
-exports.listen = (callback) ->
 	
-	plugins.run 'setup', ->
-		listen_args = [config.port]
-		listen_args.push config.bind if config.bind
-		listen_args.push (err) ->
-			return callback err if err
-			#exit.push 'Http(s) server', (cb) -> server.close cb
-			#/!\ server.close = timeout if at least one connection /!\ wtf?
-			console.log '%s listening at %s for %s', server.name, server.url, config.host_url
-			plugins.data.emit 'server', null
-			callback null, server
+	PLModule = require './presentationLayer'
 
-		server.listen.apply server, listen_args
+	# Server config and launch
+	server_options =
+		name: 'oauthd'
+		version: '1.0.0'
 
+	if env.config.ssl
+		server_options.key = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' + env.config.ssl.key)
+		server_options.certificate = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' +  env.config.ssl.certificate)
+		server_options.ca = fs.readFileSync Path.resolve(env.config.rootdir, env.config.ssl.ca) if env.config.ssl.ca
+		console.log 'SSL is enabled !'
+	server_options.formatters = env.engine.formatters.formatters
+
+	env.server = server = restify.createServer server_options
+	env.plugins.data.server = server
+	env.plugins.runSync 'raw'
+
+	server.use restify.authorizationParser()
+	server.use restify.queryParser()
+	server.use restify.bodyParser mapParams:false
+
+	# runs the plugins' method init if popuplated
+	env.plugins.runSync 'init'
+
+
+	if not env.plugins.data.hooks["api_cors_middleware"]
+		env.plugins.data.addhook 'api_cors_middleware', (req, res, next) =>
+			next()
+	if not env.plugins.data.hooks["api_create_app_restriction"]
+		env.plugins.data.addhook 'api_create_app_restriction', (req, res, next) =>
+			next()
+
+	# init the presentation layer
+	PLModule(env) # initializes the api webservices endpoints
+
+	return {
+		listen: (callback) =>
+			env.plugins.run 'setup', =>
+				listen_args = [env.config.port]
+				listen_args.push env.config.bind if env.config.bind
+				listen_args.push (err) =>
+					return callback err if err
+					console.log '%s listening at %s for %s', server.name, server.url, env.config.host_url
+					env.events.emit 'server', null
+					callback null, server
+
+				server.listen.apply server, listen_args
+	}

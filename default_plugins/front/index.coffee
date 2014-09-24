@@ -1,5 +1,5 @@
-
-express = require 'express'
+restify = require 'restify'
+ecstatic = require 'ecstatic'
 fs = require 'fs'
 
 exports.setup = (callback) ->
@@ -13,5 +13,7 @@ exports.setup = (callback) ->
 					res.setHeader 'Content-Type', 'text/html'
 					res.send 200, data
 					return
-	, express.static(__dirname + '/public')
+	, restify.serveStatic
+		directory: __dirname + '/public'
+		default: __dirname + '/public/index.html'
 	callback()

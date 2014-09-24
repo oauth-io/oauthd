@@ -74,7 +74,7 @@ exports.raw = ->
 
 	check = @check
 
-	@server.options new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), (req, res, next) =>
+	@server.opts new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), (req, res, next) =>
 		origin = null
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 		urlinfos = Url.parse(ref)

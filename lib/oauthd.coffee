@@ -17,14 +17,37 @@
 Q = require 'q'
 
 defer = Q.defer()
+events = require('events')
+# Env is the global environment object. It is usually the 'this' (or @) in other modules
+env = {}
 
 exports.init = () ->
 	startTime = new Date
+	env.events = new events.EventEmitter()
 
 	Path = require 'path'
-	config = require "./config"
 	async = require "async"
-	config.rootdir = Path.normalize __dirname + '/..'
+
+	#project requires
+	engineModule = require './engine'
+	DALModule = require './dataLayer'
+	BLModule = require './businessLayer'
+	
+
+	engineModule(env).initEngine() # initializes env.engine
+	DALModule(env) # initializes env.DAL
+
+	engineModule(env).initOAuth()
+
+
+	engineModule(env).initPlugins()
+	BLModule(env) # inits env.BL, the module containing all business methods. Part of that must be opened to plugins
+	
+	exports.mailer = env.engine.mailer
+	exports.exit = env.engine.exit
+	exports.oauth1 = env.engine.oauth.oauth1
+	exports.oauth2 = env.engine.oauth.oauth2
+	exports.plugin_env = env.plugins.data
 
 	# request FIX
 	qs = require 'request/node_modules/qs'
@@ -41,11 +64,11 @@ exports.init = () ->
 
 	# initialize plugins
 	console.log "oauthd initialize plugins"
-	exports.plugins = plugins = require "./plugins"
+	exports.plugins = plugins = env.plugins
 	plugins.init (res) ->
 		# start server
 		console.log "oauthd start server"
-		exports.server = server = require './server'
+		exports.server = server = require('./server')(env)
 		async.series [
 			plugins.data.db.providers.getList,
 			server.listen
@@ -60,8 +83,4 @@ exports.init = () ->
 
 		return defer.promise
 
-exports.mailer = require './mailer'
-exports.exit = require './exit'
-exports.oauth1 = require './oauth1'
-exports.oauth2 = require './oauth2'
-exports.plugin_env = require './plugin_shared'
+	
