@@ -27,7 +27,7 @@ module.exports = (env) ->
 			@_provider = provider
 			@_oauthConfiguration = provider[oauthv];
 			@_parameters = parameters
-			@_serverCallbackUrl = config.host_url + config.relbase
+			@_serverCallbackUrl = config.host_url + '/auth' # redirection url http(s)://domain/auth
 			@_setParams @_provider.parameters
 			@_setParams @_provider[oauthv].parameters
 
