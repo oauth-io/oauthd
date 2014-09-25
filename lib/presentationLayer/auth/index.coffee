@@ -184,7 +184,6 @@ module.exports = (env) ->
 		# oauth: popup or redirection to provider's authorization url
 		env.server.get env.config.base + '/auth/:provider', (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
-			console.log 'REQ.PARAMS', req.params
 			domain = null
 			origin = null
 			ref = env.fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")

@@ -103,7 +103,6 @@ module.exports = (env) ->
 			cb()
 
 	exp.optional = (req, res, next) ->
-		console.log 'hey'
 		cb = ->
 			req.user = req.clientId
 			req.body ?= {}

@@ -101,7 +101,7 @@ module.exports = (env) ->
 				exp.plugin['request'] = request_plugin
 
 				# Loading me
-				me_plugin = require env.config.root + '/default_plugins/me/bin'
+				me_plugin = require(env.config.root + '/default_plugins/me/bin')(env)
 				exp.plugin['me'] = me_plugin
 				callback true
 		catch e

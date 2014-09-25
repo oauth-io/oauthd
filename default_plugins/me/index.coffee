@@ -25,7 +25,6 @@ fs = require 'fs'
 Stream = require 'stream'
 
 module.exports = (env) ->
-
 	oauth = env.engine.oauth
 
 	fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
@@ -68,13 +67,13 @@ module.exports = (env) ->
 		result.raw = if result.raw then result.raw else body
 		return result
 
-
+	exp = {}
 	exp.raw = ->
 		fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
 		check = @check
-
 		@server.opts new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), (req, res, next) =>
+
 			origin = null
 			ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 			urlinfos = Url.parse(ref)
