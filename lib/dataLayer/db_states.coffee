@@ -26,7 +26,7 @@ module.exports = (env) ->
 	# add a new state
 	exp.add = check key:check.format.key, provider:check.format.provider
 		, token:['none','string'], expire:['none','number'], oauthv:'string'
-		, origin:['none','string'], redirect_uri:['none','string']
+		, origin:['none','string'], redirect_uri:['none','string'], redirect_type:['none','string']
 		, options:['none','object'], (data, callback) ->
 
 			id = db.generateUid()
@@ -34,6 +34,7 @@ module.exports = (env) ->
 			dbdata.token = data.token if data.token
 			dbdata.expire = (new Date()).getTime() + data.expire if data.expire
 			dbdata.redirect_uri = data.redirect_uri if data.redirect_uri
+			dbdata.redirect_type = data.redirect_type if data.redirect_type
 			dbdata.oauthv = data.oauthv if data.oauthv
 			dbdata.origin = data.origin if data.origin
 			dbdata.options = JSON.stringify(data.options) if data.options

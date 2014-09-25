@@ -52,6 +52,7 @@ module.exports = (env) ->
 				key: opts.key,
 				provider: @_provider.provider,
 				redirect_uri: opts.redirect_uri,
+				redirect_type: opts.redirect_type,
 				oauthv: @_oauthv,
 				origin: opts.origin,
 				options: opts.options,
