@@ -1,24 +1,28 @@
+Url = require 'url'
+async = require 'async'
+UAParser = require 'ua-parser-js'
+
 module.exports = (env) ->
 	init: () ->
 		return
 	registerWs: () ->
 		# oauth: refresh token
 		env.server.post env.config.base + '/auth/refresh_token/:provider', (req, res, next) ->
-			e = new check.Error
+			e = new env.engine.check.Error
 			e.check req.body, key:check.format.key, secret:check.format.key, token:'string'
 			e.check req.params, provider:'string'
 			return next e if e.failed()
-			db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
+			env.DAL.db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
 				return next e if e
-				return next new check.Error "invalid credentials" if not r
-				db.apps.getKeyset req.body.key, req.params.provider, (e, keyset) ->
+				return next new env.engine.check.Error "invalid credentials" if not r
+				env.DAL.db.apps.getKeyset req.body.key, req.params.provider, (e, keyset) ->
 					return next e if e
 					if keyset.response_type != "code" and keyset.response_type != "both"
-						return next new check.Error "refresh token is a server-side feature only"
-					db.providers.getExtended req.params.provider, (e, provider) ->
+						return next new env.engine.check.Error "refresh token is a server-side feature only"
+					env.DAL.db.providers.getExtended req.params.provider, (e, provider) ->
 						return next e if e
 						if not provider.oauth2?.refresh
-							return next new check.Error "refresh token not supported for " + req.params.provider
+							return next new env.engine.check.Error "refresh token not supported for " + req.params.provider
 						oa = new @engine.oauth.oauth2(provider, keyset.parameters)
 						oa.refresh req.body.token, keyset, send(res,next)
 
@@ -26,9 +30,9 @@ module.exports = (env) ->
 		env.server.get env.config.base + '/auth/iframe', (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
-			e = new check.Error
+			e = new env.engine.check.Error
 			e.check req.params, d:'string'
-			origin = check.escape req.params.d
+			origin = env.engine.check.escape req.params.d
 			return next e if e.failed()
 			content = '<!DOCTYPE html>\n'
 			content += '<html><head><script>(function() {\n'
@@ -64,17 +68,17 @@ module.exports = (env) ->
 
 		# oauth: get access token from server
 		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
-			e = new check.Error
+			e = new env.engine.check.Error
 			e.check req.body, code:check.format.key, key:check.format.key, secret:check.format.key
 			return next e if e.failed()
-			db.states.get req.body.code, (err, state) ->
+			env.DAL.db.states.get req.body.code, (err, state) ->
 				return next err if err
-				return next new check.Error 'code', 'invalid or expired' if not state || state.step != "1"
-				return next new check.Error 'code', 'invalid or expired' if state.key != req.body.key
-				db.apps.checkSecret state.key, req.body.secret, (e,r) ->
+				return next new env.engine.check.Error 'code', 'invalid or expired' if not state || state.step != "1"
+				return next new env.engine.check.Error 'code', 'invalid or expired' if state.key != req.body.key
+				env.DAL.db.apps.checkSecret state.key, req.body.secret, (e,r) ->
 					return next e if e
-					return next new check.Error "invalid credentials" if not r
-					db.states.del req.body.code, (->)
+					return next new env.engine.check.Error "invalid credentials" if not r
+					env.DAL.db.states.del req.body.code, (->)
 					r = JSON.parse(state.token)
 					r.state = state.options.state
 					r.provider = state.provider
@@ -83,10 +87,10 @@ module.exports = (env) ->
 
 		clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
 			if not e and data.redirect_uri
-				redirect_infos = Url.parse fixUrl(data.redirect_uri), true
+				redirect_infos = Url.parse env.fixUrl(data.redirect_uri), true
 				if redirect_infos.hostname == 'oauth.io'
-					e = new check.Error 'OAuth.redirect url must NOT be "oauth.io"'
-			body = formatters.build e || r
+					e = new env.engine.check.Error 'OAuth.redirect url must NOT be "oauth.io"'
+			body = env.engine.formatters.build e || r
 			body.state = data.state if data.state
 			body.provider = data.provider.toLowerCase() if data.provider
 			view = '<!DOCTYPE html>\n'
@@ -137,36 +141,36 @@ module.exports = (env) ->
 					return callback null, stateid if stateid
 				oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 				if oaio_uid
-					db.redis.get 'cli:state:' + oaio_uid, callback
+					env.DAL.db.redis.get 'cli:state:' + oaio_uid, callback
 			getState (err, stateid) ->
 				return next err if err
-				return next new check.Error 'state', 'must be present' if not stateid
-				db.states.get stateid, (err, state) ->
+				return next new env.engine.check.Error 'state', 'must be present' if not stateid
+				env.DAL.db.states.get stateid, (err, state) ->
 					return next err if err
-					return next new check.Error 'state', 'invalid or expired' if not state
+					return next new env.engine.check.Error 'state', 'invalid or expired' if not state
 					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
-					return callback new check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+					return callback new env.engine.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 					async.parallel [
-							(cb) -> db.providers.getExtended state.provider, cb
-							(cb) -> db.apps.getKeyset state.key, state.provider, cb
+							(cb) -> env.DAL.db.providers.getExtended state.provider, cb
+							(cb) -> env.DAL.db.apps.getKeyset state.key, state.provider, cb
 					], (err, r) =>
 						return callback err if err
 						provider = r[0]
 						parameters = r[1].parameters
 						response_type = r[1].response_type
-						oa = new oauth[state.oauthv](provider, parameters)
+						oa = new env.engine.oauth[state.oauthv](provider, parameters)
 						oa.access_token state, req, (e, r) ->
 							status = if e then 'error' else 'success'
-							plugins.data.callhook 'connect.auth', req, res, (err) ->
+							env.plugins.data.callhook 'connect.auth', req, res, (err) ->
 								return callback err if err
-								plugins.data.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+								env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
 								return callback e if e
 
-								plugins.data.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
+								env.plugins.data.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
 									return callback e if e
 
 									if response_type != 'token'
-										db.states.set stateid, token:JSON.stringify(r), step:1, (->)
+										env.DAL.db.states.set stateid, token:JSON.stringify(r), step:1, (->)
 									if response_type != 'code'
 										delete r.refresh_token
 									if response_type == 'code'
@@ -174,7 +178,7 @@ module.exports = (env) ->
 									if response_type != 'token'
 										r.code = stateid
 									if response_type == 'token'
-										db.states.del stateid, (->)
+										env.DAL.db.states.del stateid, (->)
 									callback null, r
 
 		# oauth: popup or redirection to provider's authorization url
@@ -183,7 +187,7 @@ module.exports = (env) ->
 
 			domain = null
 			origin = null
-			ref = fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
+			ref = env.fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
 			urlinfos = Url.parse ref
 			if not urlinfos.hostname
 				if ref
@@ -200,9 +204,9 @@ module.exports = (env) ->
 			if req.params.options
 				try
 					options = JSON.parse(req.params.opts)
-					return next new check.Error 'Options must be an object' if typeof options != 'object'
+					return next new env.engine.check.Error 'Options must be an object' if typeof options != 'object'
 				catch e
-					return next new check.Error 'Error in request parameters'
+					return next new env.engine.check.Error 'Error in request parameters'
 
 			callback = clientCallback state:options.state, provider:req.params.provider, origin:origin, redirect_uri:req.params.redirect_uri, req, res, next
 
@@ -216,42 +220,42 @@ module.exports = (env) ->
 			}[req.params.oauthv]
 			provider_conf = undefined
 			async.waterfall [
-				(cb) -> db.apps.checkDomain key, ref, cb
+				(cb) -> env.DAL.db.apps.checkDomain key, ref, cb
 				(valid, cb) ->
-					return cb new check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host if not valid
+					return cb new env.engine.check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host if not valid
 					if req.params.redirect_uri
-						db.apps.checkDomain key, req.params.redirect_uri, cb
+						env.DAL.db.apps.checkDomain key, req.params.redirect_uri, cb
 					else
 						cb null, true
 				(valid, cb) ->
-					return cb new check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + env.config.url.host if not valid
+					return cb new env.engine.check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + env.config.url.host if not valid
 
-					db.providers.getExtended req.params.provider, cb
+					env.DAL.db.providers.getExtended req.params.provider, cb
 				(provider, cb) ->
 					if oauthv and not provider[oauthv]
-						return cb new check.Error "oauthv", "Unsupported oauth version: " + oauthv
+						return cb new env.engine.check.Error "oauthv", "Unsupported oauth version: " + oauthv
 					provider_conf = provider
 					oauthv ?= 'oauth2' if provider.oauth2
 					oauthv ?= 'oauth1' if provider.oauth1
-					db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
+					env.DAL.db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 				(keyset, provider, cb) ->
-					return cb new check.Error 'This app is not configured for ' + provider.provider if not keyset
+					return cb new env.engine.check.Error 'This app is not configured for ' + provider.provider if not keyset
 					{parameters, response_type} = keyset
 					if response_type != 'token' and (not options.state or options.state_type)
-						return cb new check.Error 'You must provide a state when server-side auth'
-					plugins.data.callhook 'connect.auth', req, res, (err) ->
+						return cb new env.engine.check.Error 'You must provide a state when server-side auth'
+					env.plugins.data.callhook 'connect.auth', req, res, (err) ->
 						return cb err if err
-						plugins.data.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
+						env.events.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
 						options.response_type = response_type
 						options.parameters = parameters
 						opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
-						oa = new oauth[oauthv](provider, parameters)
+						oa = new env.engine.oauth[oauthv](provider, parameters)
 						oa.authorize opts, cb
 				(authorize, cb) ->
 						return cb null, authorize.url if not req.oaio_uid
-						db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+						env.DAL.db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
 							return cb err if err
-							db.redis.expire 'cli:state:' + req.oaio_uid, 1200
+							env.DAL.db.redis.expire 'cli:state:' + req.oaio_uid, 1200
 							cb null, authorize.url
 			], (err, url) ->
 				return callback err if err

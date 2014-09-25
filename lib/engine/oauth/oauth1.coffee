@@ -20,7 +20,7 @@ module.exports = (env) ->
 	check = env.engine.check
 	db = env.DAL.db
 
-	OAuth1ResponseParser = require './oauth1-response-parser'
+	OAuth1ResponseParser = require('./oauth1-response-parser')(env)
 	OAuthBase = require('./oauth-base')(env)
 
 	class OAuth1 extends OAuthBase
