@@ -9,7 +9,7 @@ module.exports = (env) ->
 		# oauth: refresh token
 		env.server.post env.config.base + '/auth/refresh_token/:provider', (req, res, next) ->
 			e = new env.engine.check.Error
-			e.check req.body, key:check.format.key, secret:check.format.key, token:'string'
+			e.check req.body, key: env.engine.check.format.key, secret: env.engine.check.format.key, token:'string'
 			e.check req.params, provider:'string'
 			return next e if e.failed()
 			env.DAL.db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
