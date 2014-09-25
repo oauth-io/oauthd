@@ -184,7 +184,7 @@ module.exports = (env) ->
 		# oauth: popup or redirection to provider's authorization url
 		env.server.get env.config.base + '/auth/:provider', (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
-
+			console.log 'REQ.PARAMS', req.params
 			domain = null
 			origin = null
 			ref = env.fixUrl(req.headers['referer'] || req.headers['origin'] || req.params.d || req.params.redirect_uri || "")
@@ -201,7 +201,7 @@ module.exports = (env) ->
 			origin = urlinfos.protocol + '//' + urlinfos.host
 
 			options = {}
-			if req.params.options
+			if req.params.opts
 				try
 					options = JSON.parse(req.params.opts)
 					return next new env.engine.check.Error 'Options must be an object' if typeof options != 'object'
