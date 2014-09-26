@@ -1,7 +1,6 @@
 jf = require 'jsonfile'
 
-module.exports = (cli) ->
-	cli.argv._.shift()
+module.exports = () ->
 	try
 		jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
 			throw err if err
@@ -18,4 +17,4 @@ module.exports = (cli) ->
 				for key, value of obj
 					console.log "- '" + key + "'"
 	catch e
-			console.log 'An error occured: ' + e.message
+		console.log 'An error occured: ' + e.message
