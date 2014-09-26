@@ -23,7 +23,7 @@ request = require 'request'
 module.exports = (env) ->
 
 
-	oauth = env.engine.oauth
+	oauth = env.utilities.oauth
 
 	exp = {}
 	exp.raw = ->
