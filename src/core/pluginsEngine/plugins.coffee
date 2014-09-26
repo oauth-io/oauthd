@@ -34,7 +34,7 @@ module.exports = (env) ->
 	shared.db.states = env.DAL.db_states
 	shared.config = env.config
 
-	
+
 	pluginsEngine = {}
 	shared.plugins = pluginsEngine
 

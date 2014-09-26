@@ -21,7 +21,7 @@ exports.init = () ->
 	}
 
 	coreModule = require './core'
-	dataModule = require './dataLayer'
+	dataModule = require './data'
 	
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
