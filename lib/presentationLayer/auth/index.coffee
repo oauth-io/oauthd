@@ -9,7 +9,7 @@ module.exports = (env) ->
 		# oauth: refresh token
 		env.server.post env.config.base + '/auth/refresh_token/:provider', (req, res, next) ->
 			e = new env.engine.check.Error
-			e.check req.body, key:check.format.key, secret:check.format.key, token:'string'
+			e.check req.body, key: env.engine.check.format.key, secret: env.engine.check.format.key, token:'string'
 			e.check req.params, provider:'string'
 			return next e if e.failed()
 			env.DAL.db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
@@ -69,7 +69,8 @@ module.exports = (env) ->
 		# oauth: get access token from server
 		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
 			e = new env.engine.check.Error
-			e.check req.body, code:check.format.key, key:check.format.key, secret:check.format.key
+			e.check req.body, code: env.engine.check.format.key, key: env.engine.check.format.key, secret: env.engine.check.format.key
+			
 			return next e if e.failed()
 			env.DAL.db.states.get req.body.code, (err, state) ->
 				return next err if err
@@ -85,7 +86,7 @@ module.exports = (env) ->
 					res.buildJsend = false
 					res.send r
 
-		clientCallback = (data, req, res, next) -> (e, r) -> #data:state,provider,redirect_uri,origin
+		clientCallback = (data, req, res, next) -> (e, r, response_type) -> #data:state,provider,redirect_uri,origin
 			if not e and data.redirect_uri
 				redirect_infos = Url.parse env.fixUrl(data.redirect_uri), true
 				if redirect_infos.hostname == 'oauth.io'
@@ -93,6 +94,10 @@ module.exports = (env) ->
 			body = env.engine.formatters.build e || r
 			body.state = data.state if data.state
 			body.provider = data.provider.toLowerCase() if data.provider
+			if data.redirect_type == 'server'
+				res.setHeader 'Location', data.redirect_uri + '?oauthio=' + encodeURIComponent(JSON.stringify(body))
+				res.send 302
+				return next()
 			view = '<!DOCTYPE html>\n'
 			view += '<html><head><script>(function() {\n'
 			view += '\t"use strict";\n'
@@ -148,7 +153,7 @@ module.exports = (env) ->
 				env.DAL.db.states.get stateid, (err, state) ->
 					return next err if err
 					return next new env.engine.check.Error 'state', 'invalid or expired' if not state
-					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, req, res, next
+					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
 					return callback new env.engine.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 					async.parallel [
 							(cb) -> env.DAL.db.providers.getExtended state.provider, cb
@@ -179,7 +184,7 @@ module.exports = (env) ->
 										r.code = stateid
 									if response_type == 'token'
 										env.DAL.db.states.del stateid, (->)
-									callback null, r
+									callback null, r, response_type
 
 		# oauth: popup or redirection to provider's authorization url
 		env.server.get env.config.base + '/auth/:provider', (req, res, next) ->
@@ -248,6 +253,7 @@ module.exports = (env) ->
 						options.response_type = response_type
 						options.parameters = parameters
 						opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
+						opts.redirect_type = req.params.redirect_type if req.params.redirect_type
 						oa = new env.engine.oauth[oauthv](provider, parameters)
 						oa.authorize opts, cb
 				(authorize, cb) ->
