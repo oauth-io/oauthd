@@ -22,7 +22,7 @@ module.exports = (env) ->
 
 	db = env.DAL.db
 	config = env.config
-	check = env.engine.check
+	check = env.utilities.check
 	plugins = env.plugins
 
 	exp = {}

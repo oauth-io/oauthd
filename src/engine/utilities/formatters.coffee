@@ -18,7 +18,7 @@ restify = require 'restify'
 
 module.exports = (env) ->
 	
-	check = env.engine.check
+	check = env.utilities.check
 	config = env.config
 
 	buildReply = (body, res) ->
@@ -92,7 +92,7 @@ module.exports = (env) ->
 			res.setHeader 'Content-Length', Buffer.byteLength(body)
 			return body
 
-	env.engine.formatters = {
+	{
 		formatters: formatters
 		build: (e,r) -> buildReply e || r, buildJsend: true
 	}

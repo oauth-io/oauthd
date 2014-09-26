@@ -19,7 +19,7 @@ querystring = require 'querystring'
 zlib = require 'zlib'
 
 module.exports = (env) ->
-	check = env.engine.check
+	check = env.utilities.check
 	
 	class OAuthResponseParser
 		constructor: (response, body, format, tokenType) ->

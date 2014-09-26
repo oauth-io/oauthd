@@ -11,7 +11,7 @@ module.exports = (env) ->
 
 	env.server.send = env.send = (res, next) -> (e, r) ->
 		return next(e) if e
-		res.send (if r? then r else env.engine.check.nullv)
+		res.send (if r? then r else env.utilities.check.nullv)
 		next()
 
 	api.init()

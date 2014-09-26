@@ -138,4 +138,4 @@ module.exports = (env) ->
 		provider: /^[a-zA-Z0-9._\-]{2,}$/
 		key: /^[a-zA-Z0-9\-_]{23,27}$/
 
-	env.engine.check = check
+	check

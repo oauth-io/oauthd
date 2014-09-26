@@ -30,4 +30,4 @@ module.exports = (env) ->
 					args.push '[[JSON str error]]'
 			fs.appendFile __dirname + '/../logs/' + @name + '.log', prepend + args.join(' ') + "\n", 'utf8', ->
 
-	env.engine.logger = Logger
+	Logger

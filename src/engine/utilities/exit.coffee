@@ -17,7 +17,7 @@
 async = require 'async'
 
 module.exports = (env) ->
-	exp = {}
+	exit = {}
 	closing_stack = []
 	closing = false
 
@@ -49,7 +49,7 @@ module.exports = (env) ->
 			console.error '--- uncaughtException WHILE CLOSING'
 		else
 			console.error '--- uncaughtException', (new Date).toGMTString()
-			exp.err = err
+			exit.err = err
 		console.error err.stack.toString()
 		console.error '--- node exiting now...'
 		if closing
@@ -61,11 +61,11 @@ module.exports = (env) ->
 		return
 
 	# push a closing function
-	exp.push = (name, f) ->
+	exit.push = (name, f) ->
 		closing_stack.push (callback) ->
 			console.log 'Closing `' + name + '`...'
 			f callback
 			return
 		return
 
-	env.engine.exit = exp
+	exit

@@ -20,7 +20,7 @@ restifyOAuth2 = require 'restify-oauth2-oauthd'
 
 module.exports = (env) ->
 
-	shared = env.plugins.data
+	shared = env.pluginsEngine.data
 	{db,check} = shared
 
 	exp = {}

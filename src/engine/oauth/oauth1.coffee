@@ -17,7 +17,7 @@
 request = require 'request'
 module.exports = (env) ->
 
-	check = env.engine.check
+	check = env.utilities.check
 	db = env.DAL.db
 
 	OAuth1ResponseParser = require('./oauth1-response-parser')(env)

@@ -26,25 +26,25 @@ module.exports = (env) ->
 		server_options.certificate = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' +  env.config.ssl.certificate)
 		server_options.ca = fs.readFileSync Path.resolve(env.config.rootdir, env.config.ssl.ca) if env.config.ssl.ca
 		console.log 'SSL is enabled !'
-	server_options.formatters = env.engine.formatters.formatters
+	server_options.formatters = env.utilities.formatters.formatters
 
 	env.server = server = restify.createServer server_options
-	env.plugins.data.server = server
-	env.plugins.runSync 'raw'
+	env.pluginsEngine.data.server = server
+	env.pluginsEngine.runSync 'raw'
 
 	server.use restify.authorizationParser()
 	server.use restify.queryParser()
 	server.use restify.bodyParser mapParams:false
 
 	# runs the plugins' method init if popuplated
-	env.plugins.runSync 'init'
+	env.pluginsEngine.runSync 'init'
 
 
-	if not env.plugins.data.hooks["api_cors_middleware"]
-		env.plugins.data.addhook 'api_cors_middleware', (req, res, next) =>
+	if not env.pluginsEngine.data.hooks["api_cors_middleware"]
+		env.pluginsEngine.data.addhook 'api_cors_middleware', (req, res, next) =>
 			next()
-	if not env.plugins.data.hooks["api_create_app_restriction"]
-		env.plugins.data.addhook 'api_create_app_restriction', (req, res, next) =>
+	if not env.pluginsEngine.data.hooks["api_create_app_restriction"]
+		env.pluginsEngine.data.addhook 'api_create_app_restriction', (req, res, next) =>
 			next()
 
 	# init the presentation layer
@@ -52,7 +52,7 @@ module.exports = (env) ->
 
 	return {
 		listen: (callback) =>
-			env.plugins.run 'setup', =>
+			env.pluginsEngine.run 'setup', =>
 				listen_args = [env.config.port]
 				listen_args.push env.config.bind if env.config.bind
 				listen_args.push (err) =>

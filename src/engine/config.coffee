@@ -31,5 +31,4 @@ module.exports = (env) ->
 	config.url = Url.parse config.host_url
 	config.bootTime = new Date
 
-	# inits env.config
-	env.config = config
+	config

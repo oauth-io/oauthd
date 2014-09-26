@@ -21,7 +21,7 @@ async = require "async"
 module.exports = (env) ->
 
 	config = env.config
-	check = env.engine.check
+	check = env.utilities.check
 
 	exp = {}
 

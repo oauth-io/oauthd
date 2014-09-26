@@ -16,8 +16,8 @@
 
 request = require 'request'
 module.exports = (env) ->
-	check = env.engine.check
-	logger = new (env.engine.logger) "oauth2"
+	check = env.utilities.check
+	logger = new (env.utilities.logger) "oauth2"
 
 	OAuth2ResponseParser = require('./oauth2-response-parser')(env)
 	OAuthBase = require('./oauth-base')(env)

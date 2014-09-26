@@ -25,7 +25,7 @@ fs = require 'fs'
 Stream = require 'stream'
 
 module.exports = (env) ->
-	oauth = env.engine.oauth
+	oauth = env.utilities.oauth
 
 	fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 

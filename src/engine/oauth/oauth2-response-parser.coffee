@@ -18,7 +18,7 @@ querystring = require 'querystring'
 
 module.exports = (env) ->
 
-	check = env.engine.check
+	check = env.utilities.check
 	OAuthResponseParser = require('./oauth-response-parser')(env)
 
 	errors_desc =

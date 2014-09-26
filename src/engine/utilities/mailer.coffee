@@ -55,4 +55,4 @@ module.exports = (env) ->
 			_.template templateContent, data, { interpolate: /\{\{(.+?)\}\}/g}
 
 
-	env.engine.mailer = Mailer
+	Mailer

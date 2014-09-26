@@ -22,7 +22,7 @@ module.exports = (env) ->
 
 	
 	config = env.config
-	exit = env.engine.exit
+	exit = env.utilities.exit
 
 	exp.redis = redis.createClient config.redis.port, config.redis.host, config.redis.options
 	exp.redis.auth(config.redis.password) if config.redis.password

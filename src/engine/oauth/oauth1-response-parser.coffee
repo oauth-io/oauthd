@@ -17,7 +17,7 @@
 querystring = require 'querystring'
 
 module.exports = (env) ->
-	check = env.engine.check
+	check = env.utilities.check
 	OAuthResponseParser = require('./oauth-response-parser')(env)
 
 	class OAuth1ResponseParser extends OAuthResponseParser
