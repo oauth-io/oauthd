@@ -24,7 +24,7 @@ module.exports = function(env) {
         });
       }, restify.serveStatic({
         directory: __dirname + '/bin/public',
-        "default": __dirname + '/public/index.html'
+        "default": __dirname + '/bin/public/index.html'
       }));
       return callback();
     }
