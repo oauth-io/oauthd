@@ -32,7 +32,7 @@ if cli.argv._[0] == 'init'
 					fs.mkdirSync './' + results.name
 				ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + results.name, (err) ->
 					return console.log err if err
-					console.log 'Thank you for using oauthd. Run "sudo grunt", then "oauthd start" to run your instance.'
+					console.log 'Thank you for using oauthd. Run "npm install", then "sudo grunt", then "oauthd start" to run your instance.'
 
 # starts oauthd
 if cli.argv._[0] == 'start'
