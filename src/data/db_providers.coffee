@@ -216,4 +216,4 @@ module.exports = (env) ->
 			provider.cache = true
 			callback null, res
 
-	env.DAL.db_providers = exp
+	exp

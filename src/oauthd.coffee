@@ -25,8 +25,9 @@ exports.init = () ->
 	
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
+	
 	dataModule(env) # initializes env.data
-
+	
 	coreModule(env).initOAuth() # might be exported in plugin later
 	coreModule(env).initPluginsEngine()
 
@@ -41,12 +42,14 @@ exports.init = () ->
 		return result
 
 	defer = Q.defer()
+
 	env.pluginsEngine.init (res) ->
 		# start server
 		console.log "oauthd start server"
 		exports.server = server = require('./server')(env)
+
 		async.series [
-			env.pluginsEngine.data.db.providers.getList,
+			env.data.providers.getList,
 			server.listen
 		], (err) ->
 			if err

@@ -23,7 +23,7 @@ module.exports = (env) ->
 	registerWs: () ->
 		# create an application
 		env.server.post '/api/apps', env.pluginsEngine.plugin['auth'].needed, env.pluginsEngine.data.hooks["api_create_app_restriction"][0], (req, res, next) =>
-			env.DAL.db.apps.create req.body, req.user, (error, result) =>
+			env.data.apps.create req.body, req.user, (error, result) =>
 				return next(error) if error
 				env.events.emit 'app.create', req.user, result
 				res.send name:result.name, key:result.key, domains:result.domains
@@ -32,10 +32,10 @@ module.exports = (env) ->
 		# get infos of an app
 		env.server.get '/api/apps/:key', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
 			async.parallel [
-				(cb) => env.DAL.db.apps.get req.params.key, cb
-				(cb) => env.DAL.db.apps.getDomains req.params.key, cb
-				(cb) => env.DAL.db.apps.getKeysets req.params.key, cb
-				(cb) => env.DAL.db.apps.getBackend req.params.key, cb
+				(cb) => env.data.apps.get req.params.key, cb
+				(cb) => env.data.apps.getDomains req.params.key, cb
+				(cb) => env.data.apps.getKeysets req.params.key, cb
+				(cb) => env.data.apps.getBackend req.params.key, cb
 			], (e, r) =>
 				return next(e) if e
 				res.send name:r[0].name, key:r[0].key, secret:r[0].secret, owner:r[0].owner, date:r[0].date, domains:r[1], keysets:r[2], backend:r[3]
@@ -43,13 +43,13 @@ module.exports = (env) ->
 
 		# update infos of an app
 		env.server.post '/api/apps/:key', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.update req.params.key, req.body, env.send(res,next)
+			env.data.apps.update req.params.key, req.body, env.send(res,next)
 
 		# remove an app
 		env.server.del '/api/apps/:key', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.get req.params.key, (e, app) =>
+			env.data.apps.get req.params.key, (e, app) =>
 				return next(e) if e
-				env.DAL.db.apps.remove req.params.key, (e, r) =>
+				env.data.apps.remove req.params.key, (e, r) =>
 					return next(e) if e
 					env.events.emit 'app.remove', req.user, app
 					res.send check.nullv
@@ -57,70 +57,70 @@ module.exports = (env) ->
 
 		# reset the public key of an app
 		env.server.post '/api/apps/:key/reset', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.resetKey req.params.key, env.send(res,next)	
+			env.data.apps.resetKey req.params.key, env.send(res,next)	
 
 		# list valid domains for an app
 		env.server.get '/api/apps/:key/domains', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.getDomains req.params.key, env.send(res,next)
+			env.data.apps.getDomains req.params.key, env.send(res,next)
 
 		# update valid domains list for an app
 		env.server.post '/api/apps/:key/domains', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.updateDomains req.params.key, req.body.domains, env.send(res,next)
+			env.data.apps.updateDomains req.params.key, req.body.domains, env.send(res,next)
 
 		# add a valid domain for an app
 		env.server.post '/api/apps/:key/domains/:domain', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.addDomain req.params.key, req.params.domain, env.send(res,next)
+			env.data.apps.addDomain req.params.key, req.params.domain, env.send(res,next)
 
 		# remove a valid domain for an app
 		env.server.del '/api/apps/:key/domains/:domain', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.remDomain req.params.key, req.params.domain, env.send(res,next)
+			env.data.apps.remDomain req.params.key, req.params.domain, env.send(res,next)
 
 		# list keysets (provider names) for an app
 		env.server.get '/api/apps/:key/keysets', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.getKeysets req.params.key, env.send(res,next)
+			env.data.apps.getKeysets req.params.key, env.send(res,next)
 
 		# get a keyset for an app and a provider
 		env.server.get '/api/apps/:key/keysets/:provider', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.getKeyset req.params.key, req.params.provider, env.send(res,next)
+			env.data.apps.getKeyset req.params.key, req.params.provider, env.send(res,next)
 
 		# add or update a keyset for an app and a provider
 		env.server.post '/api/apps/:key/keysets/:provider', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.addKeyset req.params.key, req.params.provider, req.body, env.send(res,next)
+			env.data.apps.addKeyset req.params.key, req.params.provider, req.body, env.send(res,next)
 
 		# remove a keyset for a app and a provider
 		env.server.del '/api/apps/:key/keysets/:provider', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.remKeyset req.params.key, req.params.provider, env.send(res,next)
+			env.data.apps.remKeyset req.params.key, req.params.provider, env.send(res,next)
 
 		# get providers list
 		env.server.get '/api/providers', env.bootPathCache(), (req, res, next) =>
-			env.DAL.db.providers.getList env.send(res,next)
+			env.data.providers.getList env.send(res,next)
 
 		# get the backend of an app
 		env.server.get '/api/apps/:key/backend', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.getBackend req.params.key, env.send(res,next)
+			env.data.apps.getBackend req.params.key, env.send(res,next)
 
 		# set or update the backend for an app
 		env.server.post '/api/apps/:key/backend/:backend', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.setBackend req.params.key, req.params.backend, req.body, env.send(res,next)
+			env.data.apps.setBackend req.params.key, req.params.backend, req.body, env.send(res,next)
 
 		# remove a backend from an app
 		env.server.del '/api/apps/:key/backend', env.pluginsEngine.plugin['auth'].needed, (req, res, next) =>
-			env.DAL.db.apps.remBackend req.params.key, env.send(res,next)
+			env.data.apps.remBackend req.params.key, env.send(res,next)
 
 		# get a provider config
 		env.server.get '/api/providers/:provider', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
 			if req.query.extend
-				env.DAL.db.providers.getExtended req.params.provider, env.send(res,next)
+				env.data.providers.getExtended req.params.provider, env.send(res,next)
 			else
-				env.DAL.db.providers.get req.params.provider, env.send(res,next)
+				env.data.providers.get req.params.provider, env.send(res,next)
 
 		# get a provider config's extras
 		env.server.get '/api/providers/:provider/settings', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
-			env.DAL.db.providers.getSettings req.params.provider, env.send(res,next)
+			env.data.providers.getSettings req.params.provider, env.send(res,next)
 
 		# get the provider me.json mapping configuration
 		env.server.get '/api/providers/:provider/user-mapping', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
-			env.DAL.db.providers.getMeMapping req.params.provider, env.send(res,next)
+			env.data.providers.getMeMapping req.params.provider, env.send(res,next)
 
 		# get a provider logo
 		env.server.get '/api/providers/:provider/logo', env.bootPathCache(), ((req, res, next) =>

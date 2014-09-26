@@ -23,7 +23,7 @@ module.exports = (env) ->
 	env.bootPathCache = =>
 		chain = restify.conditionalRequest()
 		chain.unshift (req, res, next) =>
-			res.set 'ETag', env.DAL.db.generateHash req.path() + ':' + env.config.bootTime
+			res.set 'ETag', env.data.generateHash req.path() + ':' + env.config.bootTime
 			next()
 		return chain
 

@@ -17,7 +17,7 @@
 querystring = require 'querystring'
 
 module.exports = (env) ->
-	db = env.DAL.db	
+	db = env.data	
 	config = env.config
 
 	class OAuthBase

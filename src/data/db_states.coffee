@@ -17,7 +17,7 @@
 async = require 'async'
 
 module.exports = (env) ->
-	db = env.DAL.db
+	db = env.data
 	config = env.config
 	check = env.utilities.check
 
@@ -73,4 +73,4 @@ module.exports = (env) ->
 	exp.setToken = check check.format.key, 'string', (id, token, callback) ->
 		db.redis.hset 'st:' + id, 'token', token, callback
 
-	env.DAL.db_states = exp
+	exp

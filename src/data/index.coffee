@@ -1,9 +1,7 @@
-
-
 module.exports = (env) ->
-	env.DAL = {}
+	env.data = require('./db') env
+	env.data.apps = require('./db_apps') env
+	env.data.providers = require('./db_providers') env
+	env.data.states = require('./db_states') env
 	
-	require('./db') env
-	require('./db_apps') env
-	require('./db_providers') env
-	require('./db_states') env
+	

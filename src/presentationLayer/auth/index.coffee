@@ -12,14 +12,14 @@ module.exports = (env) ->
 			e.check req.body, key: env.utilities.check.format.key, secret: env.utilities.check.format.key, token:'string'
 			e.check req.params, provider:'string'
 			return next e if e.failed()
-			env.DAL.db.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
+			env.data.apps.checkSecret req.body.key, req.body.secret, (e,r) ->
 				return next e if e
 				return next new env.utilities.check.Error "invalid credentials" if not r
-				env.DAL.db.apps.getKeyset req.body.key, req.params.provider, (e, keyset) ->
+				env.data.apps.getKeyset req.body.key, req.params.provider, (e, keyset) ->
 					return next e if e
 					if keyset.response_type != "code" and keyset.response_type != "both"
 						return next new env.utilities.check.Error "refresh token is a server-side feature only"
-					env.DAL.db.providers.getExtended req.params.provider, (e, provider) ->
+					env.data.providers.getExtended req.params.provider, (e, provider) ->
 						return next e if e
 						if not provider.oauth2?.refresh
 							return next new env.utilities.check.Error "refresh token not supported for " + req.params.provider
@@ -72,14 +72,14 @@ module.exports = (env) ->
 			e.check req.body, code: env.utilities.check.format.key, key: env.utilities.check.format.key, secret: env.utilities.check.format.key
 			
 			return next e if e.failed()
-			env.DAL.db.states.get req.body.code, (err, state) ->
+			env.data.states.get req.body.code, (err, state) ->
 				return next err if err
 				return next new env.utilities.check.Error 'code', 'invalid or expired' if not state || state.step != "1"
 				return next new env.utilities.check.Error 'code', 'invalid or expired' if state.key != req.body.key
-				env.DAL.db.apps.checkSecret state.key, req.body.secret, (e,r) ->
+				env.data.apps.checkSecret state.key, req.body.secret, (e,r) ->
 					return next e if e
 					return next new env.utilities.check.Error "invalid credentials" if not r
-					env.DAL.db.states.del req.body.code, (->)
+					env.data.states.del req.body.code, (->)
 					r = JSON.parse(state.token)
 					r.state = state.options.state
 					r.provider = state.provider
@@ -146,18 +146,18 @@ module.exports = (env) ->
 					return callback null, stateid if stateid
 				oaio_uid = req.headers.cookie?.match(/oaio_uid=%22(.*?)%22/)?[1]
 				if oaio_uid
-					env.DAL.db.redis.get 'cli:state:' + oaio_uid, callback
+					env.data.redis.get 'cli:state:' + oaio_uid, callback
 			getState (err, stateid) ->
 				return next err if err
 				return next new env.utilities.check.Error 'state', 'must be present' if not stateid
-				env.DAL.db.states.get stateid, (err, state) ->
+				env.data.states.get stateid, (err, state) ->
 					return next err if err
 					return next new env.utilities.check.Error 'state', 'invalid or expired' if not state
 					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
 					return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 					async.parallel [
-							(cb) -> env.DAL.db.providers.getExtended state.provider, cb
-							(cb) -> env.DAL.db.apps.getKeyset state.key, state.provider, cb
+							(cb) -> env.data.providers.getExtended state.provider, cb
+							(cb) -> env.data.apps.getKeyset state.key, state.provider, cb
 					], (err, r) =>
 						return callback err if err
 						provider = r[0]
@@ -175,7 +175,7 @@ module.exports = (env) ->
 									return callback e if e
 
 									if response_type != 'token'
-										env.DAL.db.states.set stateid, token:JSON.stringify(r), step:1, (->)
+										env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
 									if response_type != 'code'
 										delete r.refresh_token
 									if response_type == 'code'
@@ -183,7 +183,7 @@ module.exports = (env) ->
 									if response_type != 'token'
 										r.code = stateid
 									if response_type == 'token'
-										env.DAL.db.states.del stateid, (->)
+										env.data.states.del stateid, (->)
 									callback null, r, response_type
 
 		# oauth: popup or redirection to provider's authorization url
@@ -224,24 +224,24 @@ module.exports = (env) ->
 			}[req.params.oauthv]
 			provider_conf = undefined
 			async.waterfall [
-				(cb) -> env.DAL.db.apps.checkDomain key, ref, cb
+				(cb) -> env.data.apps.checkDomain key, ref, cb
 				(valid, cb) ->
 					return cb new env.utilities.check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host if not valid
 					if req.params.redirect_uri
-						env.DAL.db.apps.checkDomain key, req.params.redirect_uri, cb
+						env.data.apps.checkDomain key, req.params.redirect_uri, cb
 					else
 						cb null, true
 				(valid, cb) ->
 					return cb new env.utilities.check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + env.config.url.host if not valid
 
-					env.DAL.db.providers.getExtended req.params.provider, cb
+					env.data.providers.getExtended req.params.provider, cb
 				(provider, cb) ->
 					if oauthv and not provider[oauthv]
 						return cb new env.utilities.check.Error "oauthv", "Unsupported oauth version: " + oauthv
 					provider_conf = provider
 					oauthv ?= 'oauth2' if provider.oauth2
 					oauthv ?= 'oauth1' if provider.oauth1
-					env.DAL.db.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
+					env.data.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
 				(keyset, provider, cb) ->
 					return cb new env.utilities.check.Error 'This app is not configured for ' + provider.provider if not keyset
 					{parameters, response_type} = keyset
@@ -258,9 +258,9 @@ module.exports = (env) ->
 						oa.authorize opts, cb
 				(authorize, cb) ->
 						return cb null, authorize.url if not req.oaio_uid
-						env.DAL.db.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+						env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
 							return cb err if err
-							env.DAL.db.redis.expire 'cli:state:' + req.oaio_uid, 1200
+							env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
 							cb null, authorize.url
 			], (err, url) ->
 				return callback err if err

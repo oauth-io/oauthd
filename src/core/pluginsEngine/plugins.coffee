@@ -21,7 +21,7 @@ jf = require 'jsonfile'
 module.exports = (env) ->
 	console.log 'Initializing plugins engine'
 
-	db = env.DAL.db
+	db = env.data
 	check = env.utilities.check
 	exit = env.utilities.exit
 	shared = {}
@@ -29,9 +29,6 @@ module.exports = (env) ->
 	shared.exit = exit
 	shared.check = check
 	shared.db = db
-	shared.db.apps = env.DAL.db_apps
-	shared.db.providers = env.DAL.db_providers
-	shared.db.states = env.DAL.db_states
 	shared.config = env.config
 
 

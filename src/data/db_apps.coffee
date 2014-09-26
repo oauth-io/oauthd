@@ -20,7 +20,7 @@ async = require 'async'
 
 module.exports = (env) ->
 
-	db = env.DAL.db
+	db = env.data
 	config = env.config
 	check = env.utilities.check
 	plugins = env.plugins
@@ -346,4 +346,4 @@ module.exports = (env) ->
 				return callback err if err
 				return callback null, sec == secret
 
-	env.DAL.db_apps = exp
+	exp
