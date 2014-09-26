@@ -20,7 +20,7 @@ exports.init = () ->
 		events: new events.EventEmitter()
 	}
 
-	coreModule = require './engine'
+	coreModule = require './core'
 	dataModule = require './dataLayer'
 	
 	coreModule(env).initConfig() #inits env.config
