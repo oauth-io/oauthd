@@ -166,12 +166,12 @@ module.exports = (env) ->
 						oa = new env.utilities.oauth[state.oauthv](provider, parameters)
 						oa.access_token state, req, (e, r) ->
 							status = if e then 'error' else 'success'
-							env.pluginsEngine.data.callhook 'connect.auth', req, res, (err) ->
+							env.callhook 'connect.auth', req, res, (err) ->
 								return callback err if err
 								env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
 								return callback e if e
 
-								env.pluginsEngine.data.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
+								env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
 									return callback e if e
 
 									if response_type != 'token'
@@ -247,7 +247,7 @@ module.exports = (env) ->
 					{parameters, response_type} = keyset
 					if response_type != 'token' and (not options.state or options.state_type)
 						return cb new env.utilities.check.Error 'You must provide a state when server-side auth'
-					env.pluginsEngine.data.callhook 'connect.auth', req, res, (err) ->
+					env.callhook 'connect.auth', req, res, (err) ->
 						return cb err if err
 						env.events.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
 						options.response_type = response_type

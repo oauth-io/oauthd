@@ -22,7 +22,7 @@ module.exports = (env) ->
 
 	registerWs: () ->
 		# create an application
-		env.server.post '/api/apps', env.pluginsEngine.plugin['auth'].needed, env.pluginsEngine.data.hooks["api_create_app_restriction"][0], (req, res, next) =>
+		env.server.post '/api/apps', env.pluginsEngine.plugin['auth'].needed, env.hooks["api_create_app_restriction"][0], (req, res, next) =>
 			env.data.apps.create req.body, req.user, (error, result) =>
 				return next(error) if error
 				env.events.emit 'app.create', req.user, result
@@ -108,18 +108,18 @@ module.exports = (env) ->
 			env.data.apps.remBackend req.params.key, env.send(res,next)
 
 		# get a provider config
-		env.server.get '/api/providers/:provider', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
+		env.server.get '/api/providers/:provider', env.bootPathCache(), env.hooks["api_cors_middleware"][0], (req, res, next) =>
 			if req.query.extend
 				env.data.providers.getExtended req.params.provider, env.send(res,next)
 			else
 				env.data.providers.get req.params.provider, env.send(res,next)
 
 		# get a provider config's extras
-		env.server.get '/api/providers/:provider/settings', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
+		env.server.get '/api/providers/:provider/settings', env.bootPathCache(), env.hooks["api_cors_middleware"][0], (req, res, next) =>
 			env.data.providers.getSettings req.params.provider, env.send(res,next)
 
 		# get the provider me.json mapping configuration
-		env.server.get '/api/providers/:provider/user-mapping', env.bootPathCache(), env.pluginsEngine.data.hooks["api_cors_middleware"][0], (req, res, next) =>
+		env.server.get '/api/providers/:provider/user-mapping', env.bootPathCache(), env.hooks["api_cors_middleware"][0], (req, res, next) =>
 			env.data.providers.getMeMapping req.params.provider, env.send(res,next)
 
 		# get a provider logo

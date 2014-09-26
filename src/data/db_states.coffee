@@ -17,7 +17,6 @@
 async = require 'async'
 
 module.exports = (env) ->
-	db = env.data
 	config = env.config
 	check = env.utilities.check
 
@@ -29,7 +28,7 @@ module.exports = (env) ->
 		, origin:['none','string'], redirect_uri:['none','string'], redirect_type:['none','string']
 		, options:['none','object'], (data, callback) ->
 
-			id = db.generateUid()
+			id =env.data.generateUid()
 			dbdata = key:data.key, provider:data.provider
 			dbdata.token = data.token if data.token
 			dbdata.expire = (new Date()).getTime() + data.expire if data.expire
@@ -40,16 +39,16 @@ module.exports = (env) ->
 			dbdata.options = JSON.stringify(data.options) if data.options
 			dbdata.step = 0
 
-			db.redis.hmset 'st:' + id, dbdata, (err, res) ->
+			env.data.redis.hmset 'st:' + id, dbdata, (err, res) ->
 				return callback err if err
 				if data.expire?
-					db.redis.expire 'st:' + id, data.expire
+					env.data.redis.expire 'st:' + id, data.expire
 				dbdata.id = id
 				callback null, dbdata
 
 	# get the state infos
 	exp.get = check check.format.key, (id, callback) ->
-		db.redis.hgetall 'st:' + id, (err, res) ->
+		env.data.redis.hgetall 'st:' + id, (err, res) ->
 			return callback err if err
 			return callback() if not res
 			res.expire = parseInt res.expire if res?.expire
@@ -63,14 +62,14 @@ module.exports = (env) ->
 		, origin:['none','string'], redirect_uri:['none','string']
 		, step:['none','number'], (id, data, callback) ->
 
-			db.redis.hmset 'st:' + id, data, callback
+			env.data.redis.hmset 'st:' + id, data, callback
 
 	# delete a state
 	exp.del = check check.format.key, (id, callback) ->
-		db.redis.del 'st:' + id, callback
+		env.data.redis.del 'st:' + id, callback
 
 	# set the state's token
 	exp.setToken = check check.format.key, 'string', (id, token, callback) ->
-		db.redis.hset 'st:' + id, 'token', token, callback
+		env.data.redis.hset 'st:' + id, 'token', token, callback
 
 	exp

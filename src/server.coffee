@@ -29,7 +29,6 @@ module.exports = (env) ->
 	server_options.formatters = env.utilities.formatters.formatters
 
 	env.server = server = restify.createServer server_options
-	env.pluginsEngine.data.server = server
 	env.pluginsEngine.runSync 'raw'
 
 	server.use restify.authorizationParser()
@@ -40,11 +39,11 @@ module.exports = (env) ->
 	env.pluginsEngine.runSync 'init'
 
 
-	if not env.pluginsEngine.data.hooks["api_cors_middleware"]
-		env.pluginsEngine.data.addhook 'api_cors_middleware', (req, res, next) =>
+	if not env.hooks["api_cors_middleware"]
+		env.addhook 'api_cors_middleware', (req, res, next) =>
 			next()
-	if not env.pluginsEngine.data.hooks["api_create_app_restriction"]
-		env.pluginsEngine.data.addhook 'api_create_app_restriction', (req, res, next) =>
+	if not env.hooks["api_create_app_restriction"]
+		env.addhook 'api_create_app_restriction', (req, res, next) =>
 			next()
 
 	# init the presentation layer

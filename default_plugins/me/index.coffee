@@ -36,10 +36,10 @@ module.exports = (env) ->
 	cors_middleware = (req, res, next) ->
 		oauthio = req.headers.oauthio
 		if ! oauthio
-			return cb new @check.Error "You must provide a valid 'oauthio' http header"
+			return env.utilities.check.Error "You must provide a valid 'oauthio' http header"
 		oauthio = qs.parse(oauthio)
 		if ! oauthio.k
-			return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
+			return cb new env.utilities.check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 
 		origin = null
 		ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
@@ -71,8 +71,8 @@ module.exports = (env) ->
 	exp.raw = ->
 		fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
-		check = @check
-		@server.opts new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), (req, res, next) =>
+		check = env.utilities.check
+		env.server.opts new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), (req, res, next) =>
 
 			origin = null
 			ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
@@ -90,8 +90,8 @@ module.exports = (env) ->
 			res.send 200
 			next false
 
-		@server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), restify.queryParser(), cors_middleware, (req, res, next) =>
-			cb = @server.send res, next
+		env.server.get new RegExp('^/auth/([a-zA-Z0-9_\\.~-]+)/me$'), restify.queryParser(), cors_middleware, (req, res, next) =>
+			cb = env.server.send res, next
 			provider = req.params[0]
 			filter = req.query.filter
 			filter = filter?.split ','
@@ -101,10 +101,10 @@ module.exports = (env) ->
 			oauthio = qs.parse(oauthio)
 			if ! oauthio.k
 				return cb new Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
-			@db.providers.getMeMapping provider, (err, content) =>
+			env.data.providers.getMeMapping provider, (err, content) =>
 				if !err
 					if content.url
-						@apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
+						env.plugins.request.apiRequest {apiUrl: content.url, headers: { 'User-Agent': 'Node' } }, provider, oauthio, (err, options) =>
 							return sendAbsentFeatureError(req, res, 'me()') if err
 							options.json = true
 							request options, (err, response, body) =>
@@ -113,7 +113,7 @@ module.exports = (env) ->
 								res.send fieldMap(body, content.fields, filter)
 					else if content.fetch
 						user_fetcher = {}
-						apiRequest = @apiRequest
+						apiRequest = env.plugins.request.apiRequest
 						async.eachSeries content.fetch, (item, cb) -> 
 							if typeof item == 'object'
 								url = item.url

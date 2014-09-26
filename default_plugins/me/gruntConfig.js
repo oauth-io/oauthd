@@ -4,8 +4,8 @@ module.exports = function(gruntConf) {
 	gruntConf.coffee['me'] = {
 		expand: true,
 		cwd: __dirname,
-		src: ['*.coffee'],
-		dest: __dirname + '/bin',
+		src: ['index.coffee'],
+		dest: __dirname,
 		ext: '.js',
 		options: {
 			bare: true

@@ -17,7 +17,6 @@
 querystring = require 'querystring'
 
 module.exports = (env) ->
-	db = env.data	
 	config = env.config
 
 	class OAuthBase
@@ -37,7 +36,7 @@ module.exports = (env) ->
 
 		_replaceParam: (param, hard_params) ->
 			param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
-				return db.generateUid() if val == "nonce"
+				return env.data.generateUid() if val == "nonce"
 				return hard_params[val] || ""
 			param = param.replace /\{(.*?)\}/g, (match, val) =>
 				return "" if ! @_params[val] || ! @_parameters[val]
@@ -57,7 +56,7 @@ module.exports = (env) ->
 				origin: opts.origin,
 				options: opts.options,
 				expire: 1200
-			db.states.add newStateData, callback
+			env.data.states.add newStateData, callback
 
 		_buildQuery : (configuration, placeholderValues, defaultParameters) ->
 			query = if (defaultParameters instanceof Object) then defaultParameters else {}

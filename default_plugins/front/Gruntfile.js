@@ -6,8 +6,18 @@ module.exports = function(grunt) {
 			default: {
 				expand: true,
 				cwd: __dirname,
-				src: ['*.coffee'],
+				src: ['*.coffee', '!index.coffee'],
 				dest: 'bin',
+				ext: '.js',
+				options: {
+					bare: true
+				}
+			},
+			default: {
+				expand: true,
+				cwd: __dirname,
+				src: ['index.coffee'],
+				dest: '.',
 				ext: '.js',
 				options: {
 					bare: true

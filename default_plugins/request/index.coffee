@@ -26,44 +26,43 @@ module.exports = (env) ->
 	oauth = env.utilities.oauth
 
 	exp = {}
+	exp.apiRequest = (req, provider_name, oauthio, callback) =>
+		req.headers ?= {}
+		async.parallel [
+			(callback) => env.data.providers.getExtended provider_name, callback
+			(callback) => env.data.apps.getKeyset oauthio.k, provider_name, callback
+		], (err, results) =>
+			return callback err if err
+			[provider, {parameters}] = results
+
+			# select oauth version
+			oauthv = oauthio.oauthv && {
+				"2":"oauth2"
+				"1":"oauth1"
+			}[oauthio.oauthv]
+			if oauthv and not provider[oauthv]
+				return callback new env.utilities.check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
+
+			oauthv ?= 'oauth2' if provider.oauth2
+			oauthv ?= 'oauth1' if provider.oauth1
+
+			parameters.oauthio = oauthio
+
+			# let oauth modules do the request
+			oa = new oauth[oauthv](provider, parameters)
+			oa.request req, callback
 	exp.raw = ->
 
 		fixUrl = (ref) -> ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
-		@apiRequest = (req, provider_name, oauthio, callback) =>
-			req.headers ?= {}
-			async.parallel [
-				(callback) => @db.providers.getExtended provider_name, callback
-				(callback) => @db.apps.getKeyset oauthio.k, provider_name, callback
-			], (err, results) =>
-				return callback err if err
-				[provider, {parameters}] = results
-
-				# select oauth version
-				oauthv = oauthio.oauthv && {
-					"2":"oauth2"
-					"1":"oauth1"
-				}[oauthio.oauthv]
-				if oauthv and not provider[oauthv]
-					return callback new @check.Error "oauthio_oauthv", "Unsupported oauth version: " + oauthv
-
-				oauthv ?= 'oauth2' if provider.oauth2
-				oauthv ?= 'oauth1' if provider.oauth1
-
-				parameters.oauthio = oauthio
-
-				# let oauth modules do the request
-				oa = new oauth[oauthv](provider, parameters)
-				oa.request req, callback
-
 		doRequest = (req, res, next) =>
-			cb = @server.send(res, next)
+			cb = env.server.send(res, next)
 			oauthio = req.headers.oauthio
 			if ! oauthio
-				return cb new @check.Error "You must provide a valid 'oauthio' http header"
+				return cb new env.utilities.check.Error "You must provide a valid 'oauthio' http header"
 			oauthio = qs.parse(oauthio)
 			if ! oauthio.k
-				return cb new @check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
+				return cb new env.utilities.check.Error "oauthio_key", "You must provide a 'k' (key) in 'oauthio' header"
 
 			origin = null
 			ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
@@ -75,15 +74,15 @@ module.exports = (env) ->
 
 			req.apiUrl = decodeURIComponent(req.params[1])
 
-			@db.apps.checkDomain oauthio.k, ref, (err, domaincheck) =>
+			env.data.apps.checkDomain oauthio.k, ref, (err, domaincheck) =>
 				return cb err if err
 				if ! domaincheck
-					return cb new @check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + @config.url.host
+					return cb new env.utilities.check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host
 
-			@apiRequest req, req.params[0], oauthio, (err, options) =>
+			exp.apiRequest req, req.params[0], oauthio, (err, options) =>
 				return cb err if err
 
-				@events.emit 'request', provider:req.params[0], key:oauthio.k
+				env.events.emit 'request', provider:req.params[0], key:oauthio.k
 
 				api_request = null
 
@@ -109,7 +108,7 @@ module.exports = (env) ->
 
 
 		# request's endpoints
-		@server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
+		env.server.opts new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), (req, res, next) ->
 			origin = null
 			ref = fixUrl(req.headers['referer'] || req.headers['origin'] || "http://localhost");
 			urlinfos = Url.parse(ref)
@@ -126,9 +125,9 @@ module.exports = (env) ->
 			res.send 200
 			next false
 
-		@server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-		@server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-		@server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-		@server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
-		@server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+		env.server.get new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+		env.server.post new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+		env.server.put new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+		env.server.patch new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
+		env.server.del new RegExp('^/request/([a-zA-Z0-9_\\.~-]+)/(.*)$'), doRequest
 	exp

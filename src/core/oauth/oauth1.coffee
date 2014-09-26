@@ -18,7 +18,6 @@ request = require 'request'
 module.exports = (env) ->
 
 	check = env.utilities.check
-	db = env.data
 
 	OAuth1ResponseParser = require('./oauth1-response-parser')(env)
 	OAuthBase = require('./oauth-base')(env)
@@ -59,7 +58,7 @@ module.exports = (env) ->
 			responseParser = new OAuth1ResponseParser(response, body, headers["Accept"], 'request_token')
 			responseParser.parse (err, response) =>
 				return callback err if err
-				db.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
+				env.data.states.setToken state.id, response.oauth_token_secret, (err, returnCode) =>
 					return callback err if err
 					configuration = @_oauthConfiguration.authorize
 					placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
