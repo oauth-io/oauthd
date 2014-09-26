@@ -10,23 +10,23 @@ module.exports = function(grunt) {
             options: {
                 nospawn: true
             },
-            lib: {
-                files: ['lib/**/*.coffee'],
-                tasks: ['coffee:lib']
+            src: {
+                files: ['src/**/*.coffee'],
+                tasks: ['coffee:src']
             },
             cli: {
                 files: ['cli/**/*.coffee'],
                 tasks: ['coffee:cli']
             },
             static: {
-                files: ['lib/**/*.png','lib/**/*.less','lib/**/*.html','lib/**/*.css','lib/**/*.js','lib/**/*.eot','lib/**/*.otf','lib/**/*.svg','lib/**/*.ttf', 'lib/**/*.woff', '**/*.ico'],
+                files: ['src/**/*.png','src/**/*.less','src/**/*.html','src/**/*.css','src/**/*.js','src/**/*.eot','src/**/*.otf','src/**/*.svg','src/**/*.ttf', 'src/**/*.woff', '**/*.ico'],
                 tasks: ['copy']  
             }
         },
         coffee: {
-            lib: {
+            src: {
                 expand: true,
-                cwd: 'lib',
+                cwd: 'src',
                 src: ['**/*.coffee'],
                 dest: 'bin',
                 ext: '.js',
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
                         expand: true,
                         src: ['**/*.less', '**/*.html', '**/*.png','**/*.js','**/*.eot','**/*.css','**/*.svg', '**/*.ttf', '**/*.woff', '**/*.otf', '**/*.ico'],
                         dest: 'bin',
-                        cwd: 'lib'
+                        cwd: 'src'
                     },
                 ]
             }
