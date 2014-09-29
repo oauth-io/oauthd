@@ -31,7 +31,11 @@ module.exports = (env) ->
 		plugin: {}
 	}
 	env.plugins = pluginsEngine.plugin
-	env.hooks = {}
+	env.hooks = {
+		'connect.auth': []
+		'connect.callback': []
+		'connect.backend': []
+	}
 	env.callhook = -> # (name, ..., callback)
 		name = Array.prototype.slice.call(arguments)
 		args = name.splice(1)
