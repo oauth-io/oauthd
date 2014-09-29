@@ -55,7 +55,11 @@ module.exports = (env) ->
 	pluginsEngine.load = (plugin_name) ->
 		console.log "Loading '" + plugin_name + "'."
 		env.config.plugins.push plugin_name
-		plugin_data = require(process.cwd() + '/plugins/' + plugin_name + '/plugin.json')
+		try 
+			plugin_data = require(process.cwd() + '/plugins/' + plugin_name + '/plugin.json')
+		catch
+			console.log 'absent plugin.json for plugin \'' + plugin_name + '\''
+			plugin_data = {}
 		if plugin_data.main?
 			entry_point = '/' + plugin_data.main
 		else
@@ -72,6 +76,7 @@ module.exports = (env) ->
 				throw err if err
 				if not obj?
 					obj = {}
+
 				for pluginname, pluginversion of obj
 					pluginsEngine.load pluginname
 

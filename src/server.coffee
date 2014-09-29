@@ -12,6 +12,7 @@ module.exports = (env) ->
 	cookieParser = require "cookie-parser"
 	session = require "express-session"
 	https = require 'https'
+	Path = require 'path'
 
 	
 	PLModule = require './presentationLayer'
