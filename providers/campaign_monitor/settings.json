@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://darwinanalytics.createsend.com/admin/applications",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://darwinanalytics.createsend.com/admin/client/settings",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.campaignmonitor.com//",
+				"docs": "https://www.campaignmonitor.com/api/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v3.1/clients.json"
+        }
+	}
+}
