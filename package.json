@@ -42,8 +42,7 @@
     "async": "~0.2.9",
     "request": "~2.33.0",
     "restify-oauth2-oauthd": "~2.1.0",
-    "ua-parser-js": "~0.6.2",
-    "zlib": "~1.0.5"
+    "ua-parser-js": "~0.6.2"
   },
   "devDependencies": {
     "grunt-nodemon": "~0.1.2",
