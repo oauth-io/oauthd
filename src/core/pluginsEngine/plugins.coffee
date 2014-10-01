@@ -73,8 +73,6 @@ module.exports = (env) ->
 		return
 
 	pluginsEngine.init = (callback) ->
-		for plugin in env.config.plugins
-			pluginsEngine.load plugin
 		try
 			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
 				throw err if err
@@ -84,25 +82,6 @@ module.exports = (env) ->
 				for pluginname, pluginversion of obj
 					pluginsEngine.load pluginname
 
-				# Checking if auth plugin is present. Else uses default
-				# if not shared.auth?
-				# 	console.log 'Using default auth'
-				# 	auth_plugin = require(env.config.root + '/default_plugins/auth/index')(env)
-				# 	pluginsEngine.plugin['auth'] = auth_plugin
-
-				# # Loading front if not overriden
-				# if not shared.front?
-				# 	console.log 'Using default front'
-				# 	front_plugin = require(env.config.root + '/default_plugins/front/index')(env)
-				# 	pluginsEngine.plugin['front'] = front_plugin
-
-				# # Loading request
-				# request_plugin = require(env.config.root + '/default_plugins/request/index')(env)
-				# pluginsEngine.plugin['request'] = request_plugin
-
-				# # Loading me
-				# me_plugin = require(env.config.root + '/default_plugins/me/index')(env)
-				# pluginsEngine.plugin['me'] = me_plugin
 				callback true
 		catch e
 			console.log 'An error occured: ' + e.message
