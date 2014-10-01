@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "https://www.campaignmonitor.com//",
+				"provider": "https://www.campaignmonitor.com/",
 				"docs": "https://www.campaignmonitor.com/api/"
 			}
 		},
