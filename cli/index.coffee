@@ -7,6 +7,21 @@ installPlugin = require('./plugins/install')
 cli = easy_cli()
 colors = require 'colors'
 
+endOfInit = (name, showGrunt) ->
+	info = 'Running npm install'
+	command = 'cd '+ name + '&& npm install'
+	if showGrunt
+		info += ' and grunt.'
+		command += ' && grunt'
+	else
+		info += '.'
+	console.log info.green + '. Please wait, this might take up to a few minutes'.yellow
+	exec = require('child_process').exec
+	exec command, (error, stdout, stderr) ->
+		console.log 'Done'
+		r_command = 'cd ' + name + ' && oauthd start'
+		console.log 'Thank you for using oauthd. Run ' + r_command.green + ' to start the instance'
+
 # copies an instance basic folder in a new folder at current cwd
 if cli.argv._[0] == 'init'
 	schema = {
@@ -57,13 +72,11 @@ if cli.argv._[0] == 'init'
 								.then () ->
 									installPlugin("git@github.com:william26/oauthd_default_plugin_front.git", process.cwd() + "/" + results.name)
 								.then () ->
-									console.log 'Running npm install & grunt.'.green + ' Please wait, this might take up to a few minutes'.yellow
-									exec = require('child_process').exec
-									exec 'cd '+ results.name + '; npm install; grunt', (error, stdout, stderr) ->
-										console.log 'Done'
-										console.log 'Thank you for using oauthd. Run ' + 'oauthd start'.green + ' to start the instance'
+									endOfInit(results.name)
 								.fail (e) ->
 									console.log 'An error occured: '.red + e.message.yellow
+							else
+								endOfInit(results.name)
 
 
 

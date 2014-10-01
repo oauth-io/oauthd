@@ -13,6 +13,7 @@ async = require "async"
 qs = require 'request/node_modules/qs'
 
 exports.init = () ->
+	defer = Q.defer()
 	startTime = new Date
 
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
@@ -41,9 +42,15 @@ exports.init = () ->
 		result = result.replace /\*/g, '%2A'
 		return result
 
-	defer = Q.defer()
+	
 
 	env.pluginsEngine.init (res) ->
+		if not env.plugins.auth
+			console.log "No " + "auth".red + " plugin found"
+			console.log "You need to install an " + "auth".red + " plugin to run the server"
+			defer.reject()
+			process.exit()
+
 		# start server
 		console.log "oauthd start server"
 		exports.server = server = require('./server')(env)
