@@ -1,6 +1,7 @@
 Url = require 'url'
 async = require 'async'
 UAParser = require 'ua-parser-js'
+restify = require 'restify'
 
 module.exports = (env) ->
 	init: () ->
