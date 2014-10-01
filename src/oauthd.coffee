@@ -18,7 +18,10 @@ exports.init = () ->
 
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
 	env = {
-		events: new events.EventEmitter()
+		events: new events.EventEmitter(),
+		middlewares: {
+			always: []
+		}
 	}
 
 	coreModule = require './core'

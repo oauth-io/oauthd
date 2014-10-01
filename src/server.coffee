@@ -36,6 +36,10 @@ module.exports = (env) ->
 	server.use restify.queryParser()
 	server.use restify.bodyParser mapParams:false
 
+	# Adds the 'always' middleware for each request
+	for k, middleware of env.middlewares.always
+		server.use middleware
+
 	# runs the plugins' method init if popuplated
 	env.pluginsEngine.runSync 'init'
 
