@@ -61,23 +61,23 @@ module.exports = function(grunt) {
     };
 
     var tasks = [];
-    var default_plg = fs.readdirSync(__dirname + '/default_plugins');
-    for (var i in default_plg) {
-        var plugin = default_plg[i];
-        if (fs.existsSync(__dirname + '/default_plugins/' + plugin + '/gruntConfig.js')) {
-            var task = require('./default_plugins/' + plugin + '/gruntConfig').call(this, gruntConf);
-            if (task)
-                tasks.push(task);
-        }
+    // var default_plg = fs.readdirSync(__dirname + '/default_plugins');
+    // for (var i in default_plg) {
+    //     var plugin = default_plg[i];
+    //     if (fs.existsSync(__dirname + '/default_plugins/' + plugin + '/gruntConfig.js')) {
+    //         var task = require('./default_plugins/' + plugin + '/gruntConfig').call(this, gruntConf);
+    //         if (task)
+    //             tasks.push(task);
+    //     }
 
-        if (fs.existsSync(__dirname + '/default_plugins/' + plugin + '/Gruntfile.js')) {
-            gruntConf.subgrunt[plugin] = {
-                options: {},
-                projects: {}
-            };
-            gruntConf.subgrunt[plugin].projects['./default_plugins/' + plugin] =  'default';
-        }
-    }
+    //     if (fs.existsSync(__dirname + '/default_plugins/' + plugin + '/Gruntfile.js')) {
+    //         gruntConf.subgrunt[plugin] = {
+    //             options: {},
+    //             projects: {}
+    //         };
+    //         gruntConf.subgrunt[plugin].projects['./default_plugins/' + plugin] =  'default';
+    //     }
+    // }
 
     grunt.initConfig(gruntConf);
 
@@ -88,6 +88,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-subgrunt');
 
     // Default task.
-    grunt.registerTask('default', ['coffee', 'copy', 'subgrunt']);
+    grunt.registerTask('default', ['coffee', 'copy']);
     grunt.registerTask('test', ['nodeunit']);
 };
