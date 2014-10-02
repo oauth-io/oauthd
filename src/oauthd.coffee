@@ -5,28 +5,24 @@
 
 Q = require 'q'
 
-events = require('events')
 Path = require 'path'
 async = require "async"
 
 # request FIX
 qs = require 'request/node_modules/qs'
 
-exports.init = () ->
+exports.init = (env) ->
 	defer = Q.defer()
 	startTime = new Date
-
+	env = env || {}
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
-	env = {
-		events: new events.EventEmitter(),
-		middlewares: {
-			always: []
-		}
-	}
+	
+
 
 	coreModule = require './core'
 	dataModule = require './data'
 	
+	coreModule(env).initEnv() #inits env
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
 	
