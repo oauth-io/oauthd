@@ -4,6 +4,6 @@ module.exports = (env) ->
 	env.data.providers = require('./db_providers') env
 	env.data.states = require('./db_states') env
 
-	env.data.Model = require('./base-model') env
+	env.data.Entity = require('./base-model') env
 	
 	
