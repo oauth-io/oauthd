@@ -76,4 +76,43 @@ describe 'Core module - utilities init', () ->
 		expect(env.utilities.mailer).toBeDefined()
 		done()
 
+describe 'Core module - oauth init', () ->
 
+	# initOAuth
+
+	it 'coreModule(env).initOAuth should init env.utilities.oauth', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initOAuth()
+		expect(env.utilities.oauth).toBeDefined()
+		done()
+
+	it 'env.utilities.oauth should contain oauth1 object', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initOAuth()
+		expect(env.utilities.oauth.oauth1).toBeDefined()
+		done()
+
+	it 'env.utilities.oauth should contain oauth2 object', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initOAuth()
+		expect(env.utilities.oauth.oauth2).toBeDefined()
+		done()
+
+
+describe 'Core module - pluginsEngine init', () ->
+
+	# pluginsEngine
+
+	it 'coreModule(env).initPluginsEngine should init env.pluginsEngine', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initPluginsEngine()
+		expect(env.pluginsEngine).toBeDefined()
+		done()
