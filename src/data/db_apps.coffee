@@ -25,9 +25,7 @@ module.exports = (env) ->
 	plugins = env.plugins
 
 	
-	class App extends env.data.Entity
-		@entity_prefix: 'a:'
-		@incr_key: 'a:i'
+	App = {}
 
 	# create a new app
 	App.create = (data, user, callback) ->
@@ -350,4 +348,4 @@ module.exports = (env) ->
 				return callback null, sec == secret
 
 
-	exp
+	App
