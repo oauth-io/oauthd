@@ -24,9 +24,13 @@ module.exports = (env) ->
 	check = env.utilities.check
 	plugins = env.plugins
 
-	exp = {}
+	
+	class App extends env.data.Entity
+		@entity_prefix: 'a:'
+		@incr_key: 'a:i'
+
 	# create a new app
-	exp.create = (data, user, callback) ->
+	App.create = (data, user, callback) ->
 		err = new check.Error
 		err.check data, name:/^.{3,50}$/,domains:['none','array']
 		if err.failed()
@@ -61,7 +65,7 @@ module.exports = (env) ->
 				return callback null, id:idapp, name:data.name, key:key
 
 	# get the app infos by its id
-	exp.getByOwner = (owner_id, callback) ->
+	App.getByOwner = (owner_id, callback) ->
 		env.data.redis.keys 'a:*:key', (err, keys) ->
 			return callback err if err
 			apps = []
@@ -85,14 +89,14 @@ module.exports = (env) ->
 				
 
 	# get the app infos by its id
-	exp.getById = check 'int', (idapp, callback) ->
+	App.getById = check 'int', (idapp, callback) ->
 		prefix = 'a:' + idapp + ':'
 		env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret'], (err, replies) ->
 			return callback err if err
 			callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2]
 
 	# get the app infos
-	exp.get = check check.format.key, (key, callback) ->
+	App.get = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -102,7 +106,7 @@ module.exports = (env) ->
 				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3]
 
 	# update app infos
-	exp.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
+	App.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -118,7 +122,7 @@ module.exports = (env) ->
 						return callback()
 				(callback) ->
 					return callback() if not data.domains
-					exp.updateDomains key, data.domains, (err, res) ->
+					App.updateDomains key, data.domains, (err, res) ->
 						return callback err if err
 						return callback()
 			], (err, res) ->
@@ -126,7 +130,7 @@ module.exports = (env) ->
 				return callback()
 
 	# reset app key
-	exp.resetKey = check check.format.key, (key, callback) ->
+	App.resetKey = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -142,8 +146,8 @@ module.exports = (env) ->
 				callback null, key:newkey, secret:newsecret
 
 	# remove an app
-	exp.remove = check check.format.key, (key, callback) ->
-		exp.getKeysets key, (err, providers) ->
+	App.remove = check check.format.key, (key, callback) ->
+		App.getKeysets key, (err, providers) ->
 			return callback err if err
 			for provider in providers
 				env.events.emit 'app.remkeyset', provider:provider, app:key
@@ -160,14 +164,14 @@ module.exports = (env) ->
 						return callback()
 
 	# get authorized domains of the app
-	exp.getDomains = check check.format.key, (key, callback) ->
+	App.getDomains = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
 			env.data.redis.smembers 'a:' + idapp + ':domains', callback
 
 	# update all authorized domains of the app
-	exp.updateDomains = check check.format.key, 'array', (key, domains, callback) ->
+	App.updateDomains = check check.format.key, 'array', (key, domains, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -182,7 +186,7 @@ module.exports = (env) ->
 				return callback()
 
 	# add an authorized domain to an app
-	exp.addDomain = check check.format.key, 'string', (key, domain, callback) ->
+	App.addDomain = check check.format.key, 'string', (key, domain, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -192,7 +196,7 @@ module.exports = (env) ->
 				callback()
 
 	# remove an authorized domain from an app
-	exp.remDomain = check check.format.key, 'string', (key, domain, callback) ->
+	App.remDomain = check check.format.key, 'string', (key, domain, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -202,7 +206,7 @@ module.exports = (env) ->
 				callback()
 
 	# get the backend of an app
-	exp.getBackend = check check.format.key, (key, callback) ->
+	App.getBackend = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -213,7 +217,7 @@ module.exports = (env) ->
 				return callback null, name:res[0], value:res[1]
 
 	# set (or update) the backend of an app
-	exp.setBackend = check check.format.key, 'string', 'object', (key, name, backend, callback) ->
+	App.setBackend = check check.format.key, 'string', 'object', (key, name, backend, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -222,7 +226,7 @@ module.exports = (env) ->
 				callback()
 
 	# remove the backend from an app
-	exp.remBackend = check check.format.key, (key, callback) ->
+	App.remBackend = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -231,11 +235,11 @@ module.exports = (env) ->
 				callback()
 
 	# get keys infos of an app for a provider
-	exp.getKeyset = check check.format.key, 'string', (key, provider, callback) ->
+	App.getKeyset = check check.format.key, 'string', (key, provider, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			exp.getBackend key, (err, backend) ->
+			App.getBackend key, (err, backend) ->
 				env.data.redis.mget 'a:' + idapp + ':k:' + provider, (err, res) ->
 					return callback err if err
 					if res[0]
@@ -252,7 +256,7 @@ module.exports = (env) ->
 						response_type = 'token'
 					callback null, parameters:(res[0] || {}), response_type:response_type
 
-	exp.getKeysetWithResponseType = check check.format.key, 'string', (key, provider, callback) ->
+	App.getKeysetWithResponseType = check check.format.key, 'string', (key, provider, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -267,7 +271,7 @@ module.exports = (env) ->
 					callback null, parameters:(res[0] || {}), response_type:(res[1] || 'token')
 
 	# get keys infos of an app for a provider
-	exp.addKeyset = check check.format.key, 'string', parameters:'object', (key, provider, data, callback) ->
+	App.addKeyset = check check.format.key, 'string', parameters:'object', (key, provider, data, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -282,7 +286,7 @@ module.exports = (env) ->
 						callback()
 
 	# get keys infos of an app for a provider
-	exp.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
+	App.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -293,7 +297,7 @@ module.exports = (env) ->
 				callback()
 
 	# get keys infos of an app for all providers
-	exp.getKeysets = check check.format.key, (key, callback) ->
+	App.getKeysets = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -303,8 +307,8 @@ module.exports = (env) ->
 				callback null, (reply.substr(prefix.length) for reply in replies)
 
 	# check a domain
-	exp.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
-		exp.getDomains key, (err, domains) ->
+	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
+		App.getDomains key, (err, domains) ->
 			return callback err if err
 			domain = Url.parse domain_str
 			if not domain.protocol
@@ -326,7 +330,7 @@ module.exports = (env) ->
 			return callback null, false
 
 	# get owner user
-	exp.getOwner = check check.format.key, (key, callback) ->
+	App.getOwner = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
@@ -337,7 +341,7 @@ module.exports = (env) ->
 				return callback null, id:iduser
 
 	# check the secret
-	exp.checkSecret = check check.format.key, check.format.key, (key, secret, callback) ->
+	App.checkSecret = check check.format.key, check.format.key, (key, secret, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp

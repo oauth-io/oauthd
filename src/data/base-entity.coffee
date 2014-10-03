@@ -6,9 +6,11 @@ module.exports = (env) ->
 
 	class Entity
 		@entity_prefix: ''
+		@incr_key: ''
 		@load: (id) ->
 			return
 		id: 0
+		data: {}
 		prefix: ''
 		constructor: (id) ->
 			@prefix = Entity.entity_prefix + ':' + id + ':'
@@ -103,6 +105,7 @@ module.exports = (env) ->
 					defer.resolve()
 
 			defer.promise
+
 
 
 	Entity	
