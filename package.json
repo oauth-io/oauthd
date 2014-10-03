@@ -42,7 +42,7 @@
     "grunt-contrib-jshint": "latest",
     "grunt-contrib-requirejs": "latest",
     "grunt-contrib-watch": "latest",
-    "hiredis": "~0.1.15",
+    "hiredis": "~0.1.x",
     "jayschema": "~0.2.0",
     "jsonfile": "^2.0.0",
     "jsonlint": "~1.6.0",
