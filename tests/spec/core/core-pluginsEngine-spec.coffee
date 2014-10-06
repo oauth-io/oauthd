@@ -3,11 +3,16 @@ coreModule = require testConfig.project_root + '/src/core'
 
 describe 'Core - env.pluginsEngine module', () ->
 	env = {}
+	consolelogs = []
 	beforeEach () ->
 		env = {}
 		coreModule(env).initEnv()
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
+
+		env.debug = () ->
+			consolelogs.push(arguments)
+
 		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
 
 	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should failed', (done) ->
@@ -60,7 +65,7 @@ describe 'Core - env.pluginsEngine module', () ->
 		try
 			expect(env.pluginsEngine.load 'undefined_plugin')
 		catch e
-			console.log "err", e
+			env.debug "err", e
 		finally
 			expect(logs[0][0]).toBe("Loading \'undefined_plugin\'.")
 			expect(logs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")

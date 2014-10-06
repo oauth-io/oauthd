@@ -46,13 +46,13 @@ exports.init = (env) ->
 	env.pluginsEngine.init process.cwd(), (err) ->
 		if not err
 			if not env.plugins.auth
-				console.log "No " + "auth".red + " plugin found"
-				console.log "You need to install an " + "auth".red + " plugin to run the server"
+				env.debug "No " + "auth".red + " plugin found"
+				env.debug "You need to install an " + "auth".red + " plugin to run the server"
 				defer.reject()
 				process.exit()
 
 			# start server
-			console.log "oauthd start server"
+			env.debug "oauthd start server"
 			exports.server = server = require('./server')(env)
 
 			async.series [
@@ -64,7 +64,7 @@ exports.init = (env) ->
 					env.pluginsEngine.data.emit 'server', err
 					defer.reject err
 				else
-					console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
+					env.debug 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
 					defer.resolve()
 
 			return defer.promise

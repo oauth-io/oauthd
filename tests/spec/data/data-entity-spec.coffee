@@ -17,6 +17,9 @@ describe 'Data - Entity module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
+		env.debug = () ->
+			logs.push(arguments)
+
 		class UserClass extends env.data.Entity
 			@prefix: 'testuser'
 			@incr: 'testuser:i'

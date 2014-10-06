@@ -13,6 +13,9 @@ describe 'Data - providers module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
+		env.debug = () ->
+			logs.push(arguments)
+
 	xit 'Provider list retrieval - env.data.providers.getList', (done) ->
 		done()
 

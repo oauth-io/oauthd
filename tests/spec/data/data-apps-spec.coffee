@@ -10,6 +10,7 @@ describe 'Data - apps module', () ->
 	}
 	
 	suffix = '0'
+	logs = []
 	beforeEach () ->
 		env = {
 			mode: 'test'
@@ -18,6 +19,9 @@ describe 'Data - apps module', () ->
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
 		dataModule(env)
+
+		env.debug = () ->
+			logs.push(arguments)
 
 		env.data.generateUid = () ->
 			return 'someuid' + suffix
