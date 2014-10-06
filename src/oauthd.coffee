@@ -43,29 +43,30 @@ exports.init = (env) ->
 
 	
 
-	env.pluginsEngine.init (process.cwd(), res) ->
-		if not env.plugins.auth
-			console.log "No " + "auth".red + " plugin found"
-			console.log "You need to install an " + "auth".red + " plugin to run the server"
-			defer.reject()
-			process.exit()
+	env.pluginsEngine.init process.cwd(), (err) ->
+		if not err
+			if not env.plugins.auth
+				console.log "No " + "auth".red + " plugin found"
+				console.log "You need to install an " + "auth".red + " plugin to run the server"
+				defer.reject()
+				process.exit()
 
-		# start server
-		console.log "oauthd start server"
-		exports.server = server = require('./server')(env)
+			# start server
+			console.log "oauthd start server"
+			exports.server = server = require('./server')(env)
 
-		async.series [
-			env.data.providers.getList,
-			server.listen
-		], (err) ->
-			if err
-				console.error 'Error while initialisation', err.stack.toString()
-				env.pluginsEngine.data.emit 'server', err
-				defer.reject err
-			else
-				console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
-				defer.resolve()
+			async.series [
+				env.data.providers.getList,
+				server.listen
+			], (err) ->
+				if err
+					console.error 'Error while initialisation', err.stack.toString()
+					env.pluginsEngine.data.emit 'server', err
+					defer.reject err
+				else
+					console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
+					defer.resolve()
 
-		return defer.promise
+			return defer.promise
 
-	
+		

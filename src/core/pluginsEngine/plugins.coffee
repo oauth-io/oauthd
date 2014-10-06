@@ -52,21 +52,17 @@ module.exports = (env) ->
 		return
 
 	pluginsEngine.init = (cwd, callback) ->
-		console.log "AAA cwd", cwd
-		console.log "AAA process.cwd()", process.cwd()
 		env.pluginsEngine.cwd = cwd
-		try
-			jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
-				throw err if err
-				if not obj?
-					obj = {}
-				for pluginname, pluginversion of obj
-					pluginsEngine.load pluginname
+		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
+			if err
+				console.log "plugins pluginsEngine.init err", err
+				env.debug 'An error occured: ' + err
 				return callback true
-		catch err
-			env.debug 'An error occured: ' + e.message
-			throw err if err
-			return callback true
+			if not obj?
+				obj = {}
+			for pluginname, pluginversion of obj
+				pluginsEngine.load pluginname
+			return callback false
 
 	pluginsEngine.list = (callback) ->
 		list = []

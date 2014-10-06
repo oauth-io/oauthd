@@ -10,7 +10,6 @@ describe 'Core - env.pluginsEngine module', () ->
 		coreModule(env).initUtilities()
 		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
 
-	# it 'env.pluginsEngine.init should throw an exception if file doesn\'t exists', (done) ->
 	it 'env.pluginsEngine.load should throw an exception if file doesn\'t exists', (done) ->
 		logs = []
 		env.debug = () ->
@@ -26,16 +25,28 @@ describe 'Core - env.pluginsEngine module', () ->
 			expect(env.pluginsEngine.plugin['undefined_plugin']).toBeUndefined()
 			expect(env.plugins['undefined_plugin']).toBeUndefined()
 			expect(env.plugins.undefined_plugin).toBeUndefined()
-			console.log "process.cwd()", process.cwd()
 		done()
 
-
-	it 'env.pluginsEngine.load should load the plugin_test', (done) ->
-
+	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should return err true and log', (done) ->
+		logs = []
+		env.debug = () ->
+     		logs.push arguments
+     	env.pluginsEngine.init process.cwd(), (err) ->
+			expect(err).toBe(true)
+			console.log "logs1", logs
+			expect(logs[0][0]).toBe("An error occured: Error: ENOENT, open \'" + process.cwd() + "/plugins.json\'")
 		done()
 
-
-
+	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should return err false', (done) ->
+		logs = []
+		env.debug = () ->
+     		logs.push arguments
+     	env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
+			expect(err).toBe(false)
+			console.log "logs2", logs
+			# Loading 'plugin_test'.
+			# Error requiring plugin 'plugin_test' entry point.
+		done()
 
 
 
