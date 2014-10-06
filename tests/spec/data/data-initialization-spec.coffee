@@ -71,4 +71,12 @@ describe 'Data - initialization', () ->
 		done()
 
 
+	it 'dataModule() should initialize env.data.Entity', (done) ->
+		dataModule(env)
+
+		expect(env.data.Entity).toBeDefined()
+		expect(typeof env.data.Entity).toBe('function')
+		done()
+
+
 		
