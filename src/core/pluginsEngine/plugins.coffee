@@ -55,7 +55,6 @@ module.exports = (env) ->
 		env.pluginsEngine.cwd = cwd
 		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
 			if err
-				console.log "plugins pluginsEngine.init err", err
 				env.debug 'An error occured: ' + err
 				return callback true
 			if not obj?

@@ -30,22 +30,20 @@ describe 'Core - env.pluginsEngine module', () ->
 	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should return err true and log', (done) ->
 		logs = []
 		env.debug = () ->
-     		logs.push arguments
-     	env.pluginsEngine.init process.cwd(), (err) ->
+			logs.push arguments
+		env.pluginsEngine.init process.cwd(), (err) ->
 			expect(err).toBe(true)
-			console.log "logs1", logs
 			expect(logs[0][0]).toBe("An error occured: Error: ENOENT, open \'" + process.cwd() + "/plugins.json\'")
 		done()
 
 	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should return err false', (done) ->
 		logs = []
 		env.debug = () ->
-     		logs.push arguments
-     	env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
+			logs.push arguments
+		env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 			expect(err).toBe(false)
-			console.log "logs2", logs
-			# Loading 'plugin_test'.
-			# Error requiring plugin 'plugin_test' entry point.
+			expect(logs[0][0]).toBe("Loading \'plugin_test\'.")
+			expect(logs[1][0]).toBe("Error requiring plugin \'plugin_test\' entry point.")
 		done()
 
 
