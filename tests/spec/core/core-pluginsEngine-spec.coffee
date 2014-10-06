@@ -15,7 +15,7 @@ describe 'Core - env.pluginsEngine module', () ->
 
 		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
 
-	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should failed', (done) ->
+	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should fail when there is no \'plugin.json\' file.', (done) ->
 		logs = []
 		env.debug = () ->
 			logs.push arguments
@@ -24,7 +24,7 @@ describe 'Core - env.pluginsEngine module', () ->
 			expect(logs[0][0]).toBe("An error occured: Error: ENOENT, open \'" + process.cwd() + "/plugins.json\'")
 			done()
 
-	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should fail on requiring \'plugin_test\' entry point', (done) ->
+	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should fail on requiring \'plugin_test\' entry point when it doesn\'t exist', (done) ->
 		logs = []
 		env.debug = () ->
 			logs.push arguments
@@ -38,11 +38,11 @@ describe 'Core - env.pluginsEngine module', () ->
 				expect(logs[1][0]).toBe("Error requiring plugin \'plugin_test\' entry point.")
 				done()
 
-	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after grunt in the folder', (done) ->
+	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after launching grunt command in that folder', (done) ->
 		logs = []
 		env.debug = () ->
 			logs.push arguments
-		command = 'cd ' + process.cwd() + '/tests/instance_test/plugins/plugin_test && npm install && grunt'
+		command = 'cd ' + process.cwd() + '/tests/instance_test/plugins/plugin_test && grunt'
 		exec = require('child_process').exec
 		exec command, (error, stdout, stderr) ->
 			expect(error).toBeNull()
@@ -65,7 +65,7 @@ describe 'Core - env.pluginsEngine module', () ->
 		try
 			expect(env.pluginsEngine.load 'undefined_plugin')
 		catch e
-			env.debug "err", e
+			env.debug "err", e if e
 		finally
 			expect(logs[0][0]).toBe("Loading \'undefined_plugin\'.")
 			expect(logs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
@@ -75,8 +75,26 @@ describe 'Core - env.pluginsEngine module', () ->
 			expect(env.plugins.undefined_plugin).toBeUndefined()
 			done()
 
+	it 'env.pluginsEngine.list should throw an err when pluginsEngine is not init with the good cwd path', (done) ->
+		logs = []
+		env.debug = () ->
+			logs.push arguments
+		env.pluginsEngine.list (err, list) ->
+			expect(err).toBeDefined()
+			expect(list).toBeUndefined()
+			done()
 
-
+	it 'env.pluginsEngine.list should return an array containing \'plugin_test\'', (done) ->
+		logs = []
+		env.debug = () ->
+			logs.push arguments
+		env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
+			expect(err).toBe(false)
+			env.pluginsEngine.list (err, list) ->
+				expect(err).toBeNull()
+				expect(list).toBeDefined()
+				expect(list).toContain("plugin_test")
+				done()
 
 
 

@@ -6,6 +6,7 @@ module.exports = (env) ->
 	pluginsEngine = {
 		plugin: {}
 	}
+	pluginsEngine.cwd = process.cwd()
 	env.plugins = pluginsEngine.plugin
 	env.hooks = {
 		'connect.auth': []
@@ -66,7 +67,9 @@ module.exports = (env) ->
 	pluginsEngine.list = (callback) ->
 		list = []
 		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
-			return callback err if err
+			if err
+				env.debug 'An error occured: ' + err
+				return callback err
 			if obj?
 				for key, value of obj
 					list.push key
