@@ -145,7 +145,7 @@ describe 'Core - pluginsEngine init', () ->
 		try
 			expect(env.pluginsEngine.load 'undefined_plugin')
 		catch e
-			console.log "e", e
+			console.log "err", e
 		finally
 			expect(logs[0][0]).toBe("Loading \'undefined_plugin\'.")
 			expect(logs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
