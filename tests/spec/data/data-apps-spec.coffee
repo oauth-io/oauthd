@@ -17,60 +17,46 @@ describe 'Data - apps module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
-	it 'Application creation - env.data.apps.create', (done) ->
+	xit 'Application creation - env.data.apps.create', (done) ->
 		expect(env.data.apps.create).toBeDefined()
-		throw new Error('Test not implemented')
+		pending()
+
+	xit 'Application retrieval by owner - env.data.apps.getByOwner', (done) ->
 		done()
 
-	it 'Application retrieval by owner - env.data.apps.getByOwner', (done) ->
-		throw new Error('Test not implemented')
+
+	xit 'Application retrieval by id - env.data.apps.get', (done) ->
 		done()
 
-
-	it 'Application retrieval by id - env.data.apps.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application update by id - env.data.apps.get', (done) ->
 		done()
 
-	it 'Application update by id - env.data.apps.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application key reset - env.data.apps.get', (done) ->
 		done()
 
-	it 'Application key reset - env.data.apps.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application removal - env.data.apps.get', (done) ->
 		done()
 
-	it 'Application removal - env.data.apps.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application domain update - env.data.apps.updateDomains', (done) ->
 		done()
 
-	it 'Application domain update - env.data.apps.updateDomains', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application domain add - env.data.apps.addDomain', (done) ->
 		done()
 
-	it 'Application domain add - env.data.apps.addDomain', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application domain retrieval - env.data.apps.getDomains', (done) ->
 		done()
 
-	it 'Application domain retrieval - env.data.apps.getDomains', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application domain removal - env.data.apps.remDomain', (done) ->
 		done()
 
-	it 'Application domain removal - env.data.apps.remDomain', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application backend set - env.data.apps.setBackend', (done) ->
 		done()
 
-	it 'Application backend set - env.data.apps.setBackend', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application backend check - env.data.apps.checkDomain', (done) ->
 		done()
 
-	it 'Application backend check - env.data.apps.checkDomain', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application owner retrieval - env.data.apps.getOwner', (done) ->
 		done()
 
-	it 'Application owner retrieval - env.data.apps.getOwner', (done) ->
-		throw new Error('Test not implemented')
-		done()
-
-	it 'Application secret check - env.data.apps.checkSecret', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Application secret check - env.data.apps.checkSecret', (done) ->
 		done()

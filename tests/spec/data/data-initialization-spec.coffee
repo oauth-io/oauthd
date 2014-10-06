@@ -13,6 +13,7 @@ describe 'Data - initialization', () ->
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
 
+		
 
 	it 'dataModule() should initialize env.data', (done) ->
 		dataModule(env)
