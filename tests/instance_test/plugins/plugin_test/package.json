@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "Gruntfile.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,9 +13,5 @@
     "grunt-contrib-coffee": "^0.11.1"
   },
   "dependencies": {
-    "async": "^0.9.0",
-    "request": "^2.44.0",
-    "restify": "^2.8.2",
-    "sugar": "^1.4.1"
   }
 }
