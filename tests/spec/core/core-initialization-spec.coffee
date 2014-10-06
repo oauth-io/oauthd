@@ -1,8 +1,8 @@
 
-testConfig = require '../test-config'
+testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
 
-describe 'Core module - env init', () ->
+describe 'Core - env init', () ->
 
 	# initEnv
 
@@ -23,7 +23,7 @@ describe 'Core module - env init', () ->
 		expect(env.middlewares.always.length).toBeDefined()
 		done()
 
-describe 'Core module - env.config init', () ->
+describe 'Core - env.config init', () ->
 
 	# initConfig
 
@@ -36,7 +36,7 @@ describe 'Core module - env.config init', () ->
 		done()
 
 
-describe 'Core module - utilities init', () ->
+describe 'Core - utilities init', () ->
 
 	# initUtilities
 
@@ -76,7 +76,7 @@ describe 'Core module - utilities init', () ->
 		expect(env.utilities.mailer).toBeDefined()
 		done()
 
-describe 'Core module - oauth init', () ->
+describe 'Core - oauth init', () ->
 
 	# initOAuth
 
@@ -105,7 +105,7 @@ describe 'Core module - oauth init', () ->
 		done()
 
 
-describe 'Core module - pluginsEngine init', () ->
+describe 'Core - pluginsEngine init', () ->
 
 	# pluginsEngine
 
