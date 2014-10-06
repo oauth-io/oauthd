@@ -43,7 +43,7 @@ exports.init = (env) ->
 
 	
 
-	env.pluginsEngine.init (res) ->
+	env.pluginsEngine.init (process.cwd(), res) ->
 		if not env.plugins.auth
 			console.log "No " + "auth".red + " plugin found"
 			console.log "You need to install an " + "auth".red + " plugin to run the server"

@@ -8,7 +8,7 @@ describe 'Core - env.pluginsEngine module', () ->
 		coreModule(env).initEnv()
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
-		coreModule(env).initPluginsEngine()
+		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
 
 	# it 'env.pluginsEngine.init should throw an exception if file doesn\'t exists', (done) ->
 	it 'env.pluginsEngine.load should throw an exception if file doesn\'t exists', (done) ->
@@ -28,3 +28,23 @@ describe 'Core - env.pluginsEngine module', () ->
 			expect(env.plugins.undefined_plugin).toBeUndefined()
 			console.log "process.cwd()", process.cwd()
 		done()
+
+
+	it 'env.pluginsEngine.load should load the plugin_test', (done) ->
+
+		done()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

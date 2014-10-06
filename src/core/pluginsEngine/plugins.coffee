@@ -35,7 +35,7 @@ module.exports = (env) ->
 	pluginsEngine.load = (plugin_name) ->
 		env.debug "Loading '" + plugin_name + "'."
 		try 
-			plugin_data = require(process.cwd() + '/plugins/' + plugin_name + '/plugin.json')
+			plugin_data = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + '/plugin.json')
 		catch
 			env.debug 'Absent plugin.json for plugin \'' + plugin_name + '\'.'
 			plugin_data = {}
@@ -44,16 +44,19 @@ module.exports = (env) ->
 		else
 			entry_point = '/index'
 		try
-			plugin = require(process.cwd() + '/plugins/' + plugin_name + entry_point)(env)
+			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + entry_point)(env)
 			env.config.plugins.push plugin_name
 			pluginsEngine.plugin[plugin_name] = plugin
 		catch 
 			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
 		return
 
-	pluginsEngine.init = (callback) ->
+	pluginsEngine.init = (cwd, callback) ->
+		console.log "AAA cwd", cwd
+		console.log "AAA process.cwd()", process.cwd()
+		env.pluginsEngine.cwd = cwd
 		try
-			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+			jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
 				throw err if err
 				if not obj?
 					obj = {}
@@ -67,7 +70,7 @@ module.exports = (env) ->
 
 	pluginsEngine.list = (callback) ->
 		list = []
-		jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
 			return callback err if err
 			if obj?
 				for key, value of obj
