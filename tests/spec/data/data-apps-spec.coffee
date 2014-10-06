@@ -24,7 +24,7 @@ describe 'Data - apps module', () ->
 			logs.push(arguments)
 
 		env.data.generateUid = () ->
-			return 'someuid' + suffix
+			return suffix
 
 	it 'Application creation - env.data.apps.create (success case)', (done) ->
 		
@@ -35,7 +35,7 @@ describe 'Data - apps module', () ->
 			expect(typeof app).toBe('object')
 			expect(typeof app.id).toBe('number')
 			expect(app.name).toBe('myapp')
-			expect(app.key).toBe('someuid-0')
+			expect(app.key).toBe('-0')
 
 			env.data.redis.mget [
 				'a:' + app.id + ':name',
@@ -46,12 +46,12 @@ describe 'Data - apps module', () ->
 			],  (err, result) ->
 				expect(err).toBe(null)
 				expect(result[0]).toBe('myapp')
-				expect(result[1]).toBe('someuid-0')
-				expect(result[2]).toBe('someuid-0')
+				expect(result[1]).toBe('-0')
+				expect(result[2]).toBe('-0')
 				expect(result[3]).toBe('1')
 				expect(result[4]).toMatch(/^[0-9]+$/)
 
-				env.data.redis.hget 'a:keys', 'someuid-0', (err, id) ->
+				env.data.redis.hget 'a:keys', '-0', (err, id) ->
 					expect(id).toBe(app.id)
 					done()
 
@@ -95,8 +95,8 @@ describe 'Data - apps module', () ->
 				app = apps[0]
 				expect(typeof app).toBe('object')
 				expect(app.name).toBe('myapp')
-				expect(app.key).toBe('someuid-1')
-				expect(app.secret).toBe('someuid-1')
+				expect(app.key).toBe('-1')
+				expect(app.secret).toBe('-1')
 				expect(app.owner).toBe('5')
 				done()
 
@@ -119,8 +119,22 @@ describe 'Data - apps module', () ->
 				expect(app2.name).toBe('myapp')
 				expect(app2.owner).toBe('1')
 				expect(app2.id).toBe(app.id)
-				expect(app2.key).toBe('someuid-2')
-				expect(app2.secret).toBe('someuid-2')
+				expect(app2.key).toBe('-2')
+				expect(app2.secret).toBe('-2')
+				done()
+
+	it 'Application retrieval by key - env.data.apps.get', (done) ->
+		suffix = 'qwertyuiop1234567890asd'
+		env.data.apps.create {name:'myapp'}, { id: 10 }, (err, app) ->
+			expect(err).toBeNull()
+			env.data.apps.get app.key, (err, app2) ->
+				expect(err).toBeNull()
+				expect(typeof app2).toBe('object')
+				expect(app2.name).toBe('myapp')
+				expect(app2.owner).toBe('10')
+				expect(app2.id).toBe(app.id)
+				expect(app2.key).toBe(suffix)
+				expect(app2.secret).toBe(suffix)
 				done()
 
 	xit 'Application update by id - env.data.apps.get', (done) ->
