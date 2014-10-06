@@ -1,32 +1,10 @@
-# OAuth daemon
-# Copyright (C) 2013 Webshell SAS
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
-
 async = require 'async'
 jf = require 'jsonfile'
 
-
 module.exports = (env) ->
-	console.log 'Initializing plugins engine'
-
-	check = env.utilities.check
-	exit = env.utilities.exit
-
-	shared = env
-
-
+	env.debug = () ->
+    	console.log.apply this, arguments
+	env.debug 'Initializing plugins engine'
 	pluginsEngine = {
 		plugin: {}
 	}
@@ -57,19 +35,22 @@ module.exports = (env) ->
 		env.hooks[name].push fn
 
 	pluginsEngine.load = (plugin_name) ->
-		console.log "Loading '" + plugin_name + "'."
-		env.config.plugins.push plugin_name
+		env.debug "Loading '" + plugin_name + "'."
 		try 
 			plugin_data = require(process.cwd() + '/plugins/' + plugin_name + '/plugin.json')
 		catch
-			console.log 'absent plugin.json for plugin \'' + plugin_name + '\''
+			env.debug 'Absent plugin.json for plugin \'' + plugin_name + '\'.'
 			plugin_data = {}
 		if plugin_data.main?
 			entry_point = '/' + plugin_data.main
 		else
 			entry_point = '/index'
-		plugin = require(process.cwd() + '/plugins/' + plugin_name + entry_point)(env)
-		pluginsEngine.plugin[plugin_name] = plugin
+		try
+			plugin = require(process.cwd() + '/plugins/' + plugin_name + entry_point)(env)
+			env.config.plugins.push plugin_name
+			pluginsEngine.plugin[plugin_name] = plugin
+		catch 
+			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
 		return
 
 	pluginsEngine.init = (callback) ->
@@ -78,14 +59,13 @@ module.exports = (env) ->
 				throw err if err
 				if not obj?
 					obj = {}
-
 				for pluginname, pluginversion of obj
 					pluginsEngine.load pluginname
-
-				callback true
-		catch e
-			console.log 'An error occured: ' + e.message
-			callback true
+				return callback true
+		catch err
+			env.debug 'An error occured: ' + e.message
+			throw err if err
+			return callback true
 
 	pluginsEngine.list = (callback) ->
 		list = []
@@ -97,7 +77,7 @@ module.exports = (env) ->
 			return callback null, list
 
 	pluginsEngine.run = (name, args, callback) ->
-		if typeof args == 'function'
+		if typeof args == 'function'	
 			callback = args
 			args = []
 		args.push null

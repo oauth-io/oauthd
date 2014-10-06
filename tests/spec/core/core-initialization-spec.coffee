@@ -1,6 +1,7 @@
 
 testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
+sugar = require 'sugar'
 
 describe 'Core - env init', () ->
 
@@ -116,3 +117,38 @@ describe 'Core - pluginsEngine init', () ->
 		coreModule(env).initPluginsEngine()
 		expect(env.pluginsEngine).toBeDefined()
 		done()
+
+	it 'coreModule(env).initPluginsEngine should init env.pluginsEngine', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initPluginsEngine()
+		expect(env.pluginsEngine).toBeDefined()
+		expect(env.plugins).toBeDefined()
+		expect(env.plugins).toEqual(jasmine.any(Object))
+		expect(env.pluginsEngine.load).toEqual(jasmine.any(Function))
+		expect(env.pluginsEngine.init).toEqual(jasmine.any(Function))
+		expect(env.pluginsEngine.list).toEqual(jasmine.any(Function))
+		expect(env.pluginsEngine.run).toEqual(jasmine.any(Function))
+		expect(env.pluginsEngine.runSync).toEqual(jasmine.any(Function))
+		done()
+
+	# it 'env.pluginsEngine.init should throw an exception if file doesn\'t exists', (done) ->
+	it 'env.pluginsEngine.load should throw an exception if file doesn\'t exists', (done) ->
+		env = {}
+		coreModule(env).initEnv()
+		coreModule(env).initUtilities()
+		coreModule(env).initPluginsEngine()
+		logs = []
+		env.debug = () ->
+     		logs.push arguments
+		try
+			expect(env.pluginsEngine.load 'undefined_plugin')
+		catch e
+			console.log "e", e
+		finally
+			expect(logs[0][0]).toBe("Loading \'undefined_plugin\'.")
+			expect(logs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
+			expect(logs[2][0]).toBe("Error requiring plugin \'undefined_plugin\' entry point.")
+		done()
+
