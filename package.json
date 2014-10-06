@@ -62,6 +62,7 @@
     "restify-oauth2-oauthd": "~2.2.0",
     "rimraf": "^2.2.8",
     "sugar": "^1.4.1",
+    "timekeeper": "0.0.4",
     "ua-parser-js": "~0.6.2",
     "underscore": "~1.4.4"
   }
