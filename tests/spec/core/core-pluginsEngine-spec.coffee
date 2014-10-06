@@ -50,11 +50,13 @@ describe 'Core - env.pluginsEngine module', () ->
 				env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 					expect(err).toBe(false)
 					expect(logs[0][0]).toBe("Loading \'plugin_test\'.")
+					expect(env.pluginsEngine.plugin['plugin_test']).toBeDefined()
+					expect(env.pluginsEngine.plugin['plugin_test'].getMyName()).toBe("plugin_test")
 					command = 'rm -rf ' + process.cwd() + '/tests/instance_test/plugins/plugin_test/bin'
 					exec = require('child_process').exec
 					exec command, (error, stdout, stderr) ->
 						expect(error).toBeNull()
-					done()
+						done()
 
 	it 'env.pluginsEngine.load should throw an exception when loading unexisting \'undefined_plugin\'.', (done) ->
 		logs = []
