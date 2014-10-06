@@ -13,22 +13,17 @@ describe 'Data - providers module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
-	it 'Provider list retrieval - env.data.providers.getList', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Provider list retrieval - env.data.providers.getList', (done) ->
 		done()
 
-	it 'Provider retrieval - env.data.providers.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Provider retrieval - env.data.providers.get', (done) ->
 		done()
 
-	it 'Provider settings retrieval - env.data.providers.getSettings', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Provider settings retrieval - env.data.providers.getSettings', (done) ->
 		done()
 
-	it 'Provider /me mappings - env.data.providers.getMeMapping', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Provider /me mappings - env.data.providers.getMeMapping', (done) ->
 		done()
 
-	it 'Provider extended description retrieval - env.data.providers.getExtended', (done) ->
-		throw new Error('Test not implemented')
+	xit 'Provider extended description retrieval - env.data.providers.getExtended', (done) ->
 		done()

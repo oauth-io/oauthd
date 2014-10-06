@@ -14,55 +14,55 @@ describe 'Data - initialization', () ->
 		coreModule(env).initUtilities()
 
 
-	it 'dataModule() should initialize env.data', (done) ->
+	xit 'dataModule() should initialize env.data', (done) ->
 		dataModule(env)
 
 		expect(env.data).toBeDefined()
 		done()
 
-	it 'dataModule() should initialize env.data.redis', (done) ->
+	xit 'dataModule() should initialize env.data.redis', (done) ->
 		dataModule(env)
 
 		expect(env.data.redis).toBeDefined()
 		expect(typeof env.data.redis).toBe('object')
 		done()
 
-	it 'dataModule() should initialize env.data.generateUid', (done) ->
+	xit 'dataModule() should initialize env.data.generateUid', (done) ->
 		dataModule(env)
 
 		expect(env.data.generateUid).toBeDefined()
 		expect(typeof env.data.generateUid).toBe('function')
 		done()
 
-	it 'dataModule() should initialize env.data.generateHash', (done) ->
+	xit 'dataModule() should initialize env.data.generateHash', (done) ->
 		dataModule(env)
 
 		expect(env.data.generateHash).toBeDefined()
 		expect(typeof env.data.generateHash).toBe('function')
 		done()
 
-	it 'dataModule() should initialize env.data.generateHash', (done) ->
+	xit 'dataModule() should initialize env.data.generateHash', (done) ->
 		dataModule(env)
 
 		expect(env.data.generateHash).toBeDefined()
 		expect(typeof env.data.generateHash).toBe('function')
 		done()
 
-	it 'dataModule() should initialize env.data.apps', (done) ->
+	xit 'dataModule() should initialize env.data.apps', (done) ->
 		dataModule(env)
 
 		expect(env.data.apps).toBeDefined()
 		expect(typeof env.data.apps).toBe('object')
 		done()
 
-	it 'dataModule() should initialize env.data.providers', (done) ->
+	xit 'dataModule() should initialize env.data.providers', (done) ->
 		dataModule(env)
 
 		expect(env.data.providers).toBeDefined()
 		expect(typeof env.data.providers).toBe('object')
 		done()
 
-	it 'dataModule() should initialize env.data.states', (done) ->
+	xit 'dataModule() should initialize env.data.states', (done) ->
 		dataModule(env)
 
 		expect(env.data.states).toBeDefined()
@@ -70,7 +70,7 @@ describe 'Data - initialization', () ->
 		done()
 
 
-	it 'dataModule() should initialize env.data.Entity', (done) ->
+	xit 'dataModule() should initialize env.data.Entity', (done) ->
 		dataModule(env)
 
 		expect(env.data.Entity).toBeDefined()

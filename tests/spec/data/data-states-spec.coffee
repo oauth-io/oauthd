@@ -13,22 +13,17 @@ describe 'Data - states module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
-	it 'State creation - env.data.states.add', (done) ->
-		throw new Error('Test not implemented')
+	xit 'State creation - env.data.states.add', (done) ->
 		done()
 
-	it 'State info retrieval - env.data.states.get', (done) ->
-		throw new Error('Test not implemented')
+	xit 'State info retrieval - env.data.states.get', (done) ->
 		done()
 
-	it 'State info update - env.data.states.set', (done) ->
-		throw new Error('Test not implemented')
+	xit 'State info update - env.data.states.set', (done) ->
 		done()
 
-	it 'State deletion - env.data.states.del', (done) ->
-		throw new Error('Test not implemented')
+	xit 'State deletion - env.data.states.del', (done) ->
 		done()
 
-	it 'State token set - env.data.states.setToken', (done) ->
-		throw new Error('Test not implemented')
+	xit 'State token set - env.data.states.setToken', (done) ->
 		done()
