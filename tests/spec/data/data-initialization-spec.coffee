@@ -13,6 +13,9 @@ describe 'Data - initialization', () ->
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
 
+		env.debug = () ->
+			logs.push(arguments)
+
 		
 
 	it 'dataModule() should initialize env.data', (done) ->

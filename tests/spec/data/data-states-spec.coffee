@@ -13,6 +13,9 @@ describe 'Data - states module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
+		env.debug = () ->
+			logs.push(arguments)
+
 	xit 'State creation - env.data.states.add', (done) ->
 		done()
 

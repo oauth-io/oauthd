@@ -114,6 +114,8 @@ describe 'Core - pluginsEngine init', () ->
 		env = {}
 		coreModule(env).initEnv()
 		coreModule(env).initUtilities()
+		env.debug = () ->
+			return
 		coreModule(env).initPluginsEngine()
 		expect(env.pluginsEngine).toBeDefined()
 		done()
@@ -122,6 +124,10 @@ describe 'Core - pluginsEngine init', () ->
 		env = {}
 		coreModule(env).initEnv()
 		coreModule(env).initUtilities()
+
+		env.debug = () ->
+			return
+
 		coreModule(env).initPluginsEngine()
 		expect(env.pluginsEngine).toBeDefined()
 		expect(env.plugins).toBeDefined()
