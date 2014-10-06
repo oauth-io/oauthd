@@ -9,7 +9,7 @@ describe 'Data - apps module', () ->
 		mode: 'test'
 	}
 	
-	suffix = '0'
+	uid = '0'
 	logs = []
 	beforeEach () ->
 		env = {
@@ -24,12 +24,12 @@ describe 'Data - apps module', () ->
 			logs.push(arguments)
 
 		env.data.generateUid = () ->
-			return suffix
+			return uid
 
 	it 'Application creation - env.data.apps.create (success case)', (done) ->
 		
 		expect(env.data.apps.create).toBeDefined()
-		suffix = '-0'
+		uid = '-0'
 		env.data.apps.create { name: 'myapp' }, { id: 1 }, (err, app) ->
 			expect(err).toBe(null)
 			expect(typeof app).toBe('object')
@@ -56,7 +56,7 @@ describe 'Data - apps module', () ->
 					done()
 
 	it 'Application creation - env.data.apps.create (error cases)', (done) ->
-		suffix = '-0'
+		uid = '-0'
 
 		async.series [
 			(next) ->
@@ -87,7 +87,7 @@ describe 'Data - apps module', () ->
 			done()
 
 	it 'Application retrieval by owner - env.data.apps.getByOwner (success case)', (done) ->
-		suffix = '-1'
+		uid = '-1'
 		env.data.apps.create {name:'myapp'}, { id: 5 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getByOwner 5, (err, apps) ->
@@ -101,7 +101,7 @@ describe 'Data - apps module', () ->
 				done()
 
 	it 'Application retrieval by owner - env.data.apps.getByOwner (error cases)', (done) ->
-		suffix = '-1'
+		uid = '-1'
 		env.data.apps.create {name:'myapp'}, { id: 6 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getByOwner 6, (err, apps) ->
@@ -110,7 +110,7 @@ describe 'Data - apps module', () ->
 
 
 	it 'Application retrieval by id - env.data.apps.getById', (done) ->
-		suffix = '-2'
+		uid = '-2'
 		env.data.apps.create {name:'myapp'}, { id: 1 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getById app.id, (err, app2) ->
@@ -123,8 +123,8 @@ describe 'Data - apps module', () ->
 				expect(app2.secret).toBe('-2')
 				done()
 
-	it 'Application retrieval by key - env.data.apps.get', (done) ->
-		suffix = 'qwertyuiop1234567890asd'
+	it 'Application retrieval by key - env.data.apps.get (success case)', (done) ->
+		uid = 'qwertyuiop1234567890asd'
 		env.data.apps.create {name:'myapp'}, { id: 10 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.get app.key, (err, app2) ->
@@ -133,36 +133,252 @@ describe 'Data - apps module', () ->
 				expect(app2.name).toBe('myapp')
 				expect(app2.owner).toBe('10')
 				expect(app2.id).toBe(app.id)
-				expect(app2.key).toBe(suffix)
-				expect(app2.secret).toBe(suffix)
+				expect(app2.key).toBe(uid)
+				expect(app2.secret).toBe(uid)
 				done()
 
-	xit 'Application update by id - env.data.apps.get', (done) ->
+	it 'Application key reset - env.data.apps.update (success case)', (done) ->
+		uid = 'yahouyahouyahouyahouyahou'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			expect(err).toBeNull()
+			env.data.apps.update app.key, { name: 'anothername' }, (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.get 'a:' + app.id + ':name', (err, name) ->
+					expect(name).toBe('anothername')
+					done()
+		uid = '2ahouyahouyahouyahouyahou'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			expect(err).toBeNull()
+			env.data.apps.update app.key, { domains: ['somedomain'] }, (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.smembers 'a:' + app.id + ':domains', (err, domains) ->
+					expect(domains[0]).toBe('somedomain')
+					done()
+
+
+	it 'Application key reset - env.data.apps.update (error cases)', (done) ->
+		# existing app with undefined
+		uid = '3ahouyahouyahouyahouyahou'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			env.data.apps.update app.key, undefined, (err) ->
+				expect(err).toBeDefined()
+				expect(err.message).toBe('Invalid format')
+				done()
+
+		# unexisting app
+		uid = '4ahouyahouyahouyahouyahou'
+		env.data.apps.update uid, {name: 'hey'}, (err) ->
+			expect(err).toBeDefined()
+			expect(err.message).toBe('Unknown key')
+			done()
+
+
+	it 'Application key reset - env.data.apps.resetKey', (done) ->
+		uid = '5testestestestestesteste'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			uid = 'newkeynewkeynewkeynewkey'
+			env.data.apps.resetKey app.key, (err, result) ->
+				expect(result.key).toBe(uid)
+				expect(result.secret).toBe(uid)
+				done()
+
+	it 'Application removal - env.data.apps.remove (success case)', (done) ->
+		uid = 'applicationremovaltesttes'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			env.data.apps.remove app.key, (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.keys 'a:' + app.id + '*', (err, keys) ->
+					expect(keys.length).toBe(0)
+					
+					env.data.redis.hget 'a:keys', app.key, (err, id) ->
+						expect(err).toBe(null)
+						expect(id).toBe(null)
+						done()
+
+	it 'Application removal - env.data.apps.remove (error cases)', (done) ->
+		uid = 'inexistingapplicationtest'
+		env.data.apps.remove uid, (err) ->
+			expect(err).toBeDefined()
+			expect(err.message).toBe('Unknown key')
+			done()
+
+	it 'Application domain update - env.data.apps.updateDomains (success case)', (done) ->
+		uid = 'appdomainupdatetestestest'
+		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+			env.data.apps.updateDomains app.key, ['domain1', 'domain2'], (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.smembers 'a:' + app.id + ':domains', (err, domains) ->
+					expect(err).toBeNull()
+					expect(domains.length).toBe(2)
+					expect(domains[0]).toBe('domain1')
+					expect(domains[1]).toBe('domain2')
+					done()
+
+	it 'Application domain update - env.data.apps.updateDomains (error cases)', (done) ->
+		async.series [
+			(next) ->
+				# unknown key
+				uid = 'inexistingapplicationtest'
+				env.data.apps.updateDomains uid, ['domain1', 'domain2'], (err) ->
+					expect(err).toBeDefined()
+					expect(err.message).toBe('Unknown key')
+					next()
+			(next) ->
+				# wrong argument type
+				uid = 'appdomainupdateerrorstest'
+				env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+					env.data.apps.updateDomains uid, undefined, (err) ->
+						expect(err).toBeDefined()
+						expect(err.message).toBe('Invalid format')
+						next()		
+		], () ->
+			done()
+
+	it 'Application domain add - env.data.apps.addDomain (success case)', (done) ->
+		uid = 'appdomainaddadderrorstest'
+		env.data.apps.create {name:'myapps'}, {id: 12}, (err, app) ->
+			env.data.apps.addDomain app.key, 'somedomain', (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.smembers 'a:' + app.id + ':domains', (err, domains) ->
+					expect(err).toBeNull()
+					expect(domains.length).toBe(1)
+					expect(domains[0]).toBe('somedomain')
+					done()
+
+	it 'Application domain add - env.data.apps.addDomain (error cases)', (done) ->
+		async.series [
+			(next) ->
+				# unknown key
+				uid = 'inexistingapplicationtest'
+				env.data.apps.addDomain uid, 'domain1', (err) ->
+					expect(err).toBeDefined()
+					expect(err.message).toBe('Unknown key')
+					next()
+			(next) ->
+				# wrong argument type
+				uid = 'appdomainupdateerrorstest'
+				env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
+					env.data.apps.addDomain uid, undefined, (err) ->
+						expect(err).toBeDefined()
+						expect(err.message).toBe('Invalid format')
+						next()		
+		], () ->
+			done()
+
+	it 'Application domain retrieval - env.data.apps.getDomains (success case)', (done) ->
+		uid = 'appdomainretrievaltestestte'
+		env.data.apps.create {name: 'myapp'}, {id: 12}, (err, app) ->
+			env.data.apps.updateDomains app.key, ['domain1', 'domain2'], (err) ->
+				env.data.apps.getDomains app.key, (err, domains) ->
+					expect(err).toBeNull()
+					expect(domains.length).toBe(2)
+					expect(domains[0]).toBe('domain1')
+					expect(domains[1]).toBe('domain2')
+					done()
+
+	it 'Application domain retrieval - env.data.apps.getDomains (error cases)', (done) ->
+		uid = 'inexistingapplicationtest'
+		env.data.apps.getDomains uid, (err, domains) ->
+			expect(err).not.toBeNull()
+			expect(err.message).toBe('Unknown key')
+			done()
+
+	it 'Application domain removal - env.data.apps.remDomain (success case)', (done) ->
+		uid = 'appremovaltestesttestestte'
+		env.data.apps.create {name: 'myapp', domains: ['hello', 'world']}, {id: 12}, (err, app) ->
+			env.data.apps.remDomain app.key, 'hello', (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.smembers 'a:' + app.id + ':domains', (err, domains) ->
+					expect(err).toBeNull()
+					expect(domains.length).toBe(1)
+					expect(domains[0]).toBe('world')
+					done()
+
+	it 'Application domain removal - env.data.apps.remDomain (error cases)', (done) ->
+		async.series [
+			(next) ->
+				# unknown key
+				uid = 'inexistingapplicationtest'
+				env.data.apps.remDomain uid, 'domain1', (err) ->
+					expect(err).toBeDefined()
+					expect(err.message).toBe('Unknown key')
+					next()
+			(next) ->
+				# wrong argument type
+				uid = 'appremovalestesttestestte'
+				env.data.apps.create {name: 'myapp', domains: ['hello', 'world']}, {id: 12}, (err, app) ->
+					env.data.apps.remDomain app.key, 'hohoho', (err) ->
+						expect(err).toBeDefined()
+						expect(err.message).toBe('Invalid format')
+						expect(err.body?.domain).toBe('hohoho is already non-valid')
+						done()	
+		], () ->
+			done()
+
+	xit 'Application domain check - env.data.apps.checkDomain', (done) ->
 		done()
 
-	xit 'Application key reset - env.data.apps.get', (done) ->
-		done()
+	it 'Application backend set - env.data.apps.setBackend (success case)', (done) ->
+		uid = 'appbackendsettestesttes'
+		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+			env.data.apps.setBackend app.key, 'backend', {somekey: 'somevalue'}, (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.get 'a:' + app.id + ':backend:name', (err, name) ->
+					expect(err).toBeNull()
+					expect(name).toBe('backend')
 
-	xit 'Application removal - env.data.apps.get', (done) ->
-		done()
+					env.data.redis.get 'a:' + app.id + ':backend:value', (err, value) ->
+						expect(err).toBeNull()
+						try
+							value = JSON.parse(value)
+						catch error
+							expect(error).toBeUndefined()
+						finally
+							expect(typeof value).toBe('object')
+							expect(value.somekey).toBe('somevalue')
+							done()
 
-	xit 'Application domain update - env.data.apps.updateDomains', (done) ->
-		done()
+	it 'Application backend retrieval - env.data.apps.getBackend (success case)', (done) ->
+		uid = 'appbackendgettestesttes'
+		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+			env.data.apps.setBackend app.key, 'backend', {somekey: 'somevalue'}, (err) ->
+				env.data.apps.getBackend app.key, (err, backend) ->
+					expect(err).toBeNull()
+					expect(typeof backend).toBe('object')
+					expect(backend.name).toBe('backend')
+					expect(typeof backend.value).toBe('object')
+					expect(backend.value.somekey).toBe('somevalue')
+					done()
 
-	xit 'Application domain add - env.data.apps.addDomain', (done) ->
-		done()
+	it 'Application backend removal - env.data.apps.remBackend (success case)', (done) ->
+		uid = 'appbackendrmttestesttes'
+		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+			env.data.apps.setBackend app.key, 'backend', {somekey: 'somevalue'}, (err) ->
+				env.data.apps.remBackend app.key, (err) ->
+					expect(err).toBeUndefined()
+					env.data.redis.mget ['a:' + app.id + ':backend:name', 'a:' + app.id + ':backend:value'], (err, result) ->
+						expect(err).toBeNull()
+						expect(result[0]).toBeNull()
+						expect(result[1]).toBeNull()
+						done()
+	
 
-	xit 'Application domain retrieval - env.data.apps.getDomains', (done) ->
-		done()
+	it 'Application keyset add - env.data.apps.addKeyset (success case)', (done) ->
+		uid = 'appkeysetaddttestesttes'
+		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+			env.data.apps.addKeyset app.key, 'someprovider', { parameters: { hello: 'world' } }, (err) ->
+				expect(err).toBeUndefined()
+				env.data.redis.get 'a:' + app.id + ':k:someprovider', (err, data) ->
+					expect(err).toBeNull()
+					try
+						keyset = JSON.parse data
+					catch error
+						expect(error).toBeUndefined()
+					finally
+						expect(keyset.hello).toBe('world')
+						done()
+					  
 
-	xit 'Application domain removal - env.data.apps.remDomain', (done) ->
-		done()
-
-	xit 'Application backend set - env.data.apps.setBackend', (done) ->
-		done()
-
-	xit 'Application backend check - env.data.apps.checkDomain', (done) ->
-		done()
 
 	xit 'Application owner retrieval - env.data.apps.getOwner', (done) ->
 		done()
