@@ -13,7 +13,6 @@ describe 'Data - initialization', () ->
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
 
-		
 
 	it 'dataModule() should initialize env.data', (done) ->
 		dataModule(env)
@@ -68,6 +67,14 @@ describe 'Data - initialization', () ->
 
 		expect(env.data.states).toBeDefined()
 		expect(typeof env.data.states).toBe('object')
+		done()
+
+
+	it 'dataModule() should initialize env.data.Entity', (done) ->
+		dataModule(env)
+
+		expect(env.data.Entity).toBeDefined()
+		expect(typeof env.data.Entity).toBe('function')
 		done()
 
 
