@@ -2,8 +2,6 @@ async = require 'async'
 jf = require 'jsonfile'
 
 module.exports = (env) ->
-	env.debug = () ->
-    	console.log.apply this, arguments
 	env.debug 'Initializing plugins engine'
 	pluginsEngine = {
 		plugin: {}
