@@ -1,0 +1,6 @@
+{
+	"name": "plugin_test",
+	"description": "Default plugin_test.",
+	"version": "0.0.1",
+	"main": "index.js"
+}
