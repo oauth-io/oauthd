@@ -15,12 +15,16 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 crypto = require 'crypto'
-redis = require 'redis'
+
 
 module.exports = (env) ->
 	data = {}
 
-	
+	if env.mode != 'test'
+		redis = require 'redis'	
+	else
+		redis = require 'fakeredis'	
+
 	config = env.config
 	exit = env.utilities.exit
 

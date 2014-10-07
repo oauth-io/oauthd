@@ -5,28 +5,24 @@
 
 Q = require 'q'
 
-events = require('events')
 Path = require 'path'
 async = require "async"
 
 # request FIX
 qs = require 'request/node_modules/qs'
 
-exports.init = () ->
+exports.init = (env) ->
 	defer = Q.defer()
 	startTime = new Date
-
+	env = env || {}
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
-	env = {
-		events: new events.EventEmitter(),
-		middlewares: {
-			always: []
-		}
-	}
+	
+
 
 	coreModule = require './core'
 	dataModule = require './data'
 	
+	coreModule(env).initEnv() #inits env
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
 	
@@ -47,29 +43,38 @@ exports.init = () ->
 
 	
 
-	env.pluginsEngine.init (res) ->
-		if not env.plugins.auth
-			console.log "No " + "auth".red + " plugin found"
-			console.log "You need to install an " + "auth".red + " plugin to run the server"
-			defer.reject()
-			process.exit()
+	env.pluginsEngine.init process.cwd(), (err) ->
+		if not err
+			if not env.plugins.auth
+				env.debug "No " + "auth".red + " plugin found"
+				env.debug "You need to install an " + "auth".red + " plugin to run the server"
+				defer.reject()
+				process.exit()
 
-		# start server
-		console.log "oauthd start server"
-		exports.server = server = require('./server')(env)
+			# start server
+			env.debug "oauthd start server"
+			exports.server = server = require('./server')(env)
 
-		async.series [
-			env.data.providers.getList,
-			server.listen
-		], (err) ->
-			if err
-				console.error 'Error while initialisation', err.stack.toString()
-				env.pluginsEngine.data.emit 'server', err
-				defer.reject err
-			else
-				console.log 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
-				defer.resolve()
+			async.series [
+				env.data.providers.getList,
+				server.listen
+			], (err) ->
+				if err
+					console.error 'Error while initialisation', err.stack.toString()
+					env.pluginsEngine.data.emit 'server', err
+					defer.reject err
+				else
+					env.debug 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
+					defer.resolve()
 
-		return defer.promise
+			return defer.promise
 
-	
+exports.installPlugins = () ->
+	cli = {
+		argv: {
+			_: [ 'plugins', 'install' ]
+		},
+		__mode: 'prog'
+	}
+	require('../cli/bin/plugins')(cli)
+		

@@ -32,7 +32,7 @@ module.exports = (env) ->
 		err = new check.Error
 		err.check data, name:/^.{3,50}$/,domains:['none','array']
 		if err.failed()
-			return callback new check.Error "You must specify a name and at least one domain for your application."
+			return callback new check.Error "You must specify a name for your application"
 
 		key = env.data.generateUid()
 		secret = env.data.generateUid()
@@ -41,7 +41,9 @@ module.exports = (env) ->
 			for domain in data.domains
 				err.check 'domains', domain, 'string'
 		if err.failed()
-			return callback new check.Error "You must specify a name and at least one domain for your application."
+			return callback new check.Error "You must specify a name for your application"
+		if not user?.id?
+			return callback new check.Error "The user must be defined and contain the field 'id'"
 		env.data.redis.incr 'a:i', (err, idapp) ->
 			return callback err if err
 			prefix = 'a:' + idapp + ':'
@@ -67,6 +69,7 @@ module.exports = (env) ->
 		env.data.redis.keys 'a:*:key', (err, keys) ->
 			return callback err if err
 			apps = []
+			return callback err if err
 			async.eachSeries keys, (item, next) ->
 				prefix = item.replace /key/, ''
 				env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix+'owner'], (err, replies) ->
@@ -77,7 +80,7 @@ module.exports = (env) ->
 						secret:replies[2],
 						owner: replies[3]
 					}
-					if app.owner == owner_id
+					if parseInt(app.owner) == parseInt(owner_id)
 						apps.push app
 					next()
 			, (err) ->
@@ -89,9 +92,9 @@ module.exports = (env) ->
 	# get the app infos by its id
 	App.getById = check 'int', (idapp, callback) ->
 		prefix = 'a:' + idapp + ':'
-		env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret'], (err, replies) ->
+		env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix + 'date', prefix + 'owner'], (err, replies) ->
 			return callback err if err
-			callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2]
+			callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date: replies[3], owner: replies[4]
 
 	# get the app infos
 	App.get = check check.format.key, (key, callback) ->
@@ -99,9 +102,9 @@ module.exports = (env) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
 			prefix = 'a:' + idapp + ':'
-			env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix + 'date'], (err, replies) ->
+			env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix + 'date', prefix + 'owner'], (err, replies) ->
 				return callback err if err
-				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3]
+				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4]
 
 	# update app infos
 	App.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->

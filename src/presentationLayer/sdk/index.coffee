@@ -1,5 +1,3 @@
-
-
 module.exports = (env) ->
 	sdk_js = require('./sdk_js')(env)
 

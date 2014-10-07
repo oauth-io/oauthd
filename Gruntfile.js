@@ -19,8 +19,8 @@ module.exports = function(grunt) {
                 tasks: ['coffee:cli']
             },
             static: {
-                files: ['src/**/*.png','src/**/*.less','src/**/*.html','src/**/*.css','src/**/*.js','src/**/*.eot','src/**/*.otf','src/**/*.svg','src/**/*.ttf', 'src/**/*.woff', '**/*.ico'],
-                tasks: ['copy']  
+                files: ['src/**/*.png', 'src/**/*.less', 'src/**/*.html', 'src/**/*.css', 'src/**/*.js', 'src/**/*.eot', 'src/**/*.otf', 'src/**/*.svg', 'src/**/*.ttf', 'src/**/*.woff', '**/*.ico'],
+                tasks: ['copy']
             }
         },
         coffee: {
@@ -47,17 +47,25 @@ module.exports = function(grunt) {
         },
         copy: {
             main: {
-                files: [
-                    {
-                        expand: true,
-                        src: ['**/*.less', '**/*.html', '**/*.png','**/*.js','**/*.eot','**/*.css','**/*.svg', '**/*.ttf', '**/*.woff', '**/*.otf', '**/*.ico'],
-                        dest: 'bin',
-                        cwd: 'src'
-                    },
-                ]
+                files: [{
+                    expand: true,
+                    src: ['**/*.less', '**/*.html', '**/*.png', '**/*.js', '**/*.eot', '**/*.css', '**/*.svg', '**/*.ttf', '**/*.woff', '**/*.otf', '**/*.ico'],
+                    dest: 'bin',
+                    cwd: 'src'
+                }, ]
             }
         },
-        subgrunt: {}
+        subgrunt: {},
+        jasmine_node: {
+            options: {
+                forceExit: true,
+                match: '.',
+                matchall: false,
+                extensions: 'js',
+                specNameMatcher: 'spec',
+            },
+            all: ['./tests/spec/']
+        }
     };
 
     var tasks = [];
@@ -85,9 +93,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-coffee');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-jasmine-node');
     grunt.loadNpmTasks('grunt-subgrunt');
 
     // Default task.
     grunt.registerTask('default', ['coffee', 'copy']);
-    grunt.registerTask('test', ['nodeunit']);
+    grunt.registerTask('test', ['jasmine_node:all']);
 };

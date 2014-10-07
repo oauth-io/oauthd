@@ -30,14 +30,14 @@ module.exports = (env) ->
 			return
 		), 5000
 		async.series closing_stack, (err, res) ->
-			console.log '--- successfully closed !'
+			env.debug '--- successfully closed !'
 			setTimeout killer, 100
 			return
 		return
 
 	# nodemon restarting
 	process.once 'SIGUSR2', ->
-		console.log '--- closing server...'
+		env.debug '--- closing server...'
 		cleanExit ->
 			process.kill process.pid, 'SIGUSR2'
 			return
@@ -63,7 +63,7 @@ module.exports = (env) ->
 	# push a closing function
 	exit.push = (name, f) ->
 		closing_stack.push (callback) ->
-			console.log 'Closing `' + name + '`...'
+			env.debug 'Closing `' + name + '`...'
 			f callback
 			return
 		return

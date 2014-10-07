@@ -1,12 +1,12 @@
-# OAuth daemon
-# Copyright (C) 2014 Webshell SAS
-#
-# LICENCE HERE
+events = require('events')
 
-# the engine object
-# contains raw features
 module.exports = (env) ->
 	return  {
+		initEnv: () ->
+			env.events = new events.EventEmitter()
+			env.middlewares =  {
+				always: []
+			}
 		initConfig: () ->
 			env.config = require('./config')(env)
 		initUtilities: () ->
@@ -16,6 +16,3 @@ module.exports = (env) ->
 		initPluginsEngine: () ->
 			env.pluginsEngine = require('./pluginsEngine')(env)
 	}
-
-	
-		

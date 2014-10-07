@@ -11,6 +11,7 @@ module.exports = (plugin_repo, cwd) ->
 	if not plugin_repo?
 		return console.log 'Please provide a repository address for the plugin to install'
 	temp_location = cwd + '/plugins/cloned'
+
 	rimraf temp_location, (err) ->
 		return defer.reject(err) if err
 		fs.mkdirSync temp_location

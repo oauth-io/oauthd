@@ -26,7 +26,7 @@ module.exports = (env) ->
 		server_options.key = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' + env.config.ssl.key)
 		server_options.certificate = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' +  env.config.ssl.certificate)
 		server_options.ca = fs.readFileSync Path.resolve(env.config.rootdir, env.config.ssl.ca) if env.config.ssl.ca
-		console.log 'SSL is enabled !'
+		env.debug 'SSL is enabled !'
 	server_options.formatters = env.utilities.formatters.formatters
 
 	env.server = server = restify.createServer server_options
@@ -61,7 +61,7 @@ module.exports = (env) ->
 				listen_args.push env.config.bind if env.config.bind
 				listen_args.push (err) =>
 					return callback err if err
-					console.log '%s listening at %s for %s', server.name, server.url, env.config.host_url
+					env.debug '%s listening at %s for %s', server.name, server.url, env.config.host_url
 					env.events.emit 'server', null
 					callback null, server
 
