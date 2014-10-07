@@ -108,20 +108,38 @@ module.exports = (env) ->
 
 
 	# Exports
-
+	# overall, check englobes a method given as last argument, and returns a hat function
+	# this hat function will first check all given arguments, fail if one is not right
+	# and finally call the hatted fn if they are all right
 	check = ->
+		# pops the last arg into checked, arguments loses its last arg
 		checked = Array.prototype.pop.call arguments, arguments
 		formats = arguments
 		return =>
+			# Here arguments is the array of arguments of the called returned method
+			
+			# shallow copies the arguments array
 			args = Array.prototype.slice.call arguments
+			# pops last value of args, not of arguments (as args is a copy)
 			callback = args.pop()
+
+			# formats is the arguments array of the check method
 			if args.length != formats.length
-				return callback new CheckError 'Bad parameters count'
+				# if the arguments count of the second fn is not the same as the the original hat fn 
+				# (without callbacks of course). Means that the arguments given to the function are wrong
+				return callback new CheckError 'Bad parameters count' 
+			
+			# Creates a new instance of CheckError
 			error = new CheckError
+			# loops through the format parameters
 			for i,argformat of formats
+				# error check returns false if the args[i] is not the argformat
 				if not error.check(args[i], argformat) and not error.failed()
 					error.error 'Bad parameters format'
+			# error failed returns true if some argument wasn't in the right format
+			# here we call callback (the last argument given to the )
 			return callback error if error.failed()
+			# if all args were right, call the hatted fn with the original arguments
 			return checked.apply @, arguments
 
 	check.clone = (cloned) -> =>
