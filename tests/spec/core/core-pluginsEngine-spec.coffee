@@ -96,9 +96,85 @@ describe 'Core - env.pluginsEngine module', () ->
 				expect(list).toContain("plugin_test")
 				done()
 
+	it 'env.pluginsEngine.run on the setup method should increment a variable inside a plugin', (done) ->
+		plugin_test = {}
+		plugin_test.testVar = 0
+		plugin_test.setup = (callback) ->
+			plugin_test.testVar++
+			callback()
+		env.plugins["plugin_test"] = plugin_test
+
+		expect(env.plugins.plugin_test.testVar).toBe(0)
+		env.pluginsEngine.run 'setup', =>
+			expect(env.plugins.plugin_test.testVar).toBe(1)
+			done()
+
+	it 'env.pluginsEngine.runSync on the init method should increment a variable inside a plugin', (done) ->
+		plugin_test = {}
+		plugin_test.testVar = 0
+		plugin_test.init = () ->
+			plugin_test.testVar++
+		env.plugins["plugin_test"] = plugin_test
+
+		expect(env.plugins.plugin_test.testVar).toBe(0)
+		try
+			env.pluginsEngine.runSync 'init'
+		finally
+			expect(env.plugins.plugin_test.testVar).toBe(1)
+			done()
 
 
+	it 'env.pluginsEngine.run on the setup method should verify asynchronism of a variable incrementation', (done) ->
+		plugin_test1 = {}
+		env.test1Var = 0
+		plugin_test1.setup = (callback) ->
+			env.test1Var = 1
+			setTimeout ( ->
+					env.test1Var = 42
+					callback()
+				), 3000
+		plugin_test2 = {}
+		plugin_test2.setup = (callback) ->
+			expect(env.test1Var).toBe(42)
+			env.test1Var++
+			callback()
+		env.plugins["plugin_test1"] = plugin_test1
+		env.plugins["plugin_test2"] = plugin_test2
 
+		expect(env.test1Var).toBe(0)
+		env.pluginsEngine.run 'setup', =>
+			expect(env.test1Var).toBe(43)
+			done()
+
+	it 'env.pluginsEngine.runSync on the init method should verify synchronism of variables incrementation', (done) ->
+		env.test2Var = 0
+		plugin_test1 = {}
+		plugin_test1.init = () ->
+			env.test2Var = 1
+			setTimeout ( =>
+					env.test2Var = 42
+				), 3000
+		plugin_test2 = {}
+		plugin_test2.init = () ->
+			expect(env.test2Var).toBe(1)
+			env.test2Var++
+			setTimeout ( =>
+					expect(env.test2Var).toBe(42)
+					env.test2Var++
+				), 3000
+		env.plugins["plugin_test1"] = plugin_test1
+		env.plugins["plugin_test2"] = plugin_test2
+
+		expect(env.test2Var).toBe(0)
+		try
+			env.pluginsEngine.runSync 'init'
+		finally
+			expect(env.test2Var).toBe(2)
+			setTimeout ( =>
+					expect(env.test2Var).toBe(43)
+					done()
+				), 3000
+			
 
 
 
