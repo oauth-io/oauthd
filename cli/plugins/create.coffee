@@ -24,7 +24,8 @@ module.exports = (name, force) ->
 					if not obj?
 						obj = {}
 					obj.name = name
-					jf.writeFile path + 'plugin.json', obj, (err) ->
+					console.log obj
+					jf.writeFile path + '/plugin.json', obj, (err) ->
 						return defer.reject err if err
 						exec 'cd ' + path + '&& git init', (error, stdout, stderr) ->
 							if not error
