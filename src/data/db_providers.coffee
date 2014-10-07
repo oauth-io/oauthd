@@ -86,11 +86,10 @@ module.exports = (env) ->
 		else
 			return callback null, ({provider:k, name:v.name} for k,v of providers._list)
 
-	# get a provider's description
-	exp.get = (provider, callback) ->
-		provider_name = provider
+	# get a provider's description by his name
+	exp.get = (provider_name, callback) ->
 		providers_dir = config.rootdir + '/providers'
-		provider = Path.resolve providers_dir, provider + '/conf.json'
+		provider = Path.resolve providers_dir, provider_name + '/conf.json'
 		if Path.relative(providers_dir, provider).substr(0,2) == ".."
 			return callback new check.Error 'Not authorized'
 

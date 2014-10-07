@@ -1,7 +1,11 @@
+Path = require "path"
+
 testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
 dataModule = require testConfig.project_root + '/src/data'
 env = {}
+
+logs = []
 describe 'Data - providers module', () ->
 	beforeEach () ->
 		env = {
@@ -15,11 +19,34 @@ describe 'Data - providers module', () ->
 
 		env.debug = () ->
 			logs.push(arguments)
+		logs = []
 
-	xit 'Provider list retrieval - env.data.providers.getList', (done) ->
-		done()
+	it 'Provider list retrieval - env.data.providers.getList', (done) ->
+		expect(env.data.providers.getList).toBeDefined()
+		expect(typeof env.data.providers.getList).toBe("function")
 
-	xit 'Provider retrieval - env.data.providers.get', (done) ->
+		env.data.providers.getList (err, list) ->
+			expect(err).toBeNull()
+			expect(list).toBeDefined()
+			expect(Array.isArray(list)).toBe(true)
+			if list.length > 0
+				expect(list[0].provider).toBeDefined()
+				expect(list[0].provider).not.toBeNull()
+				expect(list[0].name).toBeDefined()
+				expect(list[0].name).not.toBeNull()
+			done()
+
+	it 'Provider retrieval - env.data.providers.get', (done) ->
+		providers_dir = env.config.rootdir + '/providers'
+		provider_name = "myProvider"
+		provider_folder = Path.resolve providers_dir, provider_name
+		provider = Path.resolve providers_dir, provider_name + '/conf.json'
+		
+		env.data.providers.get "myProvider", (err, provider) ->
+			expect(err).toBeDefined()
+			expect(err).not.toBeNull()
+			expect(provider).toBeUndefined()
+			# [Error: No such provider: myProvider] message: 'No such provider: myProvider', body: {}
 		done()
 
 	xit 'Provider settings retrieval - env.data.providers.getSettings', (done) ->

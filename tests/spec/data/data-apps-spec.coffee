@@ -388,6 +388,12 @@ describe 'Data - apps module', () ->
 					expect(keysets[0]).toBe('someprovider')
 					done()
 
+	xit 'Application keyset removal - env.data.apps.remKeyset', (done) ->
+		done()
+
+	xit 'Application keyset retrieval with response type - env.data.apps.getKeysetWithResponseType', (done) ->
+		done()
+
 	it 'Application keyset retrieval with right response_types - env.data.apps.getKeysets (success case)', (done) ->
 		async.series [
 			(next) ->
@@ -428,8 +434,9 @@ describe 'Data - apps module', () ->
 
 		], () ->
 			done()
-					  
-
+	
+	xit 'Application domain verification - env.data.apps.checkDomain', (done) ->
+		done()
 
 	it 'Application owner retrieval - env.data.apps.getOwner', (done) ->
 		uid = 'appownerretrievaltestest'
