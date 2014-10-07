@@ -315,9 +315,6 @@ describe 'Data - apps module', () ->
 		], () ->
 			done()
 
-	xit 'Application domain check - env.data.apps.checkDomain', (done) ->
-		done()
-
 	it 'Application backend set - env.data.apps.setBackend (success case)', (done) ->
 		uid = 'appbackendsettestesttes'
 		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
@@ -377,11 +374,85 @@ describe 'Data - apps module', () ->
 					finally
 						expect(keyset.hello).toBe('world')
 						done()
+
+
+	it 'Application keysets retrieval - env.data.apps.getKeysets (success case)', (done) ->
+		uid = 'appkeysetsgetttestesttes'
+		env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+			env.data.apps.addKeyset app.key, 'someprovider', { parameters: { hello: 'world' } }, (err) ->
+				expect(err).toBeUndefined()
+				env.data.apps.getKeysets app.key, (err, keysets) ->
+					expect(err).toBeNull()
+					expect(keysets.length).toBe(1)
+					expect(keysets[0]).toBe('someprovider')
+					done()
+
+	it 'Application keyset retrieval with right response_types - env.data.apps.getKeysets (success case)', (done) ->
+		async.series [
+			(next) ->
+				uid = 'appkeysetgettttestesttes'
+				env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+					env.data.apps.addKeyset app.key, 'someprovider', { parameters: { hello: 'world' } }, (err) ->
+						expect(err).toBeUndefined()
+						env.data.apps.getKeyset app.key, 'someprovider', (err, keyset) ->
+							expect(err).toBeNull()
+							expect(keyset.parameters).toBeDefined()
+							expect(keyset.parameters.hello).toBe('world')
+							expect(keyset.response_type).toBe('token')
+							next()
+			(next) ->
+				uid = 'appkeysetget2ttestesttes'
+				env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+					env.data.apps.setBackend app.key, 'php', {}, (err) ->
+						env.data.apps.addKeyset app.key, 'someprovider', { parameters: { hello: 'world' } }, (err) ->
+							expect(err).toBeUndefined()
+							env.data.apps.getKeyset app.key, 'someprovider', (err, keyset) ->
+								expect(err).toBeNull()
+								expect(keyset.parameters).toBeDefined()
+								expect(keyset.parameters.hello).toBe('world')
+								expect(keyset.response_type).toBe('code')
+								next()
+			(next) ->
+				uid = 'appkeysetget3ttestesttes'
+				env.data.apps.create {name: 'myapp'}, {id: 13}, (err, app) ->
+					env.data.apps.setBackend app.key, 'php', { client_side: true }, (err) ->
+						env.data.apps.addKeyset app.key, 'someprovider', { parameters: { hello: 'world' } }, (err) ->
+							expect(err).toBeUndefined()
+							env.data.apps.getKeyset app.key, 'someprovider', (err, keyset) ->
+								expect(err).toBeNull()
+								expect(keyset.parameters).toBeDefined()
+								expect(keyset.parameters.hello).toBe('world')
+								expect(keyset.response_type).toBe('both')
+								next()
+
+		], () ->
+			done()
 					  
 
 
-	xit 'Application owner retrieval - env.data.apps.getOwner', (done) ->
-		done()
+	it 'Application owner retrieval - env.data.apps.getOwner', (done) ->
+		uid = 'appownerretrievaltestest'
+		env.data.apps.create {name: 'myapp'}, {id: 54}, (err, app) ->
+			env.data.apps.getOwner app.key, (err, user) ->
+				expect(err).toBeNull()
+				expect(typeof user).toBe('object')
+				expect(user.id).toBeDefined()
+				expect(user.id).toBe(54)
+				done()
 
-	xit 'Application secret check - env.data.apps.checkSecret', (done) ->
-		done()
+	it 'Application secret check - env.data.apps.checkSecret (success case)', (done) ->
+		uid = 'appsecretchecktestesteste'
+		env.data.apps.create {name: 'myapp'}, { id: 55 }, (err, app) ->
+			env.data.apps.checkSecret app.key, uid, (err, bool) ->
+				expect(err).toBeNull()
+				expect(bool).toBe(true)
+				done()
+
+	it 'Application secret check - env.data.apps.checkSecret (error cases)', (done) ->
+		uid = 'appsecretchecktestesteste'
+		uid2 = 'appsecretchecktestesseste'
+		env.data.apps.create {name: 'myapp'}, { id: 55 }, (err, app) ->
+			env.data.apps.checkSecret app.key, uid2, (err, bool) ->
+				expect(err).toBeNull()
+				expect(bool).toBe(false)
+				done()
