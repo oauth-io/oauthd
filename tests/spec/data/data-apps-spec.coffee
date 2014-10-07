@@ -1,4 +1,3 @@
-tk = require('timekeeper')
 testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
 dataModule = require testConfig.project_root + '/src/data'

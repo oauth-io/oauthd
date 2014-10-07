@@ -130,7 +130,7 @@ module.exports = (env) ->
 				return callback new CheckError 'Bad parameters count' 
 			
 			# Creates a new instance of CheckError
-			error = new CheckError
+			error = new CheckError 'Bad parameters format'
 			# loops through the format parameters
 			for i,argformat of formats
 				# error check returns false if the args[i] is not the argformat
