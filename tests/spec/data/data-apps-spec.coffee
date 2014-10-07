@@ -3,6 +3,7 @@ testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
 dataModule = require testConfig.project_root + '/src/data'
 async = require 'async'
+
 describe 'Data - apps module', () ->
 
 	env = {

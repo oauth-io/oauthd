@@ -14,34 +14,35 @@ describe 'Core - env.pluginsEngine module', () ->
 			consolelogs.push(arguments)
 
 		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
+		consolelogs = []
 
 	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should fail when there is no \'plugin.json\' file.', (done) ->
-		logs = []
-		env.debug = () ->
-			logs.push arguments
+		expect(env.pluginsEngine.init).toBeDefined()
+		expect(typeof env.pluginsEngine.init).toBe("function")
+
 		env.pluginsEngine.init process.cwd(), (err) ->
 			expect(err).toBe(true)
-			expect(logs[0][0]).toBe("An error occured: Error: ENOENT, open \'" + process.cwd() + "/plugins.json\'")
+			expect(consolelogs[0][0]).toBe("An error occured: Error: ENOENT, open \'" + process.cwd() + "/plugins.json\'")
 			done()
 
 	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should fail on requiring \'plugin_test\' entry point when it doesn\'t exist', (done) ->
-		logs = []
-		env.debug = () ->
-			logs.push arguments
+		expect(env.pluginsEngine.init).toBeDefined()
+		expect(typeof env.pluginsEngine.init).toBe("function")
+
 		command = 'rm -rf ' + process.cwd() + '/tests/instance_test/plugins/plugin_test/bin'
 		exec = require('child_process').exec
 		exec command, (error, stdout, stderr) ->
 			expect(error).toBeNull()
 			env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 				expect(err).toBe(false)
-				expect(logs[0][0]).toBe("Loading \'plugin_test\'.")
-				expect(logs[1][0]).toBe("Error requiring plugin \'plugin_test\' entry point.")
+				expect(consolelogs[0][0]).toBe("Loading \'plugin_test\'.")
+				expect(consolelogs[1][0]).toBe("Error requiring plugin \'plugin_test\' entry point.")
 				done()
 
 	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after launching grunt command in that folder', (done) ->
-		logs = []
-		env.debug = () ->
-			logs.push arguments
+		expect(env.pluginsEngine.init).toBeDefined()
+		expect(typeof env.pluginsEngine.init).toBe("function")
+
 		command = 'cd ' + process.cwd() + '/tests/instance_test/plugins/plugin_test && grunt'
 		exec = require('child_process').exec
 		exec command, (error, stdout, stderr) ->
@@ -49,7 +50,7 @@ describe 'Core - env.pluginsEngine module', () ->
 			if not error
 				env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 					expect(err).toBe(false)
-					expect(logs[0][0]).toBe("Loading \'plugin_test\'.")
+					expect(consolelogs[0][0]).toBe("Loading \'plugin_test\'.")
 					expect(env.pluginsEngine.plugin['plugin_test']).toBeDefined()
 					expect(env.pluginsEngine.plugin['plugin_test'].getMyName()).toBe("plugin_test")
 					command = 'rm -rf ' + process.cwd() + '/tests/instance_test/plugins/plugin_test/bin'
@@ -59,35 +60,35 @@ describe 'Core - env.pluginsEngine module', () ->
 						done()
 
 	it 'env.pluginsEngine.load should throw an exception when loading unexisting \'undefined_plugin\'.', (done) ->
-		logs = []
-		env.debug = () ->
-     		logs.push arguments
+		expect(env.pluginsEngine.load).toBeDefined()
+		expect(typeof env.pluginsEngine.load).toBe("function")
+
 		try
 			expect(env.pluginsEngine.load 'undefined_plugin')
 		catch e
 			env.debug "err", e if e
 		finally
-			expect(logs[0][0]).toBe("Loading \'undefined_plugin\'.")
-			expect(logs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
-			expect(logs[2][0]).toBe("Error requiring plugin \'undefined_plugin\' entry point.")
+			expect(consolelogs[0][0]).toBe("Loading \'undefined_plugin\'.")
+			expect(consolelogs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
+			expect(consolelogs[2][0]).toBe("Error requiring plugin \'undefined_plugin\' entry point.")
 			expect(env.pluginsEngine.plugin['undefined_plugin']).toBeUndefined()
 			expect(env.plugins['undefined_plugin']).toBeUndefined()
 			expect(env.plugins.undefined_plugin).toBeUndefined()
 			done()
 
 	it 'env.pluginsEngine.list should throw an err when pluginsEngine is not init with the good cwd path', (done) ->
-		logs = []
-		env.debug = () ->
-			logs.push arguments
+		expect(env.pluginsEngine.list).toBeDefined()
+		expect(typeof env.pluginsEngine.list).toBe("function")
+
 		env.pluginsEngine.list (err, list) ->
 			expect(err).toBeDefined()
 			expect(list).toBeUndefined()
 			done()
 
 	it 'env.pluginsEngine.list should return an array containing \'plugin_test\'', (done) ->
-		logs = []
-		env.debug = () ->
-			logs.push arguments
+		expect(env.pluginsEngine.list).toBeDefined()
+		expect(typeof env.pluginsEngine.list).toBe("function")
+
 		env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 			expect(err).toBe(false)
 			env.pluginsEngine.list (err, list) ->
@@ -97,6 +98,9 @@ describe 'Core - env.pluginsEngine module', () ->
 				done()
 
 	it 'env.pluginsEngine.run on the setup method should increment a variable inside a plugin', (done) ->
+		expect(env.pluginsEngine.run).toBeDefined()
+		expect(typeof env.pluginsEngine.run).toBe("function")
+
 		plugin_test = {}
 		plugin_test.testVar = 0
 		plugin_test.setup = (callback) ->
@@ -110,6 +114,9 @@ describe 'Core - env.pluginsEngine module', () ->
 			done()
 
 	it 'env.pluginsEngine.runSync on the init method should increment a variable inside a plugin', (done) ->
+		expect(env.pluginsEngine.runSync).toBeDefined()
+		expect(typeof env.pluginsEngine.runSync).toBe("function")
+
 		plugin_test = {}
 		plugin_test.testVar = 0
 		plugin_test.init = () ->
@@ -125,6 +132,9 @@ describe 'Core - env.pluginsEngine module', () ->
 
 
 	it 'env.pluginsEngine.run on the setup method should verify asynchronism of a variable incrementation', (done) ->
+		expect(env.pluginsEngine.run).toBeDefined()
+		expect(typeof env.pluginsEngine.run).toBe("function")
+
 		plugin_test1 = {}
 		env.test1Var = 0
 		plugin_test1.setup = (callback) ->
@@ -147,6 +157,9 @@ describe 'Core - env.pluginsEngine module', () ->
 			done()
 
 	it 'env.pluginsEngine.runSync on the init method should verify synchronism of variables incrementation', (done) ->
+		expect(env.pluginsEngine.runSync).toBeDefined()
+		expect(typeof env.pluginsEngine.runSync).toBe("function")
+
 		env.test2Var = 0
 		plugin_test1 = {}
 		plugin_test1.init = () ->
