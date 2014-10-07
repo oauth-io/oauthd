@@ -6,7 +6,10 @@ jf = require 'jsonfile'
 installPlugin = require('./install')
 colors = require 'colors'
 exec = require('child_process').exec
+Q = require('q')
 module.exports = (cli) ->
+	main_defer = Q.defer()
+
 	cli.argv._.shift()
 
 	if cli.argv._[0] is 'list'
@@ -33,7 +36,6 @@ module.exports = (cli) ->
 					exec 'npm install; grunt;', (error, stdout, stderr) ->
 						console.log 'Done'
 		else
-
 			try
 				plugins = JSON.parse(fs.readFileSync process.cwd() + '/plugins.json', { encoding: 'UTF-8' })
 			catch e
@@ -46,16 +48,22 @@ module.exports = (cli) ->
 						do (v) ->
 							if not promise?
 								promise =  installPlugin(v, process.cwd())
-								console.log v
 							else
 								promise = promise.then () ->
-									console.log '!', v
 									return installPlugin(v, process.cwd())
 				promise
 					.then () ->
-						console.log 'Running npm install and grunt'.green + ' This may take a few minutes'.yellow
-						exec 'npm install; grunt;', (error, stdout, stderr) ->
-							console.log 'Done'
+						if (cli.__mode != 'prog')
+							console.log 'Running npm install and grunt'.green + ' This may take a few minutes'.yellow
+							exec 'npm install; grunt;', (error, stdout, stderr) ->
+								console.log 'Done'
+								main_defer.resolve()
+						else
+							main_defer.resolve()
 					.fail (e) ->
 						console.log 'ERROR'.red, e.message.yellow
+						main_defer.reject()
+	
+	return main_defer.promise
+
 

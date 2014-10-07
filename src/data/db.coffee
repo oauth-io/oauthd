@@ -20,7 +20,7 @@ crypto = require 'crypto'
 module.exports = (env) ->
 	data = {}
 
-	if env.mode is not 'test'
+	if env.mode != 'test'
 		redis = require 'redis'	
 	else
 		redis = require 'fakeredis'	
