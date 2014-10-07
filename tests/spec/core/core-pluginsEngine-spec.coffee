@@ -96,6 +96,19 @@ describe 'Core - env.pluginsEngine module', () ->
 				expect(list).toContain("plugin_test")
 				done()
 
+	it 'env.pluginsEngine.run on the setup method should increment a variable inside a plugin', (done) ->
+		plugin_test = {}
+		plugin_test.testVar = 0
+		plugin_test.setup = (callback) ->
+			plugin_test.testVar++
+			callback()
+		env.plugins["plugin_test"] = plugin_test
+
+		expect(env.plugins.plugin_test.testVar).toBe(0)
+		env.pluginsEngine.run 'setup', =>
+			expect(env.plugins.plugin_test.testVar).toBe(1)
+			done()
+
 
 
 
