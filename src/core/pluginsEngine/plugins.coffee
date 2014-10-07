@@ -74,7 +74,7 @@ module.exports = (env) ->
 				for key, value of obj
 					list.push key
 			return callback null, list
-	
+
 	pluginsEngine.run = (name, args, callback) ->
 		if typeof args == 'function'	
 			callback = args
