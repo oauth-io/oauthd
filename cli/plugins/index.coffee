@@ -64,6 +64,22 @@ module.exports = (cli) ->
 						console.log 'ERROR'.red, e.message.yellow
 						main_defer.reject()
 	
+	
+
+	if cli.argv._[0] is 'create'
+		cli.argv._.shift()
+		force = cli.argv.force == null
+		save = cli.argv.save == null
+		name = cli.argv._[0]
+		require('./create')(name, force, save)
+			.then () ->
+				defer.resolve()
+			.fail () ->
+				defer.reject()
+
+
+
 	return main_defer.promise
+
 
 
