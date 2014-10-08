@@ -69,8 +69,9 @@ module.exports = (cli) ->
 	if cli.argv._[0] is 'create'
 		cli.argv._.shift()
 		force = cli.argv.force == null
+		save = cli.argv.save == null
 		name = cli.argv._[0]
-		require('./create')(name, force)
+		require('./create')(name, force, save)
 			.then () ->
 				defer.resolve()
 			.fail () ->

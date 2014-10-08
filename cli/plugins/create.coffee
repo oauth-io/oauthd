@@ -8,7 +8,7 @@ Q = require 'q'
 
 
 
-module.exports = (name, force) ->
+module.exports = (name, force, save) ->
 	defer = Q.defer()
 
 	path = process.cwd() + '/plugins/' + name
@@ -24,14 +24,28 @@ module.exports = (name, force) ->
 					if not obj?
 						obj = {}
 					obj.name = name
-					console.log obj
 					jf.writeFile path + '/plugin.json', obj, (err) ->
 						return defer.reject err if err
 						exec 'cd ' + path + '&& git init', (error, stdout, stderr) ->
-							if not error
-								console.log 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name
+							if save
+								jf.readFile process.cwd() + '/plugins.json', (err, plugins) ->
+									return defer.reject err if err
+									plugins[name] = ""
+									jf.writeFile process.cwd() + '/plugins.json', plugins, (err) ->
+										if err
+											console.log err
+											console.log 'An error occured while initializing the plugin git repo'.red
+											return defer.reject err
+										console.log 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name
+
+										defer.resolve()
 							else
-								console.log 'An error occured while initializing the plugin git repo'.red
+								if not error
+									console.log 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name
+									defer.resolve()
+								else
+									console.log 'An error occured while initializing the plugin git repo'.red
+									defer.reject error
 	else
 		console.log 'The plugin ' + name.yellow + ' already exists. To override, use ' + '--force'.green
 
