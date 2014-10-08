@@ -162,7 +162,7 @@ describe 'Data - apps module', () ->
 		env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
 			env.data.apps.update app.key, undefined, (err) ->
 				expect(err).toBeDefined()
-				expect(err.message).toBe('Invalid format')
+				expect(err.message).toBe('Bad parameters format')
 				done()
 
 		# unexisting app
@@ -229,7 +229,7 @@ describe 'Data - apps module', () ->
 				env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
 					env.data.apps.updateDomains uid, undefined, (err) ->
 						expect(err).toBeDefined()
-						expect(err.message).toBe('Invalid format')
+						expect(err.message).toBe('Bad parameters format')
 						next()		
 		], () ->
 			done()
@@ -260,7 +260,7 @@ describe 'Data - apps module', () ->
 				env.data.apps.create {name:'myapp'}, { id: 12 }, (err, app) ->
 					env.data.apps.addDomain uid, undefined, (err) ->
 						expect(err).toBeDefined()
-						expect(err.message).toBe('Invalid format')
+						expect(err.message).toBe('Bad parameters format')
 						next()		
 		], () ->
 			done()
@@ -387,6 +387,12 @@ describe 'Data - apps module', () ->
 					expect(keysets[0]).toBe('someprovider')
 					done()
 
+	xit 'Application keyset removal - env.data.apps.remKeyset', (done) ->
+		done()
+
+	xit 'Application keyset retrieval with response type - env.data.apps.getKeysetWithResponseType', (done) ->
+		done()
+
 	it 'Application keyset retrieval with right response_types - env.data.apps.getKeysets (success case)', (done) ->
 		async.series [
 			(next) ->
@@ -427,8 +433,9 @@ describe 'Data - apps module', () ->
 
 		], () ->
 			done()
-					  
-
+	
+	xit 'Application domain verification - env.data.apps.checkDomain', (done) ->
+		done()
 
 	it 'Application owner retrieval - env.data.apps.getOwner', (done) ->
 		uid = 'appownerretrievaltestest'

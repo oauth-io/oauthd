@@ -2,7 +2,7 @@ testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
 dataModule = require testConfig.project_root + '/src/data'
 env = {}
-describe 'Data - states module', () ->
+describe 'Data - db module', () ->
 	logs = []
 	beforeEach () ->
 		env = {
@@ -13,21 +13,17 @@ describe 'Data - states module', () ->
 		coreModule(env).initConfig()
 		coreModule(env).initUtilities()
 		dataModule(env)
-
+		logs = []
 		env.debug = () ->
 			logs.push(arguments)
 
-	xit 'State creation - env.data.states.add', (done) ->
+	xit 'uid generation - env.data.generateUid', (done) ->
 		done()
 
-	xit 'State info retrieval - env.data.states.get', (done) ->
+	xit 'hash generation - env.data.generateHash', (done) ->
 		done()
 
-	xit 'State info update - env.data.states.set', (done) ->
+	xit 'empty string generation - env.data.emptyStrIfNull', (done) ->
 		done()
 
-	xit 'State deletion - env.data.states.del', (done) ->
-		done()
 
-	xit 'State token set - env.data.states.setToken', (done) ->
-		done()
