@@ -23,9 +23,9 @@ module.exports = (env) ->
 		version: '1.0.0'
 
 	if env.config.ssl
-		server_options.key = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' + env.config.ssl.key)
-		server_options.certificate = fs.readFileSync Path.resolve(env.config.rootdir, process.cwd() + '/' +  env.config.ssl.certificate)
-		server_options.ca = fs.readFileSync Path.resolve(env.config.rootdir, env.config.ssl.ca) if env.config.ssl.ca
+		server_options.key = fs.readFileSync env.config.ssl.key
+		server_options.certificate = fs.readFileSync env.config.ssl.certificate
+		server_options.ca = fs.readFileSync env.config.ssl.ca if env.config.ssl.ca
 		env.debug 'SSL is enabled !'
 	server_options.formatters = env.utilities.formatters.formatters
 
