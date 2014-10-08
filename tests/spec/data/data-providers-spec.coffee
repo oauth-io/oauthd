@@ -37,17 +37,20 @@ describe 'Data - providers module', () ->
 			done()
 
 	it 'Provider retrieval - env.data.providers.get', (done) ->
-		providers_dir = env.config.rootdir + '/providers'
-		provider_name = "myProvider"
-		provider_folder = Path.resolve providers_dir, provider_name
-		provider = Path.resolve providers_dir, provider_name + '/conf.json'
+		# to mock fs - not working yet :(
+		# providers_dir = env.config.rootdir + '/providers'
+		# provider_name = "myProvider"
+		# provider_folder = Path.resolve providers_dir, provider_name
+		# provider = Path.resolve providers_dir, provider_name + '/conf.json'
 		
-		env.data.providers.get "myProvider", (err, provider) ->
+		env.data.providers.get "undefined_provider", (err, conf) ->
 			expect(err).toBeDefined()
 			expect(err).not.toBeNull()
-			expect(provider).toBeUndefined()
-			# [Error: No such provider: myProvider] message: 'No such provider: myProvider', body: {}
-		done()
+			expect(conf).toBeUndefined()
+			env.data.providers.get "facebook", (err, conf) ->
+				expect(err).toBeNull()
+				expect(conf).toBeDefined()
+				done()
 
 	xit 'Provider settings retrieval - env.data.providers.getSettings', (done) ->
 		done()

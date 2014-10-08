@@ -75,7 +75,7 @@ module.exports = (env) ->
 							cmds.push (callback) ->
 								exp.get provider, (err, data) ->
 									if err
-										console.error "Error in " + provider + ".json:", err, "skipping this provider"
+										env.debug "Error in " + provider + ".json:", err, "skipping this provider"
 										return callback null
 									providers._list[provider] ?= cached:false, name:(data.name || provider)
 									callback null
