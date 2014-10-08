@@ -7,6 +7,7 @@ Q = require 'q'
 
 Path = require 'path'
 async = require "async"
+colors = require "colors"
 
 # request FIX
 qs = require 'request/node_modules/qs'
