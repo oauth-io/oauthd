@@ -41,6 +41,7 @@ module.exports = (env) ->
 		catch
 			env.debug 'Absent plugin.json for plugin \'' + plugin_name + '\'.'
 			plugin_data = {}
+		console.log "pluginsEngine.load plugin_data", plugin_data
 		if plugin_data.main?
 			entry_point = '/' + plugin_data.main
 		else
@@ -57,6 +58,7 @@ module.exports = (env) ->
 		env.pluginsEngine.cwd = cwd
 
 		plugins = fs.readdirSync cwd + '/plugins'
+		console.log "pluginsEngine.init plugins", plugins
 		for k,plugin of plugins
 			stat = fs.statSync cwd + '/plugins/' + plugin
 			if stat.isDirectory() # && fs.exists cwd + '/plugins/plugin.json'
