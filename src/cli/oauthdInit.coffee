@@ -54,11 +54,11 @@ module.exports = () ->
 						.then () ->
 							installPlugin("https://github.com/william26/oauthd_default_plugin_front", process.cwd() + "/" + results.name)
 						.then () ->
-							defer.promise(results.name)
+							defer.resolve(results.name)
 						.fail (e) ->
 							return defer.reject e if e
 					else
-						defer.promise(results.name)
+						defer.resolve(results.name)
 
 	defer.promise
 

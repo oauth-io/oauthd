@@ -12,7 +12,7 @@ endOfInit = (name, showGrunt) ->
 		command += ' && grunt'
 	else
 		info += '.'
-	console.log info.green + '. Please wait, this might take up to a few minutes'.yellow
+	console.log info.green + ' Please wait, this might take up to a few minutes.'.yellow
 	exec = require('child_process').exec
 	exec command, (error, stdout, stderr) ->
 		if error
@@ -35,7 +35,7 @@ if cli.argv._[0] == 'init'
 
 # starts oauthd
 if cli.argv._[0] == 'start'
-	require('../../../index').init()
+	require('../oauthd').init()
 
 # plugin management
 if cli.argv._[0] == 'plugins'
