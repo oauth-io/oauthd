@@ -80,7 +80,7 @@ module.exports = (env) ->
 						secret:replies[2],
 						owner: replies[3]
 					}
-					if parseInt(app.owner) == parseInt(owner_id)
+					if app.owner == owner_id
 						apps.push app
 					next()
 			, (err) ->
