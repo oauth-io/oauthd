@@ -35,7 +35,7 @@ module.exports = function(grunt) {
             main: {
                 files: [{
                     expand: true,
-                    src: ['**/*.less', '**/*.html', '**/*.json', '**/*.md','**/*.png', '**/*.js', '**/*.eot', '**/*.css', '**/*.svg', '**/*.ttf', '**/*.woff', '**/*.otf', '**/*.ico'],
+                    src: ['!**/*.coffee'],
                     dest: 'bin',
                     cwd: 'src'
                 }, ]

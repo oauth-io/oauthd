@@ -1,8 +1,9 @@
 fs = require 'fs'
 prompt = require 'prompt'
-installPlugin = require('./plugins/install')
+installPlugin = require('../scaffolding/plugins/install')
 colors = require 'colors'
 Q = require 'q'
+ncp = require 'ncp'
 
 module.exports = () ->
 	defer = Q.defer()
@@ -26,10 +27,9 @@ module.exports = () ->
 			return
 		console.log 'Generating a folder for ' + results.name
 		fs.stat './' + results.name, (err, stats) ->
-			return defer.reject err if err
 			if not stats
 				fs.mkdirSync './' + results.name
-			ncp __dirname + '/../../scaffolding/templates/basis_structure', process.cwd() + '/' + results.name, (err) ->
+			ncp __dirname + '/../scaffolding/templates/basis_structure', process.cwd() + '/' + results.name, (err) ->
 				return defer.reject err if err
 				schema = {
 					properties:
