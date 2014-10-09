@@ -9,7 +9,7 @@ colors = require 'colors'
 
 endOfInit = (name, showGrunt) ->
 	info = 'Running npm install'
-	command = 'cd '+ name + '&& npm install'
+	command = 'cd '+ name + ' && npm install'
 	if showGrunt
 		info += ' and grunt.'
 		command += ' && grunt'
@@ -18,9 +18,13 @@ endOfInit = (name, showGrunt) ->
 	console.log info.green + '. Please wait, this might take up to a few minutes'.yellow
 	exec = require('child_process').exec
 	exec command, (error, stdout, stderr) ->
-		console.log 'Done'
-		r_command = 'cd ' + name + ' && oauthd start'
-		console.log 'Thank you for using oauthd. Run ' + r_command.green + ' to start the instance'
+		if error
+			console.log "Error running command \"" + command + "\"."
+			console.log error
+		else
+			console.log 'Done'
+			r_command = 'cd ' + name + ' && oauthd start'
+			console.log 'Thank you for using oauthd. Run ' + r_command.green + ' to start the instance'
 
 # copies an instance basic folder in a new folder at current cwd
 if cli.argv._[0] == 'init'
@@ -64,15 +68,15 @@ if cli.argv._[0] == 'init'
 					prompt.get schema, (err, res2) ->
 						if not err
 							if res2.install_default_plugin is "yes"
-								installPlugin("git@github.com:william26/oauthd_default_plugin_auth.git", process.cwd() + "/" + results.name)
+								installPlugin("https://github.com/william26/oauthd_default_plugin_auth", process.cwd() + "/" + results.name)
 								.then () ->
-									installPlugin("git@github.com:william26/oauthd_default_plugin_me.git", process.cwd() + "/" + results.name)
+									installPlugin("https://github.com/william26/oauthd_default_plugin_me", process.cwd() + "/" + results.name)
 								.then () ->
-									installPlugin("git@github.com:william26/oauthd_default_plugin_request.git", process.cwd() + "/" + results.name)
+									installPlugin("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + results.name)
 								.then () ->
-									installPlugin("git@github.com:william26/oauthd_default_plugin_front.git", process.cwd() + "/" + results.name)
+									installPlugin("https://github.com/william26/oauthd_default_plugin_front", process.cwd() + "/" + results.name)
 								.then () ->
-									endOfInit(results.name)
+									endOfInit(results.name, true)
 								.fail (e) ->
 									console.log 'An error occured: '.red + e.message.yellow
 							else

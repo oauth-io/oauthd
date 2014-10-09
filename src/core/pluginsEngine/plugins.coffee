@@ -41,7 +41,6 @@ module.exports = (env) ->
 		catch
 			env.debug 'Absent plugin.json for plugin \'' + plugin_name + '\'.'
 			plugin_data = {}
-		console.log "pluginsEngine.load plugin_data", plugin_data
 		if plugin_data.main?
 			entry_point = '/' + plugin_data.main
 		else
@@ -50,20 +49,23 @@ module.exports = (env) ->
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + entry_point)(env)
 			env.config.plugins.push plugin_name
 			pluginsEngine.plugin[plugin_name] = plugin
-		catch 
-			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
+		catch e
+			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point. err:" + e 
 		return
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
-
-		plugins = fs.readdirSync cwd + '/plugins'
-		console.log "pluginsEngine.init plugins", plugins
-		for k,plugin of plugins
-			stat = fs.statSync cwd + '/plugins/' + plugin
-			if stat.isDirectory() # && fs.exists cwd + '/plugins/plugin.json'
-				pluginsEngine.load plugin
-		return callback null
+		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
+			if err
+				env.debug 'An error occured: ' + err
+				return callback true
+			if not obj?
+				obj = {}
+			for pluginname, pluginversion of obj
+				stat = fs.statSync cwd + '/plugins/' + pluginname
+				if stat.isDirectory()
+					pluginsEngine.load pluginname
+			return callback false
 
 	pluginsEngine.list = (callback) ->
 		list = []
