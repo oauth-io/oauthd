@@ -1,5 +1,6 @@
 async = require 'async'
 jf = require 'jsonfile'
+fs = require 'fs'
 
 module.exports = (env) ->
 	env.debug 'Initializing plugins engine'
@@ -54,15 +55,13 @@ module.exports = (env) ->
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
-		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
-			if err
-				env.debug 'An error occured: ' + err
-				return callback true
-			if not obj?
-				obj = {}
-			for pluginname, pluginversion of obj
-				pluginsEngine.load pluginname
-			return callback false
+
+		plugins = fs.readdirSync cwd + '/plugins'
+		for k,plugin of plugins
+			stat = fs.statSync cwd + '/plugins/' + plugin
+			if stat.isDirectory() # && fs.exists cwd + '/plugins/plugin.json'
+				pluginsEngine.load plugin
+		return callback null
 
 	pluginsEngine.list = (callback) ->
 		list = []
