@@ -80,6 +80,9 @@ module.exports = (env) ->
 						secret:replies[2],
 						owner: replies[3]
 					}
+					if typeof owner_id != 'string' && owner_id.toString?
+						owner_id = owner_id.toString()
+
 					if app.owner == owner_id
 						apps.push app
 					next()
