@@ -6,7 +6,7 @@ jf = require 'jsonfile'
 Q = require 'q'
 colors = require 'colors'
 
-module.exports = (plugin_repo, cwd) ->
+module.exports = (plugin_repo, cwd, save) ->
 	defer = Q.defer()
 	if not plugin_repo?
 		return console.log 'Please provide a repository address for the plugin to install'
@@ -33,17 +33,20 @@ module.exports = (plugin_repo, cwd) ->
 					
 					file =  cwd + '/plugins.json'
 					jf.spaces = 4
-					jf.readFile file, (err, obj) ->
-						return defer.reject(err) if err
-						if not obj?
-							obj = {}
-						if (not obj[plugin_data.name]?) # only add entry to plugins.json if not already there
-							obj[plugin_data.name] = plugin_repo
-							jf.writeFile file, obj, (err) ->
-								return defer.reject(err) if err
-								console.log 'Plugin "' + plugin_data.name + '" successfully added to the plugins list.'
+					if save or save == undefined
+						jf.readFile file, (err, obj) ->
+							return defer.reject(err) if err
+							if not obj?
+								obj = {}
+							if (not obj[plugin_data.name]?) # only add entry to plugins.json if not already there
+								obj[plugin_data.name] = plugin_repo
+								jf.writeFile file, obj, (err) ->
+									return defer.reject(err) if err
+									console.log 'Plugin "' + plugin_data.name + '" successfully added to the plugins list.'
+									defer.resolve()
+							else
 								defer.resolve()
-						else
-							defer.resolve()
+					else
+						defer.resolve()
 
 	defer.promise

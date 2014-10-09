@@ -30,9 +30,10 @@ module.exports = (cli) ->
 		cli.argv._.shift()
 		plugin_repo = cli.argv._[0]
 		if plugin_repo?
-			require('./install')(plugin_repo, process.cwd())
+			save = cli.argv.save == null
+			require('./install')(plugin_repo, process.cwd(), save)
 				.done () ->
-					console.log 'Running npm install and grunt'.green + ' This may take a few minutes'.yellow
+					console.log 'Running npm install and grunt..'.green + ' This may take a few minutes'.yellow
 					exec 'npm install; grunt;', (error, stdout, stderr) ->
 						console.log 'Done'
 		else
@@ -54,7 +55,7 @@ module.exports = (cli) ->
 				promise
 					.then () ->
 						if (cli.__mode != 'prog')
-							console.log 'Running npm install and grunt'.green + ' This may take a few minutes'.yellow
+							console.log 'Running npm install and grunt.. '.green + 'This might take a few minutes'.yellow
 							exec 'npm install; grunt;', (error, stdout, stderr) ->
 								console.log 'Done'
 								main_defer.resolve()
