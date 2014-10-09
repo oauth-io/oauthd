@@ -2,7 +2,7 @@ exec = require('child_process').exec
 easy_cli = require 'easy-cli'
 ncp = require 'ncp'
 cli = easy_cli()
-oauthdInit = require('./oauthdInit')
+scaffolding = require('../scaffolding')({ console: true })
 
 endOfInit = (name, showGrunt) ->
 	info = 'Running npm install'
@@ -26,7 +26,7 @@ endOfInit = (name, showGrunt) ->
 
 # copies an instance basic folder in a new folder at current cwd
 if cli.argv._[0] == 'init'
-	oauthdInit()
+	scaffolding.init()
 	.then (name) ->
 		endOfInit(name, true)
 	.fail (err) ->
