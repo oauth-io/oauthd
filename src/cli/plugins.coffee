@@ -1,20 +1,18 @@
-easy_cli = require 'easy-cli'
 fs = require 'fs'
 ncp = require 'ncp'
-prompt = require 'prompt'
-jf = require 'jsonfile'
 installPlugin = require('./install')
-colors = require 'colors'
 exec = require('child_process').exec
 Q = require('q')
+
 module.exports = (cli) ->
+	scaffolding_folder_path = "../scaffolding"
 	main_defer = Q.defer()
 
 	cli.argv._.shift()
 
 	if cli.argv._[0] is 'list'
 		cli.argv._.shift()
-		require('./list')()
+		require(scaffolding_folder_path + '/list')()
 
 	if cli.argv._[0] is 'uninstall' 
 		cli.argv._.shift()
@@ -23,7 +21,7 @@ module.exports = (cli) ->
 			if plugin_name != ""
 				plugin_name += " "
 			plugin_name += elt
-		require('./uninstall')(plugin_name)
+		require(scaffolding_folder_path + '/uninstall')(plugin_name)
 
 	if cli.argv._[0] is 'install'
 
@@ -31,7 +29,7 @@ module.exports = (cli) ->
 		plugin_repo = cli.argv._[0]
 		if plugin_repo?
 			save = cli.argv.save == null
-			require('./install')(plugin_repo, process.cwd(), save)
+			require(scaffolding_folder_path + '/install')(plugin_repo, process.cwd(), save)
 				.done () ->
 					console.log 'Running npm install and grunt..'.green + ' This may take a few minutes'.yellow
 					exec 'npm install; grunt;', (error, stdout, stderr) ->
@@ -72,7 +70,7 @@ module.exports = (cli) ->
 		force = cli.argv.force == null
 		save = cli.argv.save == null
 		name = cli.argv._[0]
-		require('./create')(name, force, save)
+		require(scaffolding_folder_path + '/create')(name, force, save)
 			.then () ->
 				defer.resolve()
 			.fail () ->
@@ -81,6 +79,4 @@ module.exports = (cli) ->
 
 
 	return main_defer.promise
-
-
 

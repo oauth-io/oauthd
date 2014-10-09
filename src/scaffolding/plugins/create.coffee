@@ -6,8 +6,6 @@ colors = require 'colors'
 
 Q = require 'q'
 
-
-
 module.exports = (name, force, save) ->
 	defer = Q.defer()
 
