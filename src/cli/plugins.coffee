@@ -70,55 +70,54 @@ module.exports = (args, options) ->
 				plugin_name += elt
 			scaffolding.plugins.uninstall(plugin_name)
 
+		chainPluginInstall = (plugins_name) ->
+			promise = undefined
+			if plugins_name?
+				for name in plugins_name
+					if (name != "")
+						do (name) ->
+							if not promise?
+								promise =  scaffolding.plugins.install(name, process.cwd())
+							else
+								promise = promise.then () ->
+									return scaffolding.plugins.install(name, process.cwd())
+				promise
+					.then () ->
+						if (cli.__mode != 'prog')
+							scaffolding.compile()
+								.then () ->
+									main_defer.resolve()
+								.fail () ->
+									main_defer.reject()
+						else
+							main_defer.resolve()
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
+						main_defer.reject()
+
 		if args[0] is 'install'
 			plugin_repo = args[1]
 			if plugin_repo?
-				save = cli.save == null
-				scaffolding.plugins.install(plugin_repo, process.cwd(), save)
+				scaffolding.plugins.install(plugin_repo, process.cwd())
 					.then () ->
 						scaffolding.compile()
 					.then () ->
 						console.log 'Done'
 			else
-				try
-					plugins = JSON.parse(fs.readFileSync process.cwd() + '/plugins.json', { encoding: 'UTF-8' })
-				catch e
-					console.log e.message.red
-					console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-				promise = undefined
-				if plugins?
-					for k,v of plugins
-						if (v != "")
-							do (v) ->
-								if not promise?
-									promise =  scaffolding.plugins.install(v, process.cwd())
-								else
-									promise = promise.then () ->
-										return scaffolding.plugins.install(v, process.cwd())
-					promise
-						.then () ->
-							if (cli.__mode != 'prog')
-								scaffolding.compile()
-									.then () ->
-										main_defer.resolve()
-									.fail () ->
-										main_defer.reject()
-							else
-								main_defer.resolve()
-						.fail (e) ->
-							console.log 'ERROR'.red, e.message.yellow
-							main_defer.reject()
-		
-		
+				scaffolding.plugins.list()
+					.then (plugins_name) ->
+						chainPluginInstall plugins_name
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
+						console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
 
 		if args[0] is 'create'
 			options = cli.args[cli.args.length - 1]
 			force = options.force
-			save = options.inactive
 			console.log cli
 			name = args[1]
 			if name
-				scaffolding.plugins.create(name, force, save)
+				scaffolding.plugins.create(name, force)
 					.then () ->
 						defer.resolve()
 					.fail () ->
@@ -126,7 +125,8 @@ module.exports = (args, options) ->
 			else
 				defer.reject 'Error'.red + ': '
 
-
+		if args[0] is 'update'
+			console.log "update plugins!"
 
 		return main_defer.promise
 
