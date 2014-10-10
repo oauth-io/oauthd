@@ -3,45 +3,22 @@ Q = require 'q'
 
 module.exports = () ->
 	(name, cwd) ->
-		defer = Q.defer()
-		command = 'cd ' + temp_location + '; git clone ' + plugin_repo + ' ' + temp_location
-		exec command, (error, stdout, stderr) ->
-			return defer.reject error if error
-			env.debug "Loading plugin information"
-			try
-				plugin_data = JSON.parse(fs.readFileSync temp_location + '/plugin.json', { encoding: 'UTF-8' })
-			catch e 
-				return defer.reject e
-			folder_name = cwd + "/plugins/" + plugin_data.name
-			rimraf folder_name, (err) ->
-				return defer.reject(err) if err
-				fs.rename cwd + '/plugins/cloned', cwd + '/plugins/' + plugin_data.name, (err) ->
-					return defer.reject(err) if err
-					env.debug 'Plugin "' + plugin_data.name + '" successfully installed in "'+ folder_name + '".'
-					
-					file =  cwd + '/plugins.json'
-					jf.spaces = 4
+		launchUpdate = () ->
+			defer = Q.defer()
 
-					jf.readFile file, (err, obj) ->
-						return defer.reject(err) if err
-						if not obj?
-							obj = {}
-						if (not obj[plugin_data.name]?) # only add entry to plugins.json if not already there
-							obj[plugin_data.name] = plugin_repo
-							jf.writeFile file, obj, (err) ->
-								return defer.reject(err) if err
-								env.debug 'Plugin "' + plugin_data.name + '" successfully added to the plugins list.'
-								defer.resolve()
-						else
-							defer.resolve()
 
+			defer.promise
+
+		checkIfFolderExist = () ->
+			return
+		checkIfPullNeeded = () ->
+			return
+		checkIfDependenciesProblems = () ->
+			return
+		updateGit = () ->
+			return
+		updatePluginsList = () ->
+			return
+
+		launchUpdate()
 		
-				
-		# jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
-		# 	return defer.reject err if err
-		# 	plugins = []
-		# 	if obj?
-		# 		plugins = Object.keys(obj)
-		# 	defer.resolve(plugins)
-		defer.resolve()
-		defer.promise

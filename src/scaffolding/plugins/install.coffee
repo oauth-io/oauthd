@@ -13,13 +13,13 @@ module.exports = (env) ->
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
 			temp_location = cwd + '/plugins/cloned'
-			cloneTheRepository url, temp_location, (err) ->
+			gitClone url, temp_location, (err) ->
 				return defer.reject err if err
 				getPluginDetails temp_location, (err, plugin_data) ->
 					return defer.reject err if err
-					moveCloneInPluginsFolder plugin_data.name, cwd, (err) ->
+					moveClonedToPlugins plugin_data.name, cwd, (err) ->
 						return defer.reject err if err
-						addToPluginList plugin_data.name, url, cwd, (err) ->
+						updatePluginsList plugin_data.name, url, cwd, (err) ->
 							return defer.reject err if err
 							defer.resolve()
 			defer.promise
@@ -32,7 +32,7 @@ module.exports = (env) ->
 				tag_name = tmpArray[1]
 			return callback repo_url, tag_name
 
-		cloneTheRepository = (url, temp_location, callback) ->
+		gitClone = (url, temp_location, callback) ->
 			rimraf temp_location, (err) ->
 				return callback err if err
 				getRepositoryTagNameIfExist url, (repo_url, tag_name) ->
@@ -53,7 +53,7 @@ module.exports = (env) ->
 				return callback e
 			return callback null, plugin_data
 
-		moveCloneInPluginsFolder = (plugin_name, cwd, callback) ->
+		moveClonedToPlugins = (plugin_name, cwd, callback) ->
 			folder_name = cwd + "/plugins/" + plugin_name
 			rimraf folder_name, (err) ->
 				return callback err if err
@@ -62,7 +62,7 @@ module.exports = (env) ->
 					env.debug 'Plugin "' + plugin_name + '" successfully installed in "'+ folder_name + '".'
 					return callback null
 
-		addToPluginList = (plugin_name, url, cwd, callback) ->
+		updatePluginsList = (plugin_name, url, cwd, callback) ->
 			file =  cwd + '/plugins.json'
 			jf.spaces = 4
 			jf.readFile file, (err, obj) ->
