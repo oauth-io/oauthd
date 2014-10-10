@@ -121,7 +121,7 @@ module.exports = (args, options) ->
 				@help('create')
 			else
 				force = options.force
-				save = options.inactive
+				save = not options.inactive
 				name = args[1]
 				if name
 					scaffolding.plugins.create(name, force, save)

@@ -85,25 +85,3 @@ else
 
 	else
 		displayHelp()
-
-
-# process.exit()
-
-
-# # unknown command
-# else
-# 	console.log cli.plugins
-# 	# if not cli.argv.help?
-# 	# 	if cli.argv._[0] 
-# 	# 		console.log 'oauthd: ' + 'Unknown command'.red +  ' "' + cli.argv._[0].yellow + '"'
-# 	# 	else
-# 	show_error = true
-# 	for k,v of cli.argv
-# 		if v == true
-# 			show_error = false
-# 		if v?.length? and v.length > 0
-# 			show_error = false
-
-# 	if show_error
-# 		console.log 'Missing arguments.'.red + ' Please execute "' + 'oauthd --help'.yellow + '" to get a list of commands'
-# 		process.exit(1)
