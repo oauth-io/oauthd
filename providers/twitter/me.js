@@ -6,7 +6,7 @@ var me = {
         name: '=',
         alias: 'screen_name',
         bio: 'description',
-        avatar: 'profile_image_url'
+        avatar: 'profile_image_url_https'
     }
 };
 
