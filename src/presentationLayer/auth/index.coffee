@@ -24,7 +24,7 @@ module.exports = (env) ->
 						return next e if e
 						if not provider.oauth2?.refresh
 							return next new env.utilities.check.Error "refresh token not supported for " + req.params.provider
-						oa = new @engine.oauth.oauth2(provider, keyset.parameters)
+						oa = new env.utilities.oauth.oauth2(provider, keyset.parameters)
 						oa.refresh req.body.token, keyset, send(res,next)
 
 		# iframe injection for IE
