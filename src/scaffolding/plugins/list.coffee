@@ -1,20 +1,12 @@
 jf = require 'jsonfile'
+Q = require 'q'
 
 module.exports = () ->
-	try
-		jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
-			throw err if err
-			if not obj?
-				console.log "There is no plugins installed yet!"
-			else
-				if Object.keys(obj).length > 0
-					if Object.keys(obj).length > 1
-						console.log "You have " + Object.keys(obj).length + " plugins installed: "
-					else
-						console.log "You have " + Object.keys(obj).length + " plugin installed: "
-				else
-						console.log "You have " + Object.keys(obj).length + " plugins installed. "
-				for key, value of obj
-					console.log "- '" + key + "'"
-	catch e
-		console.log 'An error occured: ' + e.message
+	defer = Q.defer()
+	jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+		return defer.reject err if err
+		plugins = []
+		if obj?
+			plugins = Object.keys(obj)
+		defer.resolve(plugins)
+	defer.promise

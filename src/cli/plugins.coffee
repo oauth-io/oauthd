@@ -49,6 +49,17 @@ module.exports = (args, options) ->
 				@help('list')
 			else
 				scaffolding.plugins.list()
+					.then (plugins_name) ->
+						if plugins_name.length is 0
+							console.log "There is no plugins installed yet."
+						else if plugins_name.length is 1
+							console.log "There is one plugin installed: "
+						else
+							console.log "There are " + plugins_name.length + " plugins installed: "
+						for name in plugins_name
+							console.log "- '" + name + "'"
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
 
 		if args[0] == 'uninstall'
 			args.shift()
