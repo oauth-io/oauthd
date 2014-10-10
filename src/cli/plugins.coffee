@@ -73,10 +73,10 @@ module.exports = (args, options) ->
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
 
-		chainPluginsInstall = (plugins_name) ->
+		chainPluginsInstall = (plugin_names) ->
 			promise = undefined
-			if plugins_name?
-				for name in plugins_name
+			if plugin_names?
+				for name in plugin_names
 					if (name != "")
 						do (name) ->
 							if not promise?
@@ -111,7 +111,7 @@ module.exports = (args, options) ->
 							console.log 'Done'
 				else
 					plugins = scaffolding.plugins.list.getActive()
-					chainPluginsInstall plugins_name
+					chainPluginsInstall plugins
 			
 		if args[0] is 'create'
 			if options.help
@@ -129,24 +129,40 @@ module.exports = (args, options) ->
 				else
 					defer.reject 'Error'.red + ': '
 
+		chainPluginsUpdate = (plugin_names) ->
+			for name in plugin_names
+				if (name != "")
+						do (name) ->
+							if not promise?
+								promise =  scaffolding.plugins.update(name, process.cwd())
+							else
+								promise = promise.then () ->
+									return scaffolding.plugins.update(name, process.cwd())
+				promise
+					.then () ->
+						main_defer.resolve()
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
+						main_defer.reject()
+
 		if args[0] is 'update'
 			if options.help
 				@help('update')
 			else
 				name = args[1]
-				if name
-					scaffolding.plugins.update(name)
-				else
-					scaffolding.plugins.list()
-						.then (plugins_name) ->
-							chainPluginsUpdate plugins_name
-						.fail (e) ->
-							console.log 'ERROR'.red, e.message.yellow
-							console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-			
-					scaffolding.plugins.update(name)
-
-				console.log "update plugins!"
+				scaffolding.plugins.list()
+				.then (plugin_names) ->
+					if name
+						if plugin_names.indexOf(name) > -1
+							scaffolding.plugins.update(name, process.cwd())
+						else
+							console.log "The plugin you want to update is not present in \'plugins.json\'."
+					else
+						chainPluginsUpdate plugin_names
+				.fail (e) ->
+					console.log 'ERROR'.red, e.message.yellow
+					console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+				
 
 		return main_defer.promise
 
