@@ -3,7 +3,6 @@ ncp = require 'ncp'
 exec = require('child_process').exec
 Q = require('q')
 scaffolding = require('../scaffolding')({ console: true })
-program = require 'commander'
 colors = require 'colors'
 
 module.exports = (args, options) ->
@@ -16,31 +15,33 @@ module.exports = (args, options) ->
 			console.log '    oauthd plugins ' + 'create'.yellow + ' <name>' + '\t\t' + 'Creates a new plugin'
 			console.log '    oauthd plugins ' + 'install'.yellow + ' [git-repository]' + '\t' + 'Installs a plugin'
 			console.log '    oauthd plugins ' + 'uninstall'.yellow + ' <name>' + '\t\t' + 'Removes a plugin'
+			console.log ''
+			console.log 'oauthd plugins <command> ' + '--help'.green + ' for more information about a specific command'
 		if command == 'list'
-			console.log 'Usage: oauthd plugins list'
-			console.log ''
-			console.log 'Lists all installed plugins'.yellow
-			console.log ''
-			console.log ''
+			console.log 'Usage: oauthd plugins ' + 'list'.yellow
+			console.log 'Lists all installed plugins'
 		if command == 'create'
-			console.log 'Usage: oauthd plugins create <name>'
-			console.log ''
+			console.log 'Usage: oauthd plugins ' + 'create <name>'.yellow
 			console.log 'Creates a new plugin in ./plugins/<name> with a basic architecture'
 			console.log ''
 			console.log 'Options:'
-			console.log '    ' + '--force' + '\t\t' + 'Creates the plugin even if another one with same name, overriding it'
-			console.log '    ' + '--save' + '\t\t' + 'Adds an entry in plugins.json for the plugin'
+			console.log '    ' + '--force'.yellow + '\t\t' + 'Creates the plugin even if another one with same name, overriding it'
+			console.log '    ' + '--inactive'.yellow + '\t\t' + 'Prevents oauthd from adding the plugin to plugins.json'
 		if command == 'install'
-			console.log 'Usage: oauthd plugins install [git-repository]'
-			console.log ''
-			console.log 'Installs a plugin using a git repository. If no argument is given, installs all plugins listed in plugins.json'
+			console.log 'Usage: oauthd plugins ' + 'install [git-repository]'.yellow
+			console.log 'Installs a plugin using a git repository.'
+			console.log 'If no argument is given, installs all plugins listed in plugins.json'
 			console.log ''
 			console.log 'Options:'
-			console.log '    ' + '--force' + '\t\t' + 'Installs the plugin even if already present, overriding it'
+			console.log '    ' + '--force'.yellow + '\t' + 'Installs the plugin even if already present, overriding it'
+		if command == 'update'
+			console.log 'Usage: oauthd plugins ' + 'update [name]'.yellow
+			console.log 'Updates a plugin using its git repository. If no argument is given, updates all plugins listed in plugins.json'
 		if command == 'uninstall'
-			console.log 'Usage: oauthd plugins uninstall <name>'
-			console.log ''
+			console.log 'Usage: oauthd plugins ' + 'uninstall <name>'.yellow
 			console.log 'Uninstalls a given plugin'
+
+
 	command: () ->
 		main_defer = Q.defer()
 
@@ -62,15 +63,18 @@ module.exports = (args, options) ->
 						console.log 'ERROR'.red, e.message.yellow
 
 		if args[0] == 'uninstall'
-			args.shift()
-			plugin_name = ""
-			for elt in args
-				if plugin_name != ""
-					plugin_name += " "
-				plugin_name += elt
-			scaffolding.plugins.uninstall(plugin_name)
+			if options.help
+				@help('uninstall')
+			else
+				args.shift()
+				plugin_name = ""
+				for elt in args
+					if plugin_name != ""
+						plugin_name += " "
+					plugin_name += elt
+				scaffolding.plugins.uninstall(plugin_name)
 
-		chainPluginInstall = (plugins_name) ->
+		chainPluginsInstall = (plugins_name) ->
 			promise = undefined
 			if plugins_name?
 				for name in plugins_name
@@ -96,34 +100,39 @@ module.exports = (args, options) ->
 						main_defer.reject()
 
 		if args[0] is 'install'
-			plugin_repo = args[1]
-			if plugin_repo?
-				scaffolding.plugins.install(plugin_repo, process.cwd())
-					.then () ->
-						scaffolding.compile()
-					.then () ->
-						console.log 'Done'
+			if options.help
+				@help('install')
 			else
-				scaffolding.plugins.list()
-					.then (plugins_name) ->
-						chainPluginInstall plugins_name
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
-						console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-
+				plugin_repo = args[1]
+				if plugin_repo?
+					scaffolding.plugins.install(plugin_repo, process.cwd())
+						.then () ->
+							scaffolding.compile()
+						.then () ->
+							console.log 'Done'
+				else
+					scaffolding.plugins.list()
+						.then (plugins_name) ->
+							chainPluginsInstall plugins_name
+						.fail (e) ->
+							console.log 'ERROR'.red, e.message.yellow
+							console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+			
 		if args[0] is 'create'
-			options = cli.args[cli.args.length - 1]
-			force = options.force
-			console.log cli
-			name = args[1]
-			if name
-				scaffolding.plugins.create(name, force)
-					.then () ->
-						defer.resolve()
-					.fail () ->
-						defer.reject()
+			if options.help
+				@help('create')
 			else
-				defer.reject 'Error'.red + ': '
+				force = options.force
+				save = not options.inactive
+				name = args[1]
+				if name
+					scaffolding.plugins.create(name, force, save)
+						.then () ->
+							defer.resolve()
+						.fail () ->
+							defer.reject()
+				else
+					defer.reject 'Error'.red + ': '
 
 		if args[0] is 'update'
 			console.log "update plugins!"
