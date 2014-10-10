@@ -15,6 +15,7 @@ module.exports = (opts) ->
 
 	scaffolding_env.plugins = require('./plugins')(scaffolding_env)
 	scaffolding_env.init = require('./init')(scaffolding_env)
+	scaffolding_env.compile = require('./compile')(scaffolding_env)
 
 	scaffolding_env
 

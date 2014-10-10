@@ -24,16 +24,15 @@ module.exports = (cli) ->
 		scaffolding.plugins.uninstall(plugin_name)
 
 	if cli.argv._[0] is 'install'
-
 		cli.argv._.shift()
 		plugin_repo = cli.argv._[0]
 		if plugin_repo?
 			save = cli.argv.save == null
 			scaffolding.plugins.install(plugin_repo, process.cwd(), save)
-				.done () ->
-					console.log 'Running npm install and grunt..'.green + ' This may take a few minutes'.yellow
-					exec 'npm install; grunt;', (error, stdout, stderr) ->
-						console.log 'Done'
+				.then () ->
+					scaffolding.compile()
+				.then () ->
+					console.log 'Done'
 		else
 			try
 				plugins = JSON.parse(fs.readFileSync process.cwd() + '/plugins.json', { encoding: 'UTF-8' })
@@ -53,10 +52,11 @@ module.exports = (cli) ->
 				promise
 					.then () ->
 						if (cli.__mode != 'prog')
-							console.log 'Running npm install and grunt.. '.green + 'This might take a few minutes'.yellow
-							exec 'npm install; grunt;', (error, stdout, stderr) ->
-								console.log 'Done'
-								main_defer.resolve()
+							scaffolding.compile()
+								.then () ->
+									main_defer.resolve()
+								.fail () ->
+									main_defer.reject()
 						else
 							main_defer.resolve()
 					.fail (e) ->
