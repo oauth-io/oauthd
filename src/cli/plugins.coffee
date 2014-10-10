@@ -4,6 +4,7 @@ exec = require('child_process').exec
 Q = require('q')
 scaffolding = require('../scaffolding')({ console: true })
 colors = require 'colors'
+sugar = require 'sugar'
 
 module.exports = (args, options) ->
 	help: (command) ->
@@ -49,18 +50,16 @@ module.exports = (args, options) ->
 			if options.help
 				@help('list')
 			else
-				scaffolding.plugins.list()
-					.then (plugins_name) ->
-						if plugins_name.length is 0
-							console.log "There is no plugins installed yet."
-						else if plugins_name.length is 1
-							console.log "There is one plugin installed: "
-						else
-							console.log "There are " + plugins_name.length + " plugins installed: "
-						for name in plugins_name
-							console.log "- '" + name + "'"
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
+				active = scaffolding.plugins.list.getActive()
+				inactive = scaffolding.plugins.list.getInactive()
+				installed = scaffolding.plugins.list.getInstalled()
+				console.log 'This instance has ' + (installed.length + ' installed plugin(s)').white
+				console.log (active.length + ' active plugin(s)').green
+				for v in active
+					console.log '- ' + v
+				console.log (inactive.length + ' inactive plugin(s)').yellow
+				for v in inactive
+					console.log '- ' + v
 
 		if args[0] == 'uninstall'
 			if options.help
@@ -111,12 +110,8 @@ module.exports = (args, options) ->
 						.then () ->
 							console.log 'Done'
 				else
-					scaffolding.plugins.list()
-						.then (plugins_name) ->
-							chainPluginsInstall plugins_name
-						.fail (e) ->
-							console.log 'ERROR'.red, e.message.yellow
-							console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+					plugins = scaffolding.plugins.list.getActive()
+					chainPluginsInstall plugins_name
 			
 		if args[0] is 'create'
 			if options.help
