@@ -49,18 +49,31 @@ options.help = options.help || options.h
 if options.help and args.length == 0
 	displayHelp()
 else if argv.version || argv.v
-	console.log pckg_info.name + ' ' + pckg_info.version
+	console.log pckg_info.name + ' ' + pckg_info.version.yellow
 else
+	
 	if args[0] == 'init'
-		scaffolding.init()
-			.then (name) ->
-				endOfInit(name, true)
-			.fail (err) ->
-				console.log 'An error occured: '.red + e.message.yellow
+		if options.help || args.length > 1
+			console.log 'Usage: ' + 'oauthd init'.yellow
+			console.log 'Initializes a new oauthd instance. \nPrompts the user for an instance name and for default components installation prefs.'
+		else
+			scaffolding.init()
+				.then (name) ->
+					endOfInit(name, true)
+				.fail (err) ->
+					console.log 'An error occured: '.red + e.message.yellow
+	
+
 	else if args[0] == 'start'
-		require('../oauthd').init()
+		if options.help || args.length > 1
+			console.log 'Usage: ' + 'oauthd start'.yellow
+			console.log 'Starts an oauthd instance. \nYou must be in an instance folder to call this command.'
+		else
+			require('../oauthd').init()
+
+
 	else if args[0] == 'plugins'
-		if options.help && args[0].lenght == 1
+		if options.help && args.length == 1
 			require('./plugins')(args, options).help()
 		args.shift()
 		require('./plugins')(args, options).command()
@@ -68,6 +81,8 @@ else
 				return
 			.fail (e) ->
 				console.log e.message
+	
+
 	else
 		displayHelp()
 
