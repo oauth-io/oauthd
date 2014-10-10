@@ -135,7 +135,23 @@ module.exports = (args, options) ->
 					defer.reject 'Error'.red + ': '
 
 		if args[0] is 'update'
-			console.log "update plugins!"
+			if options.help
+				@help('update')
+			else
+				name = args[1]
+				if name
+					scaffolding.plugins.update(name)
+				else
+					scaffolding.plugins.list()
+						.then (plugins_name) ->
+							chainPluginsUpdate plugins_name
+						.fail (e) ->
+							console.log 'ERROR'.red, e.message.yellow
+							console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+			
+					scaffolding.plugins.update(name)
+
+				console.log "update plugins!"
 
 		return main_defer.promise
 
