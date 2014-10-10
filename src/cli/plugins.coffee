@@ -21,6 +21,12 @@ module.exports = (args, options) ->
 		if command == 'list'
 			console.log 'Usage: oauthd plugins ' + 'list'.yellow
 			console.log 'Lists all installed plugins'
+		if command == 'activate'
+			console.log 'Usage: oauthd plugins ' + 'activate <name>'.yellow
+			console.log 'Activates a plugin (puts it in the plugins.json file)'
+		if command == 'deactivate'
+			console.log 'Usage: oauthd plugins ' + 'deactivate <name>'.yellow
+			console.log 'Deactivates a plugin (removes it from the plugins.json file)'
 		if command == 'create'
 			console.log 'Usage: oauthd plugins ' + 'create <name>'.yellow
 			console.log 'Creates a new plugin in ./plugins/<name> with a basic architecture'
@@ -128,6 +134,17 @@ module.exports = (args, options) ->
 							defer.reject()
 				else
 					defer.reject 'Error'.red + ': '
+
+		if args[0] is 'activate'
+			if options.help || args.length != 2
+				@help('activate')
+			else
+				scaffolding.plugins.activate(args[1])
+		if args[0] is 'deactivate'
+			if options.help || args.length != 2
+				@help 'deactivate'
+			else
+				scaffolding.plugins.deactivate(args[1])
 
 		if args[0] is 'update'
 			console.log "update plugins!"
