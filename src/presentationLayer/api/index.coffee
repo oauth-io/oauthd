@@ -52,7 +52,7 @@ module.exports = (env) ->
 				env.data.apps.remove req.params.key, (e, r) =>
 					return next(e) if e
 					env.events.emit 'app.remove', req.user, app
-					res.send check.nullv
+					res.send env.utilities.check.nullv
 					next()
 
 		# reset the public key of an app
