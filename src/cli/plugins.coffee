@@ -25,10 +25,14 @@ module.exports = (cli) ->
 
 	if cli.argv._[0] is 'install'
 		cli.argv._.shift()
+		console.log "cli.argv.force", cli.argv.force
+		if cli.argv.force
+			force = true
+		else
+			force = false
 		plugin_repo = cli.argv._[0]
 		if plugin_repo?
-			save = cli.argv.save == null
-			scaffolding.plugins.install(plugin_repo, process.cwd(), save)
+			scaffolding.plugins.install(plugin_repo, process.cwd(), force)
 				.then () ->
 					scaffolding.compile()
 				.then () ->
@@ -45,10 +49,10 @@ module.exports = (cli) ->
 					if (v != "")
 						do (v) ->
 							if not promise?
-								promise =  scaffolding.plugins.install(v, process.cwd())
+								promise =  scaffolding.plugins.install(v, process.cwd(), force)
 							else
 								promise = promise.then () ->
-									return scaffolding.plugins.install(v, process.cwd())
+									return scaffolding.plugins.install(v, process.cwd(), force)
 				promise
 					.then () ->
 						if (cli.__mode != 'prog')
