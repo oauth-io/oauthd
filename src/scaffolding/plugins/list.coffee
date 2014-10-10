@@ -3,9 +3,7 @@ Q = require 'q'
 fs = require 'fs'
 
 module.exports = (env) ->
-
 	getActive: () ->
-
 		obj = jf.readFileSync process.cwd() + '/plugins.json'
 		plugins = []
 		if obj?

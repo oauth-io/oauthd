@@ -53,7 +53,7 @@ module.exports = (env) ->
 							.then () ->
 								env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + results.name)
 							.then () ->
-								env.plugins.install("https://github.com/william26/oauthd_default_plugin_front", process.cwd() + "/" + results.name)
+								env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + results.name)
 							.then () ->
 								defer.resolve(results.name)
 							.fail (e) ->
