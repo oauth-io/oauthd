@@ -7,7 +7,7 @@ Q = require 'q'
 colors = require 'colors'
 
 module.exports = (env) ->
-	(plugin_repo, cwd, save) ->
+	(plugin_repo, cwd, force) ->
 		defer = Q.defer()
 		if not plugin_repo?
 			return env.debug 'Please provide a repository address for the plugin to install'
@@ -16,8 +16,16 @@ module.exports = (env) ->
 		rimraf temp_location, (err) ->
 			return defer.reject(err) if err
 			fs.mkdirSync temp_location
+			plugin_repo_str = plugin_repo.split("^")
+			plugin_repo = plugin_repo_str[0]
+			tag_name = null
+			if plugin_repo_str.length > 1
+				tag_name = plugin_repo_str[1]
 			env.debug "Cloning " + plugin_repo.red
-			exec 'cd ' + temp_location + '; git clone ' + plugin_repo + ' ' + temp_location, (error, stdout, stderr) ->
+			command = 'cd ' + temp_location + '; git clone ' + plugin_repo + ' ' + temp_location
+			if force 
+				command += '; git checkout tags/' + tag_name
+			exec command, (error, stdout, stderr) ->
 				# throw error if error
 				return defer.reject error if error
 				env.debug "Loading plugin information"
