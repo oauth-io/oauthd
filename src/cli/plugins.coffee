@@ -56,16 +56,16 @@ module.exports = (args, options) ->
 			if options.help
 				@help('list')
 			else
-				active = scaffolding.plugins.list.getActive()
-				inactive = scaffolding.plugins.list.getInactive()
-				installed = scaffolding.plugins.list.getInstalled()
-				console.log 'This instance has ' + (installed.length + ' installed plugin(s)').white
+				active = scaffolding.plugins.info.getActive()
+				inactive = scaffolding.plugins.info.getInactive()
+				installed = scaffolding.plugins.info.getInstalled()
+				console.log 'This instance has ' + (installed.length + ' installed plugin(s):').white
 				console.log (active.length + ' active plugin(s)').green
-				for v in active
-					console.log '- ' + v
+				for name in active
+					console.log '- ' + name
 				console.log (inactive.length + ' inactive plugin(s)').yellow
-				for v in inactive
-					console.log '- ' + v
+				for name in inactive
+					console.log '- ' + name
 
 		if args[0] == 'uninstall'
 			if options.help
@@ -168,10 +168,10 @@ module.exports = (args, options) ->
 				@help('update')
 			else
 				name = args[1]
-				scaffolding.plugins.list()
+				scaffolding.plugins.info.getActive()
 				.then (plugin_names) ->
 					if name
-						if plugin_names.indexOf(name) > -1
+						if scaffolding.plugins.info.isActive(name)
 							scaffolding.plugins.update(name, process.cwd())
 						else
 							console.log "The plugin you want to update is not present in \'plugins.json\'."

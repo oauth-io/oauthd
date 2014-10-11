@@ -3,13 +3,15 @@ Q = require 'q'
 
 module.exports = () ->
 	(name, cwd) ->
-		launchUpdate = () ->
+		launchUpdate = (name, cwd) ->
 			defer = Q.defer()
-
+			checkIfFolderExist
 
 			defer.promise
 
-		checkIfFolderExist = () ->
+		checkIfFolderExist = (name, cwd) ->
+			stat = fs.statSync process.cwd() + '/plugins/' + plugin
+				if stat.isDirectory()
 			return
 		checkIfPullNeeded = () ->
 			return
@@ -20,5 +22,4 @@ module.exports = () ->
 		updatePluginsList = () ->
 			return
 
-		launchUpdate()
-		
+		launchUpdate(name, cwd)
