@@ -15,7 +15,8 @@ module.exports = (env) ->
 			temp_location = cwd + '/plugins/cloned'
 			gitClone url, temp_location, (err) ->
 				return defer.reject err if err
-				getPluginDetails temp_location, (err, plugin_data) ->
+				env.debug "Loading plugin information"
+				env.plugins.info.getDetails temp_location, (err, plugin_data) ->
 					return defer.reject err if err
 					moveClonedToPlugins plugin_data.name, cwd, (err) ->
 						return defer.reject err if err
@@ -44,14 +45,6 @@ module.exports = (env) ->
 					exec command, (error, stdout, stderr) ->
 						return callback error if error
 						return callback null
-		
-		getPluginDetails = (temp_location, callback) ->
-			env.debug "Loading plugin information"
-			try
-				plugin_data = JSON.parse(fs.readFileSync temp_location + '/plugin.json', { encoding: 'UTF-8' })
-			catch e 
-				return callback e
-			return callback null, plugin_data
 
 		moveClonedToPlugins = (plugin_name, cwd, callback) ->
 			folder_name = cwd + "/plugins/" + plugin_name

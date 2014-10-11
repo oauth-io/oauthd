@@ -1,17 +1,16 @@
 jf = require 'jsonfile'
 Q = require 'q'
 
-module.exports = () ->
-	(name, cwd) ->
-		launchUpdate = (name, cwd) ->
+module.exports = (env) ->
+	(name) ->
+		launchUpdate = (name) ->
 			defer = Q.defer()
 			checkIfFolderExist
 
 			defer.promise
 
-		checkIfFolderExist = (name, cwd) ->
-			stat = fs.statSync process.cwd() + '/plugins/' + plugin
-				if stat.isDirectory()
+		checkIfFolderExist = (name) ->
+
 			return
 		checkIfPullNeeded = () ->
 			return
@@ -22,4 +21,4 @@ module.exports = () ->
 		updatePluginsList = () ->
 			return
 
-		launchUpdate(name, cwd)
+		launchUpdate(name)

@@ -81,28 +81,26 @@ module.exports = (args, options) ->
 
 		chainPluginsInstall = (plugin_names) ->
 			promise = undefined
-			if plugin_names?
-				for name in plugin_names
-					if (name != "")
-						do (name) ->
-							if not promise?
-								promise =  scaffolding.plugins.install(name, process.cwd())
-							else
-								promise = promise.then () ->
-									return scaffolding.plugins.install(name, process.cwd())
-				promise
-					.then () ->
-						if (cli.__mode != 'prog')
-							scaffolding.compile()
-								.then () ->
-									main_defer.resolve()
-								.fail () ->
-									main_defer.reject()
-						else
-							main_defer.resolve()
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
-						main_defer.reject()
+			for name in plugin_names
+				do (name) ->
+					if not promise?
+						promise =  scaffolding.plugins.install(name, process.cwd())
+					else
+						promise = promise.then () ->
+							return scaffolding.plugins.install(name, process.cwd())
+			promise
+				.then () ->
+					if (cli.__mode != 'prog')
+						scaffolding.compile()
+							.then () ->
+								main_defer.resolve()
+							.fail () ->
+								main_defer.reject()
+					else
+						main_defer.resolve()
+				.fail (e) ->
+					console.log 'ERROR'.red, e.message.yellow
+					main_defer.reject()
 
 		if args[0] is 'install'
 			if options.help
@@ -116,8 +114,8 @@ module.exports = (args, options) ->
 						.then () ->
 							console.log 'Done'
 				else
-					plugins = scaffolding.plugins.list.getActive()
-					chainPluginsInstall plugins
+					plugin_names = scaffolding.plugins.list.getActive()
+					chainPluginsInstall plugin_names
 			
 		if args[0] is 'create'
 			if options.help
@@ -149,13 +147,12 @@ module.exports = (args, options) ->
 
 		chainPluginsUpdate = (plugin_names) ->
 			for name in plugin_names
-				if (name != "")
-						do (name) ->
-							if not promise?
-								promise =  scaffolding.plugins.update(name, process.cwd())
-							else
-								promise = promise.then () ->
-									return scaffolding.plugins.update(name, process.cwd())
+				do (name) ->
+					if not promise?
+						promise =  scaffolding.plugins.update(name)
+					else
+						promise = promise.then () ->
+							return scaffolding.plugins.update(name)
 				promise
 					.then () ->
 						main_defer.resolve()
@@ -172,7 +169,7 @@ module.exports = (args, options) ->
 				.then (plugin_names) ->
 					if name
 						if scaffolding.plugins.info.isActive(name)
-							scaffolding.plugins.update(name, process.cwd())
+							scaffolding.plugins.update(name)
 						else
 							console.log "The plugin you want to update is not present in \'plugins.json\'."
 					else
