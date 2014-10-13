@@ -1,6 +1,5 @@
 exec = require('child_process').exec
 fs = require 'fs'
-ncp = require 'ncp'
 rimraf = require 'rimraf'
 jf = require 'jsonfile'
 Q = require 'q'

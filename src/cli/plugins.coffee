@@ -152,12 +152,9 @@ module.exports = (args, options) ->
 				scaffolding.plugins.update(name)
 					.then () ->
 						console.log "THEN name", name
-						main_defer.resolve()
 					.fail (e) ->
 						console.log 'ERROR'.red, e.message.yellow
-						main_defer.reject()
-			return 
-			
+
 		if args[0] is 'update'
 			if options.help
 				@help('update')
