@@ -58,16 +58,16 @@ module.exports = (args, options) ->
 			if options.help
 				@help('list')
 			else
-				active = scaffolding.plugins.list.getActive()
-				inactive = scaffolding.plugins.list.getInactive()
-				installed = scaffolding.plugins.list.getInstalled()
-				console.log 'This instance has ' + (installed.length + ' installed plugin(s)').white
+				active = scaffolding.plugins.info.getActive()
+				inactive = scaffolding.plugins.info.getInactive()
+				installed = scaffolding.plugins.info.getInstalled()
+				console.log 'This instance has ' + (installed.length + ' installed plugin(s):').white
 				console.log (active.length + ' active plugin(s)').green
-				for v in active
-					console.log '- ' + v
+				for name in active
+					console.log '- ' + name
 				console.log (inactive.length + ' inactive plugin(s)').yellow
-				for v in inactive
-					console.log '- ' + v
+				for name in inactive
+					console.log '- ' + name
 
 		if args[0] == 'uninstall'
 			if options.help
@@ -81,30 +81,28 @@ module.exports = (args, options) ->
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
 
-		chainPluginsInstall = (plugins_name) ->
+		chainPluginsInstall = (plugin_names) ->
 			promise = undefined
-			if plugins_name?
-				for name in plugins_name
-					if (name != "")
-						do (name) ->
-							if not promise?
-								promise =  scaffolding.plugins.install(name, process.cwd())
-							else
-								promise = promise.then () ->
-									return scaffolding.plugins.install(name, process.cwd())
-				promise
-					.then () ->
-						if (cli.__mode != 'prog')
-							scaffolding.compile()
-								.then () ->
-									main_defer.resolve()
-								.fail () ->
-									main_defer.reject()
-						else
-							main_defer.resolve()
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
-						main_defer.reject()
+			for name in plugin_names
+				do (name) ->
+					if not promise?
+						promise =  scaffolding.plugins.install(name, process.cwd())
+					else
+						promise = promise.then () ->
+							return scaffolding.plugins.install(name, process.cwd())
+			promise
+				.then () ->
+					if (cli.__mode != 'prog')
+						scaffolding.compile()
+							.then () ->
+								main_defer.resolve()
+							.fail () ->
+								main_defer.reject()
+					else
+						main_defer.resolve()
+				.fail (e) ->
+					console.log 'ERROR'.red, e.message.yellow
+					main_defer.reject()
 
 		if args[0] is 'install'
 			if options.help
@@ -118,8 +116,8 @@ module.exports = (args, options) ->
 						.then () ->
 							console.log 'Done'
 				else
-					plugins = scaffolding.plugins.list.getActive()
-					chainPluginsInstall plugins_name
+					plugin_names = scaffolding.plugins.list.getActive()
+					chainPluginsInstall plugin_names
 			
 		if args[0] is 'create'
 			if options.help
@@ -142,14 +140,46 @@ module.exports = (args, options) ->
 				@help('activate')
 			else
 				scaffolding.plugins.activate(args[1])
+
 		if args[0] is 'deactivate'
 			if options.help || args.length != 2
 				@help 'deactivate'
 			else
 				scaffolding.plugins.deactivate(args[1])
 
+		chainPluginsUpdate = (plugin_names) ->
+			for name in plugin_names
+				do (name) ->
+					if not promise?
+						promise =  scaffolding.plugins.update(name)
+					else
+						promise = promise.then () ->
+							return scaffolding.plugins.update(name)
+				promise
+					.then () ->
+						main_defer.resolve()
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
+						main_defer.reject()
+
 		if args[0] is 'update'
-			console.log "update plugins!"
+			if options.help
+				@help('update')
+			else
+				name = args[1]
+				scaffolding.plugins.info.getActive()
+				.then (plugin_names) ->
+					if name
+						if scaffolding.plugins.info.isActive(name)
+							scaffolding.plugins.update(name)
+						else
+							console.log "The plugin you want to update is not present in \'plugins.json\'."
+					else
+						chainPluginsUpdate plugin_names
+				.fail (e) ->
+					console.log 'ERROR'.red, e.message.yellow
+					console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+				
 
 		return main_defer.promise
 
