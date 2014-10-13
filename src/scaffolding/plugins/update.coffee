@@ -22,6 +22,7 @@ module.exports = (env) ->
 		makeUpdate = (plugin_location, version, callback) ->
 			command = 'cd ' + plugin_location + '; git fetch'
 			command += '; git checkout ' + version
+			command += '; git pull origin ' + version
 			exec command, (error, stdout, stderr) ->
 				return callback error if error
 				return callback null

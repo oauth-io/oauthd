@@ -48,7 +48,6 @@ module.exports = (env) ->
 			env.debug 'ERROR'.red, e.message.yellow
 			env.debug 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
 		for name, url of obj
-			console.log "name", name
 			if name is plugin_name
 				return callback null, url
 		return callback true
