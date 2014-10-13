@@ -3,8 +3,64 @@ prompt = require 'prompt'
 colors = require 'colors'
 Q = require 'q'
 ncp = require 'ncp'
+async = require 'async'
 
 module.exports = (env) ->
+	continue_init = (defer, name) ->
+		schema = {
+			properties:{}
+
+		}
+
+		schema.properties.install_default_plugin = {
+			pattern: /^([Yy]|[nN])$/
+			message: "Please answer by 'yes' or 'no'."
+			description: 'Do you want to install default plugins?  (Y|n)'
+			default: 'Y'
+		}
+
+		prompt.message = "oauthd".white
+		prompt.delimiter = "> "
+		prompt.start()
+		prompt.get schema, (err, res2) ->
+			env.debug 'Generating a folder for ' + name
+			ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
+				return defer.reject err if err
+				if res2.install_default_plugin.match(/[yY]/)
+					async.parallel [
+						(next) ->
+							env.plugins.install("https://github.com/william26/oauthd_default_plugin_auth", process.cwd() + "/" + name)
+								.then () ->
+									next()
+								.fail (e) ->
+									next e
+						(next) ->
+							env.plugins.install("https://github.com/william26/oauthd_default_plugin_me", process.cwd() + "/" + name)
+								.then () ->
+									next()
+								.fail (e) ->
+									next e
+						(next) ->
+							env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + name)
+								.then () ->
+									next()
+								.fail (e) ->
+									next e
+						(next) ->
+							env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + name)
+								.then () ->
+									next()
+								.fail (e) ->
+									next e
+					], (err) ->
+						return defer.reject err if err
+						defer.resolve(name)
+
+				else
+					defer.resolve(name)
+
+
+
 	(force) ->
 		defer = Q.defer()
 		schema = {
@@ -26,40 +82,31 @@ module.exports = (env) ->
 				env.debug 'You must give a folder name using only letters, digits, dash and underscores'
 				return
 			exists = fs.existsSync './' + results.name
+
+			
+
 			if exists && not force
-				env.debug 'A folder already exists for that name. Use '.red + '--force'.yellow + ' to overwrite it.'.red
-			else
-				env.debug 'Generating a folder for ' + results.name
-				ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + results.name, (err) ->
-					return defer.reject err if err
-					schema = {
-						properties:
-							install_default_plugin: {
-								pattern: /^(yes|no)$/
-								message: "Please answer by 'yes' or 'no'."
-								description: 'Do you want to install default plugins? (recommanded)'
-								require: true
-							}
-					}
-					prompt.message = "oauthd".white
-					prompt.delimiter = "> "
-					prompt.start()
-					prompt.get schema, (err, res2) ->
-						return defer.reject err if err
-						if res2.install_default_plugin is "yes"
-							env.plugins.install("https://github.com/william26/oauthd_default_plugin_auth", process.cwd() + "/" + results.name)
-							.then () ->
-								env.plugins.install("https://github.com/william26/oauthd_default_plugin_me", process.cwd() + "/" + results.name)
-							.then () ->
-								env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + results.name)
-							.then () ->
-								env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + results.name)
-							.then () ->
-								defer.resolve(results.name)
-							.fail (e) ->
-								return defer.reject e if e
-						else
-							defer.resolve(results.name)
+				schema = {
+					properties:{}
+				}
+				schema.properties.overwrite = {
+					pattern: /^(y|n)$/
+					message: "Please answer by 'y' for yes or 'n' for no."
+					description: 'A folder ' + results.name + ' already exists. Do you want to overwrite it? (y|N)'
+					default: 'N'
+				}
+
+				prompt.message = "oauthd".white
+				prompt.delimiter = "> "
+				prompt.start()
+				
+				prompt.get schema, (err, res_overwrite) ->
+					if res_overwrite.overwrite.match(/[Yy]/)
+						continue_init(defer, results.name)
+					else
+						return defer.reject new Error 'Stopped'
+
+				
 
 		defer.promise
 
