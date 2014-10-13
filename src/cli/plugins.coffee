@@ -116,7 +116,7 @@ module.exports = (args, options) ->
 						.then () ->
 							console.log 'Done'
 				else
-					plugin_names = scaffolding.plugins.list.getActive()
+					plugin_names = scaffolding.plugins.info.getActive()
 					chainPluginsInstall plugin_names
 			
 		if args[0] is 'create'
