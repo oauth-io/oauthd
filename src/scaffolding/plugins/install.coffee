@@ -27,21 +27,13 @@ module.exports = (env) ->
 							defer.resolve()
 			defer.promise
 
-		getRepositoryTagNameIfExist = (full_url, callback) ->
-			tag_name = null
-			tmpArray = full_url.split("^")
-			repo_url = tmpArray[0]
-			if tmpArray.length > 1
-				tag_name = tmpArray[1]
-			return callback repo_url, tag_name
-
 		gitClone = (url, temp_location, callback) ->
 			rimraf temp_location, (err) ->
 				return callback err if err
-				getRepositoryTagNameIfExist url, (repo_url, tag_name) ->
+				env.plugins.info.getVersion url, (repo_url, tag_name) ->
 					command = 'cd ' + temp_location + '; git clone ' + repo_url + ' ' + temp_location
 					if tag_name 
-						command += '; git checkout tags/' + tag_name
+						command += '; git checkout ' + tag_name
 					fs.mkdirSync temp_location
 					env.debug "Cloning " + url.red + "."
 					exec command, (error, stdout, stderr) ->

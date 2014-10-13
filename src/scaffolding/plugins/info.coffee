@@ -33,6 +33,13 @@ module.exports = (env) ->
 		catch e 
 			return callback e
 		return callback null, plugin_data
+	getVersion: (url, callback) ->
+		tag_name = null
+		tmpArray = url.split("#")
+		repo_url = tmpArray[0]
+		if tmpArray.length > 1
+			tag_name = tmpArray[1]
+		return callback repo_url, tag_name
 	isActive:(name) ->
 		obj = jf.readFileSync process.cwd() + '/plugins.json'
 		plugin_names = []

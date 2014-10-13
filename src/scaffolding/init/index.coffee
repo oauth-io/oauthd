@@ -28,7 +28,7 @@ module.exports = (env) ->
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + name)
+				env.plugins.install("https://github.com/william26/oauthd_default_plugin_front", process.cwd() + "/" + name)
 					.then () ->
 						next()
 					.fail (e) ->
