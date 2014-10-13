@@ -16,6 +16,8 @@ module.exports = (args, options) ->
 			console.log '    oauthd plugins ' + 'create'.yellow + ' <name>' + '\t\t' + 'Creates a new plugin'
 			console.log '    oauthd plugins ' + 'install'.yellow + ' [git-repository]' + '\t' + 'Installs a plugin'
 			console.log '    oauthd plugins ' + 'uninstall'.yellow + ' <name>' + '\t\t' + 'Removes a plugin'
+			console.log '    oauthd plugins ' + 'activate'.yellow + ' <name>' + '\t\t' + 'Activates a plugin'
+			console.log '    oauthd plugins ' + 'deactivate'.yellow + ' <name>' + '\t\t' + 'Deactivates a plugin'
 			console.log ''
 			console.log 'oauthd plugins <command> ' + '--help'.green + ' for more information about a specific command'
 		if command == 'list'

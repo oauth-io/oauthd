@@ -6,19 +6,21 @@ jf = require 'jsonfile'
 Q = require 'q'
 colors = require 'colors'
 
+cloned_nb = 0
+
 module.exports = (env) ->
 	(url, cwd) ->
 		launchInstall = (url, cwd) ->
 			defer = Q.defer()
 			if not url?
-				return env.debug 'Please provide a repository address for the plugin to install.'
-			temp_location = cwd + '/plugins/cloned'
+				return env.debug 'Please provide a repository address for the plugin to install'
+			temp_location = cwd + '/plugins/cloned' + (cloned_nb++)
 			gitClone url, temp_location, (err) ->
 				return defer.reject err if err
-				env.debug "Loading plugin information."
+				# env.debug "Loading plugin information"
 				env.plugins.info.getDetails temp_location, (err, plugin_data) ->
 					return defer.reject err if err
-					moveClonedToPlugins plugin_data.name, cwd, (err) ->
+					moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
 						return defer.reject err if err
 						updatePluginsList plugin_data.name, url, cwd, (err) ->
 							return defer.reject err if err
@@ -46,13 +48,13 @@ module.exports = (env) ->
 						return callback error if error
 						return callback null
 
-		moveClonedToPlugins = (plugin_name, cwd, callback) ->
+		moveClonedToPlugins = (plugin_name, temp_location, cwd, callback) ->
 			folder_name = cwd + "/plugins/" + plugin_name
 			rimraf folder_name, (err) ->
 				return callback err if err
-				fs.rename cwd + '/plugins/cloned', cwd + '/plugins/' + plugin_name, (err) ->
+				fs.rename temp_location, cwd + '/plugins/' + plugin_name, (err) ->
 					return callback err if err
-					env.debug 'Plugin "' + plugin_name + '" successfully installed in "'+ folder_name + '".'
+					env.debug 'Plugin ' + plugin_name.green + ' successfully installed in "'+ folder_name + '"'
 					return callback null
 
 		updatePluginsList = (plugin_name, url, cwd, callback) ->
@@ -66,7 +68,7 @@ module.exports = (env) ->
 					obj[plugin_name] = url
 					jf.writeFile file, obj, (err) ->
 						return callback err if err
-						env.debug 'Plugin "' + plugin_name + '" successfully added to the plugins list.'
+						env.debug 'Plugin ' + plugin_name.green + ' successfully activated'
 						return callback null
 				else
 					return callback null

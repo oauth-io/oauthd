@@ -27,7 +27,6 @@ endOfInit = (name, showGrunt) ->
 			console.log "Error running command \"" + command + "\"."
 			console.log error
 		else
-			console.log 'Done'
 			r_command = 'cd ' + name + ' && oauthd start'
 			console.log 'Thank you for using oauthd. Run ' + r_command.green + ' to start the instance'
 
