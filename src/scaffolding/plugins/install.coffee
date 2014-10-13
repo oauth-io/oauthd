@@ -11,11 +11,11 @@ module.exports = (env) ->
 		launchInstall = (url, cwd) ->
 			defer = Q.defer()
 			if not url?
-				return env.debug 'Please provide a repository address for the plugin to install'
+				return env.debug 'Please provide a repository address for the plugin to install.'
 			temp_location = cwd + '/plugins/cloned'
 			gitClone url, temp_location, (err) ->
 				return defer.reject err if err
-				env.debug "Loading plugin information"
+				env.debug "Loading plugin information."
 				env.plugins.info.getDetails temp_location, (err, plugin_data) ->
 					return defer.reject err if err
 					moveClonedToPlugins plugin_data.name, cwd, (err) ->

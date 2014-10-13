@@ -2,16 +2,13 @@ jf = require 'jsonfile'
 Q = require 'q'
 
 module.exports = (env) ->
-	(name) ->
-		launchUpdate = (name) ->
+	(plugin_name) ->
+		launchUpdate = (plugin_name) ->
 			defer = Q.defer()
-			checkIfFolderExist
-
+			folder_name = env.plugins.info.getFolderName plugin_name
+				
 			defer.promise
 
-		checkIfFolderExist = (name) ->
-
-			return
 		checkIfPullNeeded = () ->
 			return
 		checkIfDependenciesProblems = () ->
@@ -21,4 +18,4 @@ module.exports = (env) ->
 		updatePluginsList = () ->
 			return
 
-		launchUpdate(name)
+		launchUpdate(plugin_name)

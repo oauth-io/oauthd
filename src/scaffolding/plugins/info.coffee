@@ -10,10 +10,10 @@ module.exports = (env) ->
 		plugin_names.remove("")
 		return plugin_names
 	getInstalled: () ->
-		plugins = fs.readdirSync process.cwd() + '/plugins'
+		folder_names = fs.readdirSync process.cwd() + '/plugins'
 		installed_plugins = []
-		for name in plugins
-			if env.plugins.info.isInstalled(name)
+		for name in folder_names
+			if env.plugins.info.folderExist(name)
 				path = process.cwd() + '/plugins/' + name
 				env.plugins.info.getDetails path, (err, plugin_data) ->
 					if plugin_data? and plugin_data.name?
@@ -38,6 +38,18 @@ module.exports = (env) ->
 		plugin_names = []
 		plugin_names = Object.keys(obj) if obj?
 		return plugin_names.indexOf(name) > -1
-	isInstalled:(name) ->
-		stat = fs.statSync process.cwd() + '/plugins/' + name
+	folderExist:(folder_name) ->
+		stat = fs.statSync process.cwd() + '/plugins/' + folder_name
 		return stat.isDirectory()
+	getFolderName:(plugin_name) ->
+		folder_names = fs.readdirSync process.cwd() + '/plugins'
+		installed_plugins = []
+		for name in folder_names
+			if env.plugins.info.folderExist(name)
+				path = process.cwd() + '/plugins/' + name
+				env.plugins.info.getDetails path, (err, plugin_data) ->
+					if plugin_data? and plugin_data.name? and plugin_data.name is plugin_name
+						return name
+		return false
+
+

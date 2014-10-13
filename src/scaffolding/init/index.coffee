@@ -23,13 +23,13 @@ module.exports = (env) ->
 		prompt.get schema, (err, results) ->
 			return defer.reject err if err
 			if results.name.length == 0
-				env.debug 'You must give a folder name using only letters, digits, dash and underscores'
+				env.debug 'You must give a folder name using only letters, digits, dash and underscores.'
 				return
 			exists = fs.existsSync './' + results.name
 			if exists && not force
 				env.debug 'A folder already exists for that name. Use '.red + '--force'.yellow + ' to overwrite it.'.red
 			else
-				env.debug 'Generating a folder for ' + results.name
+				env.debug 'Generating a folder for ' + results.name + "."
 				ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + results.name, (err) ->
 					return defer.reject err if err
 					schema = {
@@ -53,7 +53,7 @@ module.exports = (env) ->
 							.then () ->
 								env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + results.name)
 							.then () ->
-								env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + results.name)
+								env.plugins.install("https://github.com/william26/oauthd_default_plugin_front", process.cwd() + "/" + results.name)
 							.then () ->
 								defer.resolve(results.name)
 							.fail (e) ->
