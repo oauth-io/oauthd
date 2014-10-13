@@ -148,15 +148,16 @@ module.exports = (args, options) ->
 				scaffolding.plugins.deactivate(args[1])
 
 		chainPluginsUpdate = (plugin_names) ->
-			promise = undefined
 			for name in plugin_names
 				scaffolding.plugins.update(name)
-				.then () ->
-					main_defer.resolve()
-				.fail (e) ->
-					console.log 'ERROR'.red, e.message.yellow
-					main_defer.reject()
-
+					.then () ->
+						console.log "THEN name", name
+						main_defer.resolve()
+					.fail (e) ->
+						console.log 'ERROR'.red, e.message.yellow
+						main_defer.reject()
+			return 
+			
 		if args[0] is 'update'
 			if options.help
 				@help('update')
@@ -165,6 +166,12 @@ module.exports = (args, options) ->
 				if name
 					if scaffolding.plugins.info.isActive(name)
 						scaffolding.plugins.update(name)
+							.then () ->
+								console.log "THEN name", name
+								main_defer.resolve()
+							.fail (e) ->
+								console.log 'ERROR'.red, e.message.yellow
+								main_defer.reject()
 					else
 						console.log "The plugin you want to update is not present in \'plugins.json\'."
 				else

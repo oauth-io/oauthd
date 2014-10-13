@@ -14,6 +14,9 @@ module.exports = (env) ->
 						if not version
 							version = "master"
 						makeUpdate plugin_location, version, (err) ->
+							console.log ""
+							console.log "launchUpdate err", err
+							console.log ""
 							return defer.reject err if err
 							env.debug 'Plugin ' + plugin_name.green + ' successfully update with tag \'' + version + '\'.'
 							defer.resolve()
