@@ -6,10 +6,40 @@ ncp = require 'ncp'
 async = require 'async'
 
 module.exports = (env) ->
+
+	installPlugins = (defer, name) ->
+		async.parallel [
+			(next) ->
+				env.plugins.install("https://github.com/william26/oauthd_default_plugin_auth", process.cwd() + "/" + name)
+					.then () ->
+						next()
+					.fail (e) ->
+						next e
+			(next) ->
+				env.plugins.install("https://github.com/william26/oauthd_default_plugin_me", process.cwd() + "/" + name)
+					.then () ->
+						next()
+					.fail (e) ->
+						next e
+			(next) ->
+				env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + name)
+					.then () ->
+						next()
+					.fail (e) ->
+						next e
+			(next) ->
+				env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + name)
+					.then () ->
+						next()
+					.fail (e) ->
+						next e
+		], (err) ->
+			return defer.reject err if err
+			defer.resolve(name)
+
 	continue_init = (defer, name) ->
 		schema = {
 			properties:{}
-
 		}
 
 		schema.properties.install_default_plugin = {
@@ -27,35 +57,7 @@ module.exports = (env) ->
 			ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
 				return defer.reject err if err
 				if res2.install_default_plugin.match(/[yY]/)
-					async.parallel [
-						(next) ->
-							env.plugins.install("https://github.com/william26/oauthd_default_plugin_auth", process.cwd() + "/" + name)
-								.then () ->
-									next()
-								.fail (e) ->
-									next e
-						(next) ->
-							env.plugins.install("https://github.com/william26/oauthd_default_plugin_me", process.cwd() + "/" + name)
-								.then () ->
-									next()
-								.fail (e) ->
-									next e
-						(next) ->
-							env.plugins.install("https://github.com/william26/oauthd_default_plugin_request", process.cwd() + "/" + name)
-								.then () ->
-									next()
-								.fail (e) ->
-									next e
-						(next) ->
-							env.plugins.install("https://github.com/william26/oauthd_default_plugin_front^1.0.0", process.cwd() + "/" + name)
-								.then () ->
-									next()
-								.fail (e) ->
-									next e
-					], (err) ->
-						return defer.reject err if err
-						defer.resolve(name)
-
+					installPlugins defer, name
 				else
 					defer.resolve(name)
 
@@ -103,6 +105,8 @@ module.exports = (env) ->
 						continue_init(defer, results.name)
 					else
 						return defer.reject new Error 'Stopped'
+			else
+				continue_init(defer, results.name)
 
 
 		defer.promise
