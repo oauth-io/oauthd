@@ -45,7 +45,7 @@ module.exports = (env) ->
 				return callback err if err
 				fs.rename temp_location, cwd + '/plugins/' + plugin_name, (err) ->
 					return callback err if err
-					env.debug 'Plugin ' + plugin_name.green + ' successfully installed in "'+ folder_name + '"'
+					env.debug 'Plugin ' + plugin_name.green + ' successfully installed in "'+ folder_name + '".'
 					return callback null
 
 		updatePluginsList = (plugin_name, url, cwd, callback) ->
@@ -59,7 +59,7 @@ module.exports = (env) ->
 					obj[plugin_name] = url
 					jf.writeFile file, obj, (err) ->
 						return callback err if err
-						env.debug 'Plugin ' + plugin_name.green + ' successfully activated'
+						env.debug 'Plugin ' + plugin_name.green + ' successfully activated.'
 						return callback null
 				else
 					return callback null

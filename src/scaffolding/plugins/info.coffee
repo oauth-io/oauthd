@@ -2,6 +2,8 @@ jf = require 'jsonfile'
 Q = require 'q'
 fs = require 'fs'
 sugar = require 'sugar'
+async = require 'async'
+
 module.exports = (env) ->
 	getActive: () ->
 		try
@@ -35,6 +37,12 @@ module.exports = (env) ->
 			if plugin not in active_plugins
 				inactive_plugins.push plugin
 		return inactive_plugins
+	getInfo: (plugin_name, callback) ->
+		env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
+			return callback err if err
+			env.plugins.info.getDetails process.cwd() + "/plugins/" + folder_name, (err, plugin_data) ->
+				return callback err if err
+				return callback null, plugin_data
 	getDetails: (path, callback) ->
 		try
 			plugin_data = JSON.parse(fs.readFileSync path + '/plugin.json', { encoding: 'UTF-8' })
@@ -68,13 +76,24 @@ module.exports = (env) ->
 		return stat.isDirectory()
 	getFolderName:(plugin_name, callback) ->
 		folder_names = fs.readdirSync process.cwd() + '/plugins'
-		installed_plugins = []
+		cmds = []
 		for name in folder_names
-			if env.plugins.info.folderExist(name)
-				path = process.cwd() + '/plugins/' + name
-				env.plugins.info.getDetails path, (err, plugin_data) ->
-					if plugin_data? and plugin_data.name? and plugin_data.name is plugin_name
-						return callback null, name
-		return callback true
+			do (name) ->
+				cmds.push (callback) ->
+					if env.plugins.info.folderExist(name)
+						path = process.cwd() + '/plugins/' + name
+						env.plugins.info.getDetails path, (err, plugin_data) ->
+							return callback err if err
+							if plugin_data? and plugin_data.name? and plugin_data.name is plugin_name
+								return callback null, name
+							return callback()
+					else
+						return callback()
+		async.parallel cmds, (e, res) ->
+			return callback e if e
+			for r in res
+				if r?
+					return callback null, r
+			return callback true
 
 

@@ -49,7 +49,9 @@ module.exports = (args, options) ->
 		if command == 'uninstall'
 			console.log 'Usage: oauthd plugins ' + 'uninstall <name>'.yellow
 			console.log 'Uninstalls a given plugin'
-
+		if command == 'info'
+			console.log 'Usage: oauthd plugins ' + 'info [name]'.yellow
+			console.log 'If no argument is given, show info of all plugins listed in plugins.json'
 
 	command: () ->
 		main_defer = Q.defer()
@@ -151,7 +153,7 @@ module.exports = (args, options) ->
 			for name in plugin_names
 				scaffolding.plugins.update(name)
 					.then () ->
-						console.log "THEN name", name
+						return
 					.fail (e) ->
 						console.log 'ERROR'.red, e.message.yellow
 
@@ -164,7 +166,6 @@ module.exports = (args, options) ->
 					if scaffolding.plugins.info.isActive(name)
 						scaffolding.plugins.update(name)
 							.then () ->
-								console.log "THEN name", name
 								main_defer.resolve()
 							.fail (e) ->
 								console.log 'ERROR'.red, e.message.yellow
@@ -174,6 +175,29 @@ module.exports = (args, options) ->
 				else
 					plugin_names = scaffolding.plugins.info.getActive()
 					chainPluginsUpdate plugin_names
+
+		if args[0] is 'info'
+			if options.help
+				@help('info')
+			else
+				name = args[1]
+				if name
+					scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
+						if err
+							console.log 'ERROR'.red, err.yellow
+							main_defer.reject()
+						console.log plugin_data
+						main_defer.resolve()
+				else
+					for name in scaffolding.plugins.info.getActive()
+						scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
+							if err
+								console.log "Plugins \'" + name.yellow + "\': "
+								console.log 'ERROR'.red, err.yellow
+							else
+								console.log "Plugins \'" + name.green + "\': "
+								console.log plugin_data
+							console.log ""
 
 		return main_defer.promise
 

@@ -34,7 +34,8 @@ module.exports = (env) ->
 								if exist
 									exec command + "; git checkout " + version + "; git pull origin " + version, (error, stdout, stderr) ->
 										return defer.reject error if error
-										env.debug 'Plugin ' + plugin_name.green + ': ' + stdout
+										# env.debug 'Plugin ' + plugin_name.green + ': ' + stdout
+										env.debug 'Plugin ' + plugin_name.green + ': ' + "Your branch is now up-to-date with \'tags/" + version + "\'."
 										defer.resolve()
 								else
 									# env.debug "The version \'" + version + "\' specified for the plugin \'" + plugin_name.yellow + "\' doesn\'t exist."
@@ -44,6 +45,6 @@ module.exports = (env) ->
 							exec command + "; git checkout " + version + "; git pull origin " + version, (error, stdout, stderr) ->
 								return defer.reject error if error
 								# env.debug 'Plugin ' + plugin_name.green + ' successfully update with tag \'' + version + '\'.'
-								env.debug 'Plugin ' + plugin_name.green + ': ' + stdout
+								env.debug 'Plugin ' + plugin_name.green + ': ' + "Your branch is now up-to-date with \'origin/" + version + "\'."
 								defer.resolve()
 		defer.promise
