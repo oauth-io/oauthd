@@ -4,13 +4,21 @@ fs = require 'fs'
 sugar = require 'sugar'
 module.exports = (env) ->
 	getActive: () ->
-		obj = jf.readFileSync process.cwd() + '/plugins.json'
+		try
+			obj = jf.readFileSync process.cwd() + '/plugins.json'
+		catch e 
+			env.debug 'ERROR'.red, e.message.yellow
+			env.debug 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
 		plugin_names = []
 		plugin_names = Object.keys(obj) if obj?
 		plugin_names.remove("")
 		return plugin_names
 	getInstalled: () ->
-		folder_names = fs.readdirSync process.cwd() + '/plugins'
+		try
+			folder_names = fs.readdirSync process.cwd() + '/plugins'
+		catch e 
+			env.debug 'ERROR'.red, e.message.yellow
+			env.debug 'Error while trying to list plugins into \'plugins\' folder. Please make sure it exists and is well structured.'
 		installed_plugins = []
 		for name in folder_names
 			if env.plugins.info.folderExist(name)
@@ -33,13 +41,24 @@ module.exports = (env) ->
 		catch e 
 			return callback e
 		return callback null, plugin_data
+	getFullUrl: (plugin_name, callback) ->
+		try
+			obj = jf.readFileSync process.cwd() + '/plugins.json'
+		catch e 
+			env.debug 'ERROR'.red, e.message.yellow
+			env.debug 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
+		for name, url of obj
+			console.log "name", name
+			if name is plugin_name
+				return callback null, url
+		return callback true
 	getVersion: (url, callback) ->
-		tag_name = null
+		version = null
 		tmpArray = url.split("#")
 		repo_url = tmpArray[0]
 		if tmpArray.length > 1
-			tag_name = tmpArray[1]
-		return callback repo_url, tag_name
+			version = tmpArray[1]
+		return callback repo_url, version
 	isActive:(name) ->
 		obj = jf.readFileSync process.cwd() + '/plugins.json'
 		plugin_names = []
@@ -48,7 +67,7 @@ module.exports = (env) ->
 	folderExist:(folder_name) ->
 		stat = fs.statSync process.cwd() + '/plugins/' + folder_name
 		return stat.isDirectory()
-	getFolderName:(plugin_name) ->
+	getFolderName:(plugin_name, callback) ->
 		folder_names = fs.readdirSync process.cwd() + '/plugins'
 		installed_plugins = []
 		for name in folder_names
@@ -56,7 +75,7 @@ module.exports = (env) ->
 				path = process.cwd() + '/plugins/' + name
 				env.plugins.info.getDetails path, (err, plugin_data) ->
 					if plugin_data? and plugin_data.name? and plugin_data.name is plugin_name
-						return name
-		return false
+						return callback null, name
+		return callback true
 
 

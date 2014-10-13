@@ -30,10 +30,10 @@ module.exports = (env) ->
 		gitClone = (url, temp_location, callback) ->
 			rimraf temp_location, (err) ->
 				return callback err if err
-				env.plugins.info.getVersion url, (repo_url, tag_name) ->
+				env.plugins.info.getVersion url, (repo_url, version) ->
 					command = 'cd ' + temp_location + '; git clone ' + repo_url + ' ' + temp_location
-					if tag_name 
-						command += '; git checkout ' + tag_name
+					if version 
+						command += '; git checkout ' + version
 					fs.mkdirSync temp_location
 					env.debug "Cloning " + url.red + "."
 					exec command, (error, stdout, stderr) ->

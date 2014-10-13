@@ -148,38 +148,28 @@ module.exports = (args, options) ->
 				scaffolding.plugins.deactivate(args[1])
 
 		chainPluginsUpdate = (plugin_names) ->
+			promise = undefined
 			for name in plugin_names
-				do (name) ->
-					if not promise?
-						promise =  scaffolding.plugins.update(name)
-					else
-						promise = promise.then () ->
-							return scaffolding.plugins.update(name)
-				promise
-					.then () ->
-						main_defer.resolve()
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
-						main_defer.reject()
+				scaffolding.plugins.update(name)
+				.then () ->
+					main_defer.resolve()
+				.fail (e) ->
+					console.log 'ERROR'.red, e.message.yellow
+					main_defer.reject()
 
 		if args[0] is 'update'
 			if options.help
 				@help('update')
 			else
 				name = args[1]
-				scaffolding.plugins.info.getActive()
-				.then (plugin_names) ->
-					if name
-						if scaffolding.plugins.info.isActive(name)
-							scaffolding.plugins.update(name)
-						else
-							console.log "The plugin you want to update is not present in \'plugins.json\'."
+				if name
+					if scaffolding.plugins.info.isActive(name)
+						scaffolding.plugins.update(name)
 					else
-						chainPluginsUpdate plugin_names
-				.fail (e) ->
-					console.log 'ERROR'.red, e.message.yellow
-					console.log 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-				
+						console.log "The plugin you want to update is not present in \'plugins.json\'."
+				else
+					plugin_names = scaffolding.plugins.info.getActive()
+					chainPluginsUpdate plugin_names
 
 		return main_defer.promise
 
