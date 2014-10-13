@@ -37,14 +37,14 @@ module.exports = (env) ->
 			return defer.reject err if err
 			defer.resolve(name)
 
-	continue_init = (defer, name) ->
+	doInit = (defer, name) ->
 		schema = {
 			properties:{}
 		}
 
 		schema.properties.install_default_plugin = {
 			pattern: /^([Yy]|[nN])$/
-			message: "Please answer by 'yes' or 'no'."
+			message: "Please answer by 'y' for yes or 'n' for no."
 			description: 'Do you want to install default plugins?  (Y|n)'
 			default: 'Y'
 		}
@@ -102,11 +102,11 @@ module.exports = (env) ->
 				
 				prompt.get schema, (err, res_overwrite) ->
 					if res_overwrite.overwrite.match(/[Yy]/)
-						continue_init(defer, results.name)
+						doInit(defer, results.name)
 					else
 						return defer.reject new Error 'Stopped'
 			else
-				continue_init(defer, results.name)
+				doInit(defer, results.name)
 
 
 		defer.promise
