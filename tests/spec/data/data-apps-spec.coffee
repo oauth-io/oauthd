@@ -63,7 +63,7 @@ describe 'Data - apps module', () ->
 				env.data.apps.create undefined, { id: 1 }, (err, app) ->
 					expect(err).toBeDefined()
 					expect(app).toBeUndefined()
-					expect(err.message).toBe('You must specify a name for your application')
+					expect(err.message).toBe('You must specify a name and at least one domain for your application.')
 					next()
 			(next) ->
 				env.data.apps.create {name:'myapp'}, undefined, (err, app) ->
@@ -75,7 +75,7 @@ describe 'Data - apps module', () ->
 				env.data.apps.create {name: undefined}, { id: 1 }, (err, app) ->
 					expect(err).toBeDefined()
 					expect(app).toBeUndefined()
-					expect(err.message).toBe('You must specify a name for your application')
+					expect(err.message).toBe('You must specify a name and at least one domain for your application.')
 					next()
 			(next) ->
 				env.data.apps.create {name:'myapp'}, {id: undefined}, (err, app) ->

@@ -32,7 +32,7 @@ module.exports = (env) ->
 		err = new check.Error
 		err.check data, name:/^.{3,50}$/,domains:['none','array']
 		if err.failed()
-			return callback new check.Error "You must specify a name for your application"
+			return callback new check.Error "You must specify a name and at least one domain for your application."
 
 		key = env.data.generateUid()
 		secret = env.data.generateUid()
@@ -41,7 +41,7 @@ module.exports = (env) ->
 			for domain in data.domains
 				err.check 'domains', domain, 'string'
 		if err.failed()
-			return callback new check.Error "You must specify a name for your application"
+			return callback new check.Error "You must specify a name and at least one domain for your application."
 		if not user?.id?
 			return callback new check.Error "The user must be defined and contain the field 'id'"
 		env.data.redis.incr 'a:i', (err, idapp) ->

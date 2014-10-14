@@ -43,14 +43,6 @@ module.exports = (env) ->
 	# runs the plugins' method init if popuplated
 	env.pluginsEngine.runSync 'init'
 
-
-	if not env.hooks["api_cors_middleware"]
-		env.addhook 'api_cors_middleware', (req, res, next) =>
-			next()
-	if not env.hooks["api_create_app_restriction"]
-		env.addhook 'api_create_app_restriction', (req, res, next) =>
-			next()
-
 	# init the presentation layer
 	PLModule(env) # initializes the api webservices endpoints
 

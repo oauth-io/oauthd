@@ -27,6 +27,11 @@ module.exports = (env) ->
 			next()
 		return chain
 
+	env.cors_middleware = (req, res, next) ->
+		res.setHeader 'Access-Control-Allow-Origin', '*'
+		res.setHeader 'Access-Control-Allow-Methods', 'GET'
+		next()
+		
 	env.fixUrl = (ref) => ref.replace /^([a-zA-Z\-_]+:\/)([^\/])/, '$1/$2'
 
 	
