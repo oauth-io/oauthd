@@ -55,13 +55,13 @@ module.exports = (env) ->
 					return callback null, plugin_data
 		getAllFullInfo: () ->
 			defer = Q.defer()
-			plugins = {}
+			plugins = []
 			info.getActiveAsync()
 				.then (names) ->
 					async.each names, (name, next) ->
 						info.getDetails process.cwd() + '/plugins/' + name, (err, data) ->
 							return next err if err
-							plugins[name] = data
+							plugins.push data
 							next()
 					, (err) ->
 						return defer.reject err if err
