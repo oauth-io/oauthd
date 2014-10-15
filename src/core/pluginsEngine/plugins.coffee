@@ -50,7 +50,7 @@ module.exports = (env) ->
 			env.config.plugins.push plugin_name
 			pluginsEngine.plugin[plugin_name] = plugin
 		catch e
-			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point. err:" + e 
+			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
 		return
 
 	pluginsEngine.init = (cwd, callback) ->
