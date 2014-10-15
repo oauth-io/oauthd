@@ -77,5 +77,5 @@ exports.installPlugins = () ->
 		},
 		__mode: 'prog'
 	}
-	require('../cli/bin/plugins')(cli)
+	require('./cli/bin/plugins')(cli)
 		

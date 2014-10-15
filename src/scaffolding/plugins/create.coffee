@@ -6,8 +6,6 @@ colors = require 'colors'
 
 Q = require 'q'
 
-
-
 module.exports = (name, force, save) ->
 	defer = Q.defer()
 
@@ -15,7 +13,8 @@ module.exports = (name, force, save) ->
 	exists = fs.existsSync process.cwd() + '/plugins/' + name
 
 	if not exists or force
-		ncp __dirname + '/../../templates/plugin', path, (err) ->
+
+		ncp __dirname + '/../templates/plugin', path, (err) ->
 			if err
 				return defer.reject err
 			else

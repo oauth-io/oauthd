@@ -1,5 +1,6 @@
 async = require 'async'
 jf = require 'jsonfile'
+fs = require 'fs'
 
 module.exports = (env) ->
 	env.debug 'Initializing plugins engine'
@@ -48,7 +49,7 @@ module.exports = (env) ->
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + entry_point)(env)
 			env.config.plugins.push plugin_name
 			pluginsEngine.plugin[plugin_name] = plugin
-		catch 
+		catch e
 			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
 		return
 
@@ -61,7 +62,9 @@ module.exports = (env) ->
 			if not obj?
 				obj = {}
 			for pluginname, pluginversion of obj
-				pluginsEngine.load pluginname
+				stat = fs.statSync cwd + '/plugins/' + pluginname
+				if stat.isDirectory()
+					pluginsEngine.load pluginname
 			return callback false
 
 	pluginsEngine.list = (callback) ->

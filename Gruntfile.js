@@ -14,10 +14,6 @@ module.exports = function(grunt) {
                 files: ['src/**/*.coffee'],
                 tasks: ['coffee:src']
             },
-            cli: {
-                files: ['cli/**/*.coffee'],
-                tasks: ['coffee:cli']
-            },
             static: {
                 files: ['src/**/*.png', 'src/**/*.less', 'src/**/*.html', 'src/**/*.css', 'src/**/*.js', 'src/**/*.eot', 'src/**/*.otf', 'src/**/*.svg', 'src/**/*.ttf', 'src/**/*.woff', '**/*.ico'],
                 tasks: ['copy']
@@ -33,23 +29,13 @@ module.exports = function(grunt) {
                 options: {
                     bare: true
                 }
-            },
-            cli: {
-                expand: true,
-                cwd: 'cli',
-                src: ['**/*.coffee'],
-                dest: 'cli/bin',
-                ext: '.js',
-                options: {
-                    bare: true
-                }
             }
         },
         copy: {
             main: {
                 files: [{
                     expand: true,
-                    src: ['**/*.less', '**/*.html', '**/*.png', '**/*.js', '**/*.eot', '**/*.css', '**/*.svg', '**/*.ttf', '**/*.woff', '**/*.otf', '**/*.ico'],
+                    src: ['**', '!**/*.coffee'],
                     dest: 'bin',
                     cwd: 'src'
                 }, ]
