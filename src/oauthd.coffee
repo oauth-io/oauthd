@@ -18,7 +18,7 @@ exports.init = (env) ->
 	env = env || {}
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
 	
-
+	env.scaffolding = require('./scaffolding')()
 
 	coreModule = require './core'
 	dataModule = require './data'

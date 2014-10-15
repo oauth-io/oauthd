@@ -147,10 +147,12 @@ module.exports = (env) ->
 
 		# get the plugins list
 		env.server.get '/api/plugins', env.middlewares.auth.needed, (req, res, next) =>
-			env.pluginsEngine.list (err, list) =>
-				return next(err) if err
-				res.send list
-				next()
+			env.scaffolding.plugins.info.getAllFullInfo()
+					.then (data) ->
+						res.send data
+					.fail (e) ->
+						env.debug e
+						res.send 400, 'Error reading the plugins data'
 
 		# get host_url
 		env.server.get '/api/host_url', env.middlewares.auth.needed, (req, res, next) =>
