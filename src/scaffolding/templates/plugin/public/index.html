@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>{{ plugin_name }}</title>
+		<link rel="stylesheet" href="css/style.css">
+	</head>
+	<body>
+		<h1>{{ plugin_name }}</h1>
+		Thanks for installing {{ plugin_name }}
+
+		<script>
+			window.token = JSON.parse(window.parent.localStorage.__amplify__loginData).data.token
+		</script>
+		<script src="app/app.js"></script>
+	</body>
+</html>

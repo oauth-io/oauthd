@@ -40,22 +40,24 @@ module.exports = (env) ->
 	for k, middleware of env.middlewares.always
 		server.use middleware
 
-	# runs the plugins' method init if popuplated
-	env.pluginsEngine.runSync 'init'
-
-	# init the presentation layer
-	PLModule(env) # initializes the api webservices endpoints
-
 	return {
 		listen: (callback) =>
-			env.pluginsEngine.run 'setup', =>
-				listen_args = [env.config.port]
-				listen_args.push env.config.bind if env.config.bind
-				listen_args.push (err) =>
-					return callback err if err
-					env.debug '%s listening at %s for %s', server.name, server.url, env.config.host_url
-					env.events.emit 'server', null
-					callback null, server
+			env.pluginsEngine.loadPluginPages(env.server)
+				.then () ->
+					# runs the plugins' method init if popuplated
+					env.pluginsEngine.runSync 'init'
 
-				server.listen.apply server, listen_args
+					# init the presentation layer
+					PLModule(env) # initializes the api webservices endpoints
+
+					env.pluginsEngine.run 'setup', =>
+						listen_args = [env.config.port]
+						listen_args.push env.config.bind if env.config.bind
+						listen_args.push (err) =>
+							return callback err if err
+							env.debug '%s listening at %s for %s', server.name, server.url, env.config.host_url
+							env.events.emit 'server', null
+							callback null, server
+						
+						server.listen.apply server, listen_args
 	}

@@ -1,5 +1,5 @@
 fs = require 'fs'
-ncp = require 'ncp'
+ncp = require('ncp').ncp
 jf = require 'jsonfile'
 exec = require('child_process').exec
 colors = require 'colors'

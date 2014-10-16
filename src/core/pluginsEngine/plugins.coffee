@@ -2,6 +2,9 @@ async = require 'async'
 jf = require 'jsonfile'
 fs = require 'fs'
 colors = require 'colors'
+Q = require 'q'
+restify = require 'restify'
+Url = require 'url'
 
 module.exports = (env) ->
 	env.debug 'Initializing plugins engine'
@@ -125,5 +128,37 @@ module.exports = (env) ->
 			if typeof plugin[name] == 'function'
 				plugin[name].apply env, args
 		return
+
+	pluginsEngine.loadPluginPages = (server) ->
+		defer = Q.defer()
+		env.scaffolding.plugins.info.getAllFullInfo()
+			.then (plugins) ->
+				for k, plugin of plugins
+					do (plugin) ->
+						server.get new RegExp("^/plugins/" + plugin.name + "/(.*)"), (req, res, next) ->
+							req.params[0] ?= ""
+							req.url = req.params[0]
+							req._url = Url.parse req.url
+							req._path = req._url.pathname
+
+							fs.stat process.cwd() + '/plugins/' + plugin.name + '/public/' + req.params[0], (err, stat) ->
+
+								if stat?.isFile() && req.params[0] != 'index.html'
+									next()
+									return
+								else
+									fs.readFile process.cwd() + '/plugins/' + plugin.name + '/public/index.html', {encoding: 'UTF-8'}, (err, data) ->
+										if err
+											res.send 404
+											return
+										res.setHeader 'Content-Type', 'text/html'
+										data2 = data.replace(/\{\{ plugin_name \}\}/g, plugin.name)
+										res.send 200, data2
+										return
+						, restify.serveStatic
+							directory: process.cwd() + '/plugins/' + plugin.name + '/public'
+				defer.resolve()
+		defer.promise
+
 
 	pluginsEngine
