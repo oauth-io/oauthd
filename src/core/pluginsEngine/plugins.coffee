@@ -1,6 +1,7 @@
 async = require 'async'
 jf = require 'jsonfile'
 fs = require 'fs'
+colors = require 'colors'
 
 module.exports = (env) ->
 	env.debug 'Initializing plugins engine'
@@ -34,24 +35,45 @@ module.exports = (env) ->
 		env.hooks[name] ?= []
 		env.hooks[name].push fn
 
+	
+	global_interface = undefined
 	pluginsEngine.load = (plugin_name) ->
-		env.debug "Loading '" + plugin_name + "'."
+		
 		try 
 			plugin_data = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + '/plugin.json')
-		catch
-			env.debug 'Absent plugin.json for plugin \'' + plugin_name + '\'.'
-			plugin_data = {}
-		if plugin_data.main?
-			entry_point = '/' + plugin_data.main
-		else
-			entry_point = '/index'
-		try
-			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + entry_point)(env)
-			env.config.plugins.push plugin_name
-			pluginsEngine.plugin[plugin_name] = plugin
 		catch e
-			env.debug "Error requiring plugin \'" + plugin_name + "\' entry point."
-		return
+			env.debug 'Error loading plugin.json (' + plugin_name + ')'
+			console.log e.message.yellow
+			plugin_data = {
+				name: plugin_name
+			}
+
+		if plugin_data.main?
+			prefix = '/' if plugin_data.main[0] != '/'
+			plugin_data.main = prefix + plugin_data.main
+		else
+			plugin_data.main = '/index'
+
+		if not plugin_data.name? or plugin_data.name != plugin_name
+			plugin_data.name = plugin_name
+		
+
+		if plugin_data.type != 'global-interface'
+			loadPlugin(plugin_data)
+		else
+			global_interface = plugin_data
+
+
+	loadPlugin = (plugin_data) ->
+		env.debug "Loading " + plugin_data.name.blue
+		try
+			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name + plugin_data.main)(env)
+			pluginsEngine.plugin[plugin_data.name] = plugin
+		catch e
+			env.debug "Error while loading plugin " + plugin_data.name
+			env.debug e.message.yellow + ' at line ' + e.lineNumber.red
+
+		
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
@@ -65,6 +87,8 @@ module.exports = (env) ->
 				stat = fs.statSync cwd + '/plugins/' + pluginname
 				if stat.isDirectory()
 					pluginsEngine.load pluginname
+			if global_interface?
+				loadPlugin(global_interface)
 			return callback false
 
 	pluginsEngine.list = (callback) ->
