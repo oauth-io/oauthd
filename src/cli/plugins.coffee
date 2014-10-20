@@ -186,8 +186,22 @@ module.exports = (args, options) ->
 						if err
 							console.log 'ERROR'.red, err.yellow
 							main_defer.reject()
-						console.log plugin_data
-						main_defer.resolve()
+						scaffolding.plugins.git(plugin_data.name).getCurrentVersion()
+							.then (version) ->
+								console.log plugin_data.name.yellow
+								console.log plugin_data.description if plugin_data.description? && plugin_data.description != ""
+								if version.type == 'branch'
+									uptodate = ' (Up to date)'
+									if not version.uptodate
+										uptodate = ' (Updates available)'
+									console.log 'Installed version: ' + version.version.yellow + uptodate
+								else
+									console.log 'Installed version: ' + version.version.yellow
+								main_defer.resolve()
+							.fail (e) ->
+								console.log e
+								main_defer.resolve()
+
 				else
 					for name in scaffolding.plugins.info.getActive()
 						scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
@@ -198,6 +212,7 @@ module.exports = (args, options) ->
 								console.log "Plugins \'" + name.green + "\': "
 								console.log plugin_data
 							console.log ""
+
 
 		return main_defer.promise
 

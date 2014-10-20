@@ -6,3 +6,5 @@ module.exports = (env) ->
 	uninstall: require('./uninstall')(env)
 	activate: require('./activate')(env)
 	deactivate: require('./deactivate')(env)
+	git: (plugin_name) ->
+		require('./git')(env, plugin_name)
