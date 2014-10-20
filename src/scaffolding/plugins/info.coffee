@@ -73,7 +73,6 @@ module.exports = (env) ->
 							plugins.push data
 							next()
 					, (err) ->
-						return defer.reject err if err
 						defer.resolve plugins
 				.fail (e) ->
 					return defer.reject e
