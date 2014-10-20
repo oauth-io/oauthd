@@ -5,6 +5,7 @@ Q = require('q')
 scaffolding = require('../scaffolding')({ console: true })
 colors = require 'colors'
 sugar = require 'sugar'
+async = require 'async'
 
 module.exports = (args, options) ->
 	help: (command) ->
@@ -52,6 +53,9 @@ module.exports = (args, options) ->
 		if command == 'info'
 			console.log 'Usage: oauthd plugins ' + 'info [name]'.yellow
 			console.log 'If no argument is given, show info of all plugins listed in plugins.json'
+			console.log ''
+			console.log 'Options:'
+			console.log '    ' + '--fetch'.yellow + '\t' + 'Fetch plugins repository, to get updates availability (a bit longer)'
 
 	command: () ->
 		main_defer = Q.defer()
@@ -176,42 +180,65 @@ module.exports = (args, options) ->
 					plugin_names = scaffolding.plugins.info.getActive()
 					chainPluginsUpdate plugin_names
 
+		getInfo = (name, done, fetch) ->
+			text = ''
+			scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
+				plugin_data = plugin_data || { name: name } # probably unable to fetch plugin_data
+				error  = ''
+				title = plugin_data.name.white + ' '
+				plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
+				text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
+				plugin_git.getCurrentVersion()
+					.then (current_version) ->	
+						
+						if current_version.type == 'branch'
+							update = ''
+							if not current_version.uptodate
+								update = ' (' + 'Updates available'.green + ')'
+							title +=  '(' +current_version.version + ')' + update + ""
+							
+							done(title, text)
+						else if current_version.type == 'tag_n'
+							plugin_git.getVersionMask()
+								.then (mask) ->
+									plugin_git.getLatestVersion(mask)
+										.then (latest_version) ->
+											update = ''
+											if plugin_git.compareVersions(latest_version, current_version.version) > 0
+												update = ' (' + latest_version.green + ' is available)' 
+											title +=  '(' +current_version.version + ')' + update + ""
+											done(title, text)
+						else if current_version.type == 'tag_a'
+							title +=  '(tag ' + current_version.version + ')'
+							done(title, text)
+						else if current_version.type == 'unversionned'
+							title +=  "(unversionned)"
+							done(title, text)
+					.fail (e) ->
+						console.log e
+						done(title, text)
+
+
 		if args[0] is 'info'
 			if options.help
 				@help('info')
 			else
 				name = args[1]
 				if name
-					scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
-						if err
-							console.log 'ERROR'.red, err.yellow
-							main_defer.reject()
-						scaffolding.plugins.git(plugin_data.name).getCurrentVersion()
-							.then (version) ->
-								console.log plugin_data.name.yellow
-								console.log plugin_data.description if plugin_data.description? && plugin_data.description != ""
-								if version.type == 'branch'
-									uptodate = ' (Up to date)'
-									if not version.uptodate
-										uptodate = ' (Updates available)'
-									console.log 'Installed version: ' + version.version.yellow + uptodate
-								else
-									console.log 'Installed version: ' + version.version.yellow
-								main_defer.resolve()
-							.fail (e) ->
-								console.log e
-								main_defer.resolve()
-
+					getInfo(name, (title, text)-> 
+						console.log title
+						console.log text
+					, options.fetch)
 				else
-					for name in scaffolding.plugins.info.getActive()
-						scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
-							if err
-								console.log "Plugins \'" + name.yellow + "\': "
-								console.log 'ERROR'.red, err.yellow
-							else
-								console.log "Plugins \'" + name.green + "\': "
-								console.log plugin_data
-							console.log ""
+					names = scaffolding.plugins.info.getActive()
+					async.each names, (n, next) ->
+						getInfo n, (title, text) ->
+							console.log title
+							console.log text
+							next()
+						, options.fetch
+					, () ->
+						main_defer.resolve()
 
 
 		return main_defer.promise

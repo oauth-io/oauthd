@@ -74,7 +74,7 @@ module.exports = (env) ->
 			pluginsEngine.plugin[plugin_data.name] = plugin
 		catch e
 			env.debug "Error while loading plugin " + plugin_data.name
-			env.debug e.message.yellow + ' at line ' + e.lineNumber.red		  
+			env.debug e.message.yellow + ' at line ' + e.lineNumber?.red		  
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd

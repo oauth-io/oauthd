@@ -49,19 +49,19 @@ module.exports = (env) ->
 					inactive_plugins.push plugin
 			return inactive_plugins
 		getInfo: (plugin_name, callback) ->
-			env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
+			# env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
+			# 	return callback err if err
+			env.plugins.info.getDetails process.cwd() + "/plugins/" + plugin_name, (err, plugin_data) ->
 				return callback err if err
-				env.plugins.info.getDetails process.cwd() + "/plugins/" + folder_name, (err, plugin_data) ->
-					return callback err if err
-					return callback null, plugin_data
+				return callback null, plugin_data
 
 		getInfoAsync: (plugin_name) ->
 			defer = Q.defer()
-			env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
+			# env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
+			# 	return defer.reject err if err
+			env.plugins.info.getDetails process.cwd() + "/plugins/" + folder_name, (err, plugin_data) ->
 				return defer.reject err if err
-				env.plugins.info.getDetails process.cwd() + "/plugins/" + folder_name, (err, plugin_data) ->
-					return defer.reject err if err
-					defer.resolve plugin_data
+				defer.resolve plugin_data
 			defer.promise
 		getAllFullInfo: () ->
 			defer = Q.defer()
@@ -109,28 +109,7 @@ module.exports = (env) ->
 		folderExist:(folder_name) ->
 			stat = fs.statSync process.cwd() + '/plugins/' + folder_name
 			return stat.isDirectory()
-		getFolderName:(plugin_name, callback) ->
-			fs.readdir process.cwd() + '/plugins', (err, folder_names) ->
-				return callback err if err
-				cmds = []
-				for name in folder_names
-					do (name) ->
-						cmds.push (callback) ->
-							if env.plugins.info.folderExist(name)
-								path = process.cwd() + '/plugins/' + name
-								env.plugins.info.getDetails path, (err, plugin_data) ->
-									return callback err if err
-									if plugin_data? and plugin_data.name? and plugin_data.name is plugin_name
-										return callback null, name
-									return callback()
-							else
-								return callback()
-				async.parallel cmds, (e, res) ->
-					return callback e if e
-					for r in res
-						if r?
-							return callback null, r
-					return callback true
+
 
 	info
 
