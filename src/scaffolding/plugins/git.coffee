@@ -1,10 +1,11 @@
 Q = require 'q'
-exec = require('child_process').exec
+
 nodegit = require('nodegit')
 fs = require 'fs'
 
 
 module.exports = (env, plugin_name, fetch) ->
+	exec = env.exec
 	try 
 		plugin_data = require process.cwd() + '/plugins/' + plugin_name
 	catch e

@@ -1,4 +1,3 @@
-exec = require('child_process').exec
 fs = require 'fs'
 rimraf = require 'rimraf'
 jf = require 'jsonfile'
@@ -8,6 +7,7 @@ colors = require 'colors'
 cloned_nb = 0
 
 module.exports = (env) ->
+	exec = env.exec
 	(url, cwd) ->
 		launchInstall = (url, cwd) ->
 			defer = Q.defer()

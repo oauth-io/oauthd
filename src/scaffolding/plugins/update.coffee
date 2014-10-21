@@ -1,9 +1,10 @@
 Q = require 'q'
-exec = require('child_process').exec
+
 colors = require 'colors'
 sugar = require 'sugar'
 
 module.exports = (env) ->
+	exec = env.exec
 	(plugin_name) ->
 		defer = Q.defer()
 		plugin_git = env.plugins.git(plugin_name, false)

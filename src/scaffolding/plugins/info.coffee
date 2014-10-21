@@ -3,9 +3,10 @@ Q = require 'q'
 fs = require 'fs'
 sugar = require 'sugar'
 async = require 'async'
-exec = require('child_process').exec
+
 
 module.exports = (env) ->
+	exec = env.exec
 	info = 
 		getActive: () ->
 			try
