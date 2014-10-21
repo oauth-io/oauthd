@@ -1,5 +1,5 @@
 module.exports = (env) ->
-	create: require './create'
+	create: require('./create')(env)
 	install: require('./install')(env)
 
 	info: require('./info')(env)

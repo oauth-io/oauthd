@@ -1,8 +1,9 @@
 jf = require 'jsonfile'
 Q = require 'q'
-exec = require('child_process').exec
+
 
 module.exports = (env) ->
+	exec = env.exec
 	(plugin) ->
 		defer = Q.defer()
 		jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
