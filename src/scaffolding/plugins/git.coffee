@@ -124,10 +124,13 @@ module.exports = (env, plugin_name, fetch) ->
 
 		getLatestVersion: (mask) ->
 			defer = Q.defer()
-			git.getAllVersions(mask)
-				.then (versions) ->
-					latest = versions[versions.length - 1]
-					defer.resolve(latest)
+			if mask.match /^(\d+)\.(\d+|x)\.(\d+|x)$/
+				git.getAllVersions(mask)
+					.then (versions) ->
+						latest = versions[versions.length - 1]
+						defer.resolve(latest)
+			else
+				defer.resolve mask
 			defer.promise
 
 		getVersionMask: () ->
@@ -172,6 +175,6 @@ module.exports = (env, plugin_name, fetch) ->
 				if not err?
 					defer.resolve()
 				else
-					defer.reject()
+					defer.reject(new Error('The target version ' + version + ' does not seem to exist'))
 			defer.promise
 	git

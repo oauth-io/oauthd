@@ -11,6 +11,13 @@ module.exports = (env) ->
 	(url, cwd) ->
 		launchInstall = (url, cwd) ->
 			defer = Q.defer()
+			if url == '' or not url?
+				defer.resolve()
+			array = url.split('#')
+			url = array[0]
+			version_mask = array[1]
+
+			
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
 			temp_location = cwd + '/plugins/cloned' + (cloned_nb++)
@@ -23,7 +30,19 @@ module.exports = (env) ->
 						return defer.reject err if err
 						updatePluginsList plugin_data.name, url, cwd, (err) ->
 							return defer.reject err if err
-							defer.resolve()
+							if version_mask?
+								plugin_git = env.plugins.git(plugin_data.name)
+								plugin_git.getLatestVersion(version_mask)
+									.then (lv) ->
+										plugin_git.checkout lv
+											.then () ->
+												defer.resolve()
+											.fail (e) ->
+												defer.reject(e)
+
+							else	
+								defer.resolve()
+
 			defer.promise
 
 		gitClone = (url, temp_location, callback) ->

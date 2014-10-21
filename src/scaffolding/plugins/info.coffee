@@ -18,6 +18,16 @@ module.exports = (env) ->
 			plugin_names = Object.keys(obj) if obj?
 			plugin_names.remove("")
 			return plugin_names
+		getPluginsJson: () ->
+			defer = Q.defer()
+			fs.readFile process.cwd() + '/plugins.json', {encoding: 'UTF-8'}, (err, data) ->
+				return defer.reject err if err
+				try
+					obj = JSON.parse data
+					defer.resolve obj
+				catch e
+					defer.reject e
+			defer.promise
 		getActiveAsync: () ->
 			defer = Q.defer()
 			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
