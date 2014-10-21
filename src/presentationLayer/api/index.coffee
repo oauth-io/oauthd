@@ -167,3 +167,8 @@ module.exports = (env) ->
 		env.server.get '/api/host_url', env.middlewares.auth.needed, (req, res, next) =>
 			res.send env.config.host_url
 			next()
+
+		# get env.config
+		env.server.get '/api/config', env.middlewares.auth.needed, (req, res, next) =>
+			res.send env.config
+			next()
