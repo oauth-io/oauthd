@@ -13,12 +13,6 @@ module.exports = (env, plugin_name, fetch) ->
 	plugin_location = process.cwd() + '/plugins/' + plugin_name
 	fetched = false
 	execGit = (commands, callback) ->
-		
-
-		if (typeof fetch == 'function')
-			callback = fetch
-			fetch = false
-
 		full_command = 'cd ' + plugin_location + ';'
 		if (fetch && not fetched)
 			full_command += ' git fetch;'
@@ -28,7 +22,7 @@ module.exports = (env, plugin_name, fetch) ->
 		exec full_command , () ->
 			callback.apply null, arguments
 
-	git = 
+	git =
 		getCurrentVersion: () ->
 			defer = Q.defer()
 			
@@ -159,5 +153,24 @@ module.exports = (env, plugin_name, fetch) ->
 					defer.resolve(remote)
 				catch e
 					defer.reject e
+			defer.promise
+
+		pullBranch: (branch) ->
+			defer = Q.defer()
+
+			execGit ['pull origin ' + branch], (err, stdout, stderr) ->
+				if not err?
+					defer.resolve()
+				else
+					defer.reject()
+			defer.promise
+
+		checkout: (version) ->
+			defer = Q.defer()
+			execGit ['checkout ' + version], (err, stdout, stderr) ->
+				if not err?
+					defer.resolve()
+				else
+					defer.reject()
 			defer.promise
 	git

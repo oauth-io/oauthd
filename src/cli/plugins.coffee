@@ -154,12 +154,21 @@ module.exports = (args, options) ->
 				scaffolding.plugins.deactivate(args[1])
 
 		chainPluginsUpdate = (plugin_names) ->
-			for name in plugin_names
-				scaffolding.plugins.update(name)
-					.then () ->
-						return
-					.fail (e) ->
-						console.log 'ERROR'.red, e.message.yellow
+			async.eachSeries plugin_names, (name, next) ->
+					console.log 'Updating '.white + name.white
+					scaffolding.plugins.update(name)
+						.then (updated) ->
+							if updated
+								console.log 'Succesfully updated '.green + name.green
+							else
+								console.log name + ' already up to date'
+							next()
+						.fail (e) ->
+							console.log 'Error while updating '.red + name.red
+							next(e)
+			, (err) ->
+				return main_defer.reject err
+				main_defer.resolve()
 
 		if args[0] is 'update'
 			if options.help
@@ -168,11 +177,16 @@ module.exports = (args, options) ->
 				name = args[1]
 				if name
 					if scaffolding.plugins.info.isActive(name)
+						console.log 'Updating '.white + name.white
 						scaffolding.plugins.update(name)
-							.then () ->
+							.then (updated) ->
+								if updated
+									console.log 'Succesfully updated '.green + name.green
+								else
+									console.log name + ' already up to date'
 								main_defer.resolve()
 							.fail (e) ->
-								console.log 'ERROR'.red, e.message.yellow
+								console.log 'Error while updating '.red + name.red
 								main_defer.reject()
 					else
 						console.log "The plugin you want to update is not present in \'plugins.json\'."
@@ -183,6 +197,8 @@ module.exports = (args, options) ->
 		getInfo = (name, done, fetch) ->
 			text = ''
 			scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
+				if not plugin_data?
+					return console.log 'No plugin named ' + name + ' was found'
 				plugin_data = plugin_data || { name: name } # probably unable to fetch plugin_data
 				error  = ''
 				title = plugin_data.name.white + ' '
@@ -225,10 +241,10 @@ module.exports = (args, options) ->
 			else
 				name = args[1]
 				if name
-					getInfo(name, (title, text)-> 
+					getInfo name, (title, text)-> 
 						console.log title
 						console.log text
-					, options.fetch)
+					, options.fetch
 				else
 					names = scaffolding.plugins.info.getActive()
 					async.each names, (n, next) ->
