@@ -4,14 +4,16 @@ nodegit = require('nodegit')
 fs = require 'fs'
 
 
-module.exports = (env, plugin_name, fetch) ->
+module.exports = (env, plugin_name, fetch, cwd) ->
 	exec = env.exec
+	cwd = cwd || process.cwd()
 	try 
-		plugin_data = require process.cwd() + '/plugins/' + plugin_name
+		plugin_data = require cwd + '/plugins/' + plugin_name
 	catch e
+		console.log 'HELLO', e
 		return;
 
-	plugin_location = process.cwd() + '/plugins/' + plugin_name
+	plugin_location = cwd + '/plugins/' + plugin_name
 	fetched = false
 	execGit = (commands, callback) ->
 		full_command = 'cd ' + plugin_location + ';'
@@ -136,7 +138,7 @@ module.exports = (env, plugin_name, fetch) ->
 		getVersionMask: () ->
 			defer = Q.defer()
 
-			fs.readFile process.cwd() + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
+			fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
 				try
 					info = JSON.parse data
 					mask = info[plugin_name]?.match(/\#(.*)$/)
@@ -149,7 +151,7 @@ module.exports = (env, plugin_name, fetch) ->
 
 		getRemote: () ->
 			defer = Q.defer()
-			fs.readFile process.cwd() + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
+			fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
 				try
 					info = JSON.parse data
 					remote = info[plugin_name]?.match(/^(.*)\#/)

@@ -31,7 +31,7 @@ module.exports = (env) ->
 						updatePluginsList plugin_data.name, url, cwd, (err) ->
 							return defer.reject err if err
 							if version_mask?
-								plugin_git = env.plugins.git(plugin_data.name)
+								plugin_git = env.plugins.git(plugin_data.name, false, cwd)
 								plugin_git.getLatestVersion(version_mask)
 									.then (lv) ->
 										plugin_git.checkout lv
@@ -39,7 +39,6 @@ module.exports = (env) ->
 												defer.resolve()
 											.fail (e) ->
 												defer.reject(e)
-
 							else	
 								defer.resolve()
 
