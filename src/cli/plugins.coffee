@@ -88,7 +88,7 @@ module.exports = (args, options) ->
 				scaffolding.plugins.uninstall(plugin_name)
 
 		chainPluginsInstall = (plugins) ->
-			async.each Object.values(plugins), (plugin, next) ->
+			async.eachSeries Object.values(plugins), (plugin, next) ->
 				console.log plugin
 				scaffolding.plugins.install(plugin, process.cwd())
 					.then () ->

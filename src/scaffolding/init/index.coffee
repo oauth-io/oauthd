@@ -8,7 +8,7 @@ async = require 'async'
 module.exports = (env) ->
 
 	installPlugins = (defer, name) ->
-		async.parallel [
+		async.series [
 			(next) ->
 				env.plugins.install("https://github.com/oauth-io/oauthd-admin-auth#0.x.x", process.cwd() + "/" + name)
 					.then () ->
