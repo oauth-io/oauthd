@@ -28,7 +28,7 @@ module.exports = (env) ->
 					return defer.reject err if err
 					moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
 						return defer.reject err if err
-						updatePluginsList plugin_data.name, url, cwd, (err) ->
+						updatePluginsList plugin_data.name, url + '#' + version_mask, cwd, (err) ->
 							return defer.reject err if err
 							if version_mask?
 								plugin_git = env.plugins.git(plugin_data.name, false, cwd)

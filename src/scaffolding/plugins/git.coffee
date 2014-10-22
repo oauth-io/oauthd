@@ -31,6 +31,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			
 			execGit ['branch -v'], (error, stdout, stderr) ->
 				return defer.reject error if error
+
 				tag = stdout.match /\* \(detached from (.*)\)/
 				tag = tag?[1]
 
@@ -41,9 +42,12 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 					behind = stdout.match /\*.*\[behind (\d+)\]/
 					behind = behind?[1]
 				version = {}
+				
 				if tag?
 					version.version = tag
+
 					if tag.match /(\d+)\.(\d+)\.(\d+)/
+
 						version.type = 'tag_n'
 					else
 						version.type = 'tag_a'

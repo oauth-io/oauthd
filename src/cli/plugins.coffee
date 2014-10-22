@@ -212,11 +212,14 @@ module.exports = (args, options) ->
 							
 							done(title, text)
 						else if current_version.type == 'tag_n'
+
 							plugin_git.getVersionMask()
 								.then (mask) ->
+									console.log mask
 									plugin_git.getLatestVersion(mask)
 										.then (latest_version) ->
 											update = ''
+											
 											if plugin_git.compareVersions(latest_version, current_version.version) > 0
 												update = ' (' + latest_version.green + ' is available)' 
 											title +=  '(' +current_version.version + ')' + update + ""
@@ -228,7 +231,7 @@ module.exports = (args, options) ->
 							title +=  "(unversionned)"
 							done(title, text)
 					.fail (e) ->
-						console.log e
+						console.log 'ERROR', e
 						done(title, text)
 
 
