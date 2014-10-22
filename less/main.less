@@ -1,3 +1,33 @@
 body {
-	margin: 1px;
+	header {
+		#title-link {
+			position: relative;
+			height: 24px;
+			width: 97px;
+			display: inline-block;
+			a {
+				color: #9ddcff;
+				border-bottom: dashed 1px #9ddcff;
+				line-height: 24px;
+				position: absolute;
+				top: 5px;
+			}
+			a:hover {
+				color: rgba(157, 220, 255, 0.5);
+				border-bottom: dashed 1px rgba(157, 220, 255, 0.5);
+				// color: #00D6DF;
+				// border-bottom: dashed 1px #00D6DF;
+			}
+		}
+	}
+	h3:before {
+		content: "" !important;
+	}
+	h4:before {
+		content: "*" !important;
+		margin-left: -12px;
+	}
+	p {
+		text-align: justify;
+	}
 }

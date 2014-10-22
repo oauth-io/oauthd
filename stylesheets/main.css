@@ -1,1 +1,1 @@
-body{margin:1px}
+body header #title-link{position:relative;height:24px;width:97px;display:inline-block}body header #title-link a{color:#9ddcff;border-bottom:dashed 1px #9ddcff;line-height:24px;position:absolute;top:5px}body header #title-link a:hover{color:rgba(157,220,255,.5);border-bottom:dashed 1px rgba(157,220,255,.5)}body h3:before{content:""!important}body h4:before{content:"*"!important;margin-left:-12px}body p{text-align:justify}

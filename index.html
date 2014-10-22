@@ -34,7 +34,7 @@
                 <h1>Oauthd</h1>
                 <!-- <h2>oauthd - The OAuth Daemon is the open source version of the OAuth.io core</h2> -->
                 <h2>
-                    oauthd, also known as the 'oauth Daemon' is the open source version of the <a href="https://oauth.io">OAuth.io</a>'s core. It is a solution based on node.js that enables you to set up and run your own stand-alone, completly free, web Background API Server. 
+                    <strong>oauthd</strong>, also known as the <strong>'oauth Daemon'</strong> is the open source version of the <span id="title-link"><a href="https://oauth.io">OAuth.io</a></span>'s core. It is a solution based on node.js that enables you to set up and run your own stand-alone, completly free, web Background API Server. 
                 </h2>
                 <a href="https://github.com/oauth-io/oauthd" class="button"><small>View project on</small> GitHub</a>
             </div>
@@ -51,38 +51,121 @@
                         By using the oauth Daemon, you are free to focus your attention on product development instead of losing time on API integration using OAuth. 
                     </p>
                     
-                    <h4>
-                        Exhaustive: compatible with 100+ providers
-                    </h4>
+                    <h4>Exhaustive: compatible with 100+ providers </h4>
                     <p>
-                        <strong>oauthd</strong>works with all your favorite platforms, whether social (Facebook, Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
+                        <strong>oauthd</strong> works with all your favorite platforms, whether social (Facebook, Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
                     </p>
                     
-                     <h4>
-                        Simplified API calls
-                    </h4>
+                    <h4>Simplified API calls</h4>
                     <p>
-                        With **oauthd**, you can make API calls instead of dealing with complex OAuth flows. Abstract tokens with the 'Request API' and get user info in a unified way, no matter which provider you are using. The API also lets you perform CRUD actions on behalf of users.
+                        With <strong>oauthd</strong>, you can make API calls instead of dealing with complex OAuth flows. Abstract tokens with the 'Request API' and get user info in a unified way, no matter which provider you are using. The API also lets you perform CRUD actions on behalf of users.
+                    </p>
+                    
+                    <h4>Secured encrypted API</h4>
+                    <p>
+                        <strong>oauthd</strong> lets you choose an authorization flow that fits your needs (client-side or server-side). It secures providers API access with SSL encryption and allows you to specify domains/url restrictions for more security. 
                     </p>
 
-                    <!-- <h3>
-                        <a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.
+                    <h4>Integrate in less than 90 seconds</h4>
+                    <p>
+                        Through the <strong>oauthd</strong> default administration interface, you can start adding OAuth providers to your app and  get a public key to start using these APIs right away.
+                    </p>
+                    
+                    <h3>
+                        <a name="modular-design" class="anchor" href="#modular-design"><span class="octicon octicon-link"></span>Modular design</a>
                     </h3>
-
                     <p>
-                        This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:
+                        <strong>oauthd</strong> is highly extendable thanks to a plugin management system based on Git. 
+                        Each plugin can brings its own layer of features. 
+                        Anyone can create his own plugin and is free to share it with the Open Source Community. 
+                        We are eager to see you contribute!
+                    </p>
+                    <p>
+                        Default plugins are furnished to ensure a working minimum environment, with:
+                        - The request system plugin
+                        - The '/me' feature plugin
+                        - The default auth plugin, which lets you administrate <strong>oauthd</strong>
+                        - The default back office front plugin, which lets you manage apps, providers and access to other plugins' configuration from the browser
+                    </p>
+                    <p>
+                        You can learn more about the <strong>oauthd</strong> plugins development
+                        [here](https://github/...).
+                    </p>
+                    
+                    <h3>
+                        <a name="how-does-it-work" class="anchor" href="#how-does-it-work"><span class="octicon octicon-link"></span>How does it work?</a>
+                    </h3>
+                    <p>
+                        Bootstrap your <strong>oauthd</strong>: check out our <strong>oauthd</strong> [quickstart tutorial](https://github/...).
                     </p>
 
-                    <pre><code>
-                        $ cd your_repo_root/repo_name
-                        $ git fetch origin
-                        $ git checkout gh-pages
-                    </code></pre>
-
+                    <h4>Installation</h4>
                     <p>
-                        If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.
-                    </p> -->
+                        Currently, <strong>oauthd</strong> relies on [node.js](http://nodejs.org/), [npm](https://www.npmjs.org/), [redis](http://redis.io/) and the npm package [grunt-cli](https://www.npmjs.org/package/grunt-cli) to work.
+                    </p>
+                    <p>
+                        As soon as you are done with pre-requisites, you can simply install <strong>oauthd</strong> from npm, by executing the following command:
+                    </p>
+                    <pre><code>$ (sudo) npm install -g oauthd</code></pre>
+                    <p>
+                        Once you've installed the <strong>oauthd</strong> npm package globally, you will have the `oauthd` command available in your shell. This command allows you to create new <strong>oauthd instances</strong>, start them, and manage their plugins.
+                    </p>
+                    <p>
+                        Learn more about the <strong>oauthd</strong> [configuration](https://github/...) and the [command line features](https://github/...). 
+                    </p>
 
+                    <h4>Usage</h4>
+                    <p>
+                        You can use the <strong>oauthd</strong> server from you app directly through the API or use one of our SDKs:
+                    </p>
+                    <strong>Client side SDKs</strong>
+                    <ul>
+                        <li>JavaScript</li>
+                        <li>iOS</li>
+                        <li>Phonegap</li>
+                        <li>Android</li>
+                    </ul>
+                    <strong>Server side SDKs</strong>
+                    <ul>
+                        <li>Nodejs</li>
+                        <li>PHP</li>
+                        <li>Go</li>
+                    </ul>
+                    <p>
+                        Learn more about the <strong>oauthd</strong> [apis](https://github/...) and the [oauthd-sdks](https://github/...).
+                    </p>
+
+                    <h3>
+                        <a name="contact" class="anchor" href="#contact"><span class="octicon octicon-link"></span>Contact</a>
+                    </h3>
+                    <p>
+                        Have a question?
+                        - Drop an email at team@oauth.io
+                        - [#oauthd](https://twitter.com/oauthd) on Twitter
+                        - [#OAuth_io](https://twitter.com/OAuth_io) on Twitter
+                    </p>
+                    
+                    <h3>
+                        <a name="contribute" class="anchor" href="#contribute"><span class="octicon octicon-link"></span>Contributing to this project</a>
+                    </h3>
+                    <p>
+                        Anyone and everyone is welcome to contribute. Please take a moment to review the guidelines for contributing.
+
+                        - [Bug reports](https://github/...)
+                        - [Feature requests](https://github/...)
+                        - [Pull requests](https://github/...)
+                    </p>
+
+                    <h3>
+                        <a name="license-copyright" class="anchor" href="#license-copyright"><span class="octicon octicon-link"></span>License & Copyright</a>
+                    </h3>
+                    <p>
+                        Copyright (C) 2014 Webshell SAS 
+                        https://github.com/oauth-io/oauthd and other contributors
+                    </p>
+                    <p>
+                        Licensed under the Apache License 2.0.
+                    </p>
                 </section>
                 <aside id="sidebar">
                     <a href="https://github.com/oauth-io/oauthd/zipball/master" class="button">
@@ -94,178 +177,13 @@
                         .tar.gz file
                     </a>
 
-                    <p class="repo-owner">
-                        <a href="https://github.com/oauth-io/oauthd"></a> is maintained by <a href="https://github.com/oauth-io">oauth-io</a>.
-                    </p>
+                    <!-- <p class="repo-owner">
+                        <a href="https://github.com/oauth-io/oauthd">oauthd</a> is maintained by <a href="https://github.com/oauth-io">oauth-io</a>.
+                    </p> -->
 
                     <!-- <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p> -->
                 </aside>
             </div>
         </div>
-
-<!-- ## Main features
-
-This server will allows you to authenticate and to integrate the common API 
-providers, with just three lines of JavaScript, completely abstracting away 
-the complexity of OAuth integration. 
-By using the oauth Daemon, you are free to focus your attention on product 
-development instead of losing time on API integration using OAuth. 
-
-#### Exhaustive: compatible with 100+ providers
-**oauthd** works with all your favorite platforms, whether social (Facebook, 
-Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
-#### Simplified API calls
-With **oauthd**, you can make API calls instead of dealing with complex OAuth flows. 
-Abstract tokens with the 'Request API' and get user info in a unified way, 
-no matter which provider you are using. The API also lets you perform CRUD 
-actions on behalf of users.
-#### Secured encrypted API
-**oauthd** lets you choose an authorization flow that fits your needs (client-side 
-or server-side). It secures providers API access with SSL encryption and allows 
-you to specify domains/url restrictions for more security. 
-#### Integrate in less than 90 seconds
-Through the **oauthd** default administration interface, you can start adding OAuth 
-providers to your app and  get a public key to start using these APIs 
-right away.
-
-## Modular design
-
-**oauthd** is highly extendable thanks to a plugin management system based on Git. 
-Each plugin can brings its own layer of features. 
-Anyone can create his own plugin and is free to share it with the Open Source Community. 
-We are eager to see you contribute!
-
-Default plugins are furnished to ensure a working minimum environment, with:
-- The request system plugin
-- The '/me' feature plugin
-- The default auth plugin, which lets you administrate **oauthd**
-- The default back office front plugin, which lets you manage apps, providers and access to other plugins' configuration from the browser
-
-You can learn more about the **oauthd** plugins development
-[here](https://github/...).
-
-## How does it work?
-
-Bootstrap your **oauthd**: check out our **oauthd** [quickstart tutorial](https://github/...).
-
-### Installation
-
-Currently, **oauthd** relies on [node.js](http://nodejs.org/), [npm](https://www.npmjs.org/), [redis](http://redis.io/) and the npm package [grunt-cli](https://www.npmjs.org/package/grunt-cli) to work.
-
-As soon as you are done with pre-requisites, you can simply install **oauthd** from npm, by executing the following command:
-
-```sh
-(sudo) npm install -g oauthd
-```
-
-Once you've installed the **oauthd** npm package globally, you will have the 
-`oauthd` command available in your shell. This command allows you to create 
-new *oauthd instances*, start them, and manage their plugins.
-
-Learn more about the **oauthd** 
-[configuration](https://github/...) and the 
-[command line features](https://github/...).
-
-### Usage
-
-You can use the **oauthd** server from you app directly through the API or use one
-of our SDKs:
-
-**Client side SDKs**
-- JavaScript
-- iOS
-- Phonegap
-- Android
-
-**Server side SDKs**
-- Nodejs
-- PHP
-- Go
-
-Learn more about the **oauthd** 
-[apis](https://github/...) and the 
-[oauthd-sdks](https://github/...).
-
-## Contact
-
-Have a question?
-
-- Drop an email at team@oauth.io
-- [#oauthd](https://twitter.com/oauthd) on Twitter
-- [#OAuth_io](https://twitter.com/OAuth_io) on Twitter
-
-## Contributing to this project
-
-Anyone and everyone is welcome to contribute. Please take a moment to review the guidelines for contributing.
-
-- [Bug reports](https://github/...)
-- [Feature requests](https://github/...)
-- [Pull requests](https://github/...)
-
-## License & Copyright
-
-Copyright (C) 2014 Webshell SAS 
-https://github.com/oauth-io/oauthd and other contributors
-
-Licensed under the Apache License 2.0.
-
-
-
-
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
-
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
-
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
-
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/oauth-io/oauthd/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/oauth-io/oauthd/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/oauth-io/oauthd"></a> is maintained by <a href="https://github.com/oauth-io">oauth-io</a>.</p>
-
-          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div> -->
-
-  
   </body>
 </html>
