@@ -36,55 +36,55 @@
                         <a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span>What is it?</a>
                     </h3>
                     <p>
-                        It is a solution based on node.js that enables you to set up and run your own stand-alone, completly free, web Background API Server. 
+                        It is a solution based on <strong>node.js</strong> that enables you to set up and run your own stand-alone, completly <strong>free</strong>, web <strong>Background API Server</strong>. 
                     </p>
                     <h3>
                         <a name="main-features" class="anchor" href="#main-features"><span class="octicon octicon-link"></span>Main features</a>
                     </h3>
                     <p>
-                        This server will allows you to authenticate and to integrate the common API providers, with just three lines of JavaScript, completely abstracting away the complexity of OAuth integration. </br>
+                        This server will allows you to <strong>authenticate</strong> and to <strong>integrate the common API providers</strong>, with just three lines of JavaScript, completely abstracting away the complexity of <strong>OAuth integration</strong>. </br>
                         By using the oauth Daemon, you are free to focus your attention on product development instead of losing time on API integration using OAuth. 
                     </p>
                     
                     <h4>Exhaustive: compatible with 100+ providers </h4>
                     <p>
-                        <strong>oauthd</strong> works with all your favorite platforms, whether social (Facebook, Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
+                        oauthd works with all <strong>your favorite platforms</strong> , whether social (Facebook, Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
                     </p>
                     
                     <h4>Simplified API calls</h4>
                     <p>
-                        With <strong>oauthd</strong>, you can make API calls instead of dealing with complex OAuth flows. Abstract tokens with the 'Request API' and get user info in a unified way, no matter which provider you are using. The API also lets you perform CRUD actions on behalf of users.
+                        With oauthd, you can make <strong>simple API calls</strong> instead of dealing with complex OAuth flows. Abstract tokens with the 'Request API' and get user info in a <strong>unified way</strong>, no matter which provider you are using. The API also lets you perform CRUD actions on behalf of users.
                     </p>
                     
                     <h4>Secured encrypted API</h4>
                     <p>
-                        <strong>oauthd</strong> lets you choose an authorization flow that fits your needs (client-side or server-side). It secures providers API access with SSL encryption and allows you to specify domains/url restrictions for more security. 
+                        oauthd lets you choose an <strong>authorization flow</strong> that fits your needs (client-side or server-side). It secures providers API access with SSL encryption and allows you to specify domains/url restrictions for more security. 
                     </p>
 
                     <h4>Integrate in less than 90 seconds</h4>
                     <p>
-                        Through the <strong>oauthd</strong> default administration interface, you can start adding OAuth providers to your app and  get a public key to start using these APIs right away.
+                        Through the oauthd default administration interface, you can <strong>start adding OAuth providers</strong> to your app and get a public key to start using these APIs <strong>right away</strong>.
                     </p>
                     
                     <h3>
                         <a name="modular-design" class="anchor" href="#modular-design"><span class="octicon octicon-link"></span>Modular design</a>
                     </h3>
                     <p>
-                        <strong>oauthd</strong> is highly extendable thanks to a plugin management system based on Git. Each plugin can brings its own layer of features. </br>
+                        oauthd is highly extendable thanks to a <strong>plugins management system</strong> based on Git. Each plugin can brings its own layer of features. </br>
                         Anyone can create his own plugin and is free to share it with the Open Source Community. 
-                        We are eager to see you contribute!
+                        We are eager to see you <strong>contribute</strong>!
                     </p>
                     <p>
-                        Default plugins are furnished to ensure a working minimum environment, with:
+                        <strong>Default plugins</strong> are furnished to ensure a working minimum environment, with:
                     </p>
                     <ul>
                         <li>The request system plugin</li>
                         <li>The '/me' feature plugin</li>
-                        <li>The default auth plugin, which lets you administrate <strong>oauthd</strong></li>
+                        <li>The default auth plugin, which lets you administrate oauthd</li>
                         <li>The default back office front plugin, which lets you manage apps, providers and access to other plugins' configuration from the browser</li>
                     </ul>
                     <p>
-                        You can learn more about the <strong>oauthd</strong> plugins development
+                        You can learn more about the oauthd <strong>plugins development</strong>
                         <a href="https://github.com/oauth-io/oauthd/wiki/Plugins-development">here</a>.
                     </p>
                     
@@ -92,24 +92,24 @@
                         <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span>Installation</a>
                     </h3>
                     <p>
-                        Currently, <strong>oauthd</strong> relies on <a href="http://nodejs.org/">node.js</a>, <a href="https://www.npmjs.org/">npm</a>, <a href="http://redis.io/">redis</a> and the npm package <a href="https://www.npmjs.org/package/grunt-cli">grunt-cli</a> to work. Check out our <strong>oauthd</strong> <a href="https://github.com/oauth-io/oauthd/wiki/Quickstart">quickstart tutorial</a> to bootstrap your <strong>oauthd</strong> server. </br>
+                        Currently, oauthd relies on <a href="http://nodejs.org/">node.js</a>, <a href="https://www.npmjs.org/">npm</a>, <a href="http://redis.io/">redis</a> and the npm package <a href="https://www.npmjs.org/package/grunt-cli">grunt-cli</a> to work. Check out our oauthd <a href="https://github.com/oauth-io/oauthd/wiki/Quickstart"><strong>quickstart tutorial</strong></a> to <strong>bootstrap</strong> your oauthd server. </br>
                     </p>
                     <p>
-                        As soon as you are done with pre-requisites, you can simply install <strong>oauthd</strong> from npm, by executing the following command:
+                        As soon as you are done with pre-requisites, you can simply install oauthd from <strong>npm</strong>, by executing the following command:
                     </p>
                     <pre><code>$ (sudo) npm install -g oauthd</code></pre>
                     <p>
-                        Once you've installed the <strong>oauthd</strong> npm package globally, you will have the `oauthd` command available in your shell. This command allows you to create new <strong>oauthd instances</strong>, start them, and manage their plugins.
+                        Once you've installed the oauthd npm package globally, you will have the <em>`oauthd`</em> <strong>command</strong> available in your shell. This command allows you to create <strong>new oauthd instances</strong>, start them, and manage their plugins.
                     </p>
                     <p>
-                        Learn more about the <strong>oauthd</strong> <a href="https://github.com/oauth-io/oauthd/wiki/Configuration">configuration</a> <a href="https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface">command line features</a>. 
+                        Learn more about the oauthd <a href="https://github.com/oauth-io/oauthd/wiki/Configuration">configuration</a> and about the <a href="https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface">command line features</a>. 
                     </p>
                     
                     <h3>
                         <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span>Usage</a>
                     </h3>
                     <p>
-                        You can use the <strong>oauthd</strong> server from you app directly through the API or use one of our SDKs:
+                        You can use the <strong>oauthd server</strong> from you app directly through the API or use one of our SDKs:
                     </p>
                     <strong>Client side SDKs</strong>
                     <ul>
@@ -125,7 +125,7 @@
                         <li>Go</li>
                     </ul>
                     <p>
-                        Learn more about the <strong>oauthd</strong>  <a href="https://github.com/oauth-io/oauthd/wiki/API">apis</a> and the  <a href="https://github.com/oauth-io/oauthd/wiki/Server-and-client-side-SDKs">oauthd-sdks</a>.
+                        Learn more about the oauthd  <a href="https://github.com/oauth-io/oauthd/wiki/API">apis</a> and the  <a href="https://github.com/oauth-io/oauthd/wiki/Server-and-client-side-SDKs">oauthd-sdks</a>.
                     </p>
 
                     <h3>
