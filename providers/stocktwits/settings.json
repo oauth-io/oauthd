@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://stocktwits.com/developers/apps/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://stocktwits.com/developers/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://stocktwits.com/",
+				"docs": "http://stocktwits.com/developers/docs"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/2/account/verify.json"
+        }
+	}
+}
