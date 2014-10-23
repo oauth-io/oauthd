@@ -1,5 +1,6 @@
 testConfig = require '../../test-config'
 coreModule = require testConfig.project_root + '/src/core'
+colors = require 'colors'
 
 describe 'Core - env.pluginsEngine module', () ->
 	env = {}
@@ -35,8 +36,8 @@ describe 'Core - env.pluginsEngine module', () ->
 			expect(error).toBeNull()
 			env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 				expect(err).toBe(false)
-				expect(consolelogs[0][0]).toBe("Loading \'plugin_test\'.")
-				expect(consolelogs[1][0]).toBe("Error requiring plugin \'plugin_test\' entry point.")
+				expect(consolelogs[0][0]).toBe("Loading " + "plugin_test".blue)
+				expect(consolelogs[1][0]).toBe("Error while loading plugin plugin_test")
 				done()
 
 	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after launching grunt command in that folder', (done) ->
@@ -50,7 +51,7 @@ describe 'Core - env.pluginsEngine module', () ->
 			if not error
 				env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
 					expect(err).toBe(false)
-					expect(consolelogs[0][0]).toBe("Loading \'plugin_test\'.")
+					expect(consolelogs[0][0]).toBe("Loading " + "plugin_test".blue)
 					expect(env.pluginsEngine.plugin['plugin_test']).toBeDefined()
 					expect(env.pluginsEngine.plugin['plugin_test'].getMyName()).toBe("plugin_test")
 					command = 'rm -rf ' + process.cwd() + '/tests/instance_test/plugins/plugin_test/bin'
@@ -68,9 +69,10 @@ describe 'Core - env.pluginsEngine module', () ->
 		catch e
 			env.debug "err", e if e
 		finally
-			expect(consolelogs[0][0]).toBe("Loading \'undefined_plugin\'.")
-			expect(consolelogs[1][0]).toBe("Absent plugin.json for plugin \'undefined_plugin\'.")
-			expect(consolelogs[2][0]).toBe("Error requiring plugin \'undefined_plugin\' entry point.")
+			expect(consolelogs[0][0]).toBe("Error loading plugin.json (undefined_plugin)")
+			path = "Cannot find module '" + process.cwd()+ "/plugins/undefined_plugin/plugin.json'"
+			expect(consolelogs[1][0]).toBe(path.yellow)
+			expect(consolelogs[2][0]).toBe("Loading " + "undefined_plugin".blue)
 			expect(env.pluginsEngine.plugin['undefined_plugin']).toBeUndefined()
 			expect(env.plugins['undefined_plugin']).toBeUndefined()
 			expect(env.plugins.undefined_plugin).toBeUndefined()

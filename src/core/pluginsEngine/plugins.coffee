@@ -41,31 +41,28 @@ module.exports = (env) ->
 	
 	global_interface = undefined
 	pluginsEngine.load = (plugin_name) ->
-		
 		try 
 			plugin_data = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + '/plugin.json')
 		catch e
 			env.debug 'Error loading plugin.json (' + plugin_name + ')'
-			console.log e.message.yellow
+			env.debug e.message.yellow
 			plugin_data = {
 				name: plugin_name
 			}
 
 		if plugin_data.main?
-			prefix = '/' if plugin_data.main[0] != '/'
-			plugin_data.main = prefix + plugin_data.main
+			if plugin_data.main[0] isnt '/'
+				plugin_data.main = '/' + plugin_data.main
 		else
 			plugin_data.main = '/index'
 
-		if not plugin_data.name? or plugin_data.name != plugin_name
+		if not plugin_data.name? or plugin_data.name isnt plugin_name
 			plugin_data.name = plugin_name
 		
-
-		if plugin_data.type != 'global-interface'
+		if plugin_data.type isnt 'global-interface'
 			loadPlugin(plugin_data)
 		else
 			global_interface = plugin_data
-
 
 	loadPlugin = (plugin_data) ->
 		env.debug "Loading " + plugin_data.name.blue
