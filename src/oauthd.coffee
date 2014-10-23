@@ -46,7 +46,12 @@ exports.init = (env) ->
 
 	env.pluginsEngine.init process.cwd(), (err) ->
 		if not err
-			if not env.plugins.auth
+			auth_plugin_present = false
+			for k, plugin of env.plugins
+				if plugin.config.type == 'auth'
+					auth_plugin_present = true
+
+			if not auth_plugin_present
 				env.debug "No " + "auth".red + " plugin found"
 				env.debug "You need to install an " + "auth".red + " plugin to run the server"
 				defer.reject()

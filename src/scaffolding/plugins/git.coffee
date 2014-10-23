@@ -1,16 +1,19 @@
 Q = require 'q'
-exec = require('child_process').exec
+
 nodegit = require('nodegit')
 fs = require 'fs'
 
 
-module.exports = (env, plugin_name, fetch) ->
+module.exports = (env, plugin_name, fetch, cwd) ->
+	exec = env.exec
+	cwd = cwd || process.cwd()
 	try 
-		plugin_data = require process.cwd() + '/plugins/' + plugin_name
+		plugin_data = require cwd + '/plugins/' + plugin_name
 	catch e
+		console.log 'HELLO', e
 		return;
 
-	plugin_location = process.cwd() + '/plugins/' + plugin_name
+	plugin_location = cwd + '/plugins/' + plugin_name
 	fetched = false
 	execGit = (commands, callback) ->
 		full_command = 'cd ' + plugin_location + ';'
@@ -28,6 +31,7 @@ module.exports = (env, plugin_name, fetch) ->
 			
 			execGit ['branch -v'], (error, stdout, stderr) ->
 				return defer.reject error if error
+
 				tag = stdout.match /\* \(detached from (.*)\)/
 				tag = tag?[1]
 
@@ -38,9 +42,12 @@ module.exports = (env, plugin_name, fetch) ->
 					behind = stdout.match /\*.*\[behind (\d+)\]/
 					behind = behind?[1]
 				version = {}
+				
 				if tag?
 					version.version = tag
+
 					if tag.match /(\d+)\.(\d+)\.(\d+)/
+
 						version.type = 'tag_n'
 					else
 						version.type = 'tag_a'
@@ -123,16 +130,19 @@ module.exports = (env, plugin_name, fetch) ->
 
 		getLatestVersion: (mask) ->
 			defer = Q.defer()
-			git.getAllVersions(mask)
-				.then (versions) ->
-					latest = versions[versions.length - 1]
-					defer.resolve(latest)
+			if mask.match /^(\d+)\.(\d+|x)\.(\d+|x)$/
+				git.getAllVersions(mask)
+					.then (versions) ->
+						latest = versions[versions.length - 1]
+						defer.resolve(latest)
+			else
+				defer.resolve mask
 			defer.promise
 
 		getVersionMask: () ->
 			defer = Q.defer()
 
-			fs.readFile process.cwd() + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
+			fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
 				try
 					info = JSON.parse data
 					mask = info[plugin_name]?.match(/\#(.*)$/)
@@ -145,7 +155,7 @@ module.exports = (env, plugin_name, fetch) ->
 
 		getRemote: () ->
 			defer = Q.defer()
-			fs.readFile process.cwd() + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
+			fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
 				try
 					info = JSON.parse data
 					remote = info[plugin_name]?.match(/^(.*)\#/)
@@ -171,6 +181,6 @@ module.exports = (env, plugin_name, fetch) ->
 				if not err?
 					defer.resolve()
 				else
-					defer.reject()
+					defer.reject(new Error('The target version ' + version + ' does not seem to exist'))
 			defer.promise
 	git

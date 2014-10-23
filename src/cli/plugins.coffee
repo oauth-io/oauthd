@@ -87,28 +87,22 @@ module.exports = (args, options) ->
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
 
-		chainPluginsInstall = (plugin_names) ->
-			promise = undefined
-			for name in plugin_names
-				do (name) ->
-					if not promise?
-						promise =  scaffolding.plugins.install(name, process.cwd())
-					else
-						promise = promise.then () ->
-							return scaffolding.plugins.install(name, process.cwd())
-			promise
-				.then () ->
-					if (cli.__mode != 'prog')
-						scaffolding.compile()
-							.then () ->
-								main_defer.resolve()
-							.fail () ->
-								main_defer.reject()
-					else
+		chainPluginsInstall = (plugins) ->
+			async.eachSeries Object.values(plugins), (plugin, next) ->
+				console.log plugin
+				scaffolding.plugins.install(plugin, process.cwd())
+					.then () ->
+						next()
+					.fail (e) ->
+						console.log 'An error occured: ' + e.message
+			, (err) ->
+				return main_defer.reject err if err
+				scaffolding.compile()
+					.then () ->
 						main_defer.resolve()
-				.fail (e) ->
-					console.log 'ERROR'.red, e.message.yellow
-					main_defer.reject()
+					.fail () ->
+						main_defer.reject()
+
 
 		if args[0] is 'install'
 			if options.help
@@ -121,9 +115,12 @@ module.exports = (args, options) ->
 							scaffolding.compile()
 						.then () ->
 							console.log 'Done'
+						.fail (e) ->
+							console.log 'An error occured: '.red + e.message.yellow
 				else
-					plugin_names = scaffolding.plugins.info.getActive()
-					chainPluginsInstall plugin_names
+					scaffolding.plugins.info.getPluginsJson()
+						.then (plugins) ->
+							chainPluginsInstall plugins
 			
 		if args[0] is 'create'
 			if options.help
@@ -215,11 +212,14 @@ module.exports = (args, options) ->
 							
 							done(title, text)
 						else if current_version.type == 'tag_n'
+
 							plugin_git.getVersionMask()
 								.then (mask) ->
+									console.log mask
 									plugin_git.getLatestVersion(mask)
 										.then (latest_version) ->
 											update = ''
+											
 											if plugin_git.compareVersions(latest_version, current_version.version) > 0
 												update = ' (' + latest_version.green + ' is available)' 
 											title +=  '(' +current_version.version + ')' + update + ""
@@ -231,7 +231,7 @@ module.exports = (args, options) ->
 							title +=  "(unversionned)"
 							done(title, text)
 					.fail (e) ->
-						console.log e
+						console.log 'ERROR', e
 						done(title, text)
 
 

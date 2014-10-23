@@ -3,9 +3,10 @@ Q = require 'q'
 fs = require 'fs'
 sugar = require 'sugar'
 async = require 'async'
-exec = require('child_process').exec
+
 
 module.exports = (env) ->
+	exec = env.exec
 	info = 
 		getActive: () ->
 			try
@@ -17,6 +18,16 @@ module.exports = (env) ->
 			plugin_names = Object.keys(obj) if obj?
 			plugin_names.remove("")
 			return plugin_names
+		getPluginsJson: () ->
+			defer = Q.defer()
+			fs.readFile process.cwd() + '/plugins.json', {encoding: 'UTF-8'}, (err, data) ->
+				return defer.reject err if err
+				try
+					obj = JSON.parse data
+					defer.resolve obj
+				catch e
+					defer.reject e
+			defer.promise
 		getActiveAsync: () ->
 			defer = Q.defer()
 			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
@@ -49,11 +60,18 @@ module.exports = (env) ->
 					inactive_plugins.push plugin
 			return inactive_plugins
 		getInfo: (plugin_name, callback) ->
-			# env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
-			# 	return callback err if err
-			env.plugins.info.getDetails process.cwd() + "/plugins/" + plugin_name, (err, plugin_data) ->
-				return callback err if err
-				return callback null, plugin_data
+			fs.readFile process.cwd() + '/plugins/' + plugin_name + '/plugin.json', {encoding: 'UTF-8'}, (err, data) ->
+				callback err if err
+				try
+					plugin_data = JSON.parse data
+					plugin_git = env.plugins.git(plugin_name)
+					plugin_git.getCurrentVersion()
+						.then (v) ->
+							plugin_data.version = v.version
+							callback null, plugin_data
+				catch err
+					callback err
+
 
 		getInfoAsync: (plugin_name) ->
 			defer = Q.defer()
@@ -69,7 +87,7 @@ module.exports = (env) ->
 			info.getActiveAsync()
 				.then (names) ->
 					async.each names, (name, next) ->
-						info.getDetails process.cwd() + '/plugins/' + name, (err, data) ->
+						info.getInfo name, (err, data) ->
 							return next err if err
 							plugins.push data
 							next()

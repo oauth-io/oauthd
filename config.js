@@ -26,14 +26,24 @@ var config = {
 
 try {
 	if (__dirname != process.cwd()) {
-		var local_config = require(process.cwd() + '/config.js');
-		for (var k in local_config) {
-			config[k] = local_config[k];
+		var instance_config = require(process.cwd() + '/config.js');
+		for (var k in instance_config) {
+			config[k] = instance_config[k];
 		}
 	}
 } catch (e) {
 	console.log(e);
 	console.log('No config file found, using defaults');
+}
+
+try {
+	if (__dirname != process.cwd()) {
+		var instance_config = require(process.cwd() + '/config.local.js');
+		for (var k in instance_config) {
+			config[k] = instance_config[k];
+		}
+	}
+} catch (e) {
 }
 
 module.exports = config;
