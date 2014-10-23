@@ -16,7 +16,10 @@ module.exports = (env) ->
 			array = url.split('#')
 			url = array[0]
 			version_mask = array[1]
-
+			if version_mask?
+				mask = '#' + version_mask
+			else
+				mask = ''
 			
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
@@ -28,7 +31,7 @@ module.exports = (env) ->
 					return defer.reject err if err
 					moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
 						return defer.reject err if err
-						updatePluginsList plugin_data.name, url + '#' + version_mask, cwd, (err) ->
+						updatePluginsList plugin_data.name, url + (mask), cwd, (err) ->
 							return defer.reject err if err
 							if version_mask?
 								plugin_git = env.plugins.git(plugin_data.name, false, cwd)
