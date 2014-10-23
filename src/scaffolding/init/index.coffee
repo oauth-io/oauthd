@@ -56,10 +56,12 @@ module.exports = (env) ->
 			env.debug 'Generating a folder for ' + name
 			ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
 				return defer.reject err if err
-				if res2.install_default_plugin.match(/[yY]/)
-					installPlugins defer, name
-				else
-					defer.resolve(name)
+				fs.rename process.cwd() + '/' + name + '/gitignore', process.cwd() + '/' + name + '/.gitignore', (err) ->
+					return defer.reject err if err
+					if res2.install_default_plugin.match(/[yY]/)
+						installPlugins defer, name
+					else
+						defer.resolve(name)
 
 
 
