@@ -61,7 +61,7 @@ module.exports = (env) ->
 			return inactive_plugins
 		getInfo: (plugin_name, callback) ->
 			fs.readFile process.cwd() + '/plugins/' + plugin_name + '/plugin.json', {encoding: 'UTF-8'}, (err, data) ->
-				callback err if err
+				return callback err if err
 				try
 					plugin_data = JSON.parse data
 					plugin_git = env.plugins.git(plugin_name)

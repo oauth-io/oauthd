@@ -48,7 +48,7 @@ exports.init = (env) ->
 		if not err
 			auth_plugin_present = false
 			for k, plugin of env.plugins
-				if plugin.config.type == 'auth'
+				if plugin.plugin_config.type == 'auth'
 					auth_plugin_present = true
 
 			if not auth_plugin_present

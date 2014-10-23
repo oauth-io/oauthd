@@ -72,8 +72,7 @@ module.exports = (env) ->
 		try
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name + plugin_data.main)(env)
 			pluginsEngine.plugin[plugin_data.name] = plugin
-			if not pluginsEngine.plugin[plugin_data.name].config?
-				pluginsEngine.plugin[plugin_data.name].config = plugin_data
+			pluginsEngine.plugin[plugin_data.name]?.plugin_config = plugin_data
 		catch e
 			env.debug "Error while loading plugin " + plugin_data.name
 			env.debug e.message.yellow + ' at line ' + e.lineNumber?.red		  
