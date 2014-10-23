@@ -203,7 +203,7 @@ module.exports = (args, options) ->
 				text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
 				plugin_git.getCurrentVersion()
 					.then (current_version) ->	
-						
+
 						if current_version.type == 'branch'
 							update = ''
 							if not current_version.uptodate
@@ -212,10 +212,8 @@ module.exports = (args, options) ->
 							
 							done(title, text)
 						else if current_version.type == 'tag_n'
-
 							plugin_git.getVersionMask()
 								.then (mask) ->
-									console.log mask
 									plugin_git.getLatestVersion(mask)
 										.then (latest_version) ->
 											update = ''
