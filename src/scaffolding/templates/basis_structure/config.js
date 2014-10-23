@@ -18,7 +18,7 @@ var config = {
 		// options: {...other options...}
 	},
 
-	// SSL is disabled by default. You can put your own key and certificate in the 'keys' folder
+	// SSL is disabled by default. You can put your own key and certificate in a 'keys' folder
 	//ssl: {
     //    key: __dirname + '/keys/yourkey.key',
     //    certificate: __dirname + '/keys/yourcertificate.crt'
