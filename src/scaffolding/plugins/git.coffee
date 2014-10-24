@@ -208,4 +208,11 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 				else
 					defer.reject(new Error('The target version ' + version + ' does not seem to exist'))
 			defer.promise
+
+		isValidRepository: () ->
+			defer = Q.defer()
+			exec 'cd ' + process.cwd() + '/plugins/' + plugin_name + '; echo $(git rev-parse --show-toplevel)', (err, stdout, stderr) ->
+				stdout = stdout.replace /[\s]/, ''
+				defer.resolve(stdout == process.cwd() + '/plugins/' + plugin_name)
+			defer.promise
 	git

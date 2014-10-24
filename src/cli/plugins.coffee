@@ -156,6 +156,7 @@ module.exports = (args, options) ->
 		chainPluginsUpdate = (plugin_names) ->
 			async.eachSeries plugin_names, (name, next) ->
 					console.log 'Updating '.white + name.white
+
 					scaffolding.plugins.update(name)
 						.then (updated) ->
 							if updated
@@ -164,35 +165,14 @@ module.exports = (args, options) ->
 								console.log name + ' already up to date'
 							next()
 						.fail (e) ->
-							console.log 'Error while updating '.red + name.red
-							if options.verbose
-								console.log e.message
-								listVersions(name)
-									.then () ->
-										next()
-							else
-								console.log 'Use --verbose for more details'
-								next()
-
+							console.log 'Error while updating '.red + name.red + ':'.red
+							console.log e.message
+							next()
 							
 			, (err) ->
 				return main_defer.reject err
 				main_defer.resolve()
 
-		listVersions = (name) ->
-			defer = Q.defer()
-			plugin_git = scaffolding.plugins.git(name)
-			plugin_git.getAllTagsAndBranches()
-				.then (versions) ->
-					console.log 'Available tags & versions:'
-					console.log versions.tags.join ', '
-					console.log 'Available branches:'
-					console.log versions.branches.join ', '
-					defer.resolve()
-				.fail () ->
-					defer.resolve()
-
-			defer.promise
 
 		if args[0] is 'update'
 			if options.help
@@ -203,6 +183,7 @@ module.exports = (args, options) ->
 					if scaffolding.plugins.info.isActive(name)
 						console.log 'Updating '.white + name.white
 						plugin_git = scaffolding.plugins.git(name)
+
 						scaffolding.plugins.update(name)
 							.then (updated) ->
 								if updated
@@ -211,21 +192,20 @@ module.exports = (args, options) ->
 									console.log name + ' already up to date'
 								main_defer.resolve()
 							.fail (e) ->
-								console.log 'Error while updating '.red + name.red
-								if options.verbose
-									console.log e.message
-									listVersions(name)
-										.then () ->
-											next()
-								else
-									console.log 'Use --verbose for more details'
-									next()
+								console.log 'Error while updating '.red + name.red + ':'.red
+								console.log e.message
+								next()
 								
 					else
 						console.log "The plugin you want to update is not present in \'plugins.json\'."
 				else
-					plugin_names = scaffolding.plugins.info.getActive()
-					chainPluginsUpdate plugin_names
+					scaffolding.plugins.info.getPluginsJson()
+						.then (plugins_data) ->
+							toUpdate = []
+							for k,v of plugins_data
+								# if v != ''
+								toUpdate.push k
+							chainPluginsUpdate toUpdate
 
 		getInfo = (name, done, fetch) ->
 			text = ''
