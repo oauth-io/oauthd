@@ -291,7 +291,7 @@ module.exports = (args, options) ->
 					, options.fetch
 				else
 					names = scaffolding.plugins.info.getActive()
-					async.each names, (n, next) ->
+					async.eachSeries names, (n, next) ->
 						getInfo n, (title, text) ->
 							console.log title
 							console.log text
