@@ -17,7 +17,7 @@ module.exports = (env) ->
 						obj[plugin] = match[1]
 						jf.writeFile process.cwd() + '/plugins.json', obj, (err) ->
 							return defer.reject err if err
-							env.debug "Successfully added plugin '" + plugin.green + "' to the plugin.json file."
+							env.debug "Successfully added plugin '" + plugin.green + "' to the plugins.json file."
 							defer.resolve()
 			else
 				defer.reject()

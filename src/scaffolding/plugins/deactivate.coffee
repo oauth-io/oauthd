@@ -12,6 +12,6 @@ module.exports = (env) ->
 				delete obj[plugin]
 				jf.writeFile process.cwd() + '/plugins.json', obj, (err) ->
 					return defer.reject err if err
-					env.debug "Successfully removed plugin '" + plugin.yellow + "' from the plugin.json file."
+					env.debug "Successfully removed plugin '" + plugin.yellow + "' from the plugins.json file."
 					defer.resolve()
 		defer.promise
