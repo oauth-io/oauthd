@@ -74,6 +74,12 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			minor: minor
 			changes: changes
 
+		isNumericalVersion: (version) ->
+			return version.match /(\d+)\.(\d+)\.(\d+)/
+		
+		isNumericalMask: (version) ->
+			return version.match /^(\d+)\.(\d+|x)\.(\d+|x)$/
+
 		compareVersions: (a, b) ->
 			if a == b
 				return 0
@@ -127,6 +133,24 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 				defer.resolve(tags)
 			defer.promise
 
+		getAllTagsAndBranches: () ->
+			defer = Q.defer()
+			versions = {}
+			execGit ['tag'], (error, stdout, stderr) ->
+				versions.tags = stdout.match /[^\s]+/g
+				execGit ['branch -a'], (error, stdout, stderr) ->
+					branches = stdout.match /.+/g
+					versions.branches = []
+					for k, v of branches
+						v = v.replace /^[\s]+/, ''
+						match = v.match /[^\s]+\/[^\s]+\/([^\s]+).*/
+						if match
+							v = match[1]
+						if (not v.match /detached/) and (not v.match /HEAD/)
+							versions.branches.push v
+					defer.resolve(versions)
+			defer.promise
+
 
 		getLatestVersion: (mask) ->
 			defer = Q.defer()
@@ -147,6 +171,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 					info = JSON.parse data
 					mask = info[plugin_name]?.match(/\#(.*)$/)
 					mask = mask?[1]
+					mask ?= 'master'
 					defer.resolve(mask)
 				catch e
 					defer.reject e

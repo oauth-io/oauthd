@@ -14,34 +14,25 @@ module.exports = (env) ->
 		update = false
 		plugin_git.getCurrentVersion()
 			.then (v) ->
-				current_v = v.version
-				cv_info = v
-				if cv_info.type == 'tag_n'
-					plugin_git.getVersionMask()
-						.then (mask) ->
-							return plugin_git.getLatestVersion(mask)
-						.then (v) ->
-							latest_v = v
-							comparison = plugin_git.compareVersions latest_v, current_v
-							if comparison > 0
-								plugin_git.checkout latest_v
-									.then () ->
-										defer.resolve(true)
-									.fail (e) ->
-										defer.reject(e)
-							else
-								defer.resolve(false)
-				else if cv_info.type == 'branch'
-					if not cv_info.uptodate
-						plugin_git.pullBranch cv_info.version
-							.then () ->
-								defer.resolve(true)
-							.fail (e) ->
-								defer.reject(e)
-					else
-						defer.resolve false
-				else
-					defer.resolve false
+				plugin_git.getVersionMask()
+					.then (mask) ->
+						current_v = v.version
+						cv_info = v
+						if plugin_git.isNumericalMask(mask)
+							plugin_git.getLatestVersion(mask)
+								.then (latest_v) ->
+									target_version = latest_v
+									plugin_git.checkout target_version
+										.then () ->
+											return defer.resolve(target_version)
+										.fail (e) ->
+											return defer.reject new Error('No target version found for mask \'' + mask + '\'')
+						else
+							plugin_git.checkout mask
+								.then () ->
+									return defer.resolve(mask)
+								.fail (e) ->
+									return defer.reject new Error('Target version ' + mask + ' does not exist')
 			.fail (e) ->
 				defer.reject e
 		defer.promise

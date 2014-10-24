@@ -47,6 +47,9 @@ module.exports = (args, options) ->
 		if command == 'update'
 			console.log 'Usage: oauthd plugins ' + 'update [name]'.yellow
 			console.log 'Updates a plugin using its git repository. If no argument is given, updates all plugins listed in plugins.json'
+			console.log ''
+			console.log 'Options:'
+			console.log '    ' + '--verbose'.yellow + '\t' + 'Get more details about update process'
 		if command == 'uninstall'
 			console.log 'Usage: oauthd plugins ' + 'uninstall <name>'.yellow
 			console.log 'Uninstalls a given plugin'
@@ -162,10 +165,34 @@ module.exports = (args, options) ->
 							next()
 						.fail (e) ->
 							console.log 'Error while updating '.red + name.red
-							next(e)
+							if options.verbose
+								console.log e.message
+								listVersions(name)
+									.then () ->
+										next()
+							else
+								console.log 'Use --verbose for more details'
+								next()
+
+							
 			, (err) ->
 				return main_defer.reject err
 				main_defer.resolve()
+
+		listVersions = (name) ->
+			defer = Q.defer()
+			plugin_git = scaffolding.plugins.git(name)
+			plugin_git.getAllTagsAndBranches()
+				.then (versions) ->
+					console.log 'Available tags & versions:'
+					console.log versions.tags.join ', '
+					console.log 'Available branches:'
+					console.log versions.branches.join ', '
+					defer.resolve()
+				.fail () ->
+					defer.resolve()
+
+			defer.promise
 
 		if args[0] is 'update'
 			if options.help
@@ -175,16 +202,25 @@ module.exports = (args, options) ->
 				if name
 					if scaffolding.plugins.info.isActive(name)
 						console.log 'Updating '.white + name.white
+						plugin_git = scaffolding.plugins.git(name)
 						scaffolding.plugins.update(name)
 							.then (updated) ->
 								if updated
-									console.log 'Succesfully updated '.green + name.green
+									console.log 'Succesfully updated '.green + name.green + ' to '.green + updated.white
 								else
 									console.log name + ' already up to date'
 								main_defer.resolve()
 							.fail (e) ->
 								console.log 'Error while updating '.red + name.red
-								main_defer.reject()
+								if options.verbose
+									console.log e.message
+									listVersions(name)
+										.then () ->
+											next()
+								else
+									console.log 'Use --verbose for more details'
+									next()
+								
 					else
 						console.log "The plugin you want to update is not present in \'plugins.json\'."
 				else
@@ -202,29 +238,39 @@ module.exports = (args, options) ->
 				plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
 				text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
 				plugin_git.getCurrentVersion()
-					.then (current_version) ->	
-
+					.then (current_version) ->
 						if current_version.type == 'branch'
-							update = ''
-							if not current_version.uptodate
-								update = ' (' + 'Updates available'.green + ')'
-							title +=  '(' +current_version.version + ')' + update + ""
-							
-							done(title, text)
+							plugin_git.getVersionMask()
+								.then (mask) ->
+									update = ''
+									if not current_version.uptodate
+										update = ' (' + 'Updates available'.green + ')'
+
+									if mask != current_version.version
+										update += ' (plugins.json points \'' + mask + '\')'
+									title +=  '(' +current_version.version + ')' + update + ""
+
+									done(title, text)
 						else if current_version.type == 'tag_n'
 							plugin_git.getVersionMask()
 								.then (mask) ->
 									plugin_git.getLatestVersion(mask)
 										.then (latest_version) ->
 											update = ''
-											
-											if plugin_git.compareVersions(latest_version, current_version.version) > 0
-												update = ' (' + latest_version.green + ' is available)' 
+											if plugin_git.isNumericalVersion(latest_version)
+												if plugin_git.compareVersions(latest_version, current_version.version) > 0
+													update = ' (' + latest_version.green + ' is available)'
+											else
+												update = ' (plugins.json points \'' + latest_version +  '\')'
 											title +=  '(' +current_version.version + ')' + update + ""
 											done(title, text)
 						else if current_version.type == 'tag_a'
-							title +=  '(tag ' + current_version.version + ')'
-							done(title, text)
+							plugin_git.getVersionMask()
+								.then (mask) ->
+									title +=  '(tag ' + current_version.version + ')'
+									if (mask != current_version.version)
+										title += ' (plugins.json points \'' + mask +  '\')'
+									done(title, text)
 						else if current_version.type == 'unversionned'
 							title +=  "(unversionned)"
 							done(title, text)
