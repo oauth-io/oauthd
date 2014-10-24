@@ -7,7 +7,7 @@ module.exports = (env) ->
 	exec = env.exec
 	(plugin_name) ->
 		defer = Q.defer()
-		plugin_git = env.plugins.git(plugin_name, false)
+		plugin_git = env.plugins.git(plugin_name, true)
 		current_v = undefined
 		cv_info = undefined
 		latest_v = undefined
