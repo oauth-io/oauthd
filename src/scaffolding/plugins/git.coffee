@@ -1,6 +1,4 @@
 Q = require 'q'
-
-nodegit = require('nodegit')
 fs = require 'fs'
 
 
