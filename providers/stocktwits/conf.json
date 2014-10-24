@@ -14,6 +14,11 @@
             }
         },
 		"access_token": "/token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",

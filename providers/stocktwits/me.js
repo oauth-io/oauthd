@@ -1,7 +1,3 @@
-// this me is not working because http://stocktwits.com/developers/docs/api#account-verify-docs
-// it require the access token in params like this:
-// https://api.stocktwits.com/api/2/account/verify.json?access_token=<access_token>
-
 var me = {
     fetch: [
 
