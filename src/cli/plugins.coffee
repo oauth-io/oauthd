@@ -90,8 +90,8 @@ module.exports = (args, options) ->
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
 
-		chainPluginsInstall = (plugins) ->
-			async.eachSeries Object.values(plugins), (plugin, next) ->
+		chainPluginsInstall = (plugins_repo) ->
+			async.eachSeries plugins_repo, (plugin, next) ->
 				console.log plugin
 				scaffolding.plugins.install(plugin, process.cwd())
 					.then () ->
@@ -123,7 +123,9 @@ module.exports = (args, options) ->
 				else
 					scaffolding.plugins.info.getPluginsJson()
 						.then (plugins) ->
-							chainPluginsInstall plugins
+							plugins_repo = Object.values(plugins)
+							plugins_repo.remove("")
+							chainPluginsInstall plugins_repo
 			
 		if args[0] is 'create'
 			if options.help

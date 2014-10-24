@@ -76,11 +76,5 @@ exports.init = (env) ->
 			return defer.promise
 
 exports.installPlugins = () ->
-	cli = {
-		argv: {
-			_: [ 'plugins', 'install' ]
-		},
-		__mode: 'prog'
-	}
-	require('./cli/bin/plugins')(cli)
+	require('../bin/cli/plugins')(['install'],{}).command()
 		
