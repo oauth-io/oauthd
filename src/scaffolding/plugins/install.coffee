@@ -13,14 +13,14 @@ module.exports = (env) ->
 			defer = Q.defer()
 
 			url = install_data.repository
-			version_mask = install_data.version
+			version_mask = install_data.version || 'master'
 			
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
 			tempfolder_nb = (cloned_nb++)
 			temp_location = process.cwd() + '/plugins/cloned' + tempfolder_nb
 			temp_pluginname = 'cloned' + tempfolder_nb
-			gitClone install_data, temp_location, (err) ->
+			gitClone install_data, temp_location, temp_pluginname, version_mask, (err) ->
 				return defer.reject err if err
 				env.plugins.info.getInfo temp_pluginname
 					.then (plugin_data) ->
@@ -44,21 +44,30 @@ module.exports = (env) ->
 
 			defer.promise
 
-		gitClone = (install_data, temp_location, callback) ->
+		gitClone = (install_data, temp_location, temp_pluginname, version_mask, callback) ->
 			url = install_data.repository
 			rimraf temp_location, (err) ->
 				return callback err if err
-				env.plugins.info.getTargetVersion install_data.name
-					.then (version) ->
-						command = 'cd ' + temp_location + '; git clone ' + url + ' ' + temp_location
-						if version 
-							command += '; git checkout ' + version
-						fs.mkdirSync temp_location
-						env.debug "Cloning " + url.red + "."
-						exec command, (error, stdout, stderr) ->
-							return callback error if error
+				command = 'cd ' + temp_location + '; git clone ' + url + ' ' + temp_location
+				env.debug "Cloning " + url.red
+				fs.mkdir temp_location, (err) ->
+					return callback err if err
+					exec command, (error, stdout, stderr) ->
+						return callback error if error
+						plugin_git = env.plugins.git temp_pluginname
+						if version_mask
+							plugin_git.getLatestVersion version_mask
+								.then (version) ->
+									if version
+										command = 'cd ' + temp_location + '; git checkout ' + version
+										exec command, (error, stdout, stderr) ->
+											return callback error if error
+											return callback null
+									else
+										return callback null
+						else
 							return callback null
-
+					
 		moveClonedToPlugins = (plugin_name, temp_location, cwd, callback) ->
 			folder_name = cwd + "/plugins/" + plugin_name
 			rimraf folder_name, (err) ->
@@ -69,20 +78,12 @@ module.exports = (env) ->
 					return callback null
 
 		updatePluginsList = (plugin_name, install_data, cwd, callback) ->
-			file =  cwd + '/plugins.json'
-			jf.spaces = 4
-			jf.readFile file, (err, obj) ->
-				return callback err if err
-				if not obj?
-					obj = {}
-				if (not obj[plugin_name]?) # only add entry to plugins.json if not already there
-					obj[plugin_name] = install_data
-					jf.writeFile file, obj, (err) ->
-						return callback err if err
-						env.debug 'Plugin ' + plugin_name.green + ' successfully activated.'
-						return callback null
-				else
-					return callback null
+			process.chdir cwd
+			env.plugins.modify.updatePluginsJson(plugin_name, install_data)
+				.then () ->
+					env.debug 'Plugin ' + plugin_name.green + ' successfully activated.'
+				.fail (e) ->
+					callback(e)
 		
 		launchInstall(url, cwd)
 

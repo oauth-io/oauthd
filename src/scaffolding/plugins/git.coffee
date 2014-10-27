@@ -5,11 +5,12 @@ fs = require 'fs'
 module.exports = (env, plugin_name, fetch, cwd) ->
 	exec = env.exec
 	cwd = cwd || process.cwd()
-	try 
-		plugin_data = require cwd + '/plugins/' + plugin_name
-	catch e
-		console.log 'HELLO', e
-		return;
+	# try 
+	# 	plugin_data = require cwd + '/plugins/' + plugin_name
+	# 	console.log 'HELLO'
+	# catch e
+	# 	console.log 'HELLO', e
+	# 	return;
 
 	plugin_location = cwd + '/plugins/' + plugin_name
 	fetched = false
@@ -176,13 +177,11 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 
 		getRemote: () ->
 			defer = Q.defer()
-			fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
-				try
-					info = JSON.parse data
-					remote = info[plugin_name]?.match(/^(.*)\#/)
-					remote = remote?[1]
-					defer.resolve(remote)
-				catch e
+			env.plugins.info.getPluginsJson()
+				.then (data) ->
+					plugin_data = data[plugin_name]
+					defer.resolve(plugin_data.repository)
+				.fail (e) ->
 					defer.reject e
 			defer.promise
 
