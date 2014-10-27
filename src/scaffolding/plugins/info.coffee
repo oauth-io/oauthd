@@ -127,15 +127,6 @@ module.exports = (env) ->
 					defer.reject err
 			defer.promise
 
-
-		getInfoAsync: (plugin_name) ->
-			defer = Q.defer()
-			# env.plugins.info.getFolderName plugin_name, (err, folder_name) ->
-			# 	return defer.reject err if err
-			env.plugins.info.getDetails process.cwd() + "/plugins/" + plugin_name, (err, plugin_data) ->
-				return defer.reject err if err
-				defer.resolve plugin_data
-			defer.promise
 		getAllFullInfo: () ->
 			defer = Q.defer()
 			plugins = []

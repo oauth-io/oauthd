@@ -156,7 +156,7 @@ module.exports = (env) ->
 
 		# get one plugin info
 		env.server.get '/api/plugins/:plugin_name', env.middlewares.auth.needed, (req, res, next) =>
-			env.scaffolding.plugins.info.getInfoAsync(req.params.plugin_name)
+			env.scaffolding.plugins.info.getInfo(req.params.plugin_name)
 					.then (data) ->
 						res.send data
 					.fail (e) ->
