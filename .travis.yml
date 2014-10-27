@@ -7,7 +7,7 @@ services:
 before_install:
  - "npm install -g grunt-cli coffee-script"
 install:
- - "npm install"
+ - "npm install && grunt prod"
 script:
  - "npm test"
 branches:
