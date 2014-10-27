@@ -164,17 +164,11 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 		getVersionMask: () ->
 			defer = Q.defer()
 
-			# fs.readFile cwd + '/plugins.json', {'encoding': 'UTF-8'}, (err, data) ->
 			env.plugins.info.getPluginsJson()
 				.then (data) ->
-					try
-						info = JSON.parse data
-						mask = info[plugin_name]?.match(/\#(.*)$/)
-						mask = mask?[1]
-						mask ?= 'master'
-						defer.resolve(mask)
-					catch e
-						defer.reject e
+					version_mask = data[plugin_name].version
+					version_mask = 'master' if !(version_mask?) and data[plugin_name].repository
+					defer.resolve version_mask
 				.fail (e) ->
 					defer.reject e
 

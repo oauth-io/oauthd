@@ -251,6 +251,7 @@ module.exports = (args, options) ->
 									.then (mask) ->
 										plugin_git.getLatestVersion(mask)
 											.then (latest_version) ->
+
 												update = ''
 												if plugin_git.isNumericalVersion(latest_version)
 													if plugin_git.compareVersions(latest_version, current_version.version) > 0
@@ -287,15 +288,16 @@ module.exports = (args, options) ->
 						console.log text
 					, options.fetch
 				else
-					names = scaffolding.plugins.info.getActive()
-					async.eachSeries names, (n, next) ->
-						doGetInfo n, (title, text) ->
-							console.log title
-							console.log text
-							next()
-						, options.fetch
-					, () ->
-						main_defer.resolve()
+					scaffolding.plugins.info.getActive()
+						.then (names) ->
+							async.eachSeries names, (n, next) ->
+								doGetInfo n, (title, text) ->
+									console.log title
+									console.log text
+									next()
+								, options.fetch
+							, () ->
+								main_defer.resolve()
 
 
 		return main_defer.promise
