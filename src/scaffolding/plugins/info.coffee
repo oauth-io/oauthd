@@ -4,11 +4,9 @@ fs = require 'fs'
 sugar = require 'sugar'
 async = require 'async'
 
-
 module.exports = (env) ->
 	exec = env.exec
-	info = 
-
+	info =
 		# retrieve plugins.json data
 		# opts can contain:
 		# - activeOnly: if true, filters plugins that are not marked active: false

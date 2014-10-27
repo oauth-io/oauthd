@@ -92,14 +92,18 @@ module.exports = (env) ->
 
 	pluginsEngine.list = (callback) ->
 		list = []
-		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
-			if err
+		env.scaffolding.plugins.info.getPluginsJson({ activeOnly: true })
+			.then (obj) ->
+				if obj?
+					for key, value of obj
+						list.push key
+				return callback null, list
+			.fail (err) ->
 				env.debug 'An error occured: ' + err
 				return callback err
-			if obj?
-				for key, value of obj
-					list.push key
-			return callback null, list
+			
+				
+			
 
 	pluginsEngine.run = (name, args, callback) ->
 		if typeof args == 'function'	

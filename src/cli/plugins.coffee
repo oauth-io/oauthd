@@ -87,6 +87,7 @@ module.exports = (args, options) ->
 						console.log (inactive.length + ' inactive plugin(s)').yellow
 						for name in inactive
 							console.log '- ' + name
+			return main_defer.promise
 
 		if args[0] == 'uninstall'
 			if options.help
@@ -99,6 +100,7 @@ module.exports = (args, options) ->
 						plugin_name += " "
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
+			return main_defer.promise
 
 		chainPluginsInstall = (plugins_data) ->
 			async.eachSeries plugins_data, (plugin_data, next) ->
@@ -141,6 +143,7 @@ module.exports = (args, options) ->
 							chainPluginsInstall plugins_data
 						.fail (e) ->
 							console.log 'An error occured:', e.message
+			return main_defer.promise
 			
 		if args[0] is 'create'
 			if options.help
@@ -158,17 +161,32 @@ module.exports = (args, options) ->
 				else
 					defer.reject 'Error'.red + ': '
 
+			return main_defer.promise
+
 		if args[0] is 'activate'
 			if options.help || args.length != 2
 				@help('activate')
 			else
 				scaffolding.plugins.activate(args[1])
+					.then () ->
+						console.log 'Successfully activated '.green + args[1].green
+					.fail (e) ->
+						console.log 'An error occured while activating '.red + args[1].red + ':'.red
+						console.log e.message
+			return main_defer.promise
+
 
 		if args[0] is 'deactivate'
 			if options.help || args.length != 2
 				@help 'deactivate'
 			else
 				scaffolding.plugins.deactivate(args[1])
+					.then () ->
+						console.log 'Successfully deactivated '.green + args[1].green
+					.fail (e) ->
+						console.log 'An error occured while deactivating '.red + args[1].red + ':'.red
+						console.log e.message
+			return main_defer.promise
 
 		chainPluginsUpdate = (plugins) ->
 			plugin_names = Object.keys plugins
@@ -220,6 +238,7 @@ module.exports = (args, options) ->
 					scaffolding.plugins.info.getPluginsJson()
 						.then (plugins) ->
 							chainPluginsUpdate plugins
+			return main_defer.promise
 
 		doGetInfo = (name, done, fetch) ->
 			text = ''
@@ -298,7 +317,9 @@ module.exports = (args, options) ->
 								, options.fetch
 							, () ->
 								main_defer.resolve()
+			return main_defer.promise
 
-
+		console.log 'Unknown command: ' + args[0].yellow
+		@help()
 		return main_defer.promise
 
