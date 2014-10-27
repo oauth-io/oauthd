@@ -10,25 +10,37 @@ module.exports = (env) ->
 	installPlugins = (defer, name) ->
 		async.series [
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-admin-auth#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-admin-auth",
+					version: "0.x.x"
+				}, process.cwd() + "/" + name)
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-slashme#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-slashme",
+					version: "0.x.x"
+				}, process.cwd() + "/" + name)
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-request#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-request",
+					version: "0.x.x"
+				}, process.cwd() + "/" + name)
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-front#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-front",
+					version: "0.x.x"
+				}, process.cwd() + "/" + name)
 					.then () ->
 						next()
 					.fail (e) ->

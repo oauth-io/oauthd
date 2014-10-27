@@ -8,69 +8,124 @@ async = require 'async'
 module.exports = (env) ->
 	exec = env.exec
 	info = 
-		getActive: () ->
-			try
-				obj = jf.readFileSync process.cwd() + '/plugins.json'
-			catch e 
-				env.debug 'ERROR'.red, e.message.yellow
-				env.debug 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-			plugin_names = []
-			plugin_names = Object.keys(obj) if obj?
-			plugin_names.remove("")
-			return plugin_names
-		getPluginsJson: () ->
+
+		# retrieve plugins.json data
+		# opts can contain:
+		# - activeOnly: if true, filters plugins that are not marked active: false
+		getPluginsJson: (opts) ->
 			defer = Q.defer()
+			opts ?= {}
 			fs.readFile process.cwd() + '/plugins.json', {encoding: 'UTF-8'}, (err, data) ->
 				return defer.reject err if err
 				try
 					obj = JSON.parse data
-					defer.resolve obj
+					plugins_json = []
+					plugins_names = Object.keys obj
+					async.eachSeries plugins_names, (plugin_name, next) ->
+						value = obj[plugin_name]
+						include_plugin = true
+						value.active ?= true
+						if typeof value == 'string'
+							str = value.split '#'
+							data = {}
+							data.repository = str[0]
+							data.version = str[1]
+							data.active = true
+							value = data
+						else if typeof value == 'object'
+							if opts.activeOnly && value.active == false
+								include_plugin = false
+						else
+							include_plugin = false
+
+						if include_plugin
+							info.getInfo plugin_name
+								.then (plugin_info) ->
+									if typeof plugin_info == 'object'
+										for k, v of plugin_info
+											if k != 'version' and k != 'active' and k != 'repository'
+												value[k] = v
+									if value.repository?
+										value.version ?= 'master'
+									value.active ?= true
+									plugins_json[plugin_name] = value
+									next()
+								.fail (e) ->
+									console.log e
+									next()
+						else
+							next()
+					, () ->
+						defer.resolve plugins_json
 				catch e
 					defer.reject e
 			defer.promise
-		getActiveAsync: () ->
+
+		getActive: () ->
 			defer = Q.defer()
-			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
-				plugin_names = []
-				plugin_names = Object.keys(obj) if obj?
-				plugin_names.remove("")
-				defer.resolve plugin_names
+
+			info.getPluginsJson { activeOnly: true }
+				.then (plugins) ->
+					defer.resolve Object.keys plugins
+				.fail (e) ->
+					defer.reject e
 
 			defer.promise
+
 		getInstalled: () ->
-			try
-				folder_names = fs.readdirSync process.cwd() + '/plugins'
-			catch e 
-				env.debug 'ERROR'.red, e.message.yellow
-				env.debug 'Error while trying to list plugins into \'plugins\' folder. Please make sure it exists and is well structured.'
-			installed_plugins = []
-			for name in folder_names
-				if env.plugins.info.folderExist(name)
-					path = process.cwd() + '/plugins/' + name
-					env.plugins.info.getDetails path, (err, plugin_data) ->
-						if plugin_data? and plugin_data.name?
-							installed_plugins.push plugin_data.name
-			return installed_plugins
+			defer = Q.defer()
+
+			fs.readdir process.cwd() + '/plugins', (err, folder_names) ->
+				installed_plugins = []
+				async.eachSeries folder_names, (name, next) ->
+					fs.stat process.cwd() + '/plugins/' + name, (err, stat) ->
+						defer.reject err if err
+						if stat.isDirectory()
+							installed_plugins.push name
+						next()
+				, () ->
+					defer.resolve installed_plugins
+
+			defer.promise
+
 		getInactive: () ->
-			installed_plugins = @getInstalled()
-			active_plugins = @getActive()
-			inactive_plugins = []
-			for plugin in installed_plugins
-				if plugin not in active_plugins
-					inactive_plugins.push plugin
-			return inactive_plugins
+			defer = Q.defer()
+
+			installed_plugins = undefined
+			active_plugins = undefined
+
+			info.getInstalled()
+				.then (_installed) ->
+					installed_plugins = _installed
+					return info.getActive()
+				.then (_active) ->
+					active_plugins = _active
+
+					inactive_plugins = []
+					for plugin in installed_plugins
+						if plugin not in active_plugins
+							inactive_plugins.push plugin
+
+					defer.resolve inactive_plugins
+				.fail (e) ->
+
+					defer.reject e
+			defer.promise
+
 		getInfo: (plugin_name, callback) ->
+			defer = Q.defer()
 			fs.readFile process.cwd() + '/plugins/' + plugin_name + '/plugin.json', {encoding: 'UTF-8'}, (err, data) ->
-				return callback err if err
+				return defer.reject err if err
 				try
 					plugin_data = JSON.parse data
 					plugin_git = env.plugins.git(plugin_name)
 					plugin_git.getCurrentVersion()
 						.then (v) ->
 							plugin_data.version = v.version
-							callback null, plugin_data
+							defer.resolve plugin_data
 				catch err
-					callback err
+					defer.reject err
+			defer.promise
 
 
 		getInfoAsync: (plugin_name) ->
@@ -84,7 +139,7 @@ module.exports = (env) ->
 		getAllFullInfo: () ->
 			defer = Q.defer()
 			plugins = []
-			info.getActiveAsync()
+			info.getActive()
 				.then (names) ->
 					async.each names, (name, next) ->
 						info.getInfo name, (err, data) ->
@@ -102,6 +157,7 @@ module.exports = (env) ->
 			catch e 
 				return callback e
 			return callback null, plugin_data
+
 		getFullUrl: (plugin_name, callback) ->
 			try
 				obj = jf.readFileSync process.cwd() + '/plugins.json'
@@ -112,6 +168,7 @@ module.exports = (env) ->
 				if name is plugin_name
 					return callback null, url
 			return callback true
+
 		getVersion: (url, callback) ->
 			version = null
 			tmpArray = url.split("#")

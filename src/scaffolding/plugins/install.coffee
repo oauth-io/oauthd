@@ -9,17 +9,11 @@ cloned_nb = 0
 module.exports = (env) ->
 	exec = env.exec
 	(url, cwd) ->
-		launchInstall = (url, cwd) ->
+		launchInstall = (install_data, cwd) ->
 			defer = Q.defer()
-			if url == '' or not url?
-				defer.resolve()
-			array = url.split('#')
-			url = array[0]
-			version_mask = array[1]
-			if version_mask?
-				mask = '#' + version_mask
-			else
-				mask = ''
+
+			url = install_data.repository
+			version_mask = install_data.version
 			
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
@@ -31,7 +25,7 @@ module.exports = (env) ->
 					return defer.reject err if err
 					moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
 						return defer.reject err if err
-						updatePluginsList plugin_data.name, url + (mask), cwd, (err) ->
+						updatePluginsList plugin_data.name, install_data, cwd, (err) ->
 							return defer.reject err if err
 							if version_mask?
 								plugin_git = env.plugins.git(plugin_data.name, false, cwd)
@@ -69,7 +63,7 @@ module.exports = (env) ->
 					env.debug 'Plugin ' + plugin_name.green + ' successfully installed in "'+ folder_name + '".'
 					return callback null
 
-		updatePluginsList = (plugin_name, url, cwd, callback) ->
+		updatePluginsList = (plugin_name, install_data, cwd, callback) ->
 			file =  cwd + '/plugins.json'
 			jf.spaces = 4
 			jf.readFile file, (err, obj) ->
@@ -77,7 +71,7 @@ module.exports = (env) ->
 				if not obj?
 					obj = {}
 				if (not obj[plugin_name]?) # only add entry to plugins.json if not already there
-					obj[plugin_name] = url
+					obj[plugin_name] = install_data
 					jf.writeFile file, obj, (err) ->
 						return callback err if err
 						env.debug 'Plugin ' + plugin_name.green + ' successfully activated.'
