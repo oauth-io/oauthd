@@ -8,7 +8,7 @@ before_install:
  - "npm install -g grunt-cli coffee-script jasmine-node"
 install:
  - "npm install"
- script:
+script:
  - "npm test"
 branches:
   only:
