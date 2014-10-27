@@ -5,12 +5,10 @@ node_js:
 services:
  - redis
 before_install:
- - "npm install -g grunt-cli coffee-script"
+ - "npm install -g grunt-cli coffee-script jasmine-node"
 install:
  - "npm install"
-before_script: 
- - "grunt prod"
-script:
+ script:
  - "npm test"
 branches:
   only:
