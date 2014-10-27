@@ -8,6 +8,8 @@ before_install:
  - "npm install -g grunt-cli coffee-script"
 install:
  - "npm install"
+before_script: 
+ - "grunt prod"
 script:
  - "npm test"
 branches:
