@@ -203,11 +203,9 @@ module.exports = (args, options) ->
 				else
 					scaffolding.plugins.info.getPluginsJson()
 						.then (plugins_data) ->
-							toUpdate = []
-							for k,v of plugins_data
-								# if v != ''
-								toUpdate.push k
-							chainPluginsUpdate toUpdate
+							plugin_names = Object.keys(plugins_data)
+							plugin_names.remove("")
+							chainPluginsUpdate plugin_names
 
 		getInfo = (name, done, fetch) ->
 			text = ''
