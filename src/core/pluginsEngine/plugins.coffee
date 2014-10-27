@@ -76,19 +76,19 @@ module.exports = (env) ->
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
-		jf.readFile env.pluginsEngine.cwd + '/plugins.json', (err, obj) ->
-			if err
-				env.debug 'An error occured: ' + err
-				return callback true
-			if not obj?
-				obj = {}
-			for pluginname, pluginversion of obj
-				stat = fs.statSync cwd + '/plugins/' + pluginname
-				if stat.isDirectory()
-					pluginsEngine.load pluginname
-			if global_interface?
-				loadPlugin(global_interface)
-			return callback false
+		env.scaffolding.plugins.info.getPluginsJson({ activeOnly: true })
+			.then (obj) ->
+				if not obj?
+					obj = {}
+				for pluginname, data of obj
+					stat = fs.statSync cwd + '/plugins/' + pluginname
+					if stat.isDirectory()
+						pluginsEngine.load pluginname
+				if global_interface?
+					loadPlugin(global_interface)
+				return callback false
+			.fail (e) ->
+				callback e
 
 	pluginsEngine.list = (callback) ->
 		list = []
@@ -127,10 +127,9 @@ module.exports = (env) ->
 
 	pluginsEngine.loadPluginPages = (server) ->
 		defer = Q.defer()
-		env.scaffolding.plugins.info.getAllFullInfo()
+		env.scaffolding.plugins.info.getPluginsJson()
 			.then (plugins) ->
-				for k, plugin of plugins
-
+				for plugin_name, plugin of plugins
 					if plugin.interface_enabled
 						do (plugin) ->
 							server.get new RegExp("^/plugins/" + plugin.name + "/(.*)"), (req, res, next) ->

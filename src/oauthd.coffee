@@ -60,7 +60,6 @@ exports.init = (env) ->
 			# start server
 			env.debug "oauthd start server"
 			exports.server = server = require('./server')(env)
-
 			async.series [
 				env.data.providers.getList,
 				server.listen

@@ -42,7 +42,6 @@ module.exports = (env) ->
 
 	return {
 		listen: (callback) =>
-
 			env.pluginsEngine.loadPluginPages(env.server)
 				.then () ->
 					# runs the plugins' method init if popuplated

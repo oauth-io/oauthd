@@ -17,42 +17,47 @@ module.exports = (env) ->
 			
 			if not url?
 				return env.debug 'Please provide a repository address for the plugin to install'
-			temp_location = cwd + '/plugins/cloned' + (cloned_nb++)
-			gitClone url, temp_location, (err) ->
+			tempfolder_nb = (cloned_nb++)
+			temp_location = process.cwd() + '/plugins/cloned' + tempfolder_nb
+			temp_pluginname = 'cloned' + tempfolder_nb
+			gitClone install_data, temp_location, (err) ->
 				return defer.reject err if err
-				# env.debug "Loading plugin information"
-				env.plugins.info.getDetails temp_location, (err, plugin_data) ->
-					return defer.reject err if err
-					moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
-						return defer.reject err if err
-						updatePluginsList plugin_data.name, install_data, cwd, (err) ->
+				env.plugins.info.getInfo temp_pluginname
+					.then (plugin_data) ->
+						moveClonedToPlugins plugin_data.name, temp_location, cwd, (err) ->
 							return defer.reject err if err
-							if version_mask?
-								plugin_git = env.plugins.git(plugin_data.name, false, cwd)
-								plugin_git.getLatestVersion(version_mask)
-									.then (lv) ->
-										plugin_git.checkout lv
-											.then () ->
-												defer.resolve()
-											.fail (e) ->
-												defer.reject(e)
-							else	
-								defer.resolve()
+							updatePluginsList plugin_data.name, install_data, cwd, (err) ->
+								return defer.reject err if err
+								if version_mask?
+									plugin_git = env.plugins.git(plugin_data.name, false, cwd)
+									plugin_git.getLatestVersion(version_mask)
+										.then (lv) ->
+											plugin_git.checkout lv
+												.then () ->
+													defer.resolve()
+												.fail (e) ->
+													defer.reject(e)
+								else	
+									defer.resolve()
+					.fail (e) ->
+						defer.reject e
 
 			defer.promise
 
-		gitClone = (url, temp_location, callback) ->
+		gitClone = (install_data, temp_location, callback) ->
+			url = install_data.repository
 			rimraf temp_location, (err) ->
 				return callback err if err
-				env.plugins.info.getVersion url, (repo_url, version) ->
-					command = 'cd ' + temp_location + '; git clone ' + repo_url + ' ' + temp_location
-					if version 
-						command += '; git checkout ' + version
-					fs.mkdirSync temp_location
-					env.debug "Cloning " + url.red + "."
-					exec command, (error, stdout, stderr) ->
-						return callback error if error
-						return callback null
+				env.plugins.info.getTargetVersion install_data.name
+					.then (version) ->
+						command = 'cd ' + temp_location + '; git clone ' + url + ' ' + temp_location
+						if version 
+							command += '; git checkout ' + version
+						fs.mkdirSync temp_location
+						env.debug "Cloning " + url.red + "."
+						exec command, (error, stdout, stderr) ->
+							return callback error if error
+							return callback null
 
 		moveClonedToPlugins = (plugin_name, temp_location, cwd, callback) ->
 			folder_name = cwd + "/plugins/" + plugin_name

@@ -51,7 +51,10 @@ module.exports = (env) ->
 									plugins_json[plugin_name] = value
 									next()
 								.fail (e) ->
-									console.log e
+									plugins_json[plugin_name] = {
+										name: plugin_name,
+										active: true
+									}
 									next()
 						else
 							next()
@@ -61,6 +64,7 @@ module.exports = (env) ->
 					defer.reject e
 			defer.promise
 
+		# retrieve list of active plugin names
 		getActive: () ->
 			defer = Q.defer()
 
@@ -72,6 +76,7 @@ module.exports = (env) ->
 
 			defer.promise
 
+		# retrieve list of installed plugins names
 		getInstalled: () ->
 			defer = Q.defer()
 
@@ -88,6 +93,7 @@ module.exports = (env) ->
 
 			defer.promise
 
+		# retrieve list of inactive plugins names
 		getInactive: () ->
 			defer = Q.defer()
 
@@ -112,6 +118,7 @@ module.exports = (env) ->
 					defer.reject e
 			defer.promise
 
+		# retrieve plugin.json data for given plugin name
 		getInfo: (plugin_name, callback) ->
 			defer = Q.defer()
 			fs.readFile process.cwd() + '/plugins/' + plugin_name + '/plugin.json', {encoding: 'UTF-8'}, (err, data) ->
@@ -127,39 +134,6 @@ module.exports = (env) ->
 					defer.reject err
 			defer.promise
 
-		getAllFullInfo: () ->
-			defer = Q.defer()
-			plugins = []
-			info.getActive()
-				.then (names) ->
-					async.each names, (name, next) ->
-						info.getInfo name, (err, data) ->
-							return next err if err
-							plugins.push data
-							next()
-					, (err) ->
-						defer.resolve plugins
-				.fail (e) ->
-					return defer.reject e
-			defer.promise
-		getDetails: (path, callback) ->
-			try
-				plugin_data = JSON.parse(fs.readFileSync path + '/plugin.json', { encoding: 'UTF-8' })
-			catch e 
-				return callback e
-			return callback null, plugin_data
-
-		getFullUrl: (plugin_name, callback) ->
-			try
-				obj = jf.readFileSync process.cwd() + '/plugins.json'
-			catch e 
-				env.debug 'ERROR'.red, e.message.yellow
-				env.debug 'Error while trying to read \'plugins.json\'. Please make sure it exists and is well structured.'
-			for name, url of obj
-				if name is plugin_name
-					return callback null, url
-			return callback true
-
 		getVersion: (url, callback) ->
 			version = null
 			tmpArray = url.split("#")
@@ -167,15 +141,30 @@ module.exports = (env) ->
 			if tmpArray.length > 1
 				version = tmpArray[1]
 			return callback repo_url, version
+
 		isActive:(name) ->
 			obj = jf.readFileSync process.cwd() + '/plugins.json'
 			plugin_names = []
 			plugin_names = Object.keys(obj) if obj?
 			return plugin_names.indexOf(name) > -1
+
 		folderExist:(folder_name) ->
 			stat = fs.statSync process.cwd() + '/plugins/' + folder_name
 			return stat.isDirectory()
 
+		getTargetVersion: (name) ->
+			defer = Q.defer()
+
+			plugin_git = env.plugins.git name
+			plugin_git.getVersionMask()
+				.then (mask) ->
+					plugin_git.getLatestVersion(mask)
+						.then (version) ->
+							defer.resolve version
+				.fail (e) ->
+					defer.reject e
+
+			defer.promise
 
 	info
 
