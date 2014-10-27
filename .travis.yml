@@ -12,7 +12,8 @@ script:
  - "npm test"
 branches:
   only:
-    - "master"
+    - master
+    - develop
 notifications:
   hipchat:
     rooms:
