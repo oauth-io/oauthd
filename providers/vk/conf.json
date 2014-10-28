@@ -31,7 +31,7 @@
 			"scope": {
 				"separator": ",",
 				"values": {
-					"notify": "The user allows receiving notifications.",
+					"notify": "User allowed to send notifications to him/her.",
 					"friends": "Access to friends.",
 					"photos": "Access to photos.",
 					"audio": "Access to audio files.",
@@ -44,12 +44,12 @@
 					"questions": "Access to questions (outdated methods).",
 					"wall": "Access to standard and advanced methods for working with the wall.",
 					"groups": "Access to user groups",
-					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
 					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
-					"notifications": "Access to the notifications",
-					"stats": "Statistics access to the user's groups and applications",
-					"offline": "Access to API at any time from an external server.",
-					"ads": "Access to advanced methods for Ads API."
+					"email": "User e-mail access. Available only for sites.",
+					"notifications": "Access to notifications about answers to the user.",
+					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
+					"ads": "Access to advanced methods for Ads API.",
+					"offline": "Access to API at any time from an external server."
 				}
 			}
 		}
