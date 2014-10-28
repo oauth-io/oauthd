@@ -1,0 +1,46 @@
+{
+	"name": "SinaWeibo",
+    "desc": "Sina Weibo is a Chinese microblogging website. The Sina Weibo API provides developers with programmatic access to the service. Via the API, users can read and write to all aspects of the service including microblogging, comments, users, topics, relations and much more. The API uses RESTful calls and responses are formatted in JSON. The site and documentation are in Chinese.",
+	"url": "https://api.weibo.com/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			},
+			"headers": {
+				"Content-Type": "application/json"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"all": "请求下列所有scope权限.",
+					"email": "用户的联系邮箱.",
+					"direct_messages_write": "私信发送接口.",
+					"direct_messages_read": "私信读取接口.",
+					"invitation_write": "邀请发送接口.",
+					"friendships_groups_read": "好友分组读取接口组.",
+					"friendships_groups_write": "好友分组写入接口组.",
+					"statuses_to_me_read": "定向微博读取接口组.",
+					"follow_app_official_microblog": "关注应用官方微博，该参数不对应具体接口，只需在应用控制台填写官方帐号即可（默认值是应用开发者帐号）."
+				}
+			}
+		},
+		"revoke": {
+			"url": "/revokeoauth2",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://open.weibo.com/development",
+		"docs": "http://open.weibo.com/wiki/",
+		"apps": "http://open.weibo.com/apps",
+		"provider": "http://weibo.com"
+	}
+}

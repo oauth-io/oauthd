@@ -1,0 +1,56 @@
+{
+	"name": "PayPal",
+	"desc": "PayPal offers online payment solutions and has more than 153 million customers worldwide. The PayPal API makes powerful functionality available to developers by exposing various features of the PayPal platform. Functionality includes but is not limited to invoice management, transaction processing and account management.",
+	"url": "https://api.{domain}",
+	"oauth2": {
+		"authorize": {
+			"url": "https://www.{domain}/webapps/auth/protocol/openidconnect/v1/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"scope": "openid {scope}",
+				"redirect_uri": "{{callback}}",
+				"nonce": "{{nonce}}",
+				"state": "{{state}}"
+			}
+		},
+		"access_token": {
+			"url": "/v1/identity/openidconnect/tokenservice",
+			"extra": ["scope"]
+		},
+		"refresh": {
+			"url": "/v1/identity/openidconnect/tokenservice",
+			"query": {
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}",
+				"scope": "openid {scope}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"profile": "Personal informations",
+					"https://uri.paypal.com/services/paypalattributes": "Personal informations (age, acount status, type & creation date, seamless checkout)",
+					"email": "Receive the email",
+					"address": "Address information",
+					"phone": "Receive the phone numbers"
+				}
+			},
+			"domain": {
+				"values": {
+					"sandbox.paypal.com": "Sandbox",
+					"paypal.com": "Live"
+				},
+				"cardinality": "1"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://developer.paypal.com/webapps/developer/applications/createapp",
+		"docs": "https://developer.paypal.com/docs",
+		"apps": "https://developer.paypal.com/webapps/developer/applications/myapps",
+		"provider": "https://www.paypal.com/"
+	}
+}

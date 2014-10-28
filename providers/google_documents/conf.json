@@ -1,0 +1,28 @@
+{
+	"name": "Google Documents",
+    "desc": "From their site: The Google Documents List data API allows client applications to upload documents to Google Documents and list them in the form of Google data API (\"GData\") feeds. Your client application can request a list of a user's documents, and query the content in an existing document.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": "/token",
+		"request": "https://www.googleapis.com",
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://docs.google.com/feeds/": "Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+					"https://spreadsheets.google.com/feeds/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

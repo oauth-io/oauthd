@@ -1,0 +1,27 @@
+{
+	"name": "Yandex",
+	"desc": "XML API for Russian search engine.",
+	"url": "https://oauth.yandex.ru",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"state": "{{state}}"
+			}
+		},
+		"access_token": "/token",
+		"request": {
+			"headers": {
+				"Authorization": "OAuth {{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://oauth.yandex.ru/client/new",
+		"docs": "http://api.yandex.ru/oauth/doc",
+		"apps": "https://oauth.yandex.ru/client/my",
+		"provider": "http://yandex.ru/"
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://dashboard.heroku.com/account#api-clients",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://dashboard.heroku.com/account#authorized-applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://heroku.com/",
+				"docs": "https://devcenter.heroku.com/articles/oauth"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/account"
+        }
+	}
+}

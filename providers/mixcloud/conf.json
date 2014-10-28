@@ -1,0 +1,35 @@
+{
+    "name": "MixCloud",
+    "desc": "Mixcloud is re-thinking radio by joining the dots between radio shows, Podcasts and DJ mixes. The Mixcloud API allows developers create applications that can search the Mixcloud database, upload 'cloudcasts', and get the code to embed the Mixcloud widget in a webpage.",
+    "url": "https://www.mixcloud.com/oauth",
+    "oauth2": {
+        "authorize": {
+            "url": "/authorize",
+            "query": {
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}"
+            }
+        },
+        "access_token": {
+            "url": "/access_token",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "redirect_uri": "{{callback}}",
+                "code": "{{code}}"
+            }
+        },
+        "request": {
+            "url": "https://api.mixcloud.com",
+            "query": {
+                "access_token": "{{token}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "http://www.mixcloud.com/developers/create/",
+        "docs": "http://www.mixcloud.com/developers/documentation",
+        "apps": "http://www.mixcloud.com/developers",
+        "provider": "http://www.mixcloud.com"
+    }
+}

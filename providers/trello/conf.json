@@ -1,0 +1,35 @@
+{
+	"name": "Trello",
+	"desc": "Trello is an online project management and collaboration platform. Users can manage their projects on Trello boards that display the various aspects of their projects, such as what has been done and who is working on what. The Trello API allows developers to access and integrate the data and functionality of Trello with other applications and to create new applications. Some example API methods include retrieving project information, managing user information, and viewing lists and tasks.",
+	"url": "https://trello.com/1",
+	"oauth1": {
+		"request_token": "/OAuthGetRequestToken",
+		"authorize": {
+			"url": "/OAuthAuthorizeToken",
+			"query": {
+				"name": "{app_name}"
+			}
+		},
+		"access_token": "/OAuthGetAccessToken",
+		"request": {
+			"url": "https://api.trello.com",
+			"query": {
+				"key": "{client_id}",
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": {
+				"scope": "public"
+			},
+			"app_name": "string"
+		}
+	},
+	"href": {
+		"keys": "https://trello.com/1/appKey/generate",
+		"docs": "https://trello.com/docs/api/",
+		"apps": "https://trello.com/1/appKey/generate",
+		"provider": "https://trello.com/"
+	}
+}

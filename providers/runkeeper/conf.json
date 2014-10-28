@@ -1,0 +1,16 @@
+{
+	"name": "Runkeeper",
+    "desc": "The RunKeeper mobile running app lets you track your workout performance over time, while connecting with your friends to make your workouts social.",
+	"url": "https://runkeeper.com/apps",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": "https://api.runkeeper.com"
+	},
+	"href": {
+		"keys": "http://runkeeper.com/partner/applications/register",
+		"docs": "http://developer.runkeeper.com/healthgraph/overview",
+		"apps": "http://runkeeper.com/partner/applications",
+		"provider": "http://runkeeper.com/"
+	}
+}

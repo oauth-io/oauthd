@@ -1,0 +1,48 @@
+{
+	"name": "Mail.ru",
+    "desc": "With the Mail.Ru API, developers have the ability to integrate the Mail.Ru services into their websites and applications.",
+	"url": "https://connect.mail.ru/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"x_mailru_vid"
+			]
+		},
+		"refresh": "/token",
+		"request": {
+			"url": "https://www.appsmail.ru",
+			"query": {
+				"session_key": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"photos": "application can upload photos",
+					"guestbook": "application can add entries in guest books users",
+					"stream": "application can add entries to the stream 'What's new'",
+					"messages": "application has access to the user's private messages",
+					"events": "application has access to user's events"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://api.mail.ru/sites/my/add/",
+		"docs": "http://api.mail.ru/docs/",
+		"apps": "http://api.mail.ru/sites/my/",
+		"provider": "http://api.mail.ru/"
+	}
+}

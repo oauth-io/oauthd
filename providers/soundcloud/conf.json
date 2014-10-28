@@ -1,0 +1,30 @@
+{
+	"name": "Soundcloud",
+    "desc": "SoundCloud is the leading audio platform that enables anyone to upload, record, promote and share their sounds across the web. The SoundCloud API makes most of the SoundCloud features from SoundCloud.com available to app developers. With the help of its SDKs it's easy to integrate functionality like audio sharing and recording directly into iOS, Android and web apps.",
+	"url": "https://api.soundcloud.com/oauth2",
+	"oauth2": {
+		"authorize": "https://soundcloud.com/connect",
+		"access_token": "/token",
+		"request": {
+			"query": {
+				"oauth_token": "{{token}}"
+			}
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"non-expiring": "To obtain a non expiring access token"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "http://soundcloud.com/you/apps/new",
+		"docs": "http://developers.soundcloud.com/docs/api/reference",
+		"apps": "http://soundcloud.com/you/apps",
+		"provider": "http://soundcloud.com"
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://bitbucket.org/account",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://bitbucket.org/account",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://bitbucket.org/",
+				"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/1.0/user"
+        }
+	}
+}

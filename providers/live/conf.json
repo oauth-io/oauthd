@@ -1,0 +1,52 @@
+{
+	"name": "Live Connect",
+    "desc": "The Interactive Live SDK is an interactive tool for exploring the Live Connect APIs and learning how they can enrich your application without having to do any coding! This tool allows you to try out the APIs without having registered a Live application.",
+	"url": "https://login.live.com",
+	"oauth2": {
+		"authorize": "/oauth20_authorize.srf",
+		"access_token": "/oauth20_authorize.srf",
+		"request": {
+			"url": "https://apis.live.net",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": "/oauth20_authorize.srf",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"wl.skydrive_update": "write to files you've stored in SkyDrive",
+					"wl.contacts_create": "add new contacts to your address book",
+					"wl.contacts_calendars": "read your contacts' calendars",
+					"wl.phone_numbers": "read your phone numbers",
+					"wl.birthday": "access your complete birthday",
+					"wl.messenger": "chat with your contacts using Live Messenger",
+					"wl.applications": "access the client IDs you use to interact with Live services",
+					"wl.work_profile": "read your employer and work position information",
+					"wl.contacts_birthday": "access your contacts' birthdays",
+					"wl.contacts_skydrive": "read files your contacts have shared with you",
+					"wl.skydrive": "read files you've stored in SkyDrive",
+					"wl.contacts_photos": "read your contacts' photos and other media",
+					"wl.share": "update your status message",
+					"wl.basic": "read your basic info and contacts",
+					"wl.events_create": "create events on your default calendar",
+					"wl.calendars": "read your calendars and events",
+					"wl.calendars_update": "write to your calendars and events",
+					"wl.offline_access": "access your information while you're not logged in",
+					"wl.photos": "read your photos and other media",
+					"wl.applications_create": "create new client IDs to interact with Live services",
+					"wl.emails": "read your email addresses",
+					"wl.postal_addresses": "read your postal addresses"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://manage.dev.live.com/Applications/Create",
+		"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
+		"apps": "https://manage.dev.live.com/Applications",
+		"provider": "https://www.live.com/"
+	}
+}

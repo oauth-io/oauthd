@@ -1,0 +1,47 @@
+{
+    "name": "Salesforce",
+    "desc": "Salesforce.com API provides programmatic access to an organization’s information and allows developers to implement custom functionality. The Apex platform and API extends Salesforce and the AppExchange is a directory of on-demand applications. \nWith more than 20 different calls the web services API allows users to create, retrieve, update or delete records, such as accounts, leads, and custom objects, perform searches, and much more.",
+    "url": "https://na15.salesforce.com/services/oauth2",
+    "oauth2": {
+        "authorize": "/authorize",
+        "access_token": {
+            "url": "/token",
+            "extra": [
+                "id",
+                "refresh_token",
+                "instance_url",
+                "signature"
+            ]
+        },
+        "refresh": "/token",
+        "revoke": {
+            "url": "/revoke",
+            "method": "post",
+            "query": {
+                "token": "{{token}}"
+            }
+        },
+        "request": "{{instance_url}}",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "api": "Allows access to the current, logged-in user’s account over the APIs, such as the REST API or Bulk API. This also includes the chatter_api, allowing access to Chatter API resources.",
+                    "chatter_api": "Allows access to only the Chatter API resources.",
+                    "full": "Allows access to all data accessible by the logged-in user. full does not return a refresh token. You must explicitly request the refresh_token scope to get a refresh token.",
+                    "id": "Allows access only to the identity URL service.",
+                    "refresh_token": "Allows a refresh token to be returned if you are eligible to receive one.",
+                    "visual_force": "Allows access to Visualforce pages.",
+                    "web": "Allows the ability to use the access_token on the Web. This also includes visualforce, allowing access to Visualforce pages."
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+        "docs": "http://www.salesforce.com/us/developer/docs/api_rest/index.htm",
+        "apps": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+        "provider": "http://www.salesforce.com/"
+    }
+}

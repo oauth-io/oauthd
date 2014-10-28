@@ -1,0 +1,26 @@
+{
+	"name": "Box",
+    "desc": "Box is a cloud based storage company that believes people should be able to access and share their content from anywhere. Since 2005 they have been helping make that possible. The Box platform makes it easy for you to utilize our storage for your application. With our XML-based API you can develop modules, applications, and plugins that can upload, download, and share files from Box.net accounts. With our latest OpenBox Services, users can bring the power of web applications directly into their Box accounts. Edit photos and images online with Picnik, work on your Word and Excel files using Zoho, preview documents with Scribd's iPaper, and much more. Third parties are encouraged to contribute their own applications to the extensive Box network of over four million users.",
+	"url": "https://www.box.com/api/oauth2",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": "https://api.box.com",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "http://box.com/developers/services/edit/",
+		"docs": "http://developers.box.com/docs/",
+		"apps": "https://www.box.com/developers/services",
+		"provider": "https://www.box.com/"
+	}
+}

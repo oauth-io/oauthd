@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://dev.fitbit.com/apps/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://dev.fitbit.com/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.fitbit.com/",
+				"docs": "https://wiki.fitbit.com/display/API/Fitbit+API"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/1/user/-/profile.json"
+        }
+	}
+}

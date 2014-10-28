@@ -1,0 +1,17 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://developers.store.qip.ru/applications/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://developers.store.qip.ru/applications"
+		},
+		"install": {
+			"href": {
+				"provider": "http://qip.ru/",
+				"docs": "http://store.qip.ru/docs/OpenApi.credentials"
+			}
+		}
+	}
+}

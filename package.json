@@ -1,0 +1,73 @@
+{
+  "name": "oauthd",
+  "description": "OAuth that just works.",
+  "version": "1.0.0",
+  "homepage": "http://oauth-io.github.io/oauthd",
+  "author": "OAuth team <team@oauth.io>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oauth-io/oauthd"
+  },
+  "licenses": "AGPLv3",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "bin": {
+    "oauthd": "./oauthd"
+  },
+  "scripts": {
+    "test": "jasmine-node --coffee --verbose tests/spec"
+  },
+  "devDependencies": {
+    "browserify": "^4.2.1",
+    "coffee-script": "^1.8.0",
+    "grunt-browserify": "^2.1.3",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-subgrunt": "^0.4.1",
+    "mock-fs": "^2.3.1"
+  },
+  "keywords": [],
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "async": "~0.2.9",
+    "body-parser": "^1.9.0",
+    "colors": "^0.6.2",
+    "commander": "^2.3.0",
+    "cookie-parser": "^1.3.3",
+    "easy-cli": "^0.1.3-2-beta",
+    "express": "^4.2.0",
+    "express-session": "^1.8.2",
+    "fakeredis": "^0.2.1",
+    "grunt": "~0.4.4",
+    "grunt-contrib-coffee": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-requirejs": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-jasmine-node": "^0.2.1",
+    "hiredis": "~0.1.x",
+    "jayschema": "~0.2.0",
+    "jsonfile": "^2.0.0",
+    "jsonlint": "~1.6.0",
+    "liquid-node": "^0.3.1",
+    "marked": "~0.3.2",
+    "minimist": "^1.1.0",
+    "ncp": "^0.6.0",
+    "nodemailer": "~0.4.4",
+    "prerender-node": "~0.1.15",
+    "prompt": "^0.2.13",
+    "q": "^1.0.1",
+    "redis": "~0.8.3",
+    "request": "~2.33.0",
+    "restify": "~2.5.1",
+    "restify-oauth2-oauthd": "~2.2.0",
+    "rewire": "^2.1.0",
+    "rimraf": "^2.2.8",
+    "sugar": "^1.4.1",
+    "timekeeper": "0.0.4",
+    "ua-parser-js": "~0.6.2",
+    "underscore": "~1.4.4"
+  }
+}

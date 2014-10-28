@@ -1,0 +1,28 @@
+{
+	"name": "Evernote",
+    "desc": "Evernote makes it easy to remember things big and small from your notable life using your computer, phone, and the web. Evernote's web service API provides secure access for your applications using the same network communications that are used by Evernote's own client software, including the ability to create, read, update and delete notes, notebooks and tags. Third party integrations are a critical part of the Evernote ecosystem and are heavily promoted via the App Center and company blog.",
+	"url": "https://www.evernote.com",
+	"oauth1": {
+		"request_token": {
+			"url": "/oauth",
+			"format": "url"
+		},
+		"authorize": "/OAuth.action",
+		"access_token": {
+			"url": "/oauth",
+			"format": "url",
+			"extra": [
+				"edam_shard",
+				"edam_userId",
+				"edam_noteStoreUrl",
+				"edam_webApiUrlPrefix"
+			]
+		}
+	},
+	"href": {
+		"keys": "http://dev.evernote.com/doc/",
+		"docs": "http://dev.evernote.com/doc/",
+		"apps": "https://www.evernote.com/AuthorizedServices.action",
+		"provider": "http://evernote.com"
+	}
+}

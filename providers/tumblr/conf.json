@@ -1,0 +1,17 @@
+{
+	"name": "Tumblr",
+    "desc": "From their site: Use the Tumblr API to read Tumblr data or to write a Tumblr post. Unlike blogs, tumblelogs aren't designed like a newspaper column. If blogs are journals, tumblelogs are scrapbooks. Blogs are great, but they can be a lot of work. And they're really built to handle longer-form text posts. Tumblelogs, on the other hand, let you easily and quickly post and share anything you find or create, such as photos, videos, audio, quotes, and links, or text.",
+	"url": "http://www.tumblr.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authorize",
+		"access_token": "/access_token",
+		"request": "http://api.tumblr.com"
+	},
+	"href": {
+		"keys": "http://www.tumblr.com/oauth/register",
+		"docs": "http://www.tumblr.com/docs/en/api/v2",
+		"apps": "http://www.tumblr.com/oauth/apps",
+		"provider": "http://www.tumblr.com/"
+	}
+}

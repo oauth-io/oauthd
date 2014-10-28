@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://app.asana.com/-/account_api",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://app.asana.com/-/account_api",
+            "image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://asana.com",
+				"docs": "http://developer.asana.com/documentation"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/1.0/users/me"
+        }
+	}
+}

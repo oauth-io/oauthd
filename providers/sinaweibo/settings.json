@@ -1,0 +1,20 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://open.weibo.com/development"
+		},
+		"copyingKey": {
+			"url": "http://open.weibo.com/apps"
+		},
+		"install": {
+			"href": {
+				"provider": "http://weibo.com",
+				"docs": "http://open.weibo.com/wiki/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/2/users/show.json"
+        }
+	}
+}

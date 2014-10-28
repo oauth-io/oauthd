@@ -1,0 +1,16 @@
+{
+	"name": "Yahoo",
+    "desc": "Yahoo! Web Search Web Services give users the ability to integrate Yahoo! Search technologies into other sites, applications, and environments. \nFour search types within this service. Context Search: returns web pages matching a context-based query. Related Suggestion: returns suggested queries to extend the power of a submitted query. Spelling Suggestion: returns suggested spelling for a given term. Web Search: allows you to search the Internet for web pages by submitting queries via REST.",
+    "url": "http://social.yahooapis.com",
+	"oauth1": {
+		"request_token": "https://api.login.yahoo.com/oauth/v2/get_request_token",
+		"authorize": "https://api.login.yahoo.com/oauth/v2/request_auth",
+		"access_token": "https://api.login.yahoo.com/oauth/v2/get_token"
+	},
+	"href": {
+		"keys": "https://developer.apps.yahoo.com/dashboard/createKey.html",
+		"docs": "http://developer.yahoo.com/everything.html",
+		"apps": "https://developer.apps.yahoo.com/projects",
+		"provider": "http://yahoo.com"
+	}
+}

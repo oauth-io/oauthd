@@ -1,0 +1,40 @@
+{
+    "name": "Stackexchange",
+    "desc": "Stack Exchange is a growing network of 89 question and answer sites on diverse topics from software programming to cooking to photography. Stack Exchange builds libraries of high-quality questions and answers focused on the most important topics in each area of expertise.\nThe Stack Exchange API enables users to retrieve answers, comments, badges, events, questions, revisions, suggested edits, user information, and tags from the site. Users can also use the API to search the site or edit posts. The API uses REST calls issued in JSON and JSONP.",
+    "url": "https://stackexchange.com",
+    "oauth2": {
+        "authorize": "/oauth",
+        "access_token": "/oauth/access_token",
+        "request": {
+            "url": "https://api.stackexchange.com",
+            "cors": true,
+            "query": {
+                "access_token": "{{token}}",
+                "key": "{key}"
+            }
+        },
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "no_expiry": "access_token's with this scope do not expire",
+                    "write_access": "perform write operations as a user",
+                    "private_info": "access full history of a user's private actions on the site.",
+                    "read_inbox": "access a user's global inbox"
+                }
+            }
+        }
+    },
+    "parameters": {
+        "key": {
+            "scope": "public"
+        }
+    },
+    "href": {
+        "keys": "http://stackapps.com/apps/oauth/register",
+        "docs": "https://api.stackexchange.com/docs",
+        "apps": "http://stackapps.com/apps/oauth/",
+        "provider": "https://stackexchange.com/"
+    }
+}

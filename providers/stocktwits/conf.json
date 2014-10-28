@@ -1,0 +1,45 @@
+{
+	"name": "Stocktwits",
+    "desc": "StockTwits provides a social communications platform and social graph for anyone interested in markets and investing. By adding StockTwits to your blog, website or application you can provide your users with access to the most relevant content within your experience and leverage their connections the leading dedicated real-time financial community.",
+	"url": "https://api.stocktwits.com/api/2/oauth",
+	"oauth2": {
+		"authorize": {
+            "url": "/authorize",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "response_type": "code",
+                "redirect_uri": "{{callback}}",
+                "scope": "{scope}"
+            }
+        },
+		"access_token": "/token",
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"read": "Default, allows to read user, symbol and authenticated streams, read social graph of people and stocks",
+					"watch_lists": "Read a users watch lists",
+					"publish_watch_lists": "Publish to a users watch lists",
+					"publish_messages": "Publish messages for a user",
+					"direct_messages": "Read a users direct messages",
+					"follow_users": "Follow other users",
+					"follow_stocks": "Follow stocks"
+				},
+				"separator": ","
+			}
+		}
+	},
+	"href": {
+		"keys": "https://stocktwits.com/developers/apps/new",
+		"docs": "http://stocktwits.com/developers/docs/api",
+		"apps": "https://stocktwits.com/developers/apps",
+		"provider": "http://stocktwits.com/"
+	}
+}

@@ -1,0 +1,30 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://www.linkedin.com/secure/developer?newapp=",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://www.linkedin.com/secure/developer",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "http://www.linkedin.com/",
+                "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+                "apps": "https://www.linkedin.com/secure/developer"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v1/people/~:(first-name,last-name,headline,picture-url)?format=json"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/v1/people/~:(first-name,last-name,headline,picture-url)?format=json"
+            }
+        },
+        "jsfiddle": "http://jsfiddle.net/thyb/Ar4xC/1/embedded/"
+    }
+}

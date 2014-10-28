@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.deviantart.com/submit/app/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.deviantart.com/settings/myapps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://deviantart.com/",
+				"docs": "http://www.deviantart.com/developers/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/oauth2/user/whoami"
+        }
+	}
+}

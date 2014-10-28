@@ -1,0 +1,63 @@
+{
+	"name": "VK",
+    "desc": "VK is the largest European social networking site with more than 100 million active users. Users registered with the site can create personal profiles, post status updates, upload images, and more. They can also follow and exchange messages with other VK members. The VK REST APIs enable users to interact with site programmatically to add or retrieve information.",
+	"url": "https://oauth.vk.com/",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}",
+				"v": "{api_version}"
+			}
+		},
+		"access_token": {
+			"url": "/access_token",
+			"method": "get",
+			"extra": ["user_id"]
+		},
+		"request": {
+			"url": "https://api.vk.com",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"api_version": "string",
+			"scope": {
+				"separator": ",",
+				"values": {
+					"notify": "The user allows receiving notifications.",
+					"friends": "Access to friends.",
+					"photos": "Access to photos.",
+					"audio": "Access to audio files.",
+					"video": "Access to videos.",
+					"docs": "Access to documents",
+					"notes": "Access to the user's notes.",
+					"pages": "Access to wiki pages.",
+					"status": "Access to user status",
+					"offers": "Access to proposals (outdated methods).",
+					"questions": "Access to questions (outdated methods).",
+					"wall": "Access to standard and advanced methods for working with the wall.",
+					"groups": "Access to user groups",
+					"stats": "Access to statistics of user groups and applications where he/she is an administrator.",
+					"messages": "(for Standalone applications) Access to advanced methods for working with messages.",
+					"notifications": "Access to the notifications",
+					"stats": "Statistics access to the user's groups and applications",
+					"offline": "Access to API at any time from an external server.",
+					"ads": "Access to advanced methods for Ads API."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://vk.com/editapp?act=create",
+		"docs": "https://vk.com/dev/main",
+		"apps": "https://vk.com/apps?act=settings",
+		"provider": "https://vk.com/"
+	}
+}

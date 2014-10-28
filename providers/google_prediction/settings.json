@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://code.google.com/apis/console/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://code.google.com/apis/console/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://google.com/",
+				"docs": "https://developers.google.com/prediction/docs/developer-guide"
+			}
+		}
+	}
+}

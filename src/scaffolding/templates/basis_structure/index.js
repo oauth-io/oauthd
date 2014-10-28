@@ -1,0 +1,1 @@
+require('oauthd').init();

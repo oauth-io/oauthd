@@ -1,0 +1,38 @@
+{
+    "name": "Linkedin (OAuth2)",
+    "desc": "LinkedIn is the worlds largest business social networking hub.\nThe Linkedin REST API provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
+    "url": "https://www.linkedin.com/uas/oauth2",
+    "oauth2": {
+        "authorize": "/authorization",
+        "access_token": "/accessToken",
+        "request": {
+            "url": "https://api.linkedin.com",
+            "query": {
+                "oauth2_access_token": "{{token}}"
+            }
+        },
+        "parameters": {
+            "client_id": "string",
+            "client_secret": "string",
+            "scope": {
+                "values": {
+                    "r_basicprofile": "Name, photo, headline, and current positions",
+                    "r_fullprofile": "Full profile including experience, education, skills, and recommendations",
+                    "r_emailaddress": "The primary email address you use for your LinkedIn account",
+                    "r_network": "Your 1st and 2nd degree connections",
+                    "r_contactinfo": "Address, phone number, and bound accounts",
+                    "rw_nus": "Retrieve and post updates to LinkedIn as you",
+                    "rw_company_admin": "Edit company pages for which I am an Admin and post status updates on behalf of those companies",
+                    "rw_groups": "Retrieve and post group discussions as you",
+                    "w_messages": "Send messages and invitations to connect as you"
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://www.linkedin.com/secure/developer?newapp=",
+        "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
+        "apps": "https://www.linkedin.com/secure/developer",
+        "provider": "http://www.linkedin.com/"
+    }
+}

@@ -1,0 +1,16 @@
+{
+	"name": "Twitter",
+    "desc": "The Twitter micro-blogging service includes two RESTful APIs. The Twitter REST API methods allow developers to access core Twitter data. This includes update timelines, status data, and user information. The Search API methods give developers methods to interact with Twitter Search and trends data. The API presently supports the following data formats: XML, JSON, and the RSS and Atom syndication formats, with some methods only accepting a subset of these formats.",
+	"url": "https://api.twitter.com/oauth",
+	"oauth1": {
+		"request_token": "/request_token",
+		"authorize": "/authenticate",
+		"access_token": "/access_token"
+	},
+	"href": {
+		"keys": "https://dev.twitter.com/apps/new",
+		"docs": "https://dev.twitter.com/docs",
+		"apps": "https://dev.twitter.com/apps",
+		"provider": "https://www.twitter.com/"
+	}
+}

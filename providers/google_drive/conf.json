@@ -1,0 +1,66 @@
+{
+	"name": "Google Drive",
+	"desc": "Google Drive is a cloud based storage platform that lets users access their data, including files of any format, from any device or application that connects to the internet. The Google Drive SDK includes an HTTP API that lets developers integrate the files stored in a user's Drvie with their own third party applications. This gives users the ability to use multiple cloud apps to interact with their files that are stored in a single location in the cloud.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": {
+			"url": "/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com/",
+		"refresh": "/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			},
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/drive.metadata.readonly": "View metadata for files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/drive.file": "View and manage Google Drive files that you have opened or created with this app",
+					"https://www.googleapis.com/auth/drive": "View and manage the files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/drive.apps.readonly": "View your Google Drive apps",
+					"https://www.googleapis.com/auth/drive.scripts": "Modify your Google Apps Script scripts' behavior",
+					"https://www.googleapis.com/auth/drive.install": "Special scope used to let users approve installation of an app",
+					"https://www.googleapis.com/auth/drive.appdata": "View and manage its own configuration data in your Google Drive",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "https://developers.google.com/drive/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

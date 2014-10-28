@@ -1,0 +1,29 @@
+{
+	"name": "Google Latitude",
+    "desc": "The Google Latitude API allows for websites and developers to integrate with Google Latitude, which lets users update and read their current location, their location history, and other geo-related information. In Latitude, a location is a record of where a user was at a given time. A location always contains a latitude, a longitude and a timestamp. It might also contain more details about the position of the user at that time, such as altitude, or metadata about how the position itself was captured, such as accuracy. A user typically has a current location, which represents the most recent known position of the user. In some cases, however, a user might decide to temporarily hide, making their position invisible to Latitude friends. A hidden user has no current location. A user can opt to have their locations stored as a time series by Google. This collection of positions is called the user's location history.",
+	"url": "https://accounts.google.com/o/oauth2",
+	"oauth2": {
+		"authorize": "/auth",
+		"access_token": "/token",
+		"request": "https://www.googleapis.com",
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/latitude.current.best": "Manage your best-available location",
+					"https://www.googleapis.com/auth/latitude.current.city": "Manage your city-level location",
+					"https://www.googleapis.com/auth/latitude.all.best": "Manage your best-available location and location history",
+					"https://www.googleapis.com/auth/latitude.all.city": "Manage your city-level location and location history"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}

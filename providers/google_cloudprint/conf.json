@@ -1,0 +1,30 @@
+{
+    "name": "Google CloudPrint",
+    "desc": "Google Cloud Print is a service that enables any app (web, desktop, or mobile) on any device to print to any printer anywhere in the world. The APIs allow the apps to collect the necessary data to show their own user interface for custom print options or use the common print dialog that Google Cloud Print provides. There are also APIs for querying print job status. The API uses XMPP protocol and responses are formatted in XML, JSON and TXT. Google Cloud Print is not currently available.",
+    "url": "https://accounts.google.com/o/oauth2",
+    "oauth2": {
+        "authorize": "/auth",
+        "access_token": "/token",
+        "request": "https://www.googleapis.com",
+        "refresh": "/token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "https://www.googleapis.com/auth/plus.me": "Know who you are on Google",
+                    "https://www.googleapis.com/auth/cloudprint": "View and manage your google cloud print data",
+                    "openid": "Access to your id",
+                    "email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+                    "profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://code.google.com/apis/console/",
+        "docs": "http://code.google.com/more/",
+        "apps": "https://code.google.com/apis/console/",
+        "provider": "http://google.com/"
+    }
+}

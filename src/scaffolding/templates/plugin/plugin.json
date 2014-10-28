@@ -1,0 +1,7 @@
+{
+	"name": "plugin_test",
+	"description": "",
+	"version": "0.0.0",
+	"main": "index.js",
+	"interface_enabled": true
+}
