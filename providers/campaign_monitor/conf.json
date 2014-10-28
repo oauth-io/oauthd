@@ -1,0 +1,46 @@
+{
+    "name": "Campaign Monitor",
+    "desc": "Campaign Monitor makes it easy to attract new subscribers, send them beautiful email newsletters and see stunning reports on the results.",
+    "url": "https://api.createsend.com",
+    "oauth2": {
+        "authorize": {
+            "url": "/oauth",
+            "query": {
+                "type": "web_server",
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}",
+                "scope": "{scope}"
+            }
+        },
+        "access_token": "/oauth/token",
+        "request": {
+            "url": "https://api.createsend.com/api",
+            "headers": {
+                "Authorization": "Bearer {{token}}"
+            }
+        },
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {
+                    "ManageLists": "Permission to manage lists",
+                    "CreateCampaigns": "Permission to create campaigns.",
+                    "ImportSubscribers": "Permission to import subscribers.",
+                    "SendCampaigns": "Permission to send campaigns.",
+                    "ViewSubscribersInReports": "Permission to view subscribers in reports.",
+                    "ManageTemplates": "Permission to manage templates.",
+                    "AdministerPersons": "Permission to administer persons.",
+                    "AdministerAccount": "Permission to administer your account."
+                },
+                "separator": ","
+            }
+        }
+    },
+    "href": {
+        "keys": "https://YOUR_SITE.createsend.com/admin/applications",
+        "docs": "https://www.campaignmonitor.com/api/",
+        "apps": "https://YOUR_SITE.createsend.com/admin/applications",
+        "provider": "http://campaignmonitor.com/"
+    }
+}
