@@ -9,5 +9,5 @@ module.exports = (env) ->
 	git: (plugin_name, fetch, cwd) ->
 		require('./git')(env, plugin_name, fetch, cwd)
 	update: require('./update')(env)
-	pluginsFile: require('./modify')(env)
+	pluginsList: require('./pluginsList')(env)
 	
