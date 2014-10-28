@@ -6,7 +6,7 @@ module.exports = (env) ->
 	exec = env.exec
 	(plugin) ->
 		defer = Q.defer()
-		env.plugins.modify.updatePluginsJson(plugin, {
+		env.plugins.pluginsList.updateEntry(plugin, {
 			active: false
 		})
 			.then () ->

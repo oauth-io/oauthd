@@ -20,7 +20,7 @@ module.exports = (scaffolding) ->
 		defer.promise
 
 	modify_module =
-		updatePluginsJson: (name, data) ->
+		updateEntry: (name, data) ->
 			defer = Q.defer()
 
 			writeEntry name, data
@@ -30,6 +30,18 @@ module.exports = (scaffolding) ->
 					defer.reject e
 
 
+			defer.promise
+
+		removeEntry: (name) ->
+			defer = Q.defer()
+			jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
+				return defer.reject err if err
+
+				if obj?
+					delete obj[name]
+					jf.writeFile process.cwd() + '/plugins.json', obj, (err) ->
+						return defer.reject err if err
+						defer.resolve()
 			defer.promise
 
 

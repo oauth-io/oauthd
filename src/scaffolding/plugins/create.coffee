@@ -30,7 +30,7 @@ module.exports = (env) ->
 							return defer.reject err if err
 							exec 'cd ' + path + '&& git init', (error, stdout, stderr) ->
 								if save
-									env.plugins.modify.updatePluginsJson name, {active: true}
+									env.plugins.pluginsList.updateEntry name, {active: true}
 										.then () ->
 											env.debug 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name
 											defer.resolve()

@@ -79,7 +79,7 @@ module.exports = (env) ->
 
 		updatePluginsList = (plugin_name, install_data, cwd, callback) ->
 			process.chdir cwd
-			env.plugins.modify.updatePluginsJson(plugin_name, install_data)
+			env.plugins.pluginsList.updateEntry(plugin_name, install_data)
 				.then () ->
 					env.debug 'Plugin ' + plugin_name.green + ' successfully activated.'
 				.fail (e) ->
