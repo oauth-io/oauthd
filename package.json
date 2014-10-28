@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/oauth-io/oauthd"
   },
-  "licenses": "AGPLv3",
+  "licenses": "Apache2",
   "main": "index.js",
   "engines": {
     "node": ">= 0.8.0"
