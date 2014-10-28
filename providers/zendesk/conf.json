@@ -1,0 +1,37 @@
+{
+	"name": "Zendesk",
+	"desc": "Zendesk is a beautiful, lightweight help desk solution. Use Zendesk's API to easily manage your users, enhance your support team's productivity and create seamless integrations.",
+	"url": "https://{subdomain}.zendesk.com/oauth",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorizations/new",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "/tokens",
+			"extra": ["scope"]
+		},
+		"refresh": "/tokens",
+		"parameters": {
+			"subdomain": "string",
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"read": "Read access on data.",
+					"write": "Write access on data."
+				}
+			}
+		}
+	},
+	"href": {
+		"docs": "http://developer.zendesk.com",
+		"provider": "http://zendesk.com/"
+	}
+}
