@@ -40,7 +40,7 @@ describe 'Core - env.pluginsEngine module', () ->
 				expect(consolelogs[1][0]).toBe("Error while loading plugin plugin_test")
 				done()
 
-	it 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after launching grunt command in that folder', (done) ->
+	xit 'env.pluginsEngine.init inside of the \'instance_test\' folder should succeed after launching grunt command in that folder', (done) ->
 		expect(env.pluginsEngine.init).toBeDefined()
 		expect(typeof env.pluginsEngine.init).toBe("function")
 

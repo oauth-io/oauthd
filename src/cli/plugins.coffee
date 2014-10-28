@@ -238,7 +238,6 @@ module.exports = (args, options) ->
 					scaffolding.plugins.info.getPluginsJson()
 						.then (plugins) ->
 							chainPluginsUpdate plugins
-			return main_defer.promise
 
 		doGetInfo = (name, done, fetch) ->
 			text = ''
@@ -322,4 +321,5 @@ module.exports = (args, options) ->
 		console.log 'Unknown command: ' + args[0].yellow
 		@help()
 		return main_defer.promise
+
 

@@ -17,7 +17,7 @@
     "oauthd": "./oauthd"
   },
   "scripts": {
-    "test": "grunt test && coffee test/providers_check.coffee"
+    "test": "jasmine-node --coffee --verbose tests/spec"
   },
   "devDependencies": {
     "browserify": "^4.2.1",
