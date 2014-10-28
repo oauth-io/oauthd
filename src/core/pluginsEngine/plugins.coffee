@@ -59,6 +59,8 @@ module.exports = (env) ->
 		if not plugin_data.name? or plugin_data.name isnt plugin_name
 			plugin_data.name = plugin_name
 		
+
+
 		if plugin_data.type isnt 'global-interface'
 			loadPlugin(plugin_data)
 		else
@@ -68,8 +70,12 @@ module.exports = (env) ->
 		env.debug "Loading " + plugin_data.name.blue
 		try
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name + plugin_data.main)(env)
-			pluginsEngine.plugin[plugin_data.name] = plugin
-			pluginsEngine.plugin[plugin_data.name]?.plugin_config = plugin_data
+			if plugin_data.type?
+				pluginsEngine.plugin[plugin_data.type] = plugin
+				pluginsEngine.plugin[plugin_data.type]?.plugin_config = plugin_data
+			else
+				pluginsEngine.plugin[plugin_data.name] = plugin
+				pluginsEngine.plugin[plugin_data.name]?.plugin_config = plugin_data
 		catch e
 			env.debug "Error while loading plugin " + plugin_data.name
 			env.debug e.message.yellow + ' at line ' + e.lineNumber?.red		  
