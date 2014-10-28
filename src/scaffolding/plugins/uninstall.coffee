@@ -17,14 +17,12 @@ module.exports = (env) ->
 					rimraf folder_name, (err) ->
 						return defer.reject err if err
 						env.debug "Successfully removed plugin '" + plugin_name.yellow + "' folder."
-				jf.readFile process.cwd() + '/plugins.json', (err, obj) ->
-					return defer.reject err if err
-					if obj? and obj[plugin_name]?
-						delete obj[plugin_name]
-						jf.writeFile process.cwd() + '/plugins.json', obj, (err) ->
-							return defer.reject err if err
-							env.debug "Successfully removed plugin '" + plugin_name.yellow + "' from the plugins list."
-							defer.resolve()
+				env.plugins.pluginsList.removeEntry plugin_name
+					.then () ->
+						env.debug "Successfully removed plugin '" + plugin_name.yellow + "' from the plugins list."
+						defer.resolve()
+					.fail (e) ->
+						defer.reject e
 		catch e
 			env.debug 'An error occured: ' + e.message
 		defer.promise

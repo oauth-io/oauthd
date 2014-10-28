@@ -67,16 +67,27 @@ module.exports = (args, options) ->
 			if options.help
 				@help('list')
 			else
-				active = scaffolding.plugins.info.getActive()
-				inactive = scaffolding.plugins.info.getInactive()
-				installed = scaffolding.plugins.info.getInstalled()
-				console.log 'This instance has ' + (installed.length + ' installed plugin(s):').white
-				console.log (active.length + ' active plugin(s)').green
-				for name in active
-					console.log '- ' + name
-				console.log (inactive.length + ' inactive plugin(s)').yellow
-				for name in inactive
-					console.log '- ' + name
+				active = undefined
+				inactive = undefined
+				installed = undefined
+				scaffolding.plugins.info.getActive()
+					.then (_active) ->
+						active = _active
+						return scaffolding.plugins.info.getInactive()
+					.then (_inactive) ->
+						inactive = _inactive
+						return scaffolding.plugins.info.getInstalled()
+					.then (_installed) ->
+						installed = _installed
+
+						console.log 'This instance has ' + (installed.length + ' installed plugin(s):').white
+						console.log (active.length + ' active plugin(s)').green
+						for name in active
+							console.log '- ' + name
+						console.log (inactive.length + ' inactive plugin(s)').yellow
+						for name in inactive
+							console.log '- ' + name
+			return main_defer.promise
 
 		if args[0] == 'uninstall'
 			if options.help
@@ -89,11 +100,11 @@ module.exports = (args, options) ->
 						plugin_name += " "
 					plugin_name += elt
 				scaffolding.plugins.uninstall(plugin_name)
+			return main_defer.promise
 
-		chainPluginsInstall = (plugins_repo) ->
-			async.eachSeries plugins_repo, (plugin, next) ->
-				console.log plugin
-				scaffolding.plugins.install(plugin, process.cwd())
+		chainPluginsInstall = (plugins_data) ->
+			async.eachSeries plugins_data, (plugin_data, next) ->
+				scaffolding.plugins.install(plugin_data, process.cwd())
 					.then () ->
 						next()
 					.fail (e) ->
@@ -111,9 +122,14 @@ module.exports = (args, options) ->
 			if options.help
 				@help('install')
 			else
-				plugin_repo = args[1]
-				if plugin_repo?
-					scaffolding.plugins.install(plugin_repo, process.cwd())
+				arg = args[1]
+				if arg?
+					args = arg.split '#'
+					plugin_data = {}
+					plugin_data.repository = args[0]
+					plugin_data.version = args[1] if args[1]
+
+					scaffolding.plugins.install(plugin_data, process.cwd())
 						.then () ->
 							scaffolding.compile()
 						.then () ->
@@ -123,9 +139,11 @@ module.exports = (args, options) ->
 				else
 					scaffolding.plugins.info.getPluginsJson()
 						.then (plugins) ->
-							plugins_repo = Object.values(plugins)
-							plugins_repo.remove("")
-							chainPluginsInstall plugins_repo
+							plugins_data = Object.values(plugins)
+							chainPluginsInstall plugins_data
+						.fail (e) ->
+							console.log 'An error occured:', e.message
+			return main_defer.promise
 			
 		if args[0] is 'create'
 			if options.help
@@ -143,19 +161,35 @@ module.exports = (args, options) ->
 				else
 					defer.reject 'Error'.red + ': '
 
+			return main_defer.promise
+
 		if args[0] is 'activate'
 			if options.help || args.length != 2
 				@help('activate')
 			else
 				scaffolding.plugins.activate(args[1])
+					.then () ->
+						console.log 'Successfully activated '.green + args[1].green
+					.fail (e) ->
+						console.log 'An error occured while activating '.red + args[1].red + ':'.red
+						console.log e.message
+			return main_defer.promise
+
 
 		if args[0] is 'deactivate'
 			if options.help || args.length != 2
 				@help 'deactivate'
 			else
 				scaffolding.plugins.deactivate(args[1])
+					.then () ->
+						console.log 'Successfully deactivated '.green + args[1].green
+					.fail (e) ->
+						console.log 'An error occured while deactivating '.red + args[1].red + ':'.red
+						console.log e.message
+			return main_defer.promise
 
-		chainPluginsUpdate = (plugin_names) ->
+		chainPluginsUpdate = (plugins) ->
+			plugin_names = Object.keys plugins
 			async.eachSeries plugin_names, (name, next) ->
 					console.log 'Updating '.white + name.white
 
@@ -202,61 +236,64 @@ module.exports = (args, options) ->
 						console.log "The plugin you want to update is not present in \'plugins.json\'."
 				else
 					scaffolding.plugins.info.getPluginsJson()
-						.then (plugins_data) ->
-							plugin_names = Object.keys(plugins_data)
-							plugin_names.remove("")
-							chainPluginsUpdate plugin_names
+						.then (plugins) ->
+							chainPluginsUpdate plugins
+			return main_defer.promise
 
-		getInfo = (name, done, fetch) ->
+		doGetInfo = (name, done, fetch) ->
 			text = ''
-			scaffolding.plugins.info.getInfo name, (err, plugin_data) ->
-				if not plugin_data?
-					return console.log 'No plugin named ' + name + ' was found'
-				plugin_data = plugin_data || { name: name } # probably unable to fetch plugin_data
-				error  = ''
-				title = plugin_data.name.white + ' '
-				plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
-				text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
-				plugin_git.getCurrentVersion()
-					.then (current_version) ->
-						if current_version.type == 'branch'
-							plugin_git.getVersionMask()
-								.then (mask) ->
-									update = ''
-									if not current_version.uptodate
-										update = ' (' + 'Updates available'.green + ')'
+			scaffolding.plugins.info.getInfo name
+				.then (plugin_data) ->
+					if not plugin_data?
+						return console.log 'No plugin named ' + name + ' was found'
+					plugin_data = plugin_data || { name: name } # probably unable to fetch plugin_data
+					error  = ''
+					title = plugin_data.name.white + ' '
+					plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
+					text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
+					plugin_git.getCurrentVersion()
+						.then (current_version) ->
+							if current_version.type == 'branch'
+								plugin_git.getVersionMask()
+									.then (mask) ->
+										update = ''
+										if not current_version.uptodate
+											update = ' (' + 'Updates available'.green + ')'
 
-									if mask != current_version.version
-										update += ' (plugins.json points \'' + mask + '\')'
-									title +=  '(' +current_version.version + ')' + update + ""
+										if mask != current_version.version
+											update += ' (plugins.json points \'' + mask + '\')'
+										title +=  '(' +current_version.version + ')' + update + ""
 
-									done(title, text)
-						else if current_version.type == 'tag_n'
-							plugin_git.getVersionMask()
-								.then (mask) ->
-									plugin_git.getLatestVersion(mask)
-										.then (latest_version) ->
-											update = ''
-											if plugin_git.isNumericalVersion(latest_version)
-												if plugin_git.compareVersions(latest_version, current_version.version) > 0
-													update = ' (' + latest_version.green + ' is available)'
-											else
-												update = ' (plugins.json points \'' + latest_version +  '\')'
-											title +=  '(' +current_version.version + ')' + update + ""
-											done(title, text)
-						else if current_version.type == 'tag_a'
-							plugin_git.getVersionMask()
-								.then (mask) ->
-									title +=  '(tag ' + current_version.version + ')'
-									if (mask != current_version.version)
-										title += ' (plugins.json points \'' + mask +  '\')'
-									done(title, text)
-						else if current_version.type == 'unversionned'
-							title +=  "(unversionned)"
+										done(title, text)
+							else if current_version.type == 'tag_n'
+								plugin_git.getVersionMask()
+									.then (mask) ->
+										plugin_git.getLatestVersion(mask)
+											.then (latest_version) ->
+
+												update = ''
+												if plugin_git.isNumericalVersion(latest_version)
+													if plugin_git.compareVersions(latest_version, current_version.version) > 0
+														update = ' (' + latest_version.green + ' is available)'
+												else
+													update = ' (plugins.json points \'' + latest_version +  '\')'
+												title +=  '(' +current_version.version + ')' + update + ""
+												done(title, text)
+							else if current_version.type == 'tag_a'
+								plugin_git.getVersionMask()
+									.then (mask) ->
+										title +=  '(tag ' + current_version.version + ')'
+										if (mask != current_version.version)
+											title += ' (plugins.json points \'' + mask +  '\')'
+										done(title, text)
+							else if current_version.type == 'unversionned'
+								title +=  "(unversionned)"
+								done(title, text)
+						.fail (e) ->
+							console.log 'ERROR', e
 							done(title, text)
-					.fail (e) ->
-						console.log 'ERROR', e
-						done(title, text)
+				.fail (e) ->
+					console.log e
 
 
 		if args[0] is 'info'
@@ -265,22 +302,26 @@ module.exports = (args, options) ->
 			else
 				name = args[1]
 				if name
-					getInfo name, (title, text)-> 
+					doGetInfo name, (title, text)-> 
 						console.log title
 						console.log text
 					, options.fetch
 				else
-					names = scaffolding.plugins.info.getActive()
-					async.eachSeries names, (n, next) ->
-						getInfo n, (title, text) ->
-							console.log title
-							console.log text
-							next()
-						, options.fetch
-					, () ->
-						main_defer.resolve()
+					scaffolding.plugins.info.getActive()
+						.then (names) ->
+							async.eachSeries names, (n, next) ->
+								doGetInfo n, (title, text) ->
+									console.log title
+									console.log text
+									next()
+								, options.fetch
+							, () ->
+								main_defer.resolve()
+			return main_defer.promise
 
-
+		if args[0]?
+			console.log 'Unknown command: ' + args[0].yellow
+		@help()
 		return main_defer.promise
 
 

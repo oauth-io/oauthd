@@ -30,17 +30,14 @@ module.exports = (env) ->
 							return defer.reject err if err
 							exec 'cd ' + path + '&& git init', (error, stdout, stderr) ->
 								if save
-									jf.readFile process.cwd() + '/plugins.json', (err, plugins) ->
-										return defer.reject err if err
-										plugins[name] = ""
-										jf.writeFile process.cwd() + '/plugins.json', plugins, (err) ->
-											if err
-												env.debug err
-												env.debug 'An error occured while initializing the plugin git repo'.red
-												return defer.reject err
+									env.plugins.pluginsList.updateEntry name, {active: true}
+										.then () ->
 											env.debug 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name
-
 											defer.resolve()
+										.fail (e) ->
+											env.debug 'An error occured while initializing the plugin git repo: '.red
+											console.log e.message
+											defer.reject e
 								else
 									if not error
 										env.debug 'The plugin ' + name.green + ' was successfully created in ./plugins/' + name

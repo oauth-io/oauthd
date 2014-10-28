@@ -8,33 +8,48 @@ async = require 'async'
 module.exports = (env) ->
 
 	installPlugins = (defer, name) ->
+		old_location = process.cwd()
+		process.chdir process.cwd() + '/' + name
 		async.series [
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-admin-auth#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-admin-auth",
+					version: "0.x.x"
+				}, process.cwd())
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-slashme#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-slashme",
+					version: "0.x.x"
+				}, process.cwd())
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-request#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-request",
+					version: "0.x.x"
+				}, process.cwd())
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 			(next) ->
-				env.plugins.install("https://github.com/oauth-io/oauthd-front#0.x.x", process.cwd() + "/" + name)
+				env.plugins.install({
+					repository: "https://github.com/oauth-io/oauthd-front",
+					version: "0.x.x"
+				}, process.cwd())
 					.then () ->
 						next()
 					.fail (e) ->
 						next e
 		], (err) ->
 			return defer.reject err if err
+			process.chdir old_location
 			defer.resolve(name)
 
 	doInit = (defer, name) ->
