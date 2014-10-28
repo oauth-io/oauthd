@@ -1,0 +1,30 @@
+{
+	"name": "Uber",
+	"desc": "Uber connects riders with safe, reliable, convenient transportation providers at a variety of price-points in cities around the world.",
+	"url": "https://login.uber.com/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": {
+			"url": "https://api.uber.com",
+			"cors": true
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"profile": "Access the basic profile information on a user's Uber account including their first name, email address, and profile picture.",
+					"history": "Pull trip data including the locations, times, and product type of a user's historical pickups and drop-offs."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://login.uber.com/applications/new",
+		"docs": "https://developer.uber.com/v1/api-reference/",
+		"apps": "https://login.uber.com/applications",
+		"provider": "https://uber.com/"
+	}
+}

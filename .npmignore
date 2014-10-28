@@ -1,2 +1,3 @@
-lib
-Gruntfile.js
+/Gruntfile.js
+src
+tests

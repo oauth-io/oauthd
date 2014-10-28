@@ -321,7 +321,8 @@ module.exports = (args, options) ->
 
 		if args[0]?
 			console.log 'Unknown command: ' + args[0].yellow
-		@help()
+		if not options.help
+			@help()
 		return main_defer.promise
 
 
