@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/oauth-io/oauthd.svg?branch=develop)](https://travis-ci.org/oauth-io/oauthd)
-
-#oauthd
-
 **oauthd**, also known as the 'oauth Daemon' is the open source version of 
-[OAuth.io](https://oauth.io)'s core. It is a solution based on node.js that enables you to set 
+[OAuth.io](https://oauth.io)'s core. 
+
+## What is it?
+
+It is a solution based on node.js that enables you to set 
 up and run your own stand-alone, completly free, web Background API Server. 
 
 ## Main features
@@ -44,16 +44,13 @@ Default plugins are furnished to ensure a working minimum environment, with:
 - The default auth plugin, which lets you administrate **oauthd**
 - The default back office front plugin, which lets you manage apps, providers and access to other plugins' configuration from the browser
 
-You can learn more about the **oauthd** plugins development
-[here](https://github.com/oauth-io/oauthd/wiki).
+You can learn more about plugins development
+[here](https://github.com/oauth-io/oauthd/wiki/Plugins-development).
 
-## How does it work?
-
-Bootstrap your **oauthd**: check out our **oauthd** [quickstart tutorial](https://github.com/oauth-io/oauthd/wiki/Quickstart).
-
-### Installation
+## Installation
 
 Currently, **oauthd** relies on [node.js](http://nodejs.org/), [npm](https://www.npmjs.org/), [redis](http://redis.io/) and the npm package [grunt-cli](https://www.npmjs.org/package/grunt-cli) to work.
+Check out our [quickstart tutorial](https://github.com/oauth-io/oauthd/wiki/Quickstart) to bootstrap your **oauthd** server.
 
 As soon as you are done with pre-requisites, you can simply install **oauthd** from npm, by executing the following command:
 
@@ -69,7 +66,7 @@ Learn more about the **oauthd**
 [configuration](https://github.com/oauth-io/oauthd/wiki/Configuration) and the 
 [command line features](https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface).
 
-### Usage
+## Usage
 
 You can use the **oauthd** server from you app directly through the API or use one
 of our SDKs:
@@ -86,7 +83,7 @@ of our SDKs:
 - Go
 
 Learn more about the **oauthd** 
-[api](https://github.com/oauth-io/oauthd/wiki/API) and the 
+[apis](https://github.com/oauth-io/oauthd/wiki/API) and the 
 [oauthd-sdks](https://github.com/oauth-io/oauthd/wiki/Server-and-client-side-SDKs).
 
 ## Contact
@@ -108,6 +105,6 @@ Anyone and everyone is welcome to contribute. Please take a moment to review the
 ## License & Copyright
 
 Copyright (C) 2014 Webshell SAS 
-https://github.com/oauth-io/oauthd and other contributors
+[https://github.com/oauth-io/oauthd](https://github.com/oauth-io/oauthd) and other contributors
 
-Licensed under the Apache License 2.0.
+Licensed under the Apache License 2.0
