@@ -1,0 +1,24 @@
+{
+    "name": "Constant Contact",
+    "desc": "Constant Contact, Inc. is an online marketing company offering email marketing, social media marketing, online survey, event marketing, digital storefronts, and local deals tools, primarily to small businesses, nonprofit organizations, and membership associations.",
+    "url": "https://oauth2.constantcontact.com/oauth2/oauth",
+    "oauth2": {
+        "authorize": "/siteowner/authorize",
+        "access_token": "/token",
+        "request": {
+            "url": "https://api.constantcontact.com/v2",
+            "query": {
+                "api_key": "{client_id}"
+            },
+            "headers": {
+                "Authorization": "Bearer {{token}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://constantcontact.mashery.com/apps/mykeys",
+        "docs": "https://constantcontact.mashery.com/io-docs",
+        "apps": "https://constantcontact.mashery.com/apps/register",
+        "provider": "http://constantcontact.com/"
+    }
+}

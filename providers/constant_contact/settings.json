@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://constantcontact.mashery.com/apps/register",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://constantcontact.mashery.com/apps/mykeys",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.constantcontact.com/",
+				"docs": "https://developer.constantcontact.com/docs/developer-guides/api-documentation-index.html"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/account/info"
+        }
+	}
+}
