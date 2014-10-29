@@ -1,4 +1,4 @@
--[![Build Status](https://travis-ci.org/oauth-io/oauthd.svg?branch=develop)](https://travis-ci.org/oauth-io/oauthd)
+[![Build Status](https://travis-ci.org/oauth-io/oauthd.svg?branch=develop)](https://travis-ci.org/oauth-io/oauthd)
 
 **oauthd**, also known as the 'oauth Daemon' is the open source version of 
 [OAuth.io](https://oauth.io)'s core. 
