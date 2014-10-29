@@ -45,11 +45,11 @@ Default plugins are furnished to ensure a working minimum environment, with:
 - The default back office front plugin, which lets you manage apps, providers and access to other plugins' configuration from the browser
 
 You can learn more about the **oauthd** plugins development
-[here](https://github/...).
+[here](https://github.com/oauth-io/oauthd/wiki).
 
 ## How does it work?
 
-Bootstrap your **oauthd**: check out our **oauthd** [quickstart tutorial](https://github/...).
+Bootstrap your **oauthd**: check out our **oauthd** [quickstart tutorial](https://github.com/oauth-io/oauthd/wiki/Quickstart).
 
 ### Installation
 
@@ -66,8 +66,8 @@ Once you've installed the **oauthd** npm package globally, you will have the
 new *oauthd instances*, start them, and manage their plugins.
 
 Learn more about the **oauthd** 
-[configuration](https://github/...) and the 
-[command line features](https://github/...).
+[configuration](https://github.com/oauth-io/oauthd/wiki/Configuration) and the 
+[command line features](https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface).
 
 ### Usage
 
@@ -86,8 +86,8 @@ of our SDKs:
 - Go
 
 Learn more about the **oauthd** 
-[apis](https://github/...) and the 
-[oauthd-sdks](https://github/...).
+[api](https://github.com/oauth-io/oauthd/wiki/API) and the 
+[oauthd-sdks](https://github.com/oauth-io/oauthd/wiki/Server-and-client-side-SDKs).
 
 ## Contact
 
@@ -101,9 +101,9 @@ Have a question?
 
 Anyone and everyone is welcome to contribute. Please take a moment to review the guidelines for contributing.
 
-- [Bug reports](https://github/...)
-- [Feature requests](https://github/...)
-- [Pull requests](https://github/...)
+- [Bug reports](https://github.com/oauth-io/oauthd/issues)
+- [Feature requests](https://github.com/oauth-io/oauthd/issues)
+- [Pull requests](https://github.com/oauth-io/oauthd/pulls)
 
 ## License & Copyright
 
