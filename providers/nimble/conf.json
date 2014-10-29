@@ -1,0 +1,22 @@
+{
+    "name": "Nimble",
+    "desc": "Social CRM Simplified",
+    "url": "https://api.nimble.com/oauth",
+    "oauth2": {
+        "authorize": "/authorize",
+        "access_token": "/token",
+        "request": "https://api.nimble.com/oauth",
+        "refresh": "/token",
+        "parameters": {
+            "client_secret": "string",
+            "client_id": "string",
+            "scope": {
+                "values": {}
+            }
+        }
+    },
+    "href": {
+        "docs": "http://nimble.readthedocs.org/",
+        "provider": "https://www.nimble.com"
+    }
+}
