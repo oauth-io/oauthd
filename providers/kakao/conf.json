@@ -1,0 +1,28 @@
+{
+	"name": "Kakao",
+	"desc": "카카오계정을 기반으로 사용자의 인증, 가입부터 상세 정보 관리까지 손쉽게 구현할 수 있습니다. 사용자들을 더 이상 새로운 아이디와 비밀번호로 고민하게 하지 마세요.",
+	"url": "https://kauth.kakao.com",
+	"oauth2": {
+		"authorize": "/oauth/authorize",
+		"access_token": "/oauth/token",
+		"request": {
+			"cors": true
+		},
+		"refresh": "/oauth/token",
+		"revoke": {
+		"url": "https://kapi.kakao.com/v1/user/logout",
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string"
+		}
+	},
+	"href": {
+		"keys": "https://developers.kakao.com/apps",
+		"docs": "https://developers.kakao.com/docs",
+		"apps": "https://developers.kakao.com/apps",
+		"provider": "http://kakao.com/"
+	}
+}
