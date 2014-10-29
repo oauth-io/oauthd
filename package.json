@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/oauth-io/oauthd"
   },
-  "licenses": "Apache2",
+  "license": "Apache-2.0",
   "main": "index.js",
   "engines": {
     "node": ">= 0.8.0"
@@ -22,8 +22,13 @@
   "devDependencies": {
     "browserify": "^4.2.1",
     "coffee-script": "^1.8.0",
+    "grunt": "^0.4.5",
     "grunt-browserify": "^2.1.3",
+    "grunt-contrib-coffee": "^0.12.0",
     "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-requirejs": "^0.4.4",
+    "grunt-contrib-watch": "^0.6.1",
     "grunt-subgrunt": "^0.4.1",
     "mock-fs": "^2.3.1"
   },
@@ -42,11 +47,6 @@
     "express-session": "^1.8.2",
     "fakeredis": "^0.2.1",
     "grunt": "~0.4.4",
-    "grunt-contrib-coffee": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-requirejs": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-jasmine-node": "^0.2.1",
     "hiredis": "~0.1.x",
     "jayschema": "~0.2.0",
     "jsonfile": "^2.0.0",
