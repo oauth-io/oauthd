@@ -1,0 +1,69 @@
+{
+    "name": "Campaign Monitor",
+    "desc": "Campaign Monitor makes it easy for you to create, send, and optimize your email marketing campaigns.",
+    "url": "https://api.createsend.com",
+    "oauth2": {
+        "authorize": {
+            "url": "/oauth",
+            "query": {
+                "type": "{type}",
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}",
+                "scope": "{scope}",
+                "state": "{{state}}"
+            }
+        },
+        "access_token": {
+            "url": "/oauth/token",
+            "query": {
+                "grant_type": "authorization_code",
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "code": "{{code}}",
+                "redirect_uri": "{{callback}}"
+            },
+            "extra": [
+                "refresh_token"
+            ]
+        },
+        "request": "/api/v3.1",
+        "refresh": {
+            "url": "/oauth/token",
+            "query": {
+                "grant_type": "refresh_token",
+                "refresh_token": "{{refresh_token}}"
+            }
+        },
+        "parameters": {
+            "client_id": "string",
+            "client_secret": "string",
+            "scope": {
+                "values": {
+                    "ViewReports": "Access to basic reporting data from any campaigns you've sent.",
+                    "ManageLists": "Can access all your subscriber and list data.",
+                    "CreateCampaigns": "Can create draft email campaigns.",
+                    "ImportSubscribers": "Can add/import subscribers into your account.",
+                    "SendCampaigns": "Can send campaigns to your subscribers.",
+                    "ViewSubscribersInReports": "Can access campaign reports down to the individual subscriber level.",
+                    "ManageTemplates": "Can add, remove or update email templates.",
+                    "AdministerPersons": "Can add/edit account administrators and access billing information.",
+                    "AdministerAccount": "Can add/edit account administrators and access billing information."
+                },
+                "separator": ","
+            },
+            "type": {
+                "values": {
+                    "web_server": "",
+                    "user_agent": ""
+                },
+                "cardinality": "1"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://YOUR_SITE.createsend.com/admin/applications/",
+        "docs": "https://www.campaignmonitor.com/api/",
+        "apps": "https://YOUR_SITE.createsend.com/admin/applications/",
+        "provider": "https://www.campaignmonitor.com/"
+    }
+}
