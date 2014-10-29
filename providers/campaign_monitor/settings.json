@@ -11,12 +11,12 @@
 		"install": {
 			"href": {
 				"provider": "https://www.campaignmonitor.com/",
-				"docs": "https://www.campaignmonitor.com/api/getting-started/"
+				"docs": "https://www.campaignmonitor.com/api/"
 			}
 		},
         "sample": {
             "method": "get",
-            "url": "/api/v3.1/clients.{xml|json}"
+            "url": "/api/v3.1/clients.json"
         }
 	}
 }
