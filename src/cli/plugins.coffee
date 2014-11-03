@@ -104,13 +104,12 @@ module.exports = (args, options) ->
 
 		chainPluginsInstall = (plugins_data) ->
 			async.eachSeries plugins_data, (plugin_data, next) ->
-				scaffolding.plugins.install(plugin_data, process.cwd())
+				scaffolding.plugins.install(plugin_data, false)
 					.then () ->
 						next()
 					.fail (e) ->
-						console.log 'An error occured: ' + e.message
+						next()
 			, (err) ->
-				return main_defer.reject err if err
 				scaffolding.compile()
 					.then () ->
 						main_defer.resolve()
@@ -129,7 +128,7 @@ module.exports = (args, options) ->
 					plugin_data.repository = args[0]
 					plugin_data.version = args[1] if args[1]
 
-					scaffolding.plugins.install(plugin_data, process.cwd())
+					scaffolding.plugins.install(plugin_data)
 						.then () ->
 							scaffolding.compile()
 						.then () ->

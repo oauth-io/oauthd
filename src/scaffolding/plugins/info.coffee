@@ -26,8 +26,9 @@ module.exports = (env) ->
 						if typeof value == 'string'
 							str = value.split '#'
 							data = {}
-							data.repository = str[0]
-							data.version = str[1]
+							if str[0] != ''
+								data.repository = str[0]
+								data.version = str[1]
 							data.active = true
 							value = data
 						else if typeof value == 'object'
