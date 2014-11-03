@@ -1,0 +1,13 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://developers.podio.com/api-key"
+        },
+        "install": {
+            "href": {
+                "provider": "https://podio.com/",
+                "docs": "https://developers.podio.com/doc/"
+            }
+        }
+    }
+}
