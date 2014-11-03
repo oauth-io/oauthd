@@ -26,8 +26,9 @@ module.exports = (env) ->
 						if typeof value == 'string'
 							str = value.split '#'
 							data = {}
-							data.repository = str[0]
-							data.version = str[1]
+							if str[0] != ''
+								data.repository = str[0]
+								data.version = str[1]
 							data.active = true
 							value = data
 						else if typeof value == 'object'
@@ -120,7 +121,11 @@ module.exports = (env) ->
 		getInfo: (plugin_name, callback) ->
 			defer = Q.defer()
 			fs.readFile process.cwd() + '/plugins/' + plugin_name + '/plugin.json', {encoding: 'UTF-8'}, (err, data) ->
-				return defer.reject err if err
+				if err
+					if err.code == 'ENOENT'
+						return defer.reject new Error('No plugin.json')
+					else
+						return defer.reject err
 				try
 					plugin_data = JSON.parse data
 					plugin_git = env.plugins.git(plugin_name)
@@ -130,6 +135,7 @@ module.exports = (env) ->
 							defer.resolve plugin_data
 				catch err
 					defer.reject err
+					
 			defer.promise
 
 		getVersion: (url, callback) ->
