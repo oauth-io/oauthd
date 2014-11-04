@@ -104,13 +104,12 @@ module.exports = (args, options) ->
 
 		chainPluginsInstall = (plugins_data) ->
 			async.eachSeries plugins_data, (plugin_data, next) ->
-				scaffolding.plugins.install(plugin_data, process.cwd())
+				scaffolding.plugins.install(plugin_data, false)
 					.then () ->
 						next()
 					.fail (e) ->
-						console.log 'An error occured: ' + e.message
+						next()
 			, (err) ->
-				return main_defer.reject err if err
 				scaffolding.compile()
 					.then () ->
 						main_defer.resolve()
@@ -129,7 +128,7 @@ module.exports = (args, options) ->
 					plugin_data.repository = args[0]
 					plugin_data.version = args[1] if args[1]
 
-					scaffolding.plugins.install(plugin_data, process.cwd())
+					scaffolding.plugins.install(plugin_data)
 						.then () ->
 							scaffolding.compile()
 						.then () ->
@@ -240,17 +239,20 @@ module.exports = (args, options) ->
 							chainPluginsUpdate plugins
 			return main_defer.promise
 
-		doGetInfo = (name, done, fetch) ->
-			text = ''
+		doGetInfo = (name, verbose, done, fetch) ->
 			scaffolding.plugins.info.getInfo name
 				.then (plugin_data) ->
 					if not plugin_data?
 						return console.log 'No plugin named ' + name + ' was found'
 					plugin_data = plugin_data || { name: name } # probably unable to fetch plugin_data
 					error  = ''
-					title = plugin_data.name.white + ' '
+					if !plugin_data.name?
+						return done null, null, true
+					title = plugin_data.name?.white + ' '
 					plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
-					text +=  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
+					text =  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
+					if not text?
+						text = 'No description\n'
 					plugin_git.getCurrentVersion()
 						.then (current_version) ->
 							if current_version.type == 'branch'
@@ -290,10 +292,11 @@ module.exports = (args, options) ->
 								title +=  "(unversionned)"
 								done(title, text)
 						.fail (e) ->
-							console.log 'ERROR', e
 							done(title, text)
 				.fail (e) ->
-					console.log e
+					if verbose
+						console.log 'Error with plugin \'' + name.white + '\':', e.message
+					done(null, null, true)
 
 
 		if args[0] is 'info'
@@ -301,21 +304,34 @@ module.exports = (args, options) ->
 				@help('info')
 			else
 				name = args[1]
+				
 				if name
-					doGetInfo name, (title, text)-> 
-						console.log title
-						console.log text
+					doGetInfo name, true, (title, text, e)->
+						if title
+							console.log title
+							console.log text
+						if e 
+							console.log 'Could not retrieve information for ' + name.white
 					, options.fetch
 				else
 					scaffolding.plugins.info.getActive()
 						.then (names) ->
+							errors_found = false
 							async.eachSeries names, (n, next) ->
-								doGetInfo n, (title, text) ->
-									console.log title
-									console.log text
+								doGetInfo n, options.verbose?, (title, text, e) ->
+									if e?
+										errors_found = errors_found || e
+									if title?
+										console.log title
+										if text?
+											console.log text
+									if e && options.verbose?
+										console.log ''
 									next()
 								, options.fetch
 							, () ->
+								if errors_found && not options.verbose?
+									console.log 'Could not retrieve all plugins. Use ' + '--verbose'.white + ' for more information.'
 								main_defer.resolve()
 			return main_defer.promise
 
