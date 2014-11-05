@@ -3,8 +3,28 @@
     "desc": "Social CRM Simplified",
     "url": "https://api.nimble.com/oauth",
     "oauth2": {
-        "authorize": "/authorize",
-        "access_token": "/token",
+        "authorize": {
+          "url": "/authorize",
+          "query": {
+            "redirect_uri": "{{callback}}",
+            "response_type": "code",
+            "state": "{{state}}",
+            "client_id": "{client_id}"
+          }
+        },
+        "access_token": {
+          "url": "/token",
+          "method": "post",
+          "format": "json",
+          "query": {
+            "grant_type": "authorization_code",
+            "code": "{{code}}",
+            "client_id": "{client_id}",
+            "client_secret": "{client_secret}",
+            "redirect_uri": "{{callback}}",
+            "state": "{{state}}"
+          }
+        },
         "request": "https://api.nimble.com/oauth",
         "refresh": "/token",
         "parameters": {
