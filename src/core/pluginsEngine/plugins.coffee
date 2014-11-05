@@ -167,5 +167,15 @@ module.exports = (env) ->
 				defer.resolve()
 		defer.promise
 
+	extended_endpoints = []
+	
+	pluginsEngine.describeAPIEndpoint = (endpoint_description) ->
+		extended_endpoints.push endpoint_description
+
+
+	pluginsEngine.getExtendedEndpoints = () ->
+		extended_endpoints
+
+
 
 	pluginsEngine

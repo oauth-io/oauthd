@@ -172,3 +172,9 @@ module.exports = (env) ->
 		env.server.get '/api/config', env.middlewares.auth.needed, (req, res, next) =>
 			res.send env.config
 			next()
+
+		# get generated api endpoints
+		env.server.get '/api/extended-endpoints', (req, res, next) ->
+			res.send env.pluginsEngine.getExtendedEndpoints()
+			next()
+		
