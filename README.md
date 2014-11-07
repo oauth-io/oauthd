@@ -68,6 +68,9 @@ Learn more about the **oauthd**
 [configuration](https://github.com/oauth-io/oauthd/wiki/Configuration) and the 
 [command line features](https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface).
 
+There is also a Docker container for oauthd if you want to try running oauthd inside a VM:
+Docker hub [repository](https://registry.hub.docker.com/u/vinc/oauthd-instance/).
+
 ## Usage
 
 You can use the **oauthd** server from you app directly through the API or use one
