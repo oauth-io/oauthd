@@ -89,7 +89,7 @@ describe 'Scaffolding - plugins - base', () ->
 						readPluginsJson (err, pluginsjson) ->
 							expect(err).toBeNull()
 							expect(pluginsjson['bla']).toBeDefined()
-							expect(pluginsjson['bla']).toBe('')
+							expect(pluginsjson['bla']).toBe({ active : true })
 							next()
 					
 					(next) ->
@@ -119,7 +119,7 @@ describe 'Scaffolding - plugins - base', () ->
 					(next) ->
 						readPluginsJson (err, obj) ->
 							expect(err).toBe(null)
-							expect(obj['fakeplugin']).toBe('')
+							expect(obj['fakeplugin']).toBe('somegit#1.2.3')
 							next()
 					(next) ->
 						readPluginJson 'fakeplugin', (err, obj) ->

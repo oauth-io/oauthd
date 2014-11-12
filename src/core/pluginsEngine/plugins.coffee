@@ -94,7 +94,7 @@ module.exports = (env) ->
 					loadPlugin(global_interface)
 				return callback false
 			.fail (e) ->
-				callback e
+				return callback e
 
 	pluginsEngine.list = (callback) ->
 		list = []
