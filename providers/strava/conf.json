@@ -1,6 +1,6 @@
 {
 	"name": "strava",
-	"desc": "",
+	"desc": "Strava is a social fitness service that allows users to share, compare and compete with other users' personal fitness data via mobile and online apps.",
 	"url": "https://www.strava.com",
 	"oauth2": {
 		"authorize": {
