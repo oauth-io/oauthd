@@ -5,6 +5,7 @@ colors = require 'colors'
 describe 'Core - env.pluginsEngine module', () ->
 	env = {}
 	consolelogs = []
+	origin_cwd = process.cwd()
 	beforeEach () ->
 		env = {}
 		coreModule(env).initEnv()
@@ -17,6 +18,9 @@ describe 'Core - env.pluginsEngine module', () ->
 
 		coreModule(env).initPluginsEngine(process.cwd() + '/tests')
 		consolelogs = []
+
+	afterEach () ->
+		process.chdir origin_cwd
 
 	it 'env.pluginsEngine.init outside of the \'instance_test\' folder should fail when there is no \'plugin.json\' file.', (done) ->
 		expect(env.pluginsEngine.init).toBeDefined()
@@ -88,11 +92,12 @@ describe 'Core - env.pluginsEngine module', () ->
 	it 'env.pluginsEngine.list should return an array containing \'plugin_test\'', (done) ->
 		expect(env.pluginsEngine.list).toBeDefined()
 		expect(typeof env.pluginsEngine.list).toBe("function")
-
-		env.pluginsEngine.init process.cwd() + '/tests/instance_test', (err) ->
-			expect(err).toBeDefined()
+		
+		process.chdir process.cwd() + '/tests/instance_test'
+		env.pluginsEngine.init process.cwd(), (err) ->
+			expect(err).toBeNull()
 			env.pluginsEngine.list (err, list) ->
-				expect(err).toBeUndefined()
+				expect(err).toBeNull()
 				expect(list).toBeDefined()
 				# expect(list).toContain("plugin_test")
 				done()

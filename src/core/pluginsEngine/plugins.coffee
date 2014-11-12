@@ -92,7 +92,7 @@ module.exports = (env) ->
 						pluginsEngine.load pluginname
 				if global_interface?
 					loadPlugin(global_interface)
-				return callback false
+				return callback null
 			.fail (e) ->
 				return callback e
 
