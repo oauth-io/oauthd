@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.strava.com/settings/api",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.strava.com/settings/api",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.strava.com/settings/api",
+				"docs": "http://strava.github.io/api/"
+			}
+		}
+	}
+}
