@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://jawbone.com/up/developer/account",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://jawbone.com/up/developer/account",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://jawbone.com/up/developer/account",
+				"docs": "https://jawbone.com/up/developer/"
+			}
+		}
+	}
+}

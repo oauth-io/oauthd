@@ -8,6 +8,7 @@ var me = {
     ],
     params: {},
     fields: {
+        id: '=',
         name: function(me) {
             return me.displayName;
         },

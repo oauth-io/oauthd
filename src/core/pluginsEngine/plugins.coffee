@@ -92,9 +92,9 @@ module.exports = (env) ->
 						pluginsEngine.load pluginname
 				if global_interface?
 					loadPlugin(global_interface)
-				return callback false
+				return callback null
 			.fail (e) ->
-				callback e
+				return callback e
 
 	pluginsEngine.list = (callback) ->
 		list = []
