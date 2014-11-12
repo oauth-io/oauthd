@@ -1,0 +1,64 @@
+{
+	"name": "jawbone",
+	"desc": "Jawbone develops human-centered wearable technology and audio devices.",
+	"url": "https://jawbone.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://jawbone.com/auth/oauth2/auth",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"scope": "{scope}",
+				"redirect_uri": "{{callback}}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "https://jawbone.com/auth/oauth2/token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"request": {
+			"url": "https://jawbone.com/nudge/api"
+		},
+		"refresh": {
+			"url": "https://jawbone.com/auth/oauth2/token",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"basic_read": "Basic Read",
+					"extended_read": "Extended Read",
+					"location_read": "Location Read",
+					"friends_read": "Friends Read",
+					"mood_read": "Mood Read",
+					"mood_write": "Mood Write",
+					"move_read": "Move Read",
+					"move_write": "Move Write",
+					"sleep_read": "Sleep Read",
+					"sleep_write": "Sleep Write",
+					"meal_read": "Meal Read",
+					"meal_write": "Meal Write",
+					"weight_read": "Weight Read",
+					"weight_write": "Weight Write",
+					"generic_event_read": "Generic Event Read",
+					"generic_event_write": "Generic Event Write"
+				}
+			}
+		}
+	}
+}
