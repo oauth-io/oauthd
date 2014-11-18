@@ -38,7 +38,8 @@
 					"wl.photos": "read your photos and other media",
 					"wl.applications_create": "create new client IDs to interact with Live services",
 					"wl.emails": "read your email addresses",
-					"wl.postal_addresses": "read your postal addresses"
+					"wl.postal_addresses": "read your postal addresses",
+					"wl.imap": "Read and write access to a user's email using IMAP, and send access using SMTP."
 				}
 			}
 		}

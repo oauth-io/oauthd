@@ -1,0 +1,52 @@
+{
+	"name": "strava",
+	"desc": "Strava is a social fitness service that allows users to share, compare and compete with other users' personal fitness data via mobile and online apps.",
+	"url": "https://www.strava.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://www.strava.com/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"redirect_uri": "{{callback}}",
+				"response_type": "code",
+				"scope": "{scope}",
+				"state": "{{state}}"
+			}
+		},
+		"access_token": {
+			"url": "https://www.strava.com/oauth/token",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"code": "{{code}}"
+			}
+		},
+		"revoke": {
+			"url": "https://www.strava.com/oauth/deauthorize",
+			"method": "post",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"request": {
+			"url": "https://www.strava.com/api"
+		},
+		"refresh": {
+
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"cardinality": "1",
+				"values": {
+					"public": "default, private activities are not returned, privacy zones are respected in stream requests",
+					"write": "modify activities, upload on the user’s behalf",
+					"view_private": "view private activities and data within privacy zones",
+					"view_private,write": "both ‘view_private’ and ‘write’ access"
+				}
+			}
+		}
+	}
+}

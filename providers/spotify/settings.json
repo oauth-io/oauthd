@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.spotify.com/my-applications/#!/applications/create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developer.spotify.com/my-applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.spotify.com/",
+				"docs": "https://developer.spotify.com/web-api/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1/me"
+        }
+	}
+}

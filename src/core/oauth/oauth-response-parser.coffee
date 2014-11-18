@@ -49,7 +49,7 @@ module.exports = (env) ->
 				else
 					@_parseUnknownBody()
 				return callback @error if @error
-				return callback @_setError 'HTTP status code: ' + @_response.statusCode if @_response.statusCode != 200
+				return callback @_setError 'HTTP status code: ' + @_response.statusCode if @_response.statusCode != 200 and @_response.statusCode != 201 
 				return callback null, @
 
 		_parse:

@@ -1,0 +1,49 @@
+{
+	"name": "mapmyapi",
+	"desc": "The API provides an interface to much of the site's features, such as activity feeds, goals and events.",
+	"url": "https://www.mapmyapi.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://www.mapmyfitness.com/v7.0/oauth2/authorize/"
+			
+		},
+		"access_token": {
+			"url": "https://oauth2-api.mapmyapi.com/v7.0/oauth2/access_token/",
+			"method": "post",
+			"headers": {
+				"Content-Type": "application/x-www-form-urlencoded",
+				"Api-Key": "{client_id}"
+			},
+			"query": {
+				"grant_type": "authorization_code",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"code": "{{code}}"
+			}
+		},
+		"request": {
+			"url": "https://oauth2-api.mapmyapi.com",
+			"headers": {
+				"Api-Key": "{client_id}",
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"refresh": {
+			"url": "https://oauth2-api.mapmyapi.com/v7.0/oauth2/access_token/",
+			"method": "post",
+			"headers": {
+				"Api-Key": "{client_id}"
+			},
+			"query": {
+				"grant_type": "refresh_token",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	}
+}

@@ -52,11 +52,14 @@ else if argv.version || argv.v
 else
 	
 	if args[0] == 'init'
-		if options.help || args.length > 1
+		if options.help or args.length > 1
 			console.log 'Usage: ' + 'oauthd init'.yellow
 			console.log 'Initializes a new oauthd instance. \nPrompts the user for an instance name and for default components installation prefs.'
 		else
-			scaffolding.init()
+			force_default = false
+			if options.default 
+				force_default = true
+			scaffolding.init(force_default)
 				.then (name) ->
 					endOfInit(name, true)
 				.fail (err) ->

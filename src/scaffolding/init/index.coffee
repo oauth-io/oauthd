@@ -68,62 +68,70 @@ module.exports = (env) ->
 		prompt.delimiter = "> "
 		prompt.start()
 		prompt.get schema, (err, res2) ->
-			env.debug 'Generating a folder for ' + name
-			ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
-				return defer.reject err if err
-				fs.rename process.cwd() + '/' + name + '/gitignore', process.cwd() + '/' + name + '/.gitignore', (err) ->
-					return defer.reject err if err
-					if res2.install_default_plugin.match(/[yY]/)
-						installPlugins defer, name
-					else
-						defer.resolve(name)
-
-
-
-	(force) ->
-		defer = Q.defer()
-		schema = {
-			properties:
-				name: {
-					pattern: /^[a-zA-Z0-9_\-]+$/
-					message: 'You must give a folder name using only letters, digits, dash and underscores'
-					description: 'What will be the name of your oauthd instance?'
-					require: true
-					delimiter: ''
-				}
-		}
-		prompt.message = "oauthd".white
-		prompt.delimiter = "> "
-		prompt.start()
-		prompt.get schema, (err, results) ->
+			copyBasisStructure defer, name, res2.install_default_plugin
+			
+	copyBasisStructure = (defer, name, install_default_plugin) ->
+		env.debug 'Generating a folder for ' + name
+		ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
 			return defer.reject err if err
-			if results.name.length == 0
-				env.debug 'You must give a folder name using only letters, digits, dash and underscores.'
-				return
-			exists = fs.existsSync './' + results.name
+			fs.rename process.cwd() + '/' + name + '/gitignore', process.cwd() + '/' + name + '/.gitignore', (err) ->
+				return defer.reject err if err
+				if install_default_plugin.match(/[yY]/)
+					installPlugins defer, name
+				else
+					defer.resolve(name)
 
-			if exists && not force
-				schema = {
-					properties:{}
-				}
-				schema.properties.overwrite = {
-					pattern: /^(y|n)$/
-					message: "Please answer by 'y' for yes or 'n' for no."
-					description: 'A folder ' + results.name + ' already exists. Do you want to overwrite it? (y|N)'
-					default: 'N'
-				}
-
-				prompt.message = "oauthd".white
-				prompt.delimiter = "> "
-				prompt.start()
-				
-				prompt.get schema, (err, res_overwrite) ->
-					if res_overwrite.overwrite.match(/[Yy]/)
-						doInit(defer, results.name)
-					else
-						return defer.reject new Error 'Stopped'
+	(force_default) ->
+		defer = Q.defer()
+		if force_default
+			exists = fs.existsSync './default-oauthd-instance'
+			if not exists
+				copyBasisStructure defer, "default-oauthd-instance", "Y"
 			else
-				doInit(defer, results.name)
+				return defer.reject new Error 'Stopped because \'default-oauthd-instance\' folder already exists.'
+		else
+			schema = {
+				properties:
+					name: {
+						pattern: /^[a-zA-Z0-9_\-]+$/
+						message: 'You must give a folder name using only letters, digits, dash and underscores'
+						description: 'What will be the name of your oauthd instance?'
+						require: true
+						delimiter: ''
+					}
+			}
+			prompt.message = "oauthd".white
+			prompt.delimiter = "> "
+			prompt.start()
+			prompt.get schema, (err, results) ->
+				return defer.reject err if err
+				if results.name.length == 0
+					env.debug 'You must give a folder name using only letters, digits, dash and underscores.'
+					return
+				exists = fs.existsSync './' + results.name
+
+				if exists
+					schema = {
+						properties:{}
+					}
+					schema.properties.overwrite = {
+						pattern: /^(y|n)$/
+						message: "Please answer by 'y' for yes or 'n' for no."
+						description: 'A folder ' + results.name + ' already exists. Do you want to overwrite it? (y|N)'
+						default: 'N'
+					}
+
+					prompt.message = "oauthd".white
+					prompt.delimiter = "> "
+					prompt.start()
+					
+					prompt.get schema, (err, res_overwrite) ->
+						if res_overwrite.overwrite.match(/[Yy]/)
+							doInit(defer, results.name)
+						else
+							return defer.reject new Error 'Stopped'
+				else
+					doInit(defer, results.name)
 
 
 		defer.promise

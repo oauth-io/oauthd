@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.mapmyapi.com/apps/register",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.mapmyapi.com/apps/mykeys",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.mapmyapi.com/apps/register",
+				"docs": "https://www.mapmyapi.com/docs/"
+			}
+		}
+	}
+}

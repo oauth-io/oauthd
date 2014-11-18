@@ -1,0 +1,71 @@
+{
+	"name": "Spotify",
+	"desc": "The Spotify Web API lets your applications fetch data from the Spotify music catalog and manage user’s playlists and saved music.",
+	"url": "https://accounts.spotify.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://accounts.spotify.com/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "https://accounts.spotify.com/api/token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"request": {
+			"url": "https://api.spotify.com",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": {
+			"url": "https://accounts.spotify.com/api/token",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"": "Read your publicly available information",
+					"playlist-read-private": "Access your private playlists",
+					"playlist-modify-public": "Manage your public playlists",
+					"playlist-modify-private": "Manage your private playlists",
+					"streaming": "Play music and control playback on your other devices",
+					"user-library-read": "Access your saved tracks and albums",
+					"user-library-modify": "Manage your saved tracks and albums",
+					"user-read-private": "Access your profile name, image and subscription details",
+					"user-read-email": "Get your real email address"
+				},
+				"separator": ","
+			}
+		}
+	},
+	"href": {
+		"keys": "https://developer.spotify.com/my-applications",
+		"docs": "https://developer.spotify.com/web-api/",
+		"apps": "https://developer.spotify.com/my-applications",
+		"provider": "https://www.spotify.com/"
+	}
+}
