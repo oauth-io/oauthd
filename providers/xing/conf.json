@@ -1,0 +1,22 @@
+{
+	"name": "Xing",
+	"desc": "Germany-based \"business social network\" XING is a social software platform for enabling a small-world network for professionals. The XING API is a RESTful API and gives you access to XING’s core features.",
+	"url": "https://api.xing.com",
+	"oauth1": {
+		"authorize": {
+			"url": "https://api.xing.com/v1/authorize"
+		},
+		"access_token": {
+			"url": "https://api.xing.com/v1/access_token"
+		},
+		"request_token": {
+			"url": "https://api.xing.com/v1/request_token"
+		}
+	},
+	"href": {
+		"keys": "https://dev.xing.com/applications/dashboard",
+		"docs": "https://dev.xing.com/docs",
+		"apps": "https://dev.xing.com/applications/dashboard",
+		"provider": "https://www.xing.com/"
+	}
+}
