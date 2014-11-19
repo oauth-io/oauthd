@@ -118,7 +118,11 @@
 					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://spreadsheets.google.com/feeds/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API.",
+					"https://www.googleapis.com/auth/appengine.admin": "App engine admin scope.",
 					"https://mail.google.com/": "The scope for IMAP and SMTP access",
+					"https://www.googleapis.com/auth/gmail.modify": "All read/write operations except immediate, permanent deletion of threads and messages, bypassing Trash.",
+					"https://www.googleapis.com/auth/gmail.readonly": "Read all resources and their metadata—no write operations.",
+					"https://www.googleapis.com/auth/gmail.compose": "Create, read, update, and delete drafts. Send messages and drafts.",
 					"openid": "Access to your id",
 					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
 					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"

@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://dev.xing.com/applications/dashboard",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://dev.xing.com/applications/dashboard",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://www.xing.com/",
+                "docs": "https://dev.xing.com/docs"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v1/users/me"
+        }
+    }
+}
