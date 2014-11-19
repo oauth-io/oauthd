@@ -118,6 +118,7 @@
 					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://spreadsheets.google.com/feeds/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API.",
+					"https://www.googleapis.com/auth/appengine.admin",
 					"https://mail.google.com/": "The scope for IMAP and SMTP access",
 					"https://www.googleapis.com/auth/gmail.modify": "All read/write operations except immediate, permanent deletion of threads and messages, bypassing Trash.",
 					"https://www.googleapis.com/auth/gmail.readonly": "Read all resources and their metadata—no write operations.",
