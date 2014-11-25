@@ -114,7 +114,7 @@ module.exports = (env) ->
 			_save = (done) =>
 				multi = env.data.redis.multi()
 				for key, value of @props
-					if typeof value == 'string'
+					if typeof value == 'string' or typeof value == 'number'
 						multi.set @prefix() + key, value
 					if typeof value == 'object' and not value?.length?
 						multi.hmset @prefix() + key, value

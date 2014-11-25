@@ -27,7 +27,6 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 	git =
 		getCurrentVersion: () ->
 			defer = Q.defer()
-			
 			execGit ['branch -v'], (error, stdout, stderr) ->
 				return defer.reject error if error
 
