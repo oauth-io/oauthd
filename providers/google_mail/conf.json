@@ -15,6 +15,9 @@
 					"https://www.googleapis.com/auth/userinfo.email": "View your email address",
 					"https://mail.google.com/": "The scope for IMAP and SMTP access",
 					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"https://www.googleapis.com/auth/gmail.modify": "All read/write operations except immediate, permanent deletion of threads and messages, bypassing Trash.",
+					"https://www.googleapis.com/auth/gmail.readonly": "Read all resources and their metadata—no write operations.",
+					"https://www.googleapis.com/auth/gmail.compose": "Create, read, update, and delete drafts. Send messages and drafts.",
 					"https://www.googleapis.com/auth/plus.login": "Know your name, basic info, and list of people you're connected to on Google+",
 					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
 				}
