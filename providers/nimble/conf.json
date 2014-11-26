@@ -28,8 +28,8 @@
         "request": "https://api.nimble.com/oauth",
         "refresh": "/token",
         "parameters": {
-            "client_secret": "string",
             "client_id": "string",
+            "client_secret": "string",
             "scope": {
                 "values": {}
             }

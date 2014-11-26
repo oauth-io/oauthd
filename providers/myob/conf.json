@@ -18,8 +18,8 @@
 		},
 		"refresh": "/v1/authorize",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"CompanyFile": "Access to MYOB AccountRight CompanyFile(s)."

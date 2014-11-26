@@ -33,8 +33,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"basic": "see basic information about this user",

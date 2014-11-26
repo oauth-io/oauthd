@@ -19,10 +19,10 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": {
 				"scope": "public"
 			},
+			"client_secret": "string",
 			"app_name": "string"
 		}
 	},

@@ -18,8 +18,8 @@
 		},
 		"refresh": "/token",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"read_user_blog": "read_user_blog",

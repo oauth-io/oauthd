@@ -6,8 +6,8 @@
 		"authorize": "/authorize",
 		"access_token": "/token",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"profile:write": "Edit your profile information, including your picture.",
