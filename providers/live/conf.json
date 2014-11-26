@@ -13,8 +13,8 @@
 		},
 		"refresh": "/oauth20_authorize.srf",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"wl.skydrive_update": "write to files you've stored in SkyDrive",

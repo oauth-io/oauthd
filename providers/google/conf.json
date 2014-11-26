@@ -30,8 +30,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"https://www.googleapis.com/auth/blogger.readonly": "View your Blogger account",

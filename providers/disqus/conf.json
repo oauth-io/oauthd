@@ -13,8 +13,8 @@
         },
         "refresh": "/access_token",
         "parameters": {
-            "client_secret": "string",
             "client_id": "string",
+            "client_secret": "string",
             "scope": {
                 "values": {
                     "read": "Read access on data.",

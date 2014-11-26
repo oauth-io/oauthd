@@ -15,8 +15,8 @@
 		},
 		"refresh": "https://connect.stripe.com/oauth/token",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"read_only": "Read-only access level",

@@ -16,8 +16,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"relationships": "to follow and unfollow users on a user’s behalf",

@@ -23,8 +23,8 @@
         },
         "request": "{{instance_url}}",
         "parameters": {
-            "client_secret": "string",
             "client_id": "string",
+            "client_secret": "string",
             "scope": {
                 "values": {
                     "api": "Allows access to the current, logged-in user’s account over the APIs, such as the REST API or Bulk API. This also includes the chatter_api, allowing access to Chatter API resources.",

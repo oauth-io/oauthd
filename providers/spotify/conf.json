@@ -8,7 +8,6 @@
 			"query": {
 				"response_type": "code",
 				"client_id": "{client_id}",
-				"client_secret": "{client_secret}",
 				"redirect_uri": "{{callback}}",
 				"state": "{{state}}",
 				"scope": "{scope}"
@@ -44,11 +43,10 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
-					"": "Read your publicly available information",
 					"playlist-read-private": "Access your private playlists",
 					"playlist-modify-public": "Manage your public playlists",
 					"playlist-modify-private": "Manage your private playlists",

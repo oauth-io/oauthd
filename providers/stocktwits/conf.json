@@ -20,8 +20,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"read": "Default, allows to read user, symbol and authenticated streams, read social graph of people and stocks",
