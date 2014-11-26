@@ -14,8 +14,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"all": "请求下列所有scope权限.",

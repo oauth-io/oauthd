@@ -8,8 +8,8 @@
 		"request": "https://api.meetup.com",
 		"refresh": "/access",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"messaging": "Enables Member to Member messaging",

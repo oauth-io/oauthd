@@ -11,8 +11,8 @@
 		},
 		"refresh": "/token",
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"profile": "Access the basic profile information on a user's Uber account including their first name, email address, and profile picture.",

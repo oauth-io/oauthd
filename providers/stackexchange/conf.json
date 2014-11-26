@@ -14,8 +14,8 @@
             }
         },
         "parameters": {
-            "client_secret": "string",
             "client_id": "string",
+            "client_secret": "string",
             "scope": {
                 "values": {
                     "no_expiry": "access_token's with this scope do not expire",

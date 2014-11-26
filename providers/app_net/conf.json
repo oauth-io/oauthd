@@ -1,0 +1,56 @@
+{
+	"name": "App.net",
+	"desc": "App.net is an ad-free online social networking service and microblogging service which enables its users to write messages of up to 256 characters.",
+	"url": "https://account.app.net/",
+	"oauth2": {
+		"authorize": {
+			"url": "https://account.app.net/oauth/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "https://account.app.net/oauth/access_token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "{{callback}}",
+				"response_type": "token",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"request": {
+			"url": "https://api.app.net/",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"basic": "see basic information about this user",
+					"stream": "read this user’s stream",
+					"write_post": "create a new post as this user",
+					"follow": "add or remove follows (or mutes) for this user",
+					"update_profile": "update a user’s name, images, and other profile information"
+				},
+				"separator": ","
+			}
+		}
+	},
+	"href": {
+		"keys": "https://account.app.net/developer/apps/",
+		"docs": "https://developers.app.net/reference/resources/",
+		"apps": "https://developers.app.net/docs/guides/create-an-app/",
+		"provider": "https://app.net/"
+	}
+}
