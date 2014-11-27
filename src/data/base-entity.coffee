@@ -107,7 +107,9 @@ module.exports = (env) ->
 
 			defer.promise
 
-		save: () ->
+		save: (overwrite, delete_unknown_keys) ->
+			overwrite ?= true 
+			delete_unknown_keys ?= false 
 			defer = Q.defer()
 			
 			# hat function that actually saves
@@ -116,12 +118,13 @@ module.exports = (env) ->
 
 				@keys()
 					.then (keys) =>
-						prefixedProps = []
-						for key in Object.keys(@props)
-							prefixedProps.push @prefix() + key
-						for key in keys
-							if key not in prefixedProps
-								multi.del key
+						if delete_unknown_keys
+							prefixedProps = []
+							for key in Object.keys(@props)
+								prefixedProps.push @prefix() + key
+							for key in keys
+								if key not in prefixedProps
+									multi.del key
 						for key, value of @props
 							if typeof value == 'string' or typeof value == 'number'
 								multi.set @prefix() + key, value
@@ -130,7 +133,8 @@ module.exports = (env) ->
 								for k, v of value
 									multi.sadd @prefix() + key, v
 							else if	value? and typeof value == 'object'
-								multi.del @prefix() + key
+								if overwrite
+									multi.del @prefix() + key
 								multi.hmset @prefix() + key, value
 							else
 								# TODO (value instanceof Boolean || typeof value == 'boolean')
