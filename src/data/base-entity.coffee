@@ -113,20 +113,35 @@ module.exports = (env) ->
 			# hat function that actually saves
 			_save = (done) =>
 				multi = env.data.redis.multi()
-				for key, value of @props
-					if typeof value == 'string' or typeof value == 'number'
-						multi.set @prefix() + key, value
-					if typeof value == 'object' and not value?.length?
-						multi.hmset @prefix() + key, value
-					if typeof value == 'object' and value?.length?
-						multi.del @prefix() + key
-						for k, v of value
-							multi.sadd @prefix() + key, v
 
-				# actual save
-				multi.exec (e, res) =>
-					return done e if e
-					done()
+				@keys()
+					.then (keys) =>
+						prefixedProps = []
+						for key in Object.keys(@props)
+							prefixedProps.push @prefix() + key
+						for key in keys
+							if key not in prefixedProps
+								multi.del key
+						for key, value of @props
+							if typeof value == 'string' or typeof value == 'number'
+								multi.set @prefix() + key, value
+							else if typeof value == 'object' and Array.isArray(value)
+								multi.del @prefix() + key
+								for k, v of value
+									multi.sadd @prefix() + key, v
+							else if	value? and typeof value == 'object'
+								multi.del @prefix() + key
+								multi.hmset @prefix() + key, value
+							else
+								# TODO (value instanceof Boolean || typeof value == 'boolean')
+								console.log "not saved: type not found"
+
+						# actual save
+						multi.exec (e, res) =>
+							return done e if e
+							done()
+					.fail (e) =>
+						return done e if e
 
 			# checks if new entity or not. If no id found, increments ids
 			if not @id?
