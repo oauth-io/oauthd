@@ -32,7 +32,6 @@ module.exports = (env) ->
 	env.server = server = restify.createServer server_options
 	env.pluginsEngine.runSync 'raw'
 
-	server.use restify.authorizationParser()
 	server.use restify.queryParser()
 	server.use restify.bodyParser mapParams:false
 

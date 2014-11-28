@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "http://rdio.mashery.com/apps/myapps",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "http://rdio.mashery.com/apps/myapps",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "http://www.rdio.com/",
+                "docs": "http://www.rdio.com/developers/docs/"
+            }
+        },
+        "sample": {
+            "method": "post",
+            "url": "http://api.rdio.com/1/"
+        }
+    }
+}

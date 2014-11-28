@@ -82,6 +82,7 @@ module.exports = (env) ->
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
+
 		env.scaffolding.plugins.info.getPluginsJson({ activeOnly: true })
 			.then (obj) ->
 				if not obj?
@@ -94,6 +95,7 @@ module.exports = (env) ->
 					loadPlugin(global_interface)
 				return callback null
 			.fail (e) ->
+				console.log e
 				return callback e
 
 	pluginsEngine.list = (callback) ->

@@ -28,8 +28,8 @@
 			}
 		},
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"friends_groups": "Provides access to the list of groups the user is a member of as the groups connection",
