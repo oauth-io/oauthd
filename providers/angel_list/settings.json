@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "https://angel.co/",
-				"docs": "https://angel.co/api"
+				"docs": "https://angel.co/api",
+				"apps": "https://angel.co/api/oauth/clients"
 			}
 		},
 		"sample": {

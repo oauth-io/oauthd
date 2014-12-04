@@ -1,15 +1,18 @@
 {
     "settings": {
         "createApp": {
-            "url": "https://login.uber.com/applications/new"
+            "url": "https://login.uber.com/applications/new",
+            "image": "config.png"
         },
         "copyingKey": {
-            "url": "https://login.uber.com/applications"
+            "url": "https://login.uber.com/applications",
+            "image": "keys.png"
         },
         "install": {
             "href": {
                 "provider": "https://uber.com/",
-                "docs": "https://developer.uber.com/v1/api-reference/"
+                "docs": "https://developer.uber.com/v1/api-reference/",
+                "apps": "https://login.uber.com/applications"
             }
         },
         "sample": {

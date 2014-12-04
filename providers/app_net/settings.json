@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "https://app.net/",
-				"docs": "https://developers.app.net/reference/resources/"
+				"docs": "https://developers.app.net/reference/resources/",
+				"apps": "https://account.app.net/developer/apps/"
 			}
 		},
         "sample": {

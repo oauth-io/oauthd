@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "https://www.spotify.com/",
-				"docs": "https://developer.spotify.com/web-api/"
+				"docs": "https://developer.spotify.com/web-api/",
+				"apps": "https://developer.spotify.com/my-applications"
 			}
 		},
         "sample": {
