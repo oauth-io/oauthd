@@ -8,13 +8,13 @@ module.exports = (env) ->
 	#libs
 	fs = require 'fs'
 	restify = require 'restify'
-	bodyParser = require "body-parser" 
+	bodyParser = require "body-parser"
 	cookieParser = require "cookie-parser"
 	session = require "express-session"
 	https = require 'https'
 	Path = require 'path'
 
-	
+
 	PLModule = require './presentationLayer'
 
 	# Server config and launch
@@ -34,6 +34,7 @@ module.exports = (env) ->
 
 	server.use restify.queryParser()
 	server.use restify.bodyParser mapParams:false
+	server.use restify.authorizationParser()
 
 	# Adds the 'always' middleware for each request
 	for k, middleware of env.middlewares.always
@@ -57,6 +58,6 @@ module.exports = (env) ->
 							env.debug '%s listening at %s for %s', server.name, server.url, env.config.host_url
 							env.events.emit 'server', null
 							callback null, server
-						
+
 						server.listen.apply server, listen_args
 	}
