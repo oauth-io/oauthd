@@ -1,0 +1,53 @@
+{
+	"name": "AngelList",
+	"desc": "AngelList is a US website for startups, angel investors, and job-seekers looking to work at startups.",
+	"url": "https://api.angel.co/",
+	"oauth2": {
+		"authorize": {
+			"url": "https://angel.co/api/oauth/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "https://angel.co/api/oauth/token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"request": {
+			"url": "https://api.angel.co/"
+		},
+		"refresh": {
+			"url": "https://angel.co/api/oauth/token",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"comment": "gives your application permission to create and destroy likes and comments.",
+					"email": "gives your application access to the user's email address.",
+					"message": "gives your application access to the user's private messages, for reading and writing.",
+					"talent": "gives your application access to the user's presence on AngelList Talent."
+				},
+				"separator": " "
+			}
+		}
+	}
+}
