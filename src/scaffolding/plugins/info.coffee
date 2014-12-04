@@ -13,6 +13,7 @@ module.exports = (env) ->
 		getPluginsJson: (opts) ->
 			defer = Q.defer()
 			opts ?= {}
+
 			fs.readFile process.cwd() + '/plugins.json', {encoding: 'UTF-8'}, (err, data) ->
 				return defer.reject err if err
 				try
@@ -50,6 +51,7 @@ module.exports = (env) ->
 									plugins_json[plugin_name] = value
 									next()
 								.fail (e) ->
+
 									plugins_json[plugin_name] = {
 										name: plugin_name,
 										active: true
@@ -132,6 +134,8 @@ module.exports = (env) ->
 					plugin_git.getCurrentVersion()
 						.then (v) ->
 							plugin_data.version = v.version
+							defer.resolve plugin_data
+						.fail () ->
 							defer.resolve plugin_data
 				catch err
 					defer.reject err

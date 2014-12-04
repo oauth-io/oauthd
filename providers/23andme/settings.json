@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "https://23andme.com/",
-				"docs": "https://api.23andme.com/docs"
+				"docs": "https://api.23andme.com/docs",
+				"apps": "https://api.23andme.com/dev"
 			}
 		},
         "sample": {

@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "https://asana.com",
-				"docs": "http://developer.asana.com/documentation"
+				"docs": "http://developer.asana.com/documentation",
+				"apps": "http://app.asana.com/-/account_api"
 			}
 		},
         "sample": {

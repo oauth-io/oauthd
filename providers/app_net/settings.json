@@ -1,0 +1,23 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developers.app.net/docs/guides/create-an-app/",
+            "image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://account.app.net/developer/apps/",
+            "image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://app.net/",
+				"docs": "https://developers.app.net/reference/resources/",
+				"apps": "https://account.app.net/developer/apps/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/users/me"
+        }
+	}
+}
