@@ -56,6 +56,11 @@ module.exports = (env) ->
 										name: plugin_name,
 										active: true
 									}
+									if value.repository?
+										value.version ?= 'master'
+										plugins_json[plugin_name].repository = value.repository
+										plugins_json[plugin_name].version = value.version
+
 									next()
 						else
 							next()
@@ -130,13 +135,16 @@ module.exports = (env) ->
 						return defer.reject err
 				try
 					plugin_data = JSON.parse data
-					plugin_git = env.plugins.git(plugin_name)
-					plugin_git.getCurrentVersion()
-						.then (v) ->
-							plugin_data.version = v.version
-							defer.resolve plugin_data
-						.fail () ->
-							defer.resolve plugin_data
+					env.plugins.git plugin_name
+						.then (plugin_git) ->
+							plugin_git.getCurrentVersion()
+								.then (v) ->
+									plugin_data.version = v.version
+									defer.resolve plugin_data
+								.fail () ->
+									defer.reject plugin_data
+						.fail (err) ->
+							defer.reject err
 				catch err
 					defer.reject err
 					
@@ -163,14 +171,17 @@ module.exports = (env) ->
 		getTargetVersion: (name) ->
 			defer = Q.defer()
 
-			plugin_git = env.plugins.git name
-			plugin_git.getVersionMask()
-				.then (mask) ->
-					plugin_git.getLatestVersion(mask)
-						.then (version) ->
-							defer.resolve version
-				.fail (e) ->
-					defer.reject e
+			env.plugins.git name
+				.then (plugin_git) ->
+					plugin_git.getVersionMask()
+						.then (mask) ->
+							plugin_git.getLatestVersion(mask)
+								.then (version) ->
+									defer.resolve version
+						.fail (e) ->
+							defer.reject e
+				.fail (err) ->
+					defer.reject err
 
 			defer.promise
 
