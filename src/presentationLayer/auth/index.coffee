@@ -277,7 +277,7 @@ module.exports = (env) ->
 							url += k + '=' + v
 					opts = JSON.parse(req.params.opts)
 					if opts.mobile is 'true' and provider_conf.mobile?.url? 
-						url_split = url.split("/oauth/")
+						url_split = url.split("/oauth/authorize")
 						if url_split.length is 2
 							url = provider_conf.mobile.url + '/oauth/' + url_split[1]
 
