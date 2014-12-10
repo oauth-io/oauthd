@@ -279,7 +279,7 @@ module.exports = (env) ->
 					if opts.mobile is 'true' and provider_conf.mobile?.url? 
 						url_split = url.split("/oauth/authorize")
 						if url_split.length is 2
-							url = provider_conf.mobile.url + '/oauth/' + url_split[1]
+							url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]
 
 				res.setHeader 'Location', url
 				res.send 302
