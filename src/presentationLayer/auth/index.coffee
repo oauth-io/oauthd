@@ -266,15 +266,21 @@ module.exports = (env) ->
 			], (err, url) ->
 				return callback err if err
 
-				#Fitbit needs this for mobile
-				if provider_conf.mobile?.params? and req.params.mobile == 'true'
-					for k,v of provider_conf.mobile.params
-						if url.indexOf('?') == -1
-							url += '?'
-						else
-							url += '&'
-						url += k + '=' + v
-				
+				#Fitbit and tripit needs this for mobile
+				if provider_conf.mobile?
+					if provider_conf.mobile?.params? and req.params.mobile == 'true'
+						for k,v of provider_conf.mobile.params
+							if url.indexOf('?') == -1
+								url += '?'
+							else
+								url += '&'
+							url += k + '=' + v
+					opts = JSON.parse(req.params.opts)
+					if opts.mobile is 'true' and provider_conf.mobile?.url? 
+						url_split = url.split("/oauth/authorize")
+						if url_split.length is 2
+							url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]
+
 				res.setHeader 'Location', url
 				res.send 302
 				next()
