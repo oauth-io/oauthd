@@ -81,8 +81,8 @@ module.exports = (args, options) ->
 						installed = _installed
 
 						console.log 'This instance has ' + (installed.length + ' installed plugin(s):').white
-						console.log (active.length + ' active plugin(s)').green
-						for name in active
+						console.log ((Object.keys(active)).length + ' active plugin(s)').green
+						for name, value of active
 							console.log '- ' + name
 						console.log (inactive.length + ' inactive plugin(s)').yellow
 						for name in inactive
@@ -249,50 +249,52 @@ module.exports = (args, options) ->
 					if !plugin_data.name?
 						return done null, null, true
 					title = plugin_data.name?.white + ' '
-					plugin_git = scaffolding.plugins.git(plugin_data.name, fetch)
-					text =  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
-					if not text?
-						text = 'No description\n'
-					plugin_git.getCurrentVersion()
-						.then (current_version) ->
-							if current_version.type == 'branch'
-								plugin_git.getVersionMask()
-									.then (mask) ->
-										update = ''
-										if not current_version.uptodate
-											update = ' (' + 'Updates available'.green + ')'
-
-										if mask != current_version.version
-											update += ' (plugins.json points \'' + mask + '\')'
-										title +=  '(' +current_version.version + ')' + update + ""
-
-										done(title, text)
-							else if current_version.type == 'tag_n'
-								plugin_git.getVersionMask()
-									.then (mask) ->
-										plugin_git.getLatestVersion(mask)
-											.then (latest_version) ->
-
+					scaffolding.plugins.git(plugin_data.name, fetch)
+						.then (plugin_git) ->
+							text =  plugin_data.description + "\n" if plugin_data.description? && plugin_data.description != ""
+							if not text?
+								text = 'No description\n'
+							plugin_git.getCurrentVersion()
+								.then (current_version) ->
+									if current_version.type == 'branch'
+										plugin_git.getVersionMask()
+											.then (mask) ->
 												update = ''
-												if plugin_git.isNumericalVersion(latest_version)
-													if plugin_git.compareVersions(latest_version, current_version.version) > 0
-														update = ' (' + latest_version.green + ' is available)'
-												else
-													update = ' (plugins.json points \'' + latest_version +  '\')'
+												if not current_version.uptodate
+													update = ' (' + 'Updates available'.green + ')'
+
+												if mask != current_version.version
+													update += ' (plugins.json points \'' + mask + '\')'
 												title +=  '(' +current_version.version + ')' + update + ""
 												done(title, text)
-							else if current_version.type == 'tag_a'
-								plugin_git.getVersionMask()
-									.then (mask) ->
-										title +=  '(tag ' + current_version.version + ')'
-										if (mask != current_version.version)
-											title += ' (plugins.json points \'' + mask +  '\')'
+									else if current_version.type == 'tag_n'
+										plugin_git.getVersionMask()
+											.then (mask) ->
+												plugin_git.getLatestVersion(mask)
+													.then (latest_version) ->
+														update = ''
+														if plugin_git.isNumericalVersion(latest_version)
+															if plugin_git.compareVersions(latest_version, current_version.version) > 0
+																update = ' (' + latest_version.green + ' is available)'
+														else
+															update = ' (plugins.json points \'' + latest_version +  '\')'
+														title +=  '(' +current_version.version + ')' + update + ""
+														done(title, text)
+									else if current_version.type == 'tag_a'
+										plugin_git.getVersionMask()
+											.then (mask) ->
+												title +=  '(tag ' + current_version.version + ')'
+												if (mask != current_version.version)
+													title += ' (plugins.json points \'' + mask +  '\')'
+												done(title, text)
+									else if current_version.type == 'unversionned'
+										title +=  "(unversionned)"
 										done(title, text)
-							else if current_version.type == 'unversionned'
-								title +=  "(unversionned)"
-								done(title, text)
+								.fail (e) ->
+									done(title, text)
 						.fail (e) ->
-							done(title, text)
+							if verbose
+								console.log 'Error with plugin \'' + name.white + '\':', e.message
 				.fail (e) ->
 					if verbose
 						console.log 'Error with plugin \'' + name.white + '\':', e.message
@@ -315,7 +317,8 @@ module.exports = (args, options) ->
 					, options.fetch
 				else
 					scaffolding.plugins.info.getActive()
-						.then (names) ->
+						.then (plugins) ->
+							names = Object.keys plugins
 							errors_found = false
 							async.eachSeries names, (n, next) ->
 								doGetInfo n, options.verbose?, (title, text, e) ->

@@ -17,7 +17,7 @@
 restify = require 'restify'
 
 module.exports = (env) ->
-	
+
 	check = env.utilities.check
 	config = env.config
 
@@ -50,6 +50,8 @@ module.exports = (env) ->
 					result.message = res.message
 					result.data = body if typeof body == 'object' && Object.keys(body).length
 				else
+					if res.statusCode < 200 or res.statusCode >= 300
+						result.status = 'error'
 					body = null if not body?
 					result.data = body
 				body = result
@@ -96,4 +98,4 @@ module.exports = (env) ->
 		formatters: formatters
 		build: (e,r) -> buildReply e || r, buildJsend: true
 	}
-		
+
