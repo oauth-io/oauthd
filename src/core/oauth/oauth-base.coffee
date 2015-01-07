@@ -24,6 +24,7 @@ module.exports = (env) ->
 			@_params = {}
 			@_oauthv = oauthv
 			@_provider = provider
+			console.log provider
 			@_oauthConfiguration = provider[oauthv];
 			@_parameters = parameters
 			@_serverCallbackUrl = config.host_url + '/auth' # redirection url http(s)://domain/auth
@@ -70,6 +71,7 @@ module.exports = (env) ->
 		_buildAuthorizeUrl: (url, query, stateId) ->
 			url = @_replaceParam(url, {})
 			url += "?" + querystring.stringify(query)
+
 			return { url: url, state: stateId }
 
 		_buildServerRequestOptions: (req) ->

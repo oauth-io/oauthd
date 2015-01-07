@@ -138,7 +138,7 @@ module.exports = (env) ->
 				return callback null, me
 			else
 				return callback new check.Error 'No me.js information for ' + provider_name
-		
+
 
 	# get a provider's description extended with default params
 	exp.getExtended = (name, callback) ->
@@ -148,7 +148,7 @@ module.exports = (env) ->
 
 		exp.get name, (err, res) ->
 			return callback err if err
-			provider = providers._list[name] ?= cache:false
+			provider = providers._list[name] || cache:false
 			base_url = ""
 			if res.url
 				base_url = res.url.match(/^.{2,5}:\/\/[^/]+/)[0] || "";
