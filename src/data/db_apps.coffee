@@ -294,11 +294,17 @@ module.exports = (env) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			env.data.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, 'a:' + idapp + ':kdate:' + provider, (err, res) ->
-				return callback err if err
-				return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
-				env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp
-				callback()
+			env.data.redis.get 'a:' + idapp + ':k:' + provider, (err, raw_keyset) ->
+				try
+					keyset = JSON.parse raw_keyset
+				catch e
+					keyset = {}
+				finally
+					env.data.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, 'a:' + idapp + ':kdate:' + provider, (err, res) ->
+						return callback err if err
+						return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+						env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp, keyset: keyset
+						callback()
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->
