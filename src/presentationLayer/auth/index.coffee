@@ -71,7 +71,7 @@ module.exports = (env) ->
 		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, code: env.utilities.check.format.key, key: env.utilities.check.format.key, secret: env.utilities.check.format.key
-			
+
 			return next e if e.failed()
 			env.data.states.get req.body.code, (err, state) ->
 				return next err if err
@@ -134,7 +134,7 @@ module.exports = (env) ->
 			res.send view
 			next()
 
-		
+
 
 		# oauth: handle callbacks
 		env.server.get env.config.base + '/auth', (req, res, next) ->
@@ -276,7 +276,7 @@ module.exports = (env) ->
 								url += '&'
 							url += k + '=' + v
 					opts = JSON.parse(req.params.opts)
-					if opts.mobile is 'true' and provider_conf.mobile?.url? 
+					if opts.mobile is 'true' and provider_conf.mobile?.url?
 						url_split = url.split("/oauth/authorize")
 						if url_split.length is 2
 							url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]

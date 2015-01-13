@@ -24,7 +24,7 @@ module.exports = (env) ->
 	check = env.utilities.check
 	plugins = env.plugins
 
-	
+
 	App = {}
 
 	# create a new app
@@ -75,8 +75,8 @@ module.exports = (env) ->
 				env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix+'owner'], (err, replies) ->
 					return callback err if err
 					app = {
-						name:replies[0], 
-						key:replies[1], 
+						name:replies[0],
+						key:replies[1],
 						secret:replies[2],
 						owner: replies[3]
 					}
@@ -90,7 +90,7 @@ module.exports = (env) ->
 				return callback err if err
 				callback(null, apps)
 
-				
+
 
 	# get the app infos by its id
 	App.getById = check 'int', (idapp, callback) ->
@@ -294,11 +294,17 @@ module.exports = (env) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			env.data.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, 'a:' + idapp + ':kdate:' + provider, (err, res) ->
-				return callback err if err
-				return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
-				env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp
-				callback()
+			env.data.redis.get 'a:' + idapp + ':k:' + provider, (err, raw_keyset) ->
+				try
+					keyset = JSON.parse raw_keyset
+				catch e
+					keyset = {}
+				finally
+					env.data.redis.del 'a:' + idapp + ':k:' + provider, 'a:' + idapp + ':ktype:' + provider, 'a:' + idapp + ':kdate:' + provider, (err, res) ->
+						return callback err if err
+						return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
+						env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp, keyset: keyset
+						callback()
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->

@@ -183,10 +183,17 @@ module.exports = (env) ->
 									else if	value? and typeof value == 'object'
 										if overwrite
 											multi.del @prefix() + key
-										multi.hmset @prefix() + key, value
+										count = 0
+										for k of value
+											count++
+										if count > 0
+											multi.hmset @prefix() + key, value
+										else # Delete key if empty object
+											multi.del @prefix() + key
+
 									else
 										# TODO (value instanceof Boolean || typeof value == 'boolean')
-										console.log "not saved: type not found"
+										# console.log "not saved: type not found", key, value
 									if opts.ttl?
 										multi.expire @prefix() + key, opts.ttl
 
