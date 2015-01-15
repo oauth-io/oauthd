@@ -12,9 +12,9 @@
 				"docs": "http://developer.vimeo.com/apis/start"
 			}
 		},
-        "sample": {
-            "method": "get",
-            "url": "/api/rest/v2?method=vimeo.people.getInfo"
-        }
+		"sample": {
+			"method": "get",
+			"url": "/api/rest/v2?method=vimeo.people.getInfo"
+		}
 	}
 }

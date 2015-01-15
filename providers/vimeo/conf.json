@@ -1,6 +1,6 @@
 {
 	"name": "Vimeo",
-    "desc": "The Vimeo API provides an interface to access much of the public data from Vimeo. Share videos with your friends. Access privacy settings to share videos with only select people. The API uses RESTful calls and responses are formatted in either XML, JSON, JSONP or serialized PHP.",
+	"desc": "The Vimeo API provides an interface to access much of the public data from Vimeo. Share videos with your friends. Access privacy settings to share videos with only select people. The API uses RESTful calls and responses are formatted in either XML, JSON, JSONP or serialized PHP.",
 	"url": "https://vimeo.com/oauth",
 	"oauth1": {
 		"request_token": "/request_token",
