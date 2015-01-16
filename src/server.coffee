@@ -14,7 +14,6 @@ module.exports = (env) ->
 	https = require 'https'
 	Path = require 'path'
 
-
 	PLModule = require './presentationLayer'
 
 	# Server config and launch
