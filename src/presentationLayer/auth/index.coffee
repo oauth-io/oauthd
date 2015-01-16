@@ -258,11 +258,11 @@ module.exports = (env) ->
 						oa = new env.utilities.oauth[oauthv](provider, parameters)
 						oa.authorize opts, cb
 				(authorize, cb) ->
-						return cb null, authorize.url if not req.oaio_uid
-						env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
-							return cb err if err
-							env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
-							cb null, authorize.url
+					return cb null, authorize.url if not req.oaio_uid
+					env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+						return cb err if err
+						env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
+						cb null, authorize.url
 			], (err, url) ->
 				return callback err if err
 
