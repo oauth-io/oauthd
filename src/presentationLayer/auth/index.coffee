@@ -265,6 +265,12 @@ module.exports = (env) ->
 							cb null, authorize.url
 			], (err, url) ->
 				return callback err if err
+				isJson = (value) ->
+					try
+						JSON.stringify(value)
+						return true
+					catch e
+						return false
 
 				#Fitbit and tripit needs this for mobile
 				if provider_conf.mobile?
@@ -275,21 +281,23 @@ module.exports = (env) ->
 							else
 								url += '&'
 							url += k + '=' + v
-					opts = JSON.parse(req.params.opts)
-					if opts.mobile is 'true' and provider_conf.mobile?.url? 
-						url_split = url.split("/oauth/authorize")
-						if url_split.length is 2
-							url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]
+					if isJson(req.params.opts)
+						opts = JSON.parse(req.params.opts)
+						if opts.mobile is 'true' and provider_conf.mobile?.url? 
+							url_split = url.split("/oauth/authorize")
+							if url_split.length is 2
+								url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]
 
 				# For api like socrata, the endpoint change for every Socrata-powered data site
 				if provider_conf.redefine_endpoint
-					opts = JSON.parse(req.params.opts)
-					if opts.endpoint
-						url_split = url.split("/oauth/")
-						if opts.endpoint[opts.endpoint.length - 1] is '/'
-							opts.endpoint = opts.endpoint.slice(0, opts.endpoint.length - 1)
-						if url_split.length is 2
-							url = opts.endpoint + '/oauth/' + url_split[1]
+					if isJson(req.params.opts)
+						opts = JSON.parse(req.params.opts)
+						if opts.endpoint
+							url_split = url.split("/oauth/")
+							if opts.endpoint[opts.endpoint.length - 1] is '/'
+								opts.endpoint = opts.endpoint.slice(0, opts.endpoint.length - 1)
+							if url_split.length is 2
+								url = opts.endpoint + '/oauth/' + url_split[1]
 				res.setHeader 'Location', url
 				res.send 302
 				next()
