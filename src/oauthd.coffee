@@ -12,23 +12,24 @@ colors = require "colors"
 # request FIX
 qs = require 'request/node_modules/qs'
 
+
 exports.init = (env) ->
 	defer = Q.defer()
 	startTime = new Date
 	env = env || {}
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
-	
+
 	env.scaffolding = require('./scaffolding')()
 
 	coreModule = require './core'
 	dataModule = require './data'
-	
+
 	coreModule(env).initEnv() #inits env
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
-	
+
 	dataModule(env) # initializes env.data
-	
+
 	coreModule(env).initOAuth() # might be exported in plugin later
 	coreModule(env).initPluginsEngine()
 
@@ -42,7 +43,7 @@ exports.init = (env) ->
 		result = result.replace /\*/g, '%2A'
 		return result
 
-	
+
 
 	env.pluginsEngine.init process.cwd(), (err) ->
 		if not err
@@ -76,4 +77,4 @@ exports.init = (env) ->
 
 exports.installPlugins = () ->
 	require('../bin/cli/plugins')(['install'],{}).command()
-		
+

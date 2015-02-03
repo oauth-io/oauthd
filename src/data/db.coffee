@@ -54,8 +54,30 @@ module.exports = (env) ->
 
 
 
-
-
+	oldhgetall = data.redis.hgetall
+	data.redis.hgetall = (key, pattern, cb) ->
+		if not cb?
+			cb  = pattern
+			pattern = '*'
+		final_response = {}
+		cursor = undefined
+		async.whilst () ->
+			return cursor != '0'
+		, (next) ->
+			if cursor == undefined
+				cursor = 0
+			data.redis.send_command 'HSCAN', [key, cursor, 'MATCH', pattern, 'COUNT', 100], (err, response) ->
+				if err
+					return next(err)
+				cursor = response[0]
+				array = response[1]
+				for i in [0..array.length] by 2
+					if array[i] and array[i+1]
+						final_response[array[i]] = array[i+1]
+				next()
+		, (err) ->
+			return cb err if err
+			cb null, final_response
 
 
 
