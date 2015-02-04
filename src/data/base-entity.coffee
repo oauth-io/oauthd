@@ -8,6 +8,12 @@ module.exports = (env) ->
 		@prefix: ''
 		@incr: ''
 		@indexes: []
+		@properties: undefined
+		@extendProperties: (array) ->
+			if @properties? and Array.isArray(@properties)
+				for k, prop of array
+					if prop not in @properties
+						@properties.push prop
 		@findById: (id) ->
 			defer = Q.defer()
 			lapin = new @(id)
@@ -59,29 +65,40 @@ module.exports = (env) ->
 		keys: () ->
 			defer = Q.defer()
 			keys = {}
-			env.data.redis.keys @prefix() + '*', (e, result) ->
-				if e
-					defer.reject e
-				else
-					defer.resolve result
+			array = []
+			if @constructor.properties? and Array.isArray(@constructor.properties)
+				for k,v of @constructor.properties
+					array.push @prefix() + v
+				defer.resolve array
+			else
+				env.data.redis.keys @prefix() + '*', (e, result) ->
+					if e
+						defer.reject e
+					else
+						defer.resolve result
 
 			defer.promise
 		typedKeys: () ->
 			defer = Q.defer()
 			keys = {}
-			env.data.redis.keys @prefix() + '*', (e, result) =>
-				async.eachSeries result
-				, (key, next) =>
-					env.data.redis.type key, (e, type) =>
-						defer.reject(e) if e
-						keyname = key.replace @prefix(), ''
-						keys[keyname] = type
-						next()
-				, (e, final_result) ->
-					if e
-						defer.reject(e)
-					else
-						defer.resolve(keys)
+			# env.data.redis.keys @prefix() + '*', (e, result) =>
+			@keys()
+				.then (result) =>
+					async.eachSeries result
+					, (key, next) =>
+						env.data.redis.type key, (e, type) =>
+							return defer.reject(e) if e
+							if type != 'none'
+								keyname = key.replace @prefix(), ''
+								keys[keyname] = type
+							next()
+					, (e, final_result) =>
+						if e
+							defer.reject(e)
+						else
+							defer.resolve(keys)
+				.fail (e) ->
+					defer.reject e
 
 			defer.promise
 
@@ -103,6 +120,7 @@ module.exports = (env) ->
 					env.data.redis.multi(cmds).exec (err, fields) ->
 						object = {}
 						keys_array = Object.keys keys
+
 						for k, v of fields
 							object[keys_array[k]] = v
 						defer.resolve(object)
