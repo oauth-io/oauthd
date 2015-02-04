@@ -105,9 +105,18 @@ module.exports = (env) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
 			prefix = 'a:' + idapp + ':'
-			env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix + 'date', prefix + 'owner'], (err, replies) ->
+			env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix + 'date', prefix + 'owner', prefix+'backend:name', prefix+'backend:value'], (err, replies) ->
 				return callback err if err
-				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4]
+				if replies[5]
+					backend = {
+						name: replies[5],
+					}
+					try
+						backend.value = JSON.parse(replies[6])
+					catch e
+						backend.value = {}
+				server_side_only = backend?.name? && not backend?.value?.client_side
+				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4], server_side_only: server_side_only
 
 	# update app infos
 	App.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
@@ -257,7 +266,7 @@ module.exports = (env) ->
 						else
 							response_type = 'code'
 					else
-						response_type = 'token'
+						response_type = 'both'
 					callback null, parameters:(res[0] || {}), response_type:response_type
 
 	App.getKeysetWithResponseType = check check.format.key, 'string', (key, provider, callback) ->

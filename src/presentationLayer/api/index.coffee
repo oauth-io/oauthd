@@ -38,7 +38,7 @@ module.exports = (env) ->
 				(cb) => env.data.apps.getBackend req.params.key, cb
 			], (e, r) =>
 				return next(e) if e
-				res.send name:r[0].name, key:r[0].key, secret:r[0].secret, owner:r[0].owner, date:r[0].date, domains:r[1], keysets:r[2], backend:r[3]
+				res.send name:r[0].name, key:r[0].key, secret:r[0].secret, owner:r[0].owner, date:r[0].date, domains:r[1], keysets:r[2], backend:r[3], server_side: server_side_only
 				next()
 
 		# update infos of an app
@@ -103,7 +103,7 @@ module.exports = (env) ->
 		env.server.post '/api/apps/:key/backend/:backend', env.middlewares.auth.needed, (req, res, next) =>
 			env.data.apps.setBackend req.params.key, req.params.backend, req.body, env.send(res,next)
 
-		# remove a backend from an app
+		# remove a backend from an app - server_side only
 		env.server.del '/api/apps/:key/backend', env.middlewares.auth.needed, (req, res, next) =>
 			env.data.apps.remBackend req.params.key, env.send(res,next)
 
