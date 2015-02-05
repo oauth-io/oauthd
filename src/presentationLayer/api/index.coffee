@@ -38,7 +38,12 @@ module.exports = (env) ->
 				(cb) => env.data.apps.getBackend req.params.key, cb
 			], (e, r) =>
 				return next(e) if e
-				res.send name:r[0].name, key:r[0].key, secret:r[0].secret, owner:r[0].owner, date:r[0].date, domains:r[1], keysets:r[2], backend:r[3], server_side: server_side_only
+				app = r[0]
+				delete app.id
+				app.domains = r[1]
+				app.keysets = r[2]
+				app.backend = r[3]
+				res.send app
 				next()
 
 		# update infos of an app
