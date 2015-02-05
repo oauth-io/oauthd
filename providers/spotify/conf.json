@@ -56,7 +56,7 @@
 					"user-read-private": "Access your profile name, image and subscription details",
 					"user-read-email": "Get your real email address"
 				},
-				"separator": ","
+				"separator": " "
 			}
 		}
 	},

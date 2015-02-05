@@ -11,7 +11,8 @@
 		"install": {
 			"href": {
 				"provider": "http://500px.com/",
-				"docs": "https://github.com/500px/api-documentation"
+				"docs": "https://github.com/500px/api-documentation",
+				"apps": "http://500px.com/settings/applications"
 			}
 		},
         "sample": {

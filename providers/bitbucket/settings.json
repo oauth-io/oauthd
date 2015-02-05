@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "https://bitbucket.org/account",
+			"url": "https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket#OAuthonBitbucket-Step1.CreateanOAuthkeyandsecret",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "https://bitbucket.org/account",
+			"url": "https://confluence.atlassian.com/display/BITBUCKET/OAuth+on+Bitbucket#OAuthonBitbucket-Step1.CreateanOAuthkeyandsecret",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
 				"provider": "https://bitbucket.org/",
-				"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs"
+				"docs": "https://confluence.atlassian.com/display/BITBUCKET/Use+the+Bitbucket+REST+APIs"
 			}
 		},
         "sample": {

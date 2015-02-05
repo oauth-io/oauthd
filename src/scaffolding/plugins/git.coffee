@@ -3,6 +3,7 @@ fs = require 'fs'
 
 
 module.exports = (env, plugin_name, fetch, cwd) ->
+	createDefer = Q.defer()
 	exec = env.exec
 	cwd = cwd || process.cwd()
 	# try 
@@ -14,6 +15,9 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 
 	plugin_location = cwd + '/plugins/' + plugin_name
 	fetched = false
+	if not fs.existsSync plugin_location + '/.git'
+		createDefer.reject new Error('No .git file.')
+		
 	execGit = (commands, callback) ->
 		full_command = 'cd ' + plugin_location + ';'
 		if (fetch && not fetched)
@@ -23,7 +27,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			full_command += ' git ' + v + ';'
 		exec full_command , () ->
 			callback.apply null, arguments
-
+	
 	git =
 		getCurrentVersion: () ->
 			defer = Q.defer()
@@ -155,8 +159,8 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			if mask.match /^(\d+)\.(\d+|x)\.(\d+|x)$/
 				git.getAllVersions(mask)
 					.then (versions) ->
-						latest = versions[versions.length - 1]
-						defer.resolve(latest)
+						latest_version = versions[versions.length - 1]
+						defer.resolve latest_version
 			else
 				defer.resolve mask
 			defer.promise
@@ -209,4 +213,6 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 				stdout = stdout.replace /[\s]/, ''
 				defer.resolve(stdout == process.cwd() + '/plugins/' + plugin_name)
 			defer.promise
-	git
+	
+	createDefer.resolve(git)
+	createDefer.promise
