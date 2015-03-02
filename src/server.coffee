@@ -30,7 +30,9 @@ module.exports = (env) ->
 	server_options.formatters = env.utilities.formatters.formatters
 
 	env.server = server = restify.createServer server_options
+
 	env.pluginsEngine.runSync 'raw'
+
 
 	server.use restify.queryParser()
 	server.use restify.bodyParser mapParams:false

@@ -78,7 +78,7 @@ module.exports = (env) ->
 				followAllRedirects: true
 				url: @_buildServerRequestUrl(req.apiUrl, req, @_oauthConfiguration.request.url)
 				qs: @_buildServerRequestQuery(@_oauthConfiguration.request.query)
-				headers: @_buildServerRequestHeaders(req.headers, @_oauthConfiguration.request.headers)
+				headers: @_buildServerRequestHeaders(req.headers, @_oauthConfiguration.request.headers, @_oauthConfiguration.request.fixed_headers?[req.method])
 			}
 
 		_buildServerRequestUrl: (url, req, configurationUrl) ->
@@ -93,7 +93,7 @@ module.exports = (env) ->
 		_buildServerRequestQuery: (configurationQuery) ->
 			return @_buildQuery(configurationQuery, @_parameters.oauthio)
 
-		_buildServerRequestHeaders: (reqHeaders, configurationHeaders) ->
+		_buildServerRequestHeaders: (reqHeaders, configurationHeaders, fixed_headers) ->
 			ignoreheaders = [
 				'oauthio', 'host', 'connection',
 				'origin', 'referer'
@@ -108,6 +108,11 @@ module.exports = (env) ->
 			for parameterName, placeholder of configurationHeaders
 				param = @_replaceParam(placeholder, @_parameters.oauthio)
 				headers[parameterName] = param if param
+
+			if fixed_headers?
+				for name, value of fixed_headers
+					headers[name] = value
+
 			return headers
 
 		_getExpireParameter: (response) ->
