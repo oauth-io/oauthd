@@ -32,13 +32,6 @@
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
-			"access_type": {
-				"values": {
-					"online": "Will not provide a refresh_token",
-					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
-				},
-				"cardinality": "1"
-			},
 			"scope": {
 				"values": {
 					"https://www.googleapis.com/auth/userinfo.profile": "View basic information about your account",
@@ -56,6 +49,13 @@
 					"https://www.googleapis.com/auth/plus.stream.read": "View your Google+ posts, comments, and stream",
 					"https://www.googleapis.com/auth/plus.stream.write": "Manage your Google+ posts, comments, and stream"
 				}
+			},
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
 			}
 		}
 	},

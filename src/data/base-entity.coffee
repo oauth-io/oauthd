@@ -3,7 +3,6 @@ async = require 'async'
 
 
 module.exports = (env) ->
-
 	class Entity
 		@prefix: ''
 		@incr: ''
