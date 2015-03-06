@@ -326,7 +326,6 @@ module.exports = (env) ->
 			return callback new check.Error 'Unknown key' unless idapp
 			prefix = 'a:' + idapp
 			providers_key = prefix + ':providers'
-			console.log 'loading keysets', providers_key
 			env.data.redis.smembers providers_key, (err, providers) ->
 				console.log err if err
 				return callback err if err
@@ -335,7 +334,6 @@ module.exports = (env) ->
 				else
 					env.data.redis.get prefix + ':stored_keysets', (err, v) ->
 						if v != '1'
-							console.log 'LOADING KEYSETS TO :providers', prefix + ':k:*'
 							env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
 								env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
 									return callback err if err
@@ -345,11 +343,11 @@ module.exports = (env) ->
 										p = key.replace(prefix + ':k:', '')
 										providers.push p
 										commands.push ['sadd', providers_key, p]
-									console.log commands
 									env.data.redis.multi(commands).exec (err) ->
 										return callback err if err
-										console.log 'setting', prefix + ':stored_keysets'
 										callback null, providers
+						else
+							callback null, providers
 
 	# check a domain
 	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
