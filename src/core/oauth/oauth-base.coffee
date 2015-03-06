@@ -70,6 +70,7 @@ module.exports = (env) ->
 		_buildAuthorizeUrl: (url, query, stateId) ->
 			url = @_replaceParam(url, {})
 			url += "?" + querystring.stringify(query)
+
 			return { url: url, state: stateId }
 
 		_buildServerRequestOptions: (req) ->

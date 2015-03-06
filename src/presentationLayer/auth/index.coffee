@@ -71,7 +71,7 @@ module.exports = (env) ->
 		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, code: env.utilities.check.format.key, key: env.utilities.check.format.key, secret: env.utilities.check.format.key
-			
+
 			return next e if e.failed()
 			env.data.states.get req.body.code, (err, state) ->
 				return next err if err
@@ -134,7 +134,7 @@ module.exports = (env) ->
 			res.send view
 			next()
 
-		
+
 
 		# oauth: handle callbacks
 		env.server.get env.config.base + '/auth', (req, res, next) ->
@@ -175,16 +175,26 @@ module.exports = (env) ->
 								env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
 									return callback e if e
 
-									if response_type != 'token'
+
+									# If not client side mode, store the tokens
+									if state.options.client_type != 'client'
 										env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
-									if response_type != 'code'
-										delete r.refresh_token
+
+									# Always delete refresh token from front-end response
+									delete r.refresh_token
+
+									# If server_side only, remove everything and put the code
 									if response_type == 'code'
 										r = {}
-									if response_type != 'token'
+
+									# If a state was given by client, give him only the code
+									if state.options.client_type != 'client'
 										r.code = stateid
-									if response_type == 'token'
+
+									# Remove the state from db for client_side mode
+									if state.options.client_type == 'client'
 										env.data.states.del stateid, (->)
+
 									callback null, r, response_type
 
 		# oauth: popup or redirection to provider's authorization url
@@ -225,7 +235,9 @@ module.exports = (env) ->
 			}[req.params.oauthv]
 			provider_conf = undefined
 			async.waterfall [
+				# Checks domain against registered origins
 				(cb) -> env.data.apps.checkDomain key, ref, cb
+				# Send error if invalid domain
 				(valid, cb) ->
 					return cb new env.utilities.check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host if not valid
 					if req.params.redirect_uri
@@ -236,6 +248,7 @@ module.exports = (env) ->
 					return cb new env.utilities.check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + env.config.url.host if not valid
 
 					env.data.providers.getExtended req.params.provider, cb
+				# Check type of OAuth, retrieve keyset
 				(provider, cb) ->
 					if oauthv and not provider[oauthv]
 						return cb new env.utilities.check.Error "oauthv", "Unsupported oauth version: " + oauthv
@@ -243,10 +256,11 @@ module.exports = (env) ->
 					oauthv ?= 'oauth2' if provider.oauth2
 					oauthv ?= 'oauth1' if provider.oauth1
 					env.data.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
+				# Got keyset, error if inexistant,
 				(keyset, provider, cb) ->
 					return cb new env.utilities.check.Error 'This app is not configured for ' + provider.provider if not keyset
 					{parameters, response_type} = keyset
-					if response_type != 'token' and (not options.state or options.state_type)
+					if response_type == 'code' and (not options.state or options.state_type)
 						return cb new env.utilities.check.Error 'You must provide a state when server-side auth'
 					env.callhook 'connect.auth', req, res, (err) ->
 						return cb err if err
@@ -258,11 +272,11 @@ module.exports = (env) ->
 						oa = new env.utilities.oauth[oauthv](provider, parameters)
 						oa.authorize opts, cb
 				(authorize, cb) ->
-						return cb null, authorize.url if not req.oaio_uid
-						env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
-							return cb err if err
-							env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
-							cb null, authorize.url
+					return cb null, authorize.url if not req.oaio_uid
+					env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+						return cb err if err
+						env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
+						cb null, authorize.url
 			], (err, url) ->
 				return callback err if err
 				isJson = (value) ->
@@ -283,7 +297,7 @@ module.exports = (env) ->
 							url += k + '=' + v
 					if isJson(req.params.opts)
 						opts = JSON.parse(req.params.opts)
-						if opts.mobile is 'true' and provider_conf.mobile?.url? 
+						if opts.mobile is 'true' and provider_conf.mobile?.url?
 							url_split = url.split("/oauth/authorize")
 							if url_split.length is 2
 								url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]

@@ -30,6 +30,8 @@ module.exports = (env) ->
 			@_createState opts, (err, state) =>
 				return callback err if err
 				configuration = @_oauthConfiguration.authorize
+				if not configuration.url?
+					return callback new Error('The provider is not properly configured internally. Please contact the provider owner if available.')
 				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
 				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)

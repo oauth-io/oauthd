@@ -11,6 +11,7 @@
 			]
 		},
 		"request": {
+			"url": "https://api.instagram.com"
 			"query": {
 				"access_token": "{{token}}"
 			}

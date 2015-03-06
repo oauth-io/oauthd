@@ -38,7 +38,12 @@ module.exports = (env) ->
 				(cb) => env.data.apps.getBackend req.params.key, cb
 			], (e, r) =>
 				return next(e) if e
-				res.send name:r[0].name, key:r[0].key, secret:r[0].secret, owner:r[0].owner, date:r[0].date, domains:r[1], keysets:r[2], backend:r[3]
+				app = r[0]
+				delete app.id
+				app.domains = r[1]
+				app.keysets = r[2]
+				app.backend = r[3]
+				res.send app
 				next()
 
 		# update infos of an app
@@ -57,7 +62,7 @@ module.exports = (env) ->
 
 		# reset the public key of an app
 		env.server.post '/api/apps/:key/reset', env.middlewares.auth.needed, (req, res, next) =>
-			env.data.apps.resetKey req.params.key, env.send(res,next)	
+			env.data.apps.resetKey req.params.key, env.send(res,next)
 
 		# list valid domains for an app
 		env.server.get '/api/apps/:key/domains', env.middlewares.auth.needed, (req, res, next) =>
@@ -92,7 +97,7 @@ module.exports = (env) ->
 			env.data.apps.remKeyset req.params.key, req.params.provider, env.send(res,next)
 
 		# get providers list
-		env.server.get '/api/providers', env.bootPathCache(), (req, res, next) =>
+		env.server.get '/api/providers', (req, res, next) =>
 			env.data.providers.getList env.send(res,next)
 
 		# get the backend of an app
@@ -103,37 +108,39 @@ module.exports = (env) ->
 		env.server.post '/api/apps/:key/backend/:backend', env.middlewares.auth.needed, (req, res, next) =>
 			env.data.apps.setBackend req.params.key, req.params.backend, req.body, env.send(res,next)
 
-		# remove a backend from an app
+		# remove a backend from an app - server_side only
 		env.server.del '/api/apps/:key/backend', env.middlewares.auth.needed, (req, res, next) =>
 			env.data.apps.remBackend req.params.key, env.send(res,next)
 
 		# get a provider config
-		env.server.get '/api/providers/:provider', env.bootPathCache(), env.cors_middleware, (req, res, next) =>
+		env.server.get '/api/providers/:provider', env.cors_middleware, (req, res, next) =>
 			if req.query.extend
 				env.data.providers.getExtended req.params.provider, env.send(res,next)
 			else
 				env.data.providers.get req.params.provider, env.send(res,next)
 
 		# get a provider config's extras
-		env.server.get '/api/providers/:provider/settings', env.bootPathCache(), env.cors_middleware, (req, res, next) =>
+		env.server.get '/api/providers/:provider/settings', env.cors_middleware, (req, res, next) =>
 			env.data.providers.getSettings req.params.provider, env.send(res,next)
 
 		# get the provider me.json mapping configuration
-		env.server.get '/api/providers/:provider/user-mapping', env.bootPathCache(), env.cors_middleware, (req, res, next) =>
+		env.server.get '/api/providers/:provider/user-mapping', env.cors_middleware, (req, res, next) =>
 			env.data.providers.getMeMapping req.params.provider, env.send(res,next)
 
 		# get a provider logo
 		env.server.get '/api/providers/:provider/logo', env.bootPathCache(), ((req, res, next) =>
-				fs.exists Path.normalize(env.config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) =>
-					if not exists
-						req.params.provider = 'default'
-					req.url = '/' + req.params.provider + '/logo.png'
-					req._url = Url.parse req.url
-					req._path = req._url._path
-					next()
-			), restify.serveStatic
-				directory: env.config.rootdir + '/providers'
-				maxAge: env.config.cacheTime
+			if env.middlewares.providerLogo?
+				env.middlewares.providerLogo req, res, () ->
+					fs.exists Path.normalize(env.config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) =>
+						if not exists
+							req.params.provider = 'default'
+						req.url = '/' + req.params.provider + '/logo.png'
+						req._url = Url.parse req.url
+						req._path = req._url._path
+						next()
+					), restify.serveStatic
+						directory: env.config.rootdir + '/providers'
+						maxAge: env.config.cacheTime
 
 		# get a provider file
 		env.server.get '/api/providers/:provider/:file', env.bootPathCache(), ((req, res, next) =>
@@ -177,4 +184,4 @@ module.exports = (env) ->
 		env.server.get '/api/extended-endpoints', (req, res, next) ->
 			res.send env.pluginsEngine.getExtendedEndpoints()
 			next()
-		
+

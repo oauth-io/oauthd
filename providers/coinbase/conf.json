@@ -1,10 +1,37 @@
 {
 	"name": "Coinbase",
-    "desc": "",
+	"desc": "",
 	"url": "https://coinbase.com/api/v1/",
 	"oauth2": {
 		"authorize": "https://coinbase.com/oauth/authorize",
-		"access_token": "https://coinbase.com/oauth/token"
+		"access_token": "https://coinbase.com/oauth/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"merchant": "Create payment buttons and forms, view your basic user information, edit your merchant settings, and generate new receive addresses",
+					"balance": "View you balance",
+					"addresses": "View receive addresses and create new ones",
+					"buttons": "Create payment buttons",
+					"buy": "Buy bitcoin",
+					"contacts": "List emails and bitcoin addresses in your contact list",
+					"orders": "List merchant orders received",
+					"sell": "Sell bitcoin",
+					"send": "Debit money from your account",
+					"send:bypass_2fa": "Debit money without two factor authentication (OAuth2 only)",
+					"request": "Request money from your account",
+					"transfer": "Transfer money between accounts",
+					"transactions": "View your transaction history",
+					"transfers": "List bitcoin buy and sell history",
+					"user": "View your basic account information",
+					"recurring_payments": "List your recurring payments",
+					"oauth_apps": "View, create and modify OAuth applications",
+					"reports": "View and create reports"
+				},
+				"separator": " "
+			}
+		}
 	},
 	"href": {
 		"keys": "https://coinbase.com/oauth/applications/new",
