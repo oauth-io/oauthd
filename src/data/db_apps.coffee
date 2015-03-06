@@ -296,7 +296,9 @@ module.exports = (env) ->
 						return callback err if err
 						eventName = if isUpdate then 'app.updatekeyset' else 'app.addkeyset'
 						env.events.emit eventName, provider:provider, app:key, id:idapp
-						callback()
+						env.data.redis.sadd 'a:' + idapp + ':providers', provider, (err) ->
+							return callback err if err
+							callback()
 
 	# get keys infos of an app for a provider
 	App.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
@@ -313,17 +315,19 @@ module.exports = (env) ->
 						return callback err if err
 						return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
 						env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp, keyset: keyset
-						callback()
+						env.data.redis.srem 'a:' + idapp + ':providers', provider, (err) ->
+							return callback err if err
+							callback()
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			prefix = 'a:' + idapp + ':k:'
-			env.data.redis.keys prefix + '*', (err, replies) ->
+			prefix = 'a:' + idapp
+			env.data.redis.get prefix + 'providers', (err, providers) ->
 				return callback err if err
-				callback null, (reply.substr(prefix.length) for reply in replies)
+				callback null, providers
 
 	# check a domain
 	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
