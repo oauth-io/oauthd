@@ -296,7 +296,9 @@ module.exports = (env) ->
 						return callback err if err
 						eventName = if isUpdate then 'app.updatekeyset' else 'app.addkeyset'
 						env.events.emit eventName, provider:provider, app:key, id:idapp
-						callback()
+						env.data.redis.sadd 'a:' + idapp + ':providers', provider, (err) ->
+							return callback err if err
+							callback()
 
 	# get keys infos of an app for a provider
 	App.remKeyset = check check.format.key, 'string', (key, provider, callback) ->
@@ -313,17 +315,39 @@ module.exports = (env) ->
 						return callback err if err
 						return callback new check.Error 'provider', 'You have no keyset for ' + provider if not res
 						env.events.emit 'app.remkeyset', provider:provider, app:key, id:idapp, keyset: keyset
-						callback()
+						env.data.redis.srem 'a:' + idapp + ':providers', provider, (err) ->
+							return callback err if err
+							callback()
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			prefix = 'a:' + idapp + ':k:'
-			env.data.redis.keys prefix + '*', (err, replies) ->
+			prefix = 'a:' + idapp
+			providers_key = prefix + ':providers'
+			env.data.redis.smembers providers_key, (err, providers) ->
+				console.log err if err
 				return callback err if err
-				callback null, (reply.substr(prefix.length) for reply in replies)
+				if providers?.length > 0
+					callback null, providers
+				else
+					env.data.redis.get prefix + ':stored_keysets', (err, v) ->
+						if v != '1'
+							env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
+								env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
+									return callback err if err
+									commands = []
+									providers = []
+									for key in provider_keys
+										p = key.replace(prefix + ':k:', '')
+										providers.push p
+										commands.push ['sadd', providers_key, p]
+									env.data.redis.multi(commands).exec (err) ->
+										return callback err if err
+										callback null, providers
+						else
+							callback null, providers
 
 	# check a domain
 	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
