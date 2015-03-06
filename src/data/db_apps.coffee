@@ -336,19 +336,19 @@ module.exports = (env) ->
 					env.data.redis.get prefix + ':stored_keysets', (err, v) ->
 						if v != '1'
 							console.log 'LOADING KEYSETS TO :providers', prefix + ':k:*'
-							env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
-								return callback err if err
-								commands = []
-								providers = []
-								for key in provider_keys
-									p = key.replace(prefix + ':k:', '')
-									providers.push p
-									commands.push ['sadd', providers_key, p]
-								console.log commands
-								env.data.redis.multi(commands).exec (err) ->
+							env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
+								env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
 									return callback err if err
-									console.log 'setting', prefix + ':stored_keysets'
-									env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
+									commands = []
+									providers = []
+									for key in provider_keys
+										p = key.replace(prefix + ':k:', '')
+										providers.push p
+										commands.push ['sadd', providers_key, p]
+									console.log commands
+									env.data.redis.multi(commands).exec (err) ->
+										return callback err if err
+										console.log 'setting', prefix + ':stored_keysets'
 										callback null, providers
 
 	# check a domain
