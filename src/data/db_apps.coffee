@@ -347,6 +347,7 @@ module.exports = (env) ->
 								console.log commands
 								env.data.redis.multi(commands).exec (err) ->
 									return callback err if err
+									console.log 'setting', prefix + ':stored_keysets'
 									env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
 										callback null, providers
 
