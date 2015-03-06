@@ -40,7 +40,7 @@ module.exports = (env) ->
 		, (next) ->
 			if cursor == -1
 				cursor = 0
-			data.redis.send_command 'SCAN', [cursor, 'MATCH', pattern, 'COUNT', 1000], (err, response) ->
+			data.redis.send_command 'SCAN', [cursor, 'MATCH', pattern, 'COUNT', 100000], (err, response) ->
 				if err
 					return next(err)
 				cursor = response[0]

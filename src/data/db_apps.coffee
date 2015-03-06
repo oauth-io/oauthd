@@ -321,13 +321,32 @@ module.exports = (env) ->
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->
+		console.log 'HELO'
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
 			prefix = 'a:' + idapp
-			env.data.redis.get prefix + 'providers', (err, providers) ->
+			providers_key = prefix + ':providers'
+			console.log 'loading keysets', providers_key
+			env.data.redis.smembers providers_key, (err, providers) ->
+				console.log err if err
 				return callback err if err
-				callback null, providers
+				if providers?.length > 0
+					callback null, providers
+				else
+					console.log 'LOADING KEYSETS TO :providers', prefix + ':k:*'
+					env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
+						return callback err if err
+						commands = []
+						providers = []
+						for key in provider_keys
+							p = key.replace(prefix + ':k:', '')
+							providers.push p
+							commands.push ['sadd', providers_key, p]
+						console.log commands
+						env.data.redis.multi(commands).exec (err) ->
+							return callback err if err
+							callback null, providers
 
 	# check a domain
 	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
