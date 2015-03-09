@@ -66,29 +66,18 @@ module.exports = (env) ->
 
 	# get the app infos by its id
 	App.getByOwner = (owner_id, callback) ->
-		env.data.redis.keys 'a:*:key', (err, keys) ->
-			return callback err if err
+		env.data.redis.smembers 'u:' + owner_id + ':apps', (err, app_ids) ->
 			apps = []
-			return callback err if err
-			async.eachSeries keys, (item, next) ->
-				prefix = item.replace /key/, ''
-				env.data.redis.mget [prefix+'name', prefix+'key', prefix+'secret', prefix+'owner'], (err, replies) ->
+			async.eachSeries app_ids, (id, next) ->
+				env.data.App.getById id
+					.then (app) ->
+						apps.push app.props
+						next()
+					.fail (e) ->
+						next e
+				, (err) ->
 					return callback err if err
-					app = {
-						name:replies[0],
-						key:replies[1],
-						secret:replies[2],
-						owner: replies[3]
-					}
-					if typeof owner_id != 'string' && owner_id.toString?
-						owner_id = owner_id.toString()
-
-					if app.owner == owner_id
-						apps.push app
-					next()
-			, (err) ->
-				return callback err if err
-				callback(null, apps)
+					callback null, apps
 
 
 

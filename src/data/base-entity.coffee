@@ -80,7 +80,6 @@ module.exports = (env) ->
 		typedKeys: () ->
 			defer = Q.defer()
 			keys = {}
-			# env.data.redis.keys @prefix() + '*', (e, result) =>
 			@keys()
 				.then (result) =>
 					async.eachSeries result
