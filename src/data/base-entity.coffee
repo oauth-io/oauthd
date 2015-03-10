@@ -135,7 +135,6 @@ module.exports = (env) ->
 								obj_pt[array[0]] = v
 							else
 								object[keys_array[k]] = v
-						console.log object
 						defer.resolve(object)
 				.fail (e) ->
 					defer.reject e
