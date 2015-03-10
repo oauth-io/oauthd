@@ -120,7 +120,22 @@ module.exports = (env) ->
 						keys_array = Object.keys keys
 
 						for k, v of fields
-							object[keys_array[k]] = v
+							# split in sub keys
+							keyname = keys_array[k]
+							if ':' in keyname
+								array = keyname.split ':'
+								key_pt = array[0]
+								obj_pt = object[key_pt] ?= {}
+								while array.length > 2
+									array.shift()
+									key_pt = array[0]
+									obj_pt[key_pt] ?= {}
+									obj_pt = obj_pt[key_pt]
+								array.shift()
+								obj_pt[array[0]] = v
+							else
+								object[keys_array[k]] = v
+						console.log object
 						defer.resolve(object)
 				.fail (e) ->
 					defer.reject e

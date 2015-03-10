@@ -1,0 +1,55 @@
+{
+	"name": "Vimeo (OAuth2)",
+	"desc": "The only way to perform authenticated read/write requests on videos, users, groups, channels, albums, or upload. The API uses OAuth 2 for authentication and you’ll first need to register your app.",
+	"url": "https://api.vimeo.com",
+	"oauth2": {
+		"authorize": {
+			"url": "/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "/oauth/access_token",
+			"headers": {
+				"Authorization": "BASIC !BASE64{client_id}:{client_secret}!BASE64"
+			},
+			"extras": ["authorization_code", "{{code}}", "{{callback}}"],
+			"method": "post",
+			"format": "url"
+		},
+		"request": {
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"separator": " ",
+				"values": {
+					"public": "View public videos",
+					"private": "View private videos",
+					"purchased": "View Vimeo On Demand purchase history",
+					"create": "Create new videos, groups, albums, etc.",
+					"edit": "Edit videos, groups, albums, etc.",
+					"delete": "Delete videos, groups, albums, etc",
+					"interact": "Interact with a video on behalf of a user, such as liking a video or adding it to your watch later queue",
+					"upload": "Upload a video"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://developer.vimeo.com/apps/new",
+		"docs": "https://developer.vimeo.com/api/start",
+		"apps": "https://developer.vimeo.com/apps",
+		"provider": "https://vimeo.com/"
+	}
+}
