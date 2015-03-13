@@ -1,0 +1,36 @@
+{
+	"name": "Buffer",
+	"desc": "Social Media Management",
+	"url": "https://api.bufferapp.com/1/",
+	"oauth2": {
+		"authorize": {
+			"url": "https://bufferapp.com/oauth2/authorize",
+			"query": {
+			"client_id": "{client_id}",
+			"redirect_uri": "https://oauth.io/auth",
+			"response_type": "code"
+			}
+		},
+		"access_token": {
+			"url": "https://api.bufferapp.com/1/oauth2/token.json",
+			"query": {
+				"code": "{{code}}",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "https://oauth.io/auth"
+			}
+		},
+		"request": {
+			"query": {
+				"access_token": "{{token}}"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://bufferapp.com/developers/apps",
+		"docs": "https://bufferapp.com/developers/api",
+		"apps": "https://bufferapp.com/developers/apps",
+		"provider": "https://bufferapp.com/"
+	}
+}
