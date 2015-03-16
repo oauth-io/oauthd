@@ -183,6 +183,7 @@ module.exports = (env) ->
 			delete req.stateid
 			delete req.state
 			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
+			return callback req.error if req.error
 			return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
 			async.parallel [
 					(cb) -> env.data.providers.getExtended state.provider, cb
