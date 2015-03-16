@@ -7,8 +7,28 @@ module.exports = (env) ->
 	init: () ->
 		return
 	registerWs: () ->
+		if not env.middlewares.connectauth
+			env.middlewares.connectauth = {}
+		if not env.middlewares.connectauth.all
+			env.middlewares.connectauth.all = []
+		# Chain of middlewares that are applied to each Auth endpoints
+		createMiddlewareChain = () ->
+			(req, res, next) ->
+				chain = []
+				i = 0
+				for k, middleware of env.middlewares.connectauth.all
+					do (middleware) ->
+						chain.push (callback) ->
+							middleware req, res, callback
+				if chain.length == 0
+					return next()
+				async.waterfall chain, () ->
+					next()
+
+		middlewares_connectauth_chain = createMiddlewareChain()
+
 		# oauth: refresh token
-		env.server.post env.config.base + '/auth/refresh_token/:provider', (req, res, next) ->
+		env.server.post env.config.base + '/auth/refresh_token/:provider', middlewares_connectauth_chain, (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, key: env.utilities.check.format.key, secret: env.utilities.check.format.key, token:'string'
 			e.check req.params, provider:'string'
@@ -28,7 +48,7 @@ module.exports = (env) ->
 						oa.refresh req.body.token, keyset, env.send(res,next)
 
 		# iframe injection for IE
-		env.server.get env.config.base + '/auth/iframe', (req, res, next) ->
+		env.server.get env.config.base + '/auth/iframe', middlewares_connectauth_chain, (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 			e = new env.utilities.check.Error
@@ -68,7 +88,7 @@ module.exports = (env) ->
 			next()
 
 		# oauth: get access token from server
-		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
+		env.server.post env.config.base + '/auth/access_token', middlewares_connectauth_chain, (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, code: env.utilities.check.format.key, key: env.utilities.check.format.key, secret: env.utilities.check.format.key
 
@@ -135,9 +155,7 @@ module.exports = (env) ->
 			next()
 
 
-
-		# oauth: handle callbacks
-		env.server.get env.config.base + '/auth', (req, res, next) ->
+		auth_middleware = (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			getState = (callback) ->
 				return callback null, req.params.state if req.params.state
@@ -154,48 +172,58 @@ module.exports = (env) ->
 				env.data.states.get stateid, (err, state) ->
 					return next err if err
 					return next new env.utilities.check.Error 'state', 'invalid or expired' if not state
-					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
-					return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-					async.parallel [
-							(cb) -> env.data.providers.getExtended state.provider, cb
-							(cb) -> env.data.apps.getKeyset state.key, state.provider, cb
-					], (err, r) =>
+					req.stateid = stateid
+					req.state = state
+					next()
+
+		# oauth: handle callbacks
+		env.server.get env.config.base + '/auth', auth_middleware, middlewares_connectauth_chain, (req, res, next) ->
+			stateid = req.stateid
+			state = req.state
+			delete req.stateid
+			delete req.state
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
+			return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+			async.parallel [
+					(cb) -> env.data.providers.getExtended state.provider, cb
+					(cb) -> env.data.apps.getKeyset state.key, state.provider, cb
+			], (err, r) =>
+				return callback err if err
+				provider = r[0]
+				parameters = r[1].parameters
+				response_type = r[1].response_type
+				oa = new env.utilities.oauth[state.oauthv](provider, parameters)
+				oa.access_token state, req, (e, r) ->
+					status = if e then 'error' else 'success'
+					env.callhook 'connect.auth', req, res, (err) ->
 						return callback err if err
-						provider = r[0]
-						parameters = r[1].parameters
-						response_type = r[1].response_type
-						oa = new env.utilities.oauth[state.oauthv](provider, parameters)
-						oa.access_token state, req, (e, r) ->
-							status = if e then 'error' else 'success'
-							env.callhook 'connect.auth', req, res, (err) ->
-								return callback err if err
-								env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
-								return callback e if e
+						env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+						return callback e if e
 
-								env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
-									return callback e if e
+						env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
+							return callback e if e
 
 
-									# If not client side mode, store the tokens
-									if state.options.client_type != 'client'
-										env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
+							# If not client side mode, store the tokens
+							if state.options.client_type != 'client'
+								env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
 
-									# Always delete refresh token from front-end response
-									delete r.refresh_token
+							# Always delete refresh token from front-end response
+							delete r.refresh_token
 
-									# If server_side only, remove everything and put the code
-									if response_type == 'code'
-										r = {}
+							# If server_side only, remove everything and put the code
+							if response_type == 'code'
+								r = {}
 
-									# If a state was given by client, give him only the code
-									if state.options.client_type != 'client'
-										r.code = stateid
+							# If a state was given by client, give him only the code
+							if state.options.client_type != 'client'
+								r.code = stateid
 
-									# Remove the state from db for client_side mode
-									if state.options.client_type == 'client'
-										env.data.states.del stateid, (->)
+							# Remove the state from db for client_side mode
+							if state.options.client_type == 'client'
+								env.data.states.del stateid, (->)
 
-									callback null, r, response_type
+							callback null, r, response_type
 
 		# oauth: popup or redirection to provider's authorization url
 		env.server.get env.config.base + '/auth/:provider', (req, res, next) ->
