@@ -105,7 +105,7 @@ module.exports = (env) ->
 					catch e
 						backend.value = {}
 				server_side_only = backend?.name? && not backend?.value?.client_side
-				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4], server_side_only: server_side_only
+				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4], server_side_only: server_side_only, backend: backend
 
 	# update app infos
 	App.update = check check.format.key, name:['none',/^.{3,50}$/], domains:['none','array'], (key, data, callback) ->
@@ -249,13 +249,10 @@ module.exports = (env) ->
 							res[0] = JSON.parse(res[0])
 						catch e
 							return callback err if err
-					if (backend?.name? and backend.name != 'firebase')
-						if (backend.value.client_side)
-							response_type = 'both'
-						else
-							response_type = 'code'
-					else
+					if not backend?.value? || backend?.value?.client_side
 						response_type = 'both'
+					else
+						response_type = 'code'
 					callback null, parameters:(res[0] || {}), response_type:response_type
 
 	App.getKeysetWithResponseType = check check.format.key, 'string', (key, provider, callback) ->
