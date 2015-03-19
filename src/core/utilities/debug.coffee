@@ -1,5 +1,6 @@
 
 module.exports = (env) ->
-    debug = () ->
-    	console.log.apply this, arguments
-    return debug
+	debug = () ->
+		if env.config?.debug
+			console.log.apply this, arguments
+	return debug

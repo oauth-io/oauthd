@@ -27,7 +27,7 @@ module.exports = (env) ->
 
 	config = env.config
 	exit = env.utilities.exit
-	data.redis = redis.createClient config.redis.port, config.redis.host, config.redis.options
+	data.redis = redis.createClient config.redis.port || 6379, config.redis.host || '127.0.0.1', config.redis.options || {}
 	data.redis.auth(config.redis.password) if config.redis.password
 	data.redis.select(config.redis.database) if config.redis.database
 
