@@ -204,9 +204,8 @@ module.exports = (env) ->
 						env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
 							return callback e if e
 
-
 							# If not client side mode, store the tokens
-							if state.options.client_type != 'client'
+							if state.options.state_type != 'client'
 								env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
 
 							# Always delete refresh token from front-end response
@@ -217,11 +216,11 @@ module.exports = (env) ->
 								r = {}
 
 							# If a state was given by client, give him only the code
-							if state.options.client_type != 'client'
+							if state.options.state_type != 'client'
 								r.code = stateid
 
 							# Remove the state from db for client_side mode
-							if state.options.client_type == 'client'
+							if state.options.state_type == 'client'
 								env.data.states.del stateid, (->)
 
 							callback null, r, response_type
@@ -296,6 +295,7 @@ module.exports = (env) ->
 						env.events.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
 						options.response_type = response_type
 						options.parameters = parameters
+						options.state_type = 'client' if req.params.mobile
 						opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 						opts.redirect_type = req.params.redirect_type if req.params.redirect_type
 						oa = new env.utilities.oauth[oauthv](provider, parameters)
