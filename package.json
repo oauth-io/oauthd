@@ -1,7 +1,7 @@
 {
   "name": "oauthd",
   "description": "OAuth that just works.",
-  "version": "1.0.0-beta.6",
+  "version": "1.0.0-beta.7",
   "homepage": "http://oauth-io.github.io/oauthd",
   "author": "OAuth team <team@oauth.io>",
   "repository": {
