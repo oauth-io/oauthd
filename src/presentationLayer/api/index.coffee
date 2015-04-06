@@ -97,8 +97,8 @@ module.exports = (env) ->
 			env.data.apps.remKeyset req.params.key, req.params.provider, env.send(res,next)
 
 		# get providers list
-		env.server.get '/api/providers', (req, res, next) =>
-			env.data.providers.getList env.send(res,next)
+		env.server.get '/api/providers', env.middlewares.auth.optional, (req, res, next) =>
+			env.data.providers.getList env.send(res,next), req.user
 
 		# get the backend of an app
 		env.server.get '/api/apps/:key/backend', env.middlewares.auth.needed, (req, res, next) =>
