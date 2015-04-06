@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://api.slack.com/applications/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://api.slack.com/applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://slack.com/",
+				"docs": "https://api.slack.com/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/api/auth.test"
+        }
+	}
+}

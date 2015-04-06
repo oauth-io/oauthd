@@ -1,0 +1,33 @@
+{
+	"name": "Slack HQ",
+    "desc": "The Slack APIs allow you to integrate complex services with Slack to go beyond the integrations we provide out of the box.",
+	"url": "https://slack.com",
+	"oauth2": {
+		"authorize": "/oauth/authorize",
+		"access_token": "/api/oauth.access",
+		"request": {
+			"url": "https://slack.com",
+			"cors": true
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"identify": "Allows applications to confirm your identity.",
+					"read": "Allows applications to read any messages and state that the user can see.",
+					"post": "Allows applications to write messages and create content on behalf of the user.",
+					"client": "Allows applications to connect to slack as a client, and post messages on behalf of the user.",
+					"admin": "Allows applications to perform administrative actions, requires the authed user is an admin."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://github.com/settings/applications/new",
+		"docs": "http://developer.github.com/v3/",
+		"apps": "https://github.com/settings/applications",
+		"provider": "https://github.com/"
+	}
+}
