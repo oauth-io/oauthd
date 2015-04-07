@@ -1,12 +1,14 @@
 {
 	"name": "Slack HQ",
-    "desc": "The Slack APIs allow you to integrate complex services with Slack to go beyond the integrations we provide out of the box.",
+	"desc": "The Slack APIs allow you to integrate complex services with Slack to go beyond the integrations we provide out of the box.",
 	"url": "https://slack.com",
 	"oauth2": {
 		"authorize": "/oauth/authorize",
 		"access_token": "/api/oauth.access",
 		"request": {
-			"url": "https://slack.com",
+			"query": {
+				"token": "{{token}}"
+			},
 			"cors": true
 		},
 		"refresh": "/token",
