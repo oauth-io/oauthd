@@ -1,0 +1,35 @@
+{
+  "name": "Flowdock",
+  "desc": "Flowdock is a team collaboration app for desktop, mobile & web.",
+  "url": "https://www.flowdock.com/oauth",
+  "oauth2": {
+    "authorize": "/authorize",
+    "access_token": "/token",
+    "request": {
+      "url": "https://api.flowdock.com",
+      "cors": true
+    },
+    "refresh": "/token",
+    "parameters": {
+      "client_id": "string",
+      "client_secret": "string",
+      "scope": {
+        "values": {
+          "flow": "Access, post messages to and list users in your flows",
+          "private": "Access and post messages to your 1-to-1 discussions, list visible users",
+          "manage": "Manage flows and organizations, list their users",
+          "push": "Post messages to flows",
+          "profile": "View basic information about your account",
+          "integration": "Set up team inbox integrations",
+          "audit": "Access organization audit information"
+        }
+      }
+    }
+  },
+  "href": {
+    "keys": "https://www.flowdock.com/oauth/applications/new",
+    "docs": "http://www.flowdock.com/api/",
+    "apps": "https://www.flowdock.com/oauth/applications",
+    "provider": "https://www.flowdock.com/"
+  }
+}
