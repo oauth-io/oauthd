@@ -15,13 +15,12 @@
       "client_secret": "string",
       "scope": {
         "values": {
-          "flow": "Access, post messages to and list users in your flows",
-          "private": "Access and post messages to your 1-to-1 discussions, list visible users",
-          "manage": "Manage flows and organizations, list their users",
-          "push": "Post messages to flows",
-          "profile": "View basic information about your account",
-          "integration": "Set up team inbox integrations",
-          "audit": "Access organization audit information"
+          "flow": "Read and send messages to flows.",
+          "private": "Read and send private messages.",
+          "manage": "Manage flows, organizations and their users.",
+          "profile": "Access the user’s profile.",
+          "offline_access": "Access the API when the user is not present.",
+          "integration": "Set up team inbox integrations"
         }
       }
     }

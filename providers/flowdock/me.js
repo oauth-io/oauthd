@@ -1,6 +1,6 @@
 var me = {
 
-    url: '/user/me',
+    url: '/user',
     params: {},
     fields: {
         id: function(me) {
