@@ -148,10 +148,10 @@ module.exports = (env) ->
 				headers[name] = param if param
 			return headers
 
-		_buildRequestOptions: (configuration, headers, query) ->
+		_buildRequestOptions: (configuration, headers, query, placeholderValues) ->
 			method = configuration.method?.toUpperCase() || 'POST'
 			options = {
-				url: @_replaceParam(configuration.url, {})
+				url: @_replaceParam(configuration.url, placeholderValues)
 				method: method
 				encoding: null
 				form: query if method != 'GET'

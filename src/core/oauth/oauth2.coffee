@@ -51,9 +51,10 @@ module.exports = (env) ->
 
 			configuration = @_oauthConfiguration.access_token
 			placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
+			@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 			query = @_buildQuery(configuration.query, placeholderValues)
 			headers = @_buildHeaders(configuration)
-			options = @_buildRequestOptions(configuration, headers, query)
+			options = @_buildRequestOptions(configuration, headers, query, placeholderValues)
 			options.followAllRedirects = true
 
 			# do request to access_token

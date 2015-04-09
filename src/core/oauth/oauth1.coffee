@@ -90,7 +90,7 @@ module.exports = (env) ->
 			@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 			query = @_buildQuery(configuration.query, placeholderValues)
 			headers = @_buildHeaders(configuration)
-			options = @_buildRequestOptions(configuration, headers, query)
+			options = @_buildRequestOptions(configuration, headers, query, placeholderValues)
 			options.oauth = {
 				callback: query.oauth_callback
 				consumer_key: @_parameters.client_id
