@@ -15,14 +15,18 @@
 			"format": "url"
 		},
 		"access_token": {
-			"url": "/oauth/access_token",
-			"headers": {
-				"Authorization": "BASIC !BASE64{client_id}:{client_secret}!BASE64"
-			},
-			"extras": ["authorization_code", "{{code}}", "{{callback}}"],
-			"method": "post",
-			"format": "url"
-		},
+            "url": "/oauth/access_token",
+            "headers": {
+                "Authorization": "BASIC !BASE64{client_id}:{client_secret}!BASE64"
+            },
+            "method": "post",
+            "format": "json",
+            "query": {
+                "grant_type": "authorization_code",
+                "code": "{{code}}",
+                "redirect_uri": "{{callback}}",
+            }
+        },
 		"request": {
 			"headers": {
 				"Authorization": "Bearer {{token}}"
@@ -47,8 +51,7 @@
 		}
 	},
 	"href": {
-		"keys": "https://developer.vimeo.com/apps/new",
-		"docs": "https://developer.vimeo.com/api/start",
+		"docs": "https://developer.vimeo.com/api",
 		"apps": "https://developer.vimeo.com/apps",
 		"provider": "https://vimeo.com/"
 	}
