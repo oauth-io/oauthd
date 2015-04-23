@@ -1,10 +1,10 @@
 {
-	"name": "Facebook v1.0",
+	"name": "Facebook",
     "desc": "At Facebook's core is the social graph; people and the connections they have to everything they care about. The Graph API presents a simple, consistent view of the Facebook social graph, uniformly representing objects in the graph (e.g., people, photos, events, and pages) and the connections between them (e.g., friend relationships, shared content, and photo tags). Public information can be accessed without a developer key/application key, but is required for private data access.",
 	"url": "https://graph.facebook.com",
 	"oauth2": {
-		"authorize": "https://www.facebook.com/dialog/oauth",
-		"access_token": "/oauth/access_token",
+		"authorize": "https://www.facebook.com/v2.1/dialog/oauth",
+		"access_token": "/v2.1/oauth/access_token",
 		"request": {
 			"cors": true,
 			"query": {
@@ -12,7 +12,7 @@
 			}
 		},
 		"refresh": {
-			"url": "/oauth/access_token",
+			"url": "/v2.1/oauth/access_token",
 			"query": {
 				"grant_type": "fb_exchange_token",
 				"client_id": "{client_id}",
@@ -21,7 +21,7 @@
 			}
 		},
 		"revoke": {
-			"url": "/me/permissions",
+			"url": "/v2.1/me/permissions",
 			"method": "delete",
 			"query": {
 				"access_token": "{{token}}"
