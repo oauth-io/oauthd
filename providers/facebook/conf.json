@@ -3,8 +3,8 @@
     "desc": "At Facebook's core is the social graph; people and the connections they have to everything they care about. The Graph API presents a simple, consistent view of the Facebook social graph, uniformly representing objects in the graph (e.g., people, photos, events, and pages) and the connections between them (e.g., friend relationships, shared content, and photo tags). Public information can be accessed without a developer key/application key, but is required for private data access.",
 	"url": "https://graph.facebook.com",
 	"oauth2": {
-		"authorize": "https://www.facebook.com/dialog/oauth",
-		"access_token": "/oauth/access_token",
+		"authorize": "https://www.facebook.com/{api_version}dialog/oauth",
+		"access_token": "/{api_version}oauth/access_token",
 		"request": {
 			"cors": true,
 			"query": {
@@ -12,7 +12,7 @@
 			}
 		},
 		"refresh": {
-			"url": "/oauth/access_token",
+			"url": "/{api_version}oauth/access_token",
 			"query": {
 				"grant_type": "fb_exchange_token",
 				"client_id": "{client_id}",
@@ -21,7 +21,7 @@
 			}
 		},
 		"revoke": {
-			"url": "/me/permissions",
+			"url": "/{api_version}me/permissions",
 			"method": "delete",
 			"query": {
 				"access_token": "{{token}}"
@@ -105,6 +105,16 @@
 					"user_friends": "This permission grants the app permission to read a list of this person's friends who also use your app. If any of this person's friends have chosen not to share their list of friends with your app, they will not show up in the list of friends for this person. Both people must have enable the user_friends permission enabled for a friend to show up in either friend list."
 				},
 				"separator": ","
+			},
+			"api_version": {
+				"values": {
+					"": "API version 1.0 (outdated)",
+					"v2.0/": "API version 2.0",
+					"v2.1/": "API version 2.1",
+					"v2.2/": "API version 2.2",
+					"v2.3/": "API version 2.3"
+				},
+				"cardinality": "1"
 			}
 		}
 	},
