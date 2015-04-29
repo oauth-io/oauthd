@@ -67,17 +67,18 @@ module.exports = (env) ->
 	# get the app infos by its id
 	App.getByOwner = (owner_id, callback) ->
 		env.data.redis.smembers 'u:' + owner_id + ':apps', (err, app_ids) ->
+			return callback err if err
 			apps = []
-			async.eachSeries app_ids, (id, next) ->
-				env.data.App.getById id
+			async.eachSeries app_ids, (id, cb) ->
+				env.data.App.findById id
 					.then (app) ->
 						apps.push app.props
-						next()
+						cb()
 					.fail (e) ->
-						next e
-				, (err) ->
-					return callback err if err
-					callback null, apps
+						cb e
+			, (err) ->
+				return callback err if err
+				callback null, apps
 
 
 
@@ -104,7 +105,7 @@ module.exports = (env) ->
 						backend.value = JSON.parse(replies[6])
 					catch e
 						backend.value = {}
-				server_side_only = backend?.name? && not backend?.value?.client_side
+				server_side_only = backend?.name? and not backend.value?.client_side
 				callback null, id:idapp, name:replies[0], key:replies[1], secret:replies[2], date:replies[3], owner: replies[4], server_side_only: server_side_only, backend: backend
 
 	# update app infos
@@ -313,7 +314,6 @@ module.exports = (env) ->
 			prefix = 'a:' + idapp
 			providers_key = prefix + ':providers'
 			env.data.redis.smembers providers_key, (err, providers) ->
-				console.log err if err
 				return callback err if err
 				if providers?.length > 0
 					callback null, providers
