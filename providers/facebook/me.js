@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/me';
+            return '/v2.3/me';
         }
 
     ],
@@ -10,7 +10,7 @@ var me = {
     fields: {
         id: '=',
         avatar: function (me) {
-            return 'https://graph.facebook.com/' + me.id + '/picture';
+            return 'https://graph.facebook.com/v2.3/' + me.id + '/picture';
         },
         name: '=',
         firstname: 'first_name',
