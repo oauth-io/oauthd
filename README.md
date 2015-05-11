@@ -5,6 +5,8 @@
 
 ## What is it?
 
+[![Join the chat at https://gitter.im/oauth-io/oauthd](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/oauth-io/oauthd?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 It is a solution based on node.js that enables you to set 
 up and run your own stand-alone, completly free, web Background API Server. 
 
