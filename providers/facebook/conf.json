@@ -102,7 +102,16 @@
 					"user_notes": "Provides access to the user's notes as the notes connection",
 					"ads_management": "Provides the ability to manage ads and call the Facebook Ads API on behalf of a user.",
 					"user_questions": "Provides access to the questions the user or friend has asked",
-					"user_friends": "This permission grants the app permission to read a list of this person's friends who also use your app. If any of this person's friends have chosen not to share their list of friends with your app, they will not show up in the list of friends for this person. Both people must have enable the user_friends permission enabled for a friend to show up in either friend list."
+					"user_friends": "This permission grants the app permission to read a list of this person's friends who also use your app. If any of this person's friends have chosen not to share their list of friends with your app, they will not show up in the list of friends for this person. Both people must have enable the user_friends permission enabled for a friend to show up in either friend list.",
+					"user_actions.books": "Provides access to all common books actions published by any app the person has used. This includes books they've read, want to read, rated or quoted.",
+					"user_actions.fitness": "Provides access to all common Open Graph fitness actions published by any app the person has used. This includes runs, walks and bikes actions.",
+					"user_managed_groups": "Enables your app to read the Groups a person is an admin of through the groups edge on the User object. This permission does not allow you to create groups on behalf of a person. It is not possible to create groups via the Graph API. This does not let you read the groups a user is just a member of.",
+					"user_posts": "Provides access to the posts on a person's Timeline. Includes their own posts, posts they are tagged in, and posts other people make on their Timeline.",
+					"user_relationships_details": "Provides access to a person's relationship interests as the interested_in field on the User object.",
+					"user_tagged_places": "Provides access to the Places a person has been tagged at in photos, videos, statuses and links.",
+					"read_custom_friendlists": "Provides access to the names of custom lists a person has created to organize their friends. This is useful for rendering an audience selector when someone is publishing stories to Facebook from your app.",
+					"read_page_mailboxes": "Provides the ability to read from the Page Inboxes of the Pages managed by a person. This permission is often used alongside the manage_pages permission. This permission does not let your app read the page owner's mailbox. It only applies to the page's mailbox.",
+					"publish_pages": "When you also have the manage_pages permission, gives your app the ability to post, comment and like as any of the Pages managed by a person using your app. Apps need both manage_pages and publish_pages to be able to publish as a Page. Publishing as an individual personal account is not possible with this permission. To post as an individual, please see the publish_actions permission."
 				},
 				"separator": ","
 			},
