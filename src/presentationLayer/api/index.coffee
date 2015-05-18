@@ -129,20 +129,21 @@ module.exports = (env) ->
 
 		# get a provider logo
 		env.server.get '/api/providers/:provider/logo', env.bootPathCache(), ((req, res, next) =>
-			if not env.middlewares.providerLogo
-				env.middlewares.providerLogo = (req, res, next) ->
-					next()
-			env.middlewares.providerLogo req, res, () ->
-				fs.exists Path.normalize(env.config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) =>
-					if not exists
-						req.params.provider = 'default'
-					req.url = '/' + req.params.provider + '/logo.png'
-					req._url = Url.parse req.url
-					req._path = req._url._path
-					next()
-				), restify.serveStatic
-					directory: env.config.rootdir + '/providers'
-					maxAge: env.config.cacheTime
+			env.middlewares.providerLogo ?= (req, res, next) -> next()
+			fs.exists Path.normalize(env.config.rootdir + '/providers/' + req.params.provider), (exists) =>
+				if not exists
+					env.middlewares.providerLogo req, res, next
+				else
+					fs.exists Path.normalize(env.config.rootdir + '/providers/' + req.params.provider + '/logo.png'), (exists) =>
+						if not exists
+							req.params.provider = 'default'
+						req.url = '/' + req.params.provider + '/logo.png'
+						req._url = Url.parse req.url
+						req._path = req._url._path
+						next()
+					), restify.serveStatic
+						directory: env.config.rootdir + '/providers'
+						maxAge: env.config.cacheTime
 			
 		# get a provider file
 		env.server.get '/api/providers/:provider/:file', env.bootPathCache(), ((req, res, next) =>
