@@ -1,0 +1,30 @@
+{
+	"name": "DigitalOcean",
+    "desc": "Deploy a cloud server or two, on us.",
+	"url": "https://cloud.digitalocean.com/v1/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"request": {
+			"url": "https://api.digitalocean.com",
+			"cors": true
+		},
+		"refresh": "/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"read": "Grants read-only access to user account. This allows actions that can be requested using the GET and HEAD methods.",
+					"read write": "Grants read/write access to user account, i.e. full access. This allows actions that can be requested using the DELETE, PUT, and POST methods, in addition to the actions allowed by the read scope."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://cloud.digitalocean.com/settings/applications/new",
+		"docs": "https://developers.digitalocean.com/documentation/v2/",
+		"apps": "https://cloud.digitalocean.com/settings/applications",
+		"provider": "https://digitalocean.com/"
+	}
+}

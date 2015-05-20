@@ -1,0 +1,28 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://cloud.digitalocean.com/settings/applications/new",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://cloud.digitalocean.com/settings/applications",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://digitalocean.com/",
+                "docs": "https://developers.digitalocean.com/documentation/v2/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v2/account"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/v2/account"
+            }
+        }
+    }
+}
