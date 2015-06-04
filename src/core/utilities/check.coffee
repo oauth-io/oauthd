@@ -152,7 +152,7 @@ module.exports = (env) ->
 	check.nullv = {} # this means a null
 
 	check.format =
-		mail: /^[a-zA-Z0-9._%\-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+		mail: /^[a-zA-Z0-9._%\-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/
 		provider: /^[a-zA-Z0-9._\-]{2,}$/
 		key: /^[a-zA-Z0-9\-_]{23,27}$/
 
