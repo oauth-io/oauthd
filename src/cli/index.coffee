@@ -17,7 +17,7 @@ endOfInit = (name, showGrunt) ->
 	command = 'cd '+ name + ' && npm install'
 	if showGrunt
 		info += ' and grunt.'
-		command += ' && grunt'
+		command += ' && $(npm bin)/grunt'
 	else
 		info += '.'
 	console.log info.green + ' Please wait, this might take up to a few minutes.'.yellow
