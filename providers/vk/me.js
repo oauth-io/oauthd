@@ -16,6 +16,9 @@ var me = {
         },
         lastname: function(me) {
             return me.response && me.response[0] ? me.response[0].last_name : undefined;
+        },
+        id: function(me) {
+            return me.response && me.response[0] ? me.response[0].uid : undefined;
         }
     }
 };
