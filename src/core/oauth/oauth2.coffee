@@ -33,6 +33,8 @@ module.exports = (env) ->
 				if not configuration.url?
 					return callback new Error('The provider is not properly configured internally. Please contact the provider owner if available.')
 				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+				if opts.options?.scope
+					@_parameters['scope'] = opts.options.scope
 				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
