@@ -17,6 +17,9 @@ var me = {
         },
         avatar: function(me) {
             return me.data.profile_picture || undefined;
+        },
+        url: function(me) {
+            return 'https://instagram.com/' + me.data.username;
         }
     }
 };

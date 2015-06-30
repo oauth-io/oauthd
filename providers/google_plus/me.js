@@ -34,7 +34,8 @@ var me = {
         location: function(me) {
             return me.placesLived && me.placesLived[0] ? me.placesLived[0].value : undefined;
         },
-        locale: 'language'
+        locale: 'language',
+        url: '='
     }
 };
 module.exports = me;

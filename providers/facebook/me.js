@@ -46,6 +46,10 @@ var me = {
             }
             return undefined;
 
+        },
+        url: function(me) {
+            // app scoped id, username is deprecated (https://developers.facebook.com/docs/apps/upgrading#upgrading_v2_0_graph_api)
+            return 'https://www.facebook.com/' + me.id;
         }
     }
 };
