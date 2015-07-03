@@ -213,11 +213,14 @@ module.exports = (env) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			env.data.redis.mget 'a:' + idapp + ':backend:name', 'a:' + idapp + ':backend:value', (err, res) ->
-				return callback err if err
-				return callback null, null if not res[0] or not res[1]
-				res[1] = JSON.parse(res[1]) if typeof res[1] == 'string'
-				return callback null, name:res[0], value:res[1]
+			App.getBackendById idapp, callback
+
+	App.getBackendById = (idapp, callback) ->
+		env.data.redis.mget 'a:' + idapp + ':backend:name', 'a:' + idapp + ':backend:value', (err, res) ->
+			return callback err if err
+			return callback null, null if not res[0] or not res[1]
+			res[1] = JSON.parse(res[1]) if typeof res[1] == 'string'
+			return callback null, name:res[0], value:res[1]
 
 	# set (or update) the backend of an app
 	App.setBackend = check check.format.key, 'string', 'object', (key, name, backend, callback) ->
@@ -242,19 +245,44 @@ module.exports = (env) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
 			return callback new check.Error 'Unknown key' unless idapp
-			App.getBackend key, (err, backend) ->
-				env.data.redis.mget 'a:' + idapp + ':k:' + provider, (err, res) ->
-					return callback err if err
-					if res[0]
-						try
-							res[0] = JSON.parse(res[0])
-						catch e
-							return callback err if err
-					if not backend?.value? || backend?.value?.client_side
-						response_type = 'both'
-					else
-						response_type = 'code'
-					callback null, parameters:(res[0] || {}), response_type:response_type
+			App.getOptionsById idapp, (err, options) ->
+				return callback err if err
+				App.getBackendById idapp, (err, backend) ->
+					env.data.redis.mget 'a:' + idapp + ':k:' + provider, (err, res) ->
+						return callback err if err
+						if res[0]
+							try
+								res[0] = JSON.parse(res[0])
+							catch e
+								return callback err if err
+						if not backend?.value? || backend?.value?.client_side
+							response_type = 'both'
+						else
+							response_type = 'code'
+						callback null, parameters:(res[0] || {}), response_type:response_type, options:options
+
+	App.setOptions = check check.format.key, 'object', (key, options, callback) ->
+		env.data.redis.hget 'a:keys', key, (err, idapp) ->
+			return callback err if err
+			return callback new check.Error 'Unknown key' unless idapp
+			env.data.redis.hmset 'a:' + idapp + ':opts', options, (err, res) ->
+				return callback err if err
+				callback null, 'options updated'
+
+	App.getOptions = check check.format.key, (key, callback) ->
+		env.data.redis.hget 'a:keys', key, (err, idapp) ->
+			return callback err if err
+			return callback new check.Error 'Unknown key' unless idapp
+			App.getOptionsById idapp, callback
+
+	App.getOptionsById = (idapp, callback) ->
+		env.data.redis.hgetall 'a:' + idapp + ':opts', (err, options) ->
+			return callback err if err
+			if options
+				for k, v of options
+					options[k] = true if v == "true"
+					options[k] = false if v == "false"
+			callback null, options || {}
 
 	App.getKeysetWithResponseType = check check.format.key, 'string', (key, provider, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->

@@ -100,7 +100,8 @@ module.exports = (env) ->
 						access_token: response.body.access_token
 						token_type: response.body.token_type
 						expires_in: expire
-					result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
+					if response.body.refresh_token && (@_appOptions.refresh_client || keyset.response_type == "code")
+						result.refresh_token = response.body.refresh_token
 					callback null, result
 
 		request: (req, callback) ->

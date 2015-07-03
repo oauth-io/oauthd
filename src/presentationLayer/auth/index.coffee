@@ -193,7 +193,8 @@ module.exports = (env) ->
 				provider = r[0]
 				parameters = r[1].parameters
 				response_type = r[1].response_type
-				oa = new env.utilities.oauth[state.oauthv](provider, parameters)
+				app_options = r[1].options
+				oa = new env.utilities.oauth[state.oauthv](provider, parameters, app_options)
 				oa.access_token state, req, (e, r) ->
 					status = if e then 'error' else 'success'
 					env.callhook 'connect.auth', req, res, (err) ->
@@ -208,8 +209,9 @@ module.exports = (env) ->
 							if state.options.state_type != 'client'
 								env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
 
-							# Always delete refresh token from front-end response
-							delete r.refresh_token
+							# Delete or keep refresh token from front-end response
+							if not app_options.refresh_client
+								delete r.refresh_token
 
 							# If server_side only, remove everything and put the code
 							if response_type == 'code'

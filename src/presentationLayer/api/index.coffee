@@ -112,6 +112,14 @@ module.exports = (env) ->
 		env.server.del '/api/apps/:key/backend', env.middlewares.auth.needed, (req, res, next) =>
 			env.data.apps.remBackend req.params.key, env.send(res,next)
 
+		# get the app's options
+		env.server.get '/api/apps/:key/options', env.middlewares.auth.needed, (req, res, next) =>
+			env.data.apps.getOptions req.params.key, env.send(res, next)
+
+		# set the app's options
+		env.server.post '/api/apps/:key/options', env.middlewares.auth.needed, (req, res, next) =>
+			env.data.apps.setOptions req.params.key, req.body, env.send(res, next)
+
 		# get a provider config
 		env.server.get '/api/providers/:provider', env.cors_middleware, (req, res, next) =>
 			if req.query.extend

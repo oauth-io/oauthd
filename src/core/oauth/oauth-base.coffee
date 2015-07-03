@@ -20,11 +20,12 @@ module.exports = (env) ->
 	config = env.config
 
 	class OAuthBase
-		constructor: (oauthv, provider, parameters) ->
+		constructor: (oauthv, provider, parameters, app_options) ->
+			@_appOptions = app_options || {}
 			@_params = {}
 			@_oauthv = oauthv
 			@_provider = provider
-			@_oauthConfiguration = provider[oauthv];
+			@_oauthConfiguration = provider[oauthv]
 			@_parameters = parameters
 			@_serverCallbackUrl = config.host_url + '/auth' # redirection url http(s)://domain/auth
 			@_setParams @_provider.parameters
