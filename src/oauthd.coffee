@@ -1,5 +1,5 @@
 # oauthd
-# Copyright (C) 2014 Webshell SAS
+# Copyright (C) 2015 Webshell SAS
 #
 # NEW LICENSE HERE
 
