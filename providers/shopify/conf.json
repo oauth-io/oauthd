@@ -1,0 +1,54 @@
+{
+	"name": "Shopify",
+    "desc": "Add ecommerce to any website in minutes.",
+	"url": "https://www.shopify.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://{shop}.myshopify.com/admin/oauth/authorize",
+			"extra": [
+				"hmac",
+				"timestamp",
+				"shop"
+			]
+		},
+		"access_token": "https://{shop}.myshopify.com/admin/oauth/access_token",
+		"request": {
+			"url": "https://{shop}.myshopify.com",
+			"headers": {
+				"X-Shopify-Access-Token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"shop": "string",
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"read_content": "Read access to Article, Blog, Comment, Page, and Redirect.",
+					"write_content": "Write access to Article, Blog, Comment, Page, and Redirect.",
+					"read_themes": "Read access to Asset and Theme.",
+					"write_themes": "Write access to Asset and Theme.",
+					"read_products": "Read access to Product, product variant, Product Image, Collect, Custom Collection, and Smart Collection.",
+					"write_products": "Write access to Product, product variant, Product Image, Collect, Custom Collection, and Smart Collection.",
+					"read_customers": "Read access to Customer and Customer Group.",
+					"write_customers": "Write access to Customer and Customer Group.",
+					"read_orders": "Read access to Order, Transaction and Fulfillment.",
+					"write_orders": "Write access to Order, Transaction and Fulfillment.",
+					"read_script_tags": "Read access to Script Tag.",
+					"write_script_tags": "Write access to Script Tag.",
+					"read_fulfillments": "Read access to Fulfillment Service.",
+					"write_fulfillments": "Write access to Fulfillment Service.",
+					"read_shipping": "Read access to Carrier Service.",
+					"write_shipping": "Write access to Carrier Service."
+				},
+				"separator": ","
+			}
+		}
+	},
+	"href": {
+		"keys": "https://app.shopify.com/services/partners/api_clients/new",
+		"docs": "https://docs.shopify.com/api",
+		"apps": "https://app.shopify.com/services/partners/api_clients",
+		"provider": "https://www.shopify.com/"
+	}
+}

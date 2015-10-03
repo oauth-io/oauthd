@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://app.shopify.com/services/partners/api_clients/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://app.shopify.com/services/partners/api_clients",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://shopify.com/",
+				"docs": "https://docs.shopify.com/api"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/admin/customers.json"
+        }
+	}
+}
