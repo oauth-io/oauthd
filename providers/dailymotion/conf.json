@@ -3,14 +3,7 @@
     "desc": "Dailymotion is a video sharing site. Users can upload and share their videos, as well as view video content from other users, content producers, and networks and studios. The Dailymotion API allows developers to access and integrate Dailymotion's functionality and content. Some example API methods include uploading, sharing, and playing content, view, create, and edit data about video content, and embedding the Dailymotion player into other sites.",
 	"url": "https://api.dailymotion.com/oauth",
 	"oauth2": {
-		"authorize": {
-			"url": "/authorize",
-			"query": {
-				"redirect_uri": "{{callback}}",
-				"response_type": "code",
-				"client_id": "{client_id}"
-			}
-		},
+		"authorize": "/authorize",
 		"access_token": "/token",
 		"request": {
 			"headers": {
