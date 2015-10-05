@@ -10,7 +10,7 @@ async = require "async"
 colors = require "colors"
 
 # request FIX
-qs = require 'request/node_modules/qs'
+qs = require 'qs'
 
 
 exports.init = (env) ->
