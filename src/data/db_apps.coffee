@@ -333,6 +333,41 @@ module.exports = (env) ->
 						env.data.redis.srem 'a:' + idapp + ':providers', provider, (err) ->
 							return callback err if err
 							callback()
+	
+	App.getAccess = check check.format.key, 'string', (key, id, callback) ->
+		env.data.redis.hget 'a:keys', key, (err, idapp) ->
+			return callback err if err
+			return callback new check.Error 'Unknown key' unless idapp
+			env.data.redis.hget 'a:' + idapp + ':access', id, (err, access) ->
+				return callback err if err
+				return callback null, [] if ! access
+				return callback null, JSON.parse(access)
+	
+	App.setAccess = check check.format.key, 'string', ['array', 'null'], (key, id, access, callback) ->
+		env.data.redis.hget 'a:keys', key, (err, idapp) ->
+			return callback err if err
+			return callback new check.Error 'Unknown key' unless idapp
+			if not access or not access.length
+				env.data.redis.hdel 'a:' + idapp + ':access', id, (err) ->
+					env.events.emit 'app.delAccess', key, id
+					return callback err if err
+					return callback()
+			else
+				env.data.redis.hset 'a:' + idapp + ':access', id, JSON.stringify(access), (err) ->
+					env.events.emit 'app.setAccess', key, id, access
+					return callback err if err
+					return callback()
+	
+	App.getAccessList = check check.format.key, (key, callback) ->
+		env.data.redis.hget 'a:keys', key, (err, idapp) ->
+			return callback err if err
+			return callback new check.Error 'Unknown key' unless idapp
+			env.data.redis.hgetall 'a:' + idapp + ':access', (err, _access_list) ->
+				return callback err if err
+				access_list = {}
+				for k,v of _access_list
+					access_list[k] = JSON.parse(v)
+				return callback null, access_list
 
 	# get keys infos of an app for all providers
 	App.getKeysets = check check.format.key, (key, callback) ->
