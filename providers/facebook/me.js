@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/v2.3/me';
+            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday';
         }
 
     ],
@@ -22,9 +22,9 @@ var me = {
         location: function(me) {
             return me.location ? me.location.name : undefined;
         },
-        local: '=',
+        locale: '=',
         company: function(me) {
-            return me.work && me.work[0] ? me.work[0].employer.name : undefined;
+            return me.work && me.work[0] && me.work[0].employer ? me.work[0].employer.name : undefined;
         },
         occupation: function(me) {
             return me.work && me.work[0] ? me.work[0].position : undefined;

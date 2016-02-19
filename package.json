@@ -1,7 +1,7 @@
 {
   "name": "oauthd",
   "description": "OAuth that just works.",
-  "version": "1.0.0-beta.17",
+  "version": "1.0.0-beta.18",
   "homepage": "http://oauth-io.github.io/oauthd",
   "author": "OAuth team <team@oauth.io>",
   "repository": {
@@ -59,6 +59,7 @@
     "prerender-node": "~0.1.15",
     "prompt": "^0.2.13",
     "q": "^1.4.1",
+    "qs": "^5.2.0",
     "redis": "^2.1.0",
     "request": "~2.64.0",
     "restify": "~3.0.3",
