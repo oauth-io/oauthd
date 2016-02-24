@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday';
+            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday,relationship_status,hometown';
         }
 
     ],
@@ -36,16 +36,24 @@ var me = {
         birthdate: function(me) {
             if (me.birthday) {
                 var array = me.birthday.split('/');
-                if (array) {
+                if (array.length == 3) {
                     return {
-                        day: array[0],
-                        month: array[1],
+                        day: array[1],
+                        month: array[0],
                         year: array[2]
+                    }
+                } else if (array.length == 2) {
+                    return {
+                        day: array[1],
+                        month: array[0]
+                    }
+                } else if (array.length == 1) {
+                    return {
+                        year: array[0]
                     }
                 }
             }
             return undefined;
-
         },
         url: function(me) {
             // app scoped id, username is deprecated (https://developers.facebook.com/docs/apps/upgrading#upgrading_v2_0_graph_api)
