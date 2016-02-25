@@ -102,8 +102,8 @@ module.exports = (env) ->
 				options.oauth.verifier = req.params.oauth_verifier
 			else
 				options.oauth.verifier = ''
-			if ( ! options.callback)
-				delete options.callback
+			if ( ! options.oauth.callback)
+				delete options.oauth.callback
 			delete query.oauth_callback
 
 			# do request to access_token
