@@ -1,6 +1,6 @@
 language: node_js
 node_js:
- - "0.10"
+ - "0.12"
 services:
  - redis
 before_install:
@@ -13,7 +13,3 @@ branches:
   only:
     - master
     - develop
-notifications:
-  hipchat:
-    rooms:
-      - secure: "ZQrGnURfq6eyP4M0KCvVA43Dw5R+jSEb5UPj5Ujo0j50OyhkjANvmODj3amWHAxVsoPra336A+eemnTMsY7plQ1/duQ1rkxnP5+8RG+kIRp57sbgLXa24nCiOQia0NBsDjeJqpUMkCKqNNmq/NzbzcqgiqZZpkrTAYplsqy2eKY="

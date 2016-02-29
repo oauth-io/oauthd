@@ -8,8 +8,8 @@ describe 'Data - apps module', () ->
 	env = {
 		mode: 'test'
 	}
-	
-	uid = '0'
+
+	uid = 'notexisting'
 	logs = []
 	beforeEach () ->
 		env = {
@@ -20,6 +20,17 @@ describe 'Data - apps module', () ->
 		coreModule(env).initUtilities()
 		dataModule(env)
 
+		if ! env.data.apps.___modcreate
+			env.data.apps.___modcreate = true
+			oldCreate = env.data.apps.create
+			env.data.apps.create = (app, user, cb) ->
+				callback = (err, data) ->
+					return cb err if err
+					env.data.redis.sadd 'u:' + user.id + ':apps', data.id, ->
+						return cb err if err
+						cb err, data
+				oldCreate.apply(env.data.apps, [app, user, callback])
+
 		env.debug = () ->
 			logs.push(arguments)
 
@@ -27,15 +38,15 @@ describe 'Data - apps module', () ->
 			return uid
 
 	it 'Application creation - env.data.apps.create (success case)', (done) ->
-		
+
 		expect(env.data.apps.create).toBeDefined()
-		uid = '-0'
+		uid = '-0b'
 		env.data.apps.create { name: 'myapp' }, { id: 1 }, (err, app) ->
 			expect(err).toBe(null)
 			expect(typeof app).toBe('object')
 			expect(typeof app.id).toBe('number')
 			expect(app.name).toBe('myapp')
-			expect(app.key).toBe('-0')
+			expect(app.key).toBe('-0b')
 
 			env.data.redis.mget [
 				'a:' + app.id + ':name',
@@ -46,17 +57,17 @@ describe 'Data - apps module', () ->
 			],  (err, result) ->
 				expect(err).toBe(null)
 				expect(result[0]).toBe('myapp')
-				expect(result[1]).toBe('-0')
-				expect(result[2]).toBe('-0')
+				expect(result[1]).toBe('-0b')
+				expect(result[2]).toBe('-0b')
 				expect(result[3]).toBe('1')
 				expect(result[4]).toMatch(/^[0-9]+$/)
 
-				env.data.redis.hget 'a:keys', '-0', (err, id) ->
+				env.data.redis.hget 'a:keys', '-0b', (err, id) ->
 					expect(id).toBe(app.id)
 					done()
 
 	it 'Application creation - env.data.apps.create (error cases)', (done) ->
-		uid = '-0'
+		uid = '-0b'
 
 		async.series [
 			(next) ->
@@ -87,7 +98,7 @@ describe 'Data - apps module', () ->
 			done()
 
 	it 'Application retrieval by owner - env.data.apps.getByOwner (success case)', (done) ->
-		uid = '-1'
+		uid = '-1a'
 		env.data.apps.create {name:'myapp'}, { id: 5 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getByOwner 5, (err, apps) ->
@@ -95,13 +106,13 @@ describe 'Data - apps module', () ->
 				app = apps[0]
 				expect(typeof app).toBe('object')
 				expect(app.name).toBe('myapp')
-				expect(app.key).toBe('-1')
-				expect(app.secret).toBe('-1')
-				expect(app.owner).toBe('5')
+				expect(app.key).toBe('-1a')
+				expect(app.secret).toBe('-1a')
+				expect(app.owner).toBe(5)
 				done()
 
 	it 'Application retrieval by owner - env.data.apps.getByOwner (error cases)', (done) ->
-		uid = '-1'
+		uid = '-1a'
 		env.data.apps.create {name:'myapp'}, { id: 6 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getByOwner 6, (err, apps) ->
@@ -110,7 +121,7 @@ describe 'Data - apps module', () ->
 
 
 	it 'Application retrieval by id - env.data.apps.getById', (done) ->
-		uid = '-2'
+		uid = '-2a'
 		env.data.apps.create {name:'myapp'}, { id: 1 }, (err, app) ->
 			expect(err).toBeNull()
 			env.data.apps.getById app.id, (err, app2) ->
@@ -119,8 +130,8 @@ describe 'Data - apps module', () ->
 				expect(app2.name).toBe('myapp')
 				expect(app2.owner).toBe('1')
 				expect(app2.id).toBe(app.id)
-				expect(app2.key).toBe('-2')
-				expect(app2.secret).toBe('-2')
+				expect(app2.key).toBe('-2a')
+				expect(app2.secret).toBe('-2a')
 				done()
 
 	it 'Application retrieval by key - env.data.apps.get (success case)', (done) ->
@@ -189,7 +200,7 @@ describe 'Data - apps module', () ->
 				expect(err).toBeUndefined()
 				env.data.redis.keys 'a:' + app.id + '*', (err, keys) ->
 					expect(keys.length).toBe(0)
-					
+
 					env.data.redis.hget 'a:keys', app.key, (err, id) ->
 						expect(err).toBe(null)
 						expect(id).toBe(null)
@@ -230,7 +241,7 @@ describe 'Data - apps module', () ->
 					env.data.apps.updateDomains uid, undefined, (err) ->
 						expect(err).toBeDefined()
 						expect(err.message).toBe('Bad parameters format')
-						next()		
+						next()
 		], () ->
 			done()
 
@@ -261,7 +272,7 @@ describe 'Data - apps module', () ->
 					env.data.apps.addDomain uid, undefined, (err) ->
 						expect(err).toBeDefined()
 						expect(err.message).toBe('Bad parameters format')
-						next()		
+						next()
 		], () ->
 			done()
 
@@ -311,7 +322,7 @@ describe 'Data - apps module', () ->
 						expect(err).toBeDefined()
 						expect(err.message).toBe('Invalid format')
 						expect(err.body?.domain).toBe('hohoho is already non-valid')
-						done()	
+						done()
 		], () ->
 			done()
 
@@ -358,7 +369,7 @@ describe 'Data - apps module', () ->
 						expect(result[0]).toBeNull()
 						expect(result[1]).toBeNull()
 						done()
-	
+
 
 	it 'Application keyset add - env.data.apps.addKeyset (success case)', (done) ->
 		uid = 'appkeysetaddttestesttes'
@@ -404,7 +415,7 @@ describe 'Data - apps module', () ->
 							expect(err).toBeNull()
 							expect(keyset.parameters).toBeDefined()
 							expect(keyset.parameters.hello).toBe('world')
-							expect(keyset.response_type).toBe('token')
+							expect(keyset.response_type).toBe('both')
 							next()
 			(next) ->
 				uid = 'appkeysetget2ttestesttes'
@@ -433,7 +444,7 @@ describe 'Data - apps module', () ->
 
 		], () ->
 			done()
-	
+
 	xit 'Application domain verification - env.data.apps.checkDomain', (done) ->
 		done()
 
