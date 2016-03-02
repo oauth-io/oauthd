@@ -17,7 +17,7 @@ endOfInit = (name, showGrunt) ->
 	command = 'cd '+ name + ' && npm install'
 	if showGrunt
 		info += ' and grunt.'
-		command += ' && grunt'
+		command += ' && $(npm bin)/grunt'
 	else
 		info += '.'
 	console.log info.green + ' Please wait, this might take up to a few minutes.'.yellow
@@ -50,21 +50,21 @@ if options.help and args.length == 0
 else if argv.version || argv.v
 	console.log pckg_info.name + ' ' + pckg_info.version.yellow
 else
-	
+
 	if args[0] == 'init'
 		if options.help or args.length > 1
 			console.log 'Usage: ' + 'oauthd init'.yellow
 			console.log 'Initializes a new oauthd instance. \nPrompts the user for an instance name and for default components installation prefs.'
 		else
 			force_default = false
-			if options.default 
+			if options.default
 				force_default = true
 			scaffolding.init(force_default)
 				.then (name) ->
 					endOfInit(name, true)
 				.fail (err) ->
 					console.log 'An error occured: '.red + e.message.yellow
-	
+
 
 	else if args[0] == 'start'
 		if options.help || args.length > 1
@@ -83,7 +83,7 @@ else
 				return
 			.fail (e) ->
 				console.log e.message
-	
+
 
 	else
 		displayHelp()

@@ -14,7 +14,7 @@ module.exports = (env) ->
 			(next) ->
 				env.plugins.install({
 					repository: "https://github.com/oauth-io/oauthd-admin-auth",
-					version: "0.x.x"
+					version: "1.x.x"
 				}, process.cwd())
 					.then () ->
 						next()
@@ -69,7 +69,7 @@ module.exports = (env) ->
 		prompt.start()
 		prompt.get schema, (err, res2) ->
 			copyBasisStructure defer, name, res2.install_default_plugin
-			
+
 	copyBasisStructure = (defer, name, install_default_plugin) ->
 		env.debug 'Generating a folder for ' + name
 		ncp __dirname + '/../templates/basis_structure', process.cwd() + '/' + name, (err) ->
@@ -124,7 +124,7 @@ module.exports = (env) ->
 					prompt.message = "oauthd".white
 					prompt.delimiter = "> "
 					prompt.start()
-					
+
 					prompt.get schema, (err, res_overwrite) ->
 						if res_overwrite.overwrite.match(/[Yy]/)
 							doInit(defer, results.name)

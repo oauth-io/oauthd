@@ -54,7 +54,7 @@ module.exports = (env) ->
 						listen_args.push env.config.bind if env.config.bind
 						listen_args.push (err) =>
 							return callback err if err
-							env.debug '%s listening at %s for %s', server.name, server.url, env.config.host_url
+							env.debug.display '%s listening at %s for %s', server.name, server.url, env.config.host_url
 							env.events.emit 'server', null
 							callback null, server
 
