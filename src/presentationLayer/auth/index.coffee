@@ -147,13 +147,16 @@ module.exports = (env) ->
 					view += '\twindow.close();\n'
 				else
 					view += 'var opener = window.opener || window.parent.window.opener;\n'
+					view += '\n'
 					view += 'if (opener)\n'
 					view += '\topener.postMessage(msg, "' + data.origin + '");\n'
 					view += '\twindow.close();\n'
-			view += '})();</script></head><body></body></html>'
+			view += '})();</script></head><body style="text-align:center">\n'
+			view += '<div style="display:inline-block; padding: 4px; border: 1px solid black">Your browser does not support popup. Please open this site with your default browser.<br />'
+			view += '<a href="' + data.origin + '">' + data.origin + '</a></div>'
+			view += '</body></html>'
 			res.send view
 			next()
-
 
 		auth_middleware = (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
