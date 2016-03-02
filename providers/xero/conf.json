@@ -1,0 +1,19 @@
+{
+	"name": "Xero",
+    "desc": "Xero is beautiful online accounting software.",
+	"url": "https://api.xero.com/",
+	"oauth1": {
+		"request_token": "/oauth/RequestToken",
+		"authorize": {
+			"url": "https://api.xero.com/oauth/Authorize",
+			"ignore_verifier": true
+		},
+		"access_token": "/oauth/access_token"
+	},
+	"href": {
+		"keys": "https://app.xero.com/Application/Add",
+		"docs": "http://developer.xero.com/",
+		"apps": "https://app.xero.com/Application",
+		"provider": "https://www.xero.com/"
+	}
+}
