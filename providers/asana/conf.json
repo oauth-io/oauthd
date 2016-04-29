@@ -4,7 +4,8 @@
 	"url": "https://app.asana.com/-",
 	"oauth2": {
 		"authorize": "/oauth_authorize",
-		"access_token": "/oauth_token"
+		"access_token": "/oauth_token",
+		"refresh": "/oauth_token"
 	},
 	"href": {
 		"keys": "http://app.asana.com/-/account_api",
