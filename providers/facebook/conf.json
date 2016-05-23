@@ -123,7 +123,8 @@
 					"v2.2/": "API version 2.2",
 					"v2.3/": "API version 2.3",
 					"v2.4/": "API version 2.4",
-					"v2.5/": "API version 2.5"
+					"v2.5/": "API version 2.5",
+					"v2.6/": "API version 2.6"
 				},
 				"cardinality": "1"
 			}
