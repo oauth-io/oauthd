@@ -21,10 +21,12 @@
 			"client_secret": "string",
 			"scope": {
 				"values": {
-					"relationships": "to follow and unfollow users on a user’s behalf",
-					"likes": "to like and unlike items on a user’s behalf",
+					"basic": "to read a user’s profile info and media",
+					"public_content": "to read any public profile info and media on a user’s behalf",
+					"follower_list": "to read the list of followers and followed-by users",
 					"comments": "to create or delete comments on a user’s behalf",
-					"basic": "to read any and all data related to a user (e.g. following/followed-by lists, photos, etc.) (granted by default)"
+					"relationships": "to follow and unfollow accounts on a user’s behalf",
+					"likes": "to like and unlike media on a user’s behalf"
 				}
 			}
 		}
