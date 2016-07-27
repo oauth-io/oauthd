@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday,relationship_status,hometown';
+            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday,relationship_status,hometown,picture';
         }
 
     ],
