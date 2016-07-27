@@ -8,6 +8,7 @@ module.exports = (env) ->
 		@incr: ''
 		@indexes: []
 		@properties: undefined
+		@_cachedTypedKeys: undefined
 		@extendProperties: (array) ->
 			if @properties? and Array.isArray(@properties)
 				for k, prop of array
@@ -78,6 +79,8 @@ module.exports = (env) ->
 
 			defer.promise
 		typedKeys: () ->
+			if @constructor._cachedTypedKeys
+				return Q(@constructor._cachedTypedKeys)
 			defer = Q.defer()
 			keys = {}
 			@keys()
@@ -95,6 +98,7 @@ module.exports = (env) ->
 							defer.reject(e)
 						else
 							defer.resolve(keys)
+							@constructor._cachedTypedKeys = keys
 				.fail (e) ->
 					defer.reject e
 
