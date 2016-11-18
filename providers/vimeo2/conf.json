@@ -52,8 +52,7 @@
 		}
 	},
 	"href": {
-		"keys": "https://developer.vimeo.com/apps/new",
-		"docs": "https://developer.vimeo.com/api/start",
+		"docs": "https://developer.vimeo.com/api",
 		"apps": "https://developer.vimeo.com/apps",
 		"provider": "https://vimeo.com/"
 	}
