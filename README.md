@@ -95,9 +95,8 @@ Learn more about the **oauthd**
 
 Have a question?
 
-- Drop an email at team@oauth.io
-- [#oauthd](https://twitter.com/oauthd) on Twitter
-- [#OAuth_io](https://twitter.com/OAuth_io) on Twitter
+- Drop an email at support@oauth.io
+- [@OAuth_io](https://twitter.com/OAuth_io) on Twitter
 
 ## Contributing to this project
 
