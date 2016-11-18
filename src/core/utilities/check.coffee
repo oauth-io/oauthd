@@ -117,7 +117,7 @@ module.exports = (env) ->
 		formats = arguments
 		return =>
 			# Here arguments is the array of arguments of the called returned method
-			
+
 			# shallow copies the arguments array
 			args = Array.prototype.slice.call arguments
 			# pops last value of args, not of arguments (as args is a copy)
@@ -125,10 +125,10 @@ module.exports = (env) ->
 
 			# formats is the arguments array of the check method
 			if args.length != formats.length
-				# if the arguments count of the second fn is not the same as the the original hat fn 
+				# if the arguments count of the second fn is not the same as the the original hat fn
 				# (without callbacks of course). Means that the arguments given to the function are wrong
-				return callback new CheckError 'Bad parameters count' 
-			
+				return callback new CheckError 'Bad parameters count'
+
 			# Creates a new instance of CheckError
 			error = new CheckError 'Bad parameters format'
 			# loops through the format parameters

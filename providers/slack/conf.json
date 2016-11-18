@@ -17,19 +17,24 @@
 			"client_secret": "string",
 			"scope": {
 				"values": {
+					"bot": "Slack-App: request this scope when your Slack app includes bot user functionality. Unlike incoming-webhook and commands, the bot scope grants your bot user access to a subset of Web API methods.",
+					"commands": "Slack App: similarly, requesting this scope allows teams to install slash commands bundled in your Slack app.",
+					"incoming-webhook": "Slack App: requesting this scope during the authentication process allows teams to easily install an incoming webhook that can post from your app to a single Slack channel.",
 					"identify": "Allows applications to confirm your identity.",
-					"read": "Allows applications to read any messages and state that the user can see.",
-					"post": "Allows applications to write messages and create content on behalf of the user.",
 					"client": "Allows applications to connect to slack as a client, and post messages on behalf of the user.",
-					"admin": "Allows applications to perform administrative actions, requires the authed user is an admin."
+					"admin": "Allows applications to perform administrative actions, requires the authed user is an admin.",
+					"chat:write:bot": "chat.delete, chat.postMessage, chat.update API methods",
+					"chat:write:user": "chat.delete, chat.meMessage, chat.postMessage, chat.update API methods",
+					"channels:read": "channels.info, channels.list",
+					"users:read": "For /me profile"
 				}
 			}
 		}
 	},
 	"href": {
-		"keys": "https://github.com/settings/applications/new",
-		"docs": "http://developer.github.com/v3/",
-		"apps": "https://github.com/settings/applications",
+		"keys": "https://api.slack.com/applications/new",
+		"docs": "https://api.slack.com/",
+		"apps": "https://api.slack.com/applications",
 		"provider": "https://github.com/"
 	}
 }

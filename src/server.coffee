@@ -1,5 +1,5 @@
 # OAuth daemon
-# Copyright (C) 2015 Webshell SAS
+# Copyright (C) 2016 Webshell SAS
 #
 # LICENCE HERE
 

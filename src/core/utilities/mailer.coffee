@@ -52,7 +52,8 @@ module.exports = (env) ->
 		getHtml : (templateName, data) ->
 			templateFullPath = "#{@options.templatePath}/#{templateName}.html"
 			templateContent = fs.readFileSync(templateFullPath, encoding = "utf8")
-			_.template templateContent, data, { interpolate: /\{\{(.+?)\}\}/g}
+			template = _.template templateContent, { interpolate: /\{\{(.+?)\}\}/g}
+			template data
 
 
 	Mailer

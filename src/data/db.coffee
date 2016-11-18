@@ -19,17 +19,38 @@ async = require 'async'
 
 module.exports = (env) ->
 	data = {}
+	config = env.config
 
 	if env.mode != 'test'
-		redis = require 'redis'
+		Redis = require 'ioredis'
+		redis_options =
+			port: config.redis.port || 6379
+			host: config.redis.host || '127.0.0.1'
+			db: config.redis.db || 0
+			retryStrategy: (times) => Math.min(times * 100, 2000)
+		redis_options.password = config.redis.password if config.redis.password
+		data.redis = new Redis redis_options
+		_multi = data.redis.multi
+		data.redis.multi = (commands) =>
+			pipeline = if commands then _multi.call(data.redis, commands) else _multi.call(data.redis)
+			_exec = pipeline.exec
+			pipeline.exec = (cb) =>
+				return _exec.call(pipeline, (err, res) =>
+					return cb err if err
+					for k, r of res
+						err = r[0] if r[0]
+						res[k] = r[1]
+					return cb err if err
+					cb null, res
+				)
+			return pipeline
 	else
 		redis = require 'fakeredis'
+		data.redis = redis.createClient config.redis.port || 6379, config.redis.host || '127.0.0.1', config.redis.options || {}
+		data.redis.auth(config.redis.password) if config.redis.password
+		data.redis.select(config.redis.database) if config.redis.database
 
-	config = env.config
 	exit = env.utilities.exit
-	data.redis = redis.createClient config.redis.port || 6379, config.redis.host || '127.0.0.1', config.redis.options || {}
-	data.redis.auth(config.redis.password) if config.redis.password
-	data.redis.select(config.redis.database) if config.redis.database
 
 	oldkeys = data.redis.keys
 	data.redis.keys = (pattern, cb) ->

@@ -333,7 +333,7 @@ module.exports = (env) ->
 						env.data.redis.srem 'a:' + idapp + ':providers', provider, (err) ->
 							return callback err if err
 							callback()
-	
+
 	App.getAccess = check check.format.key, 'string', (key, id, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
@@ -342,7 +342,7 @@ module.exports = (env) ->
 				return callback err if err
 				return callback null, [] if ! access
 				return callback null, JSON.parse(access)
-	
+
 	App.setAccess = check check.format.key, 'string', ['array', 'null'], (key, id, access, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err
@@ -357,7 +357,7 @@ module.exports = (env) ->
 					env.events.emit 'app.setAccess', key, id, access
 					return callback err if err
 					return callback()
-	
+
 	App.getAccessList = check check.format.key, (key, callback) ->
 		env.data.redis.hget 'a:keys', key, (err, idapp) ->
 			return callback err if err

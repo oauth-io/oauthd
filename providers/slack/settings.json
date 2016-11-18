@@ -14,9 +14,9 @@
 				"docs": "https://api.slack.com/"
 			}
 		},
-        "sample": {
-            "method": "get",
-            "url": "/api/auth.test"
-        }
+		"sample": {
+			"method": "get",
+			"url": "/api/auth.test"
+		}
 	}
 }

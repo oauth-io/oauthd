@@ -58,20 +58,20 @@ module.exports = (env) ->
 		return body
 
 	formatters =
-		'application/json; q=0.9': (req, res, body) ->
+		'application/json; q=0.9': (req, res, body, cb) ->
 			data = JSON.stringify buildReply(body, res)
 			res.setHeader 'Content-Type', "application/json; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(data)
-			return data
+			return cb null, data
 
-		'application/javascript; q=0.1': (req, res, body) ->
-			return "" if body instanceof Error && not config.debug
+		'application/javascript; q=0.1': (req, res, body, cb) ->
+			return cb null, "" if body instanceof Error && not config.debug
 			body = body.toString()
 			res.setHeader 'Content-Type', "application/javascript; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(body)
-			return body
+			return cb null, body
 
-		'text/html; q=0.1': (req, res, body) ->
+		'text/html; q=0.1': (req, res, body, cb) ->
 			if body instanceof Error
 				if body instanceof check.Error || body instanceof restify.RestError
 					msg = body.message
@@ -92,7 +92,7 @@ module.exports = (env) ->
 			body = body.toString()
 			res.setHeader 'Content-Type', "text/html; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(body)
-			return body
+			return cb null, body
 
 	{
 		formatters: formatters

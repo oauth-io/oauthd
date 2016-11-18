@@ -23,7 +23,11 @@ var me = {
         },
         occupation: '=',
         gender: function(me) {
-            return me.gender == 'male' ? 0 : 1;
+            if (me.gender == 'male')
+                return 0;
+            if (me.gender == 'female')
+                return 1;
+            return undefined;
         },
         avatar: function(me) {
             return me.image ? me.image.url : undefined;

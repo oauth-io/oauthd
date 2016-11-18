@@ -16,10 +16,10 @@ module.exports = (env) ->
 						@properties.push prop
 		@findById: (id) ->
 			defer = Q.defer()
-			lapin = new @(id)
-			lapin.load()
+			inst = new @(id)
+			inst.load()
 				.then () ->
-					defer.resolve lapin
+					defer.resolve inst
 				.fail (e) ->
 					defer.reject e
 			defer.promise
@@ -231,7 +231,7 @@ module.exports = (env) ->
 									if opts.ttl?
 										multi.expire @prefix() + key, opts.ttl
 
-									cb()
+								cb()
 						], () =>
 							# Actual execution of the db access
 							multi.exec (e, res) =>

@@ -21,7 +21,12 @@
 			},
 			"extras": ["authorization_code", "{{code}}", "{{callback}}"],
 			"method": "post",
-			"format": "url"
+			"format": "json",
+			"query": {
+				"grant_type": "authorization_code",
+				"code": "{{code}}",
+				"redirect_uri": "{{callback}}"
+			}
 		},
 		"request": {
 			"headers": {

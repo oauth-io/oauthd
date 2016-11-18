@@ -1,0 +1,20 @@
+{
+    "name": "Drip",
+    "desc": "Try Drip, email marketing automation that allows you to craft every interaction with your leads, trial users and customers like an artisan.",
+    "url": "https://www.getdrip.com/oauth/",
+    "oauth2": {
+        "authorize": "/authorize",
+        "access_token": "/token",
+        "request": {
+            "url": "https://api.getdrip.com/v2",
+            "headers": {
+                "Authorization": "Bearer {{token}}"
+            }
+        }
+    },
+    "href": {
+        "docs": "https://www.getdrip.com/docs/rest-api",
+        "apps": "https://www.getdrip.com/user/applications",
+        "provider": "https://www.getdrip.com"
+    }
+}

@@ -1,43 +1,43 @@
 [![Build Status](https://travis-ci.org/oauth-io/oauthd.svg?branch=develop)](https://travis-ci.org/oauth-io/oauthd)
 
-**oauthd**, also known as the 'oauth Daemon' is the open source version of 
-[OAuth.io](https://oauth.io)'s core. 
+**oauthd**, also known as the 'oauth Daemon' is the open source version of
+[OAuth.io](https://oauth.io)'s core.
 
 ## What is it?
 
-It is a solution based on node.js that enables you to set 
-up and run your own stand-alone, completly free, web Background API Server. 
+It is a solution based on node.js that enables you to set
+up and run your own stand-alone, completly free, web Background API Server.
 
 ## Main features
 
-This server will allows you to authenticate and to integrate the common API 
-providers, with just three lines of JavaScript, completely abstracting away 
-the complexity of OAuth integration. 
-By using the oauth Daemon, you are free to focus your attention on product 
-development instead of losing time on API integration using OAuth. 
+This server will allows you to authenticate and to integrate the common API
+providers, with just three lines of JavaScript, completely abstracting away
+the complexity of OAuth integration.
+By using the oauth Daemon, you are free to focus your attention on product
+development instead of losing time on API integration using OAuth.
 
 #### Exhaustive: compatible with 100+ providers
-**oauthd** works with all your favorite platforms, whether social (Facebook, 
-Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...). 
+**oauthd** works with all your favorite platforms, whether social (Facebook,
+Twitter, LinkedIn...) or SaaS (Mailchimp, Paypal, Stripe...).
 #### Simplified API calls
-With **oauthd**, you can make API calls instead of dealing with complex OAuth flows. 
-Abstract tokens with the 'Request API' and get user info in a unified way, 
-no matter which provider you are using. The API also lets you perform CRUD 
+With **oauthd**, you can make API calls instead of dealing with complex OAuth flows.
+Abstract tokens with the 'Request API' and get user info in a unified way,
+no matter which provider you are using. The API also lets you perform CRUD
 actions on behalf of users.
 #### Secured encrypted API
-**oauthd** lets you choose an authorization flow that fits your needs (client-side 
-or server-side). It secures providers API access with SSL encryption and allows 
-you to specify domains/url restrictions for more security. 
+**oauthd** lets you choose an authorization flow that fits your needs (client-side
+or server-side). It secures providers API access with SSL encryption and allows
+you to specify domains/url restrictions for more security.
 #### Integrate in less than 90 seconds
-Through the **oauthd** default administration interface, you can start adding OAuth 
-providers to your app and  get a public key to start using these APIs 
+Through the **oauthd** default administration interface, you can start adding OAuth
+providers to your app and  get a public key to start using these APIs
 right away.
 
 ## Modular design
 
-**oauthd** is highly extendable thanks to a plugin management system based on Git. 
-Each plugin can brings its own layer of features. 
-Anyone can create his own plugin and is free to share it with the Open Source Community. 
+**oauthd** is highly extendable thanks to a plugin management system based on Git.
+Each plugin can brings its own layer of features.
+Anyone can create his own plugin and is free to share it with the Open Source Community.
 We are eager to see you contribute!
 
 Default plugins are furnished to ensure a working minimum environment, with:
@@ -60,12 +60,12 @@ As soon as you are done with pre-requisites, you can simply install **oauthd** f
 (sudo) npm install -g oauthd
 ```
 
-Once you've installed the **oauthd** npm package globally, you will have the 
-`oauthd` command available in your shell. This command allows you to create 
+Once you've installed the **oauthd** npm package globally, you will have the
+`oauthd` command available in your shell. This command allows you to create
 new *oauthd instances*, start them, and manage their plugins.
 
-Learn more about the **oauthd** 
-[configuration](https://github.com/oauth-io/oauthd/wiki/Configuration) and the 
+Learn more about the **oauthd**
+[configuration](https://github.com/oauth-io/oauthd/wiki/Configuration) and the
 [command line features](https://github.com/oauth-io/oauthd/wiki/Command-Line-Interface).
 
 There is also a Docker container for oauthd if you want to try running oauthd inside a VM:
@@ -87,8 +87,8 @@ of our SDKs:
 - PHP
 - Go
 
-Learn more about the **oauthd** 
-[apis](https://github.com/oauth-io/oauthd/wiki/API) and the 
+Learn more about the **oauthd**
+[apis](https://github.com/oauth-io/oauthd/wiki/API) and the
 [oauthd-sdks](https://github.com/oauth-io/oauthd/wiki/Server-and-client-side-SDKs).
 
 ## Contact
@@ -109,7 +109,7 @@ Anyone and everyone is welcome to contribute. Please take a moment to review the
 
 ## License & Copyright
 
-Copyright (C) 2015 Webshell SAS 
+Copyright (C) 2016 Webshell SAS
 [https://github.com/oauth-io/oauthd](https://github.com/oauth-io/oauthd) and other contributors
 
 Licensed under the Apache License 2.0

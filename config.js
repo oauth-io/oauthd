@@ -32,7 +32,6 @@ try {
 		}
 	}
 } catch (e) {
-	console.log(e);
 	console.log('No config file found, using defaults');
 }
 

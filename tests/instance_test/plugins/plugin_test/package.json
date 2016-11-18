@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "grunt-contrib-coffee": "^0.13.0"
+    "grunt-contrib-coffee": "^1.0.0"
   },
   "dependencies": {
   }

@@ -20,9 +20,9 @@ var config = {
 
 	// SSL is disabled by default. You can put your own key and certificate in a 'keys' folder
 	//ssl: {
-    //    key: __dirname + '/keys/yourkey.key',
-    //    certificate: __dirname + '/keys/yourcertificate.crt'
-    //},
+	//	key: __dirname + '/keys/yourkey.key',
+	//	certificate: __dirname + '/keys/yourcertificate.crt'
+	//},
 };
 
 module.exports = config;

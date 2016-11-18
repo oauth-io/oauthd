@@ -1,0 +1,16 @@
+{
+	"name": "Intercom",
+	"desc": "Intercom is the customer communication platform.",
+	"url": "https://app.intercom.io/oauth",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": "/token",
+		"refresh": "/token"
+	},
+	"href": {
+		"keys": "https://app.intercom.io",
+		"docs": "https://developers.intercom.io/",
+		"apps": "https://app.intercom.io",
+		"provider": "http://intercom.io/"
+	}
+}

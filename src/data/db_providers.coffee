@@ -113,7 +113,7 @@ module.exports = (env) ->
 		if Path.relative(providers_dir, provider).substr(0,2) == ".."
 			return callback new check.Error 'Not authorized'
 
-		fs.readFile provider, (err, data) ->
+		fs.readFile provider, {encoding: 'utf-8'}, (err, data) ->
 			if err?.code == 'ENOENT'
 				return callback new check.Error 'No settings infos for ' + provider_name
 			return callback err if err

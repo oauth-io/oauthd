@@ -42,6 +42,10 @@ module.exports = function(grunt) {
         }
     }
 
+    if (added_plg.length === 0){
+        gruntConf.taskDefault = [];
+    }
+
     grunt.initConfig(gruntConf);
 
     // These plugins provide necessary tasks.

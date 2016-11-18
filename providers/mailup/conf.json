@@ -1,0 +1,17 @@
+{
+    "name": "MailUp",
+    "desc": "MailUp is your complete email and SMS delivery solution that combines powerful email marketing tools with SMTP relay and plugins for e-commerce, CRM, and CMS systems.",
+    "url": "https://services.mailup.com",
+    "oauth2": {
+        "authorize": "/Authorization/OAuth/Authorization",
+        "access_token": "/Authorization/OAuth/Token",
+        "refresh": "/Authorization/OAuth/Token",
+        "request": "https://services.mailup.com/API/v1.1/Rest/ConsoleService.svc/Console"
+    },
+    "href": {
+        "keys": "http://developers.mailup.com/setupen",
+        "docs": "http://help.mailup.com/display/mailupapi/Getting+started+with+the+MailUp+API",
+        "apps": "http://developers.mailup.com/setupen",
+        "provider": "http://mailup.com/"
+    }
+}

@@ -1,11 +1,14 @@
 {
 	"name": "MailChimp",
-    "desc": "Sync campaign stats and subscriber information between MailChimp and your database. This helps you download a list of unsubscribes to clean your inhouse lists, build client portals and pull campaign stats from MailChimp if you send emails on behalf of clients, aggregate and compile campaign stats, send \"we also recommend this...\" campaigns, and pass account status data to MailChimp so that only active members get your emails.",
+	"desc": "Sync campaign stats and subscriber information between MailChimp and your database. This helps you download a list of unsubscribes to clean your inhouse lists, build client portals and pull campaign stats from MailChimp if you send emails on behalf of clients, aggregate and compile campaign stats, send \"we also recommend this...\" campaigns, and pass account status data to MailChimp so that only active members get your emails.",
 	"url": "https://login.mailchimp.com/oauth2",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": "/token",
 		"request": {
+			"query": {
+				"apikey": "{{token}}"
+			},
 			"headers": {
 				"Authorization": "OAuth {{token}}"
 			}

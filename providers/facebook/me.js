@@ -17,7 +17,11 @@ var me = {
         lastname: 'last_name',
         email: '=',
         gender: function(me) {
-            return me.gender == 'male' ? 0 : 1;
+            if (me.gender == 'male')
+                return 0;
+            if (me.gender == 'female')
+                return 1;
+            return undefined;
         },
         location: function(me) {
             return me.location ? me.location.name : undefined;

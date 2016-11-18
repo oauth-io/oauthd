@@ -1,7 +1,5 @@
 # oauthd
-# Copyright (C) 2015 Webshell SAS
-#
-# NEW LICENSE HERE
+# Copyright (C) 2016 Webshell SAS
 
 Q = require 'q'
 

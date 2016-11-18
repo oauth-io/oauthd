@@ -44,6 +44,7 @@ module.exports = (env) ->
 		return
 
 	# uncaught exception catching
+	###
 	process.on 'uncaughtException', (err) ->
 		if closing
 			console.error '--- uncaughtException WHILE CLOSING'
@@ -59,6 +60,7 @@ module.exports = (env) ->
 				process.exit 1
 				return
 		return
+	###
 
 	# push a closing function
 	exit.push = (name, f) ->

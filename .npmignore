@@ -2,3 +2,5 @@
 src
 tests
 providers/test
+.DS_Store
+**/*.DS_Store
