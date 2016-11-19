@@ -140,7 +140,13 @@ module.exports = (env) ->
 			# here we call callback (the last argument given to the )
 			return callback error if error.failed()
 			# if all args were right, call the hatted fn with the original arguments
-			return checked.apply @, arguments
+			try
+				return checked.apply @, arguments
+			catch e
+				err = new Error 'Uncaught exception: ' + e.message
+				err.stack = e.stack if e.stack
+				return callback err
+
 
 	check.clone = (cloned) -> =>
 		return cloned.apply @, _clone arguments
