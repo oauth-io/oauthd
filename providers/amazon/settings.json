@@ -14,9 +14,9 @@
 				"docs": "https://images-na.ssl-images-amazon.com/images/G/01/lwa/dev/docs/website-developer-guide._TTH_.pdf"
 			}
 		},
-        "sample": {
-            "method": "get",
-            "url": "https://api.amazon.com/user/profile"
-        }
+		"sample": {
+			"method": "get",
+			"url": "https://api.amazon.com/user/profile"
+		}
 	}
 }

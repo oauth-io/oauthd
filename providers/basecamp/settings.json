@@ -14,9 +14,9 @@
 				"docs": "https://github.com/basecamp/bc3-api"
 			}
 		},
-        "sample": {
-            "method": "get",
-            "url": "https://launchpad.37signals.com/authorization.json"
-        }
+		"sample": {
+			"method": "get",
+			"url": "https://launchpad.37signals.com/authorization.json"
+		}
 	}
 }
