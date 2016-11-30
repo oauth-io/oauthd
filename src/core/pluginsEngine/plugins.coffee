@@ -67,6 +67,9 @@ module.exports = (env) ->
 			global_interface = plugin_data
 
 	loadPlugin = (plugin_data) ->
+		if not fs.existsSync(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name)
+			env.debug "Cannot find addon " + plugin_data.name
+			return
 		env.debug "Loading " + plugin_data.name.blue
 		try
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name + plugin_data.main)(env)
