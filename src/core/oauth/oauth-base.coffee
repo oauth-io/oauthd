@@ -84,7 +84,7 @@ module.exports = (env) ->
 			}
 
 		_buildServerRequestUrl: (url, req, configurationUrl) ->
-			if typeof req.query == 'function' and typeof req.query() == 'string'
+			if typeof req.query == 'function' and typeof req.query() == 'string' and req.query().length > 0 and url.indexOf('?') == -1
 				url += "?" + req.query()
 			if ! url.match(/^[a-z]{2,16}:\/\//)
 				if url[0] != '/'
