@@ -1,7 +1,7 @@
 # OAuth daemon
 # Copyright (C) 2016 Webshell SAS
 #
-# LICENCE HERE
+# License: Apache2
 
 module.exports = (env) ->
 
