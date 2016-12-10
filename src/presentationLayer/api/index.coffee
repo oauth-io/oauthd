@@ -175,7 +175,10 @@ module.exports = (env) ->
 		env.server.get '/api/plugins', env.middlewares.auth.needed, (req, res, next) =>
 			env.scaffolding.plugins.info.getPluginsJson({activeOnly: true})
 					.then (data) ->
-						res.send Object.values data
+						dataValues = []
+						Object.keys(data).forEach (key) ->
+							dataValues.push data[key]
+						res.send dataValues
 					.fail (e) ->
 						env.debug e
 						res.send 400, 'Error reading the plugins data'
