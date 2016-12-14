@@ -74,18 +74,16 @@ module.exports = (env) ->
 		'text/html; q=0.1': (req, res, body, cb) ->
 			if body instanceof Error
 				if body instanceof check.Error || body instanceof restify.RestError
-					msg = body.message
+					msg = check.escapeHtml body.message
 					if typeof body.body == 'object' && Object.keys(body.body).length
 						msg += "<br/>"
 						for k,v of body.body
-							msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
+							msg += '<span style="color:red">' + (check.escapeHtml k.toString()) + "</span>: " + (check.escapeHtml v.toString()) + "<br/>"
 					else if typeof body.body == 'string' && body.body != ""
-						msg += '<br/><span style="color:red">' + body.body + '</span>'
+						msg += '<br/><span style="color:red">' + (check.escapeHtml body.body) + '</span>'
 					if config.debug && body.stack
-						if body.we_cause?.stack
-							msg += "<br/>" + body.we_cause.stack.split "<br/>"
-						else
-							msg += "<br/>" + body.stack.split "<br/>"
+						stack = if body.we_cause?.stack then body.we_cause.stack else body.stack
+						msg += "<br/>" + (check.escapeHtml stack).replace(/\n/g, '<br/>')
 					body = msg
 				else
 					body = "Internal error"
