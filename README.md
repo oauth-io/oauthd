@@ -109,7 +109,7 @@ Anyone and everyone is welcome to contribute. Please take a moment to review the
 
 ## License & Copyright
 
-Copyright (C) 2016 Webshell SAS
+Copyright (C) 2017 Webshell SAS
 [https://github.com/oauth-io/oauthd](https://github.com/oauth-io/oauthd) and other contributors
 
 Licensed under the Apache License 2.0
