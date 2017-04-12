@@ -4,7 +4,17 @@
 	"url": "https://slack.com",
 	"oauth2": {
 		"authorize": "/oauth/authorize",
-		"access_token": "/api/oauth.access",
+		"access_token": {
+			"url": "/api/oauth.access",
+			"extra": [
+				"team_name",
+				"team_id",
+				"team",
+				"user",
+			    "incoming_webhook",
+				"bot"
+			]
+		},
 		"request": {
 			"query": {
 				"token": "{{token}}"
@@ -17,16 +27,63 @@
 			"client_secret": "string",
 			"scope": {
 				"values": {
-					"bot": "Slack-App: request this scope when your Slack app includes bot user functionality. Unlike incoming-webhook and commands, the bot scope grants your bot user access to a subset of Web API methods.",
-					"commands": "Slack App: similarly, requesting this scope allows teams to install slash commands bundled in your Slack app.",
-					"incoming-webhook": "Slack App: requesting this scope during the authentication process allows teams to easily install an incoming webhook that can post from your app to a single Slack channel.",
-					"identify": "Allows applications to confirm your identity.",
-					"client": "Allows applications to connect to slack as a client, and post messages on behalf of the user.",
-					"admin": "Allows applications to perform administrative actions, requires the authed user is an admin.",
-					"chat:write:bot": "chat.delete, chat.postMessage, chat.update API methods",
-					"chat:write:user": "chat.delete, chat.meMessage, chat.postMessage, chat.update API methods",
-					"channels:read": "channels.info, channels.list",
-					"users:read": "For /me profile"
+					"identify": "[Special] Special Allows applications to confirm your identity.",
+					"client": "[Special] Allows applications to connect to slack as a client, and post messages on behalf of the user.",
+					"admin": "[Special] Allows applications to perform administrative actions, requires the authed user is an admin.",
+					
+					"bot": "[Slack App] request this scope when your Slack app includes bot user functionality. Unlike incoming-webhook and commands, the bot scope grants your bot user access to a subset of Web API methods.",
+					"commands": "[Slack App] similarly, requesting this scope allows teams to install slash commands bundled in your Slack app.",
+					"incoming-webhook": "[Slack App] requesting this scope during the authentication process allows teams to easily install an incoming webhook that can post from your app to a single Slack channel.",
+
+					"channels:history": "[API Methods] channels.history, channels.replies",
+					"channels:read": "[API Methods] channels.info, channels.list",
+					"channels:write": "[API Methods] channels.archive, channels.create, channels.invite, channels.join, channels.kick, channels.leave, channels.mark, channels.rename, channels.setPurpose, channels.setTopic, channels.unarchive",
+
+					"chat:write:bot": "[API Methods] chat.delete, chat.postMessage, chat.update",
+					"chat:write:user": "[API Methods] chat.delete, chat.meMessage, chat.postMessage, chat.update",
+
+					"dnd:read": "[API Methods] dnd.info, dnd.teamInfo",
+					"dnd:write": "[API Methods] dnd.endDnd, dnd.endSnooze, dnd.setSnooze",
+
+					"emoji:read": "[API Methods] emoji.list",
+
+					"files:read": "[API Methods] files.info, files.list",
+					"files:write:user": "[API Methods] files.comments.add, files.comments.delete, files.comments.edit, files.delete, files.revokePublicURL, files.sharedPublicURL, files.upload",
+					
+					"groups:history": "[API Methods] groups.history,groups.replies",
+					"groups:read": "[API Methods] groups.info, groups.list",
+					"groups:write": "[API Methods] groups.archive, groups.close, groups.create, groups.createChild, groups.invite, groups.kick, groups.leave, groups.mark, groups.open, groups.rename, groups.setPurpose, groups.setTopic, groups.unarchive",
+
+					"identity.basic": "[API Methods] users.identity",
+
+					"im:history": "[API Methods] im.history, im.replies",
+					"im:read": "[API Methods] im.list",
+					"im:write": "[API Methods] im.close, im.mark, im.open",
+
+					"links:write": "[API Methods] chat.unfurl",
+
+					"mpim:history": "[API Methods] mpim.history, mpim.replies",
+					"mpim:read": "[API Methods] mpim.list",
+					"mpim:write": "[API Methods] mpim.close, mpim.mark, mpim.open",
+					"pins:read": "[API Methods] pins.list, pins:write, pins.add, pins.remove",
+					
+					"reactions:read": "[API Methods] reactions.get, reactions.list",
+					"reactions:write": "[API Methods] reactions.add, reactions.remove",
+
+					"reminders:read": "[API Methods] reminders.info, reminders.list",
+					"reminders:write": "[API Methods] reminders.add, reminders.complete, reminders.delete",
+					
+					"search:read": "[API Methods] search.all, search.files, search.messages",
+					"stars:read": "[API Methods] stars.list, stars:write, stars.add, stars.remove",
+
+					"team:read": "[API Methods] team.info",
+
+					"usergroups:read": "[API Methods] usergroups.list, usergroups.users.list",
+					"usergroups:write": "[API Methods] usergroups.create, usergroups.disable, usergroups.enable, usergroups.update, usergroups.users.update",
+					"users.profile:read": "[API Methods] team.profile.get, users.profile.get",
+					"users.profile:write": "[API Methods] users.deletePhoto, users.profile.set, users.setPhoto",
+					"users:read": "[API Methods] bots.info, users.getPresence, users.info, users.list",
+					"users:write": "[API Methods] users.setActive, users.setPresence"
 				}
 			}
 		}
