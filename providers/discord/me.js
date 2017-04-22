@@ -19,7 +19,11 @@ var me = {
             return me.discriminator;
         },
         fullName: function(me) {
-            return me.username + '#' + me.discriminator;
+            if (me.username && me.discriminator) {
+                return me.username + '#' + me.discriminator;
+            }
+
+            return undefined;
         }
     }
 };
