@@ -1,5 +1,6 @@
 {
     "name": "Beam",
+    "desc": "Beam or Beam.pro is a livestreaming platform focused on viewer interaction.",
     "url": "https://beam.pro/api/v1",
     "oauth2": {
         "authorize": {
