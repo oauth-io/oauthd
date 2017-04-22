@@ -1,0 +1,18 @@
+{
+    "settings": {
+        "createApp": {
+            "image": "config.png",
+            "url": "https://discordapp.com/developers/applications/me/create"
+        },
+        "copyingKey": {
+            "image": "keys.png",
+            "url": "https://discordapp.com/developers/applications/me"
+        },
+        "install": {
+            "href": {
+                "provider": "https://discordapp.com/",
+                "docs": "https://discordapp.com/developers/docs/intro"
+            }
+        }
+    }
+}
