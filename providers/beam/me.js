@@ -1,7 +1,7 @@
 var me = {
     fetch: [
-        function (fetched_elts) {
-            return "/users/current";
+        function() {
+            return 'https://beam.pro/api/v1/users/current';
         }
     ],
     params: {},
@@ -23,3 +23,5 @@ var me = {
         }
     }
 };
+
+module.exports = me;
