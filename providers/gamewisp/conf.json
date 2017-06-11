@@ -1,0 +1,63 @@
+{
+    "name": "GameWisp",
+    "desc": "GameWisp offers subscription tools for live streamers.",
+    "url": "https://api.gamewisp.com/pub/v1/oauth",
+    "oauth2": {
+        "authorize": {
+            "url": "/authorize",
+            "query": {
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}",
+                "response_type": "code",
+                "scope": "{scope}",
+                "state": "{{state}}"
+            }
+        },
+        "access_token": {
+            "url": "/token",
+            "format": "json",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "code": "{{code}}",
+                "grant_type": "authorization_code",
+                "redirect_uri": "{{callback}}"
+            },
+            "extra": [
+                "refresh_token"
+            ]
+        },
+        "refresh": {
+            "url": "/token",
+            "format": "json",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "grant_type": "refresh_token",
+                "refresh_token": "{{refresh_token}}"
+            }
+        },
+        "request": {
+            "query": {
+                "access_token": "{{token}}"
+            }
+        }
+    },
+    "parameters": {
+        "client_id": "string",
+        "client_secret": "string",
+        "scope": {
+            "values": {
+                "read_only": "Use this when you're building applications that you intend for GameWisp channels to use. Provides access to the Channel Resource. Provides read only access to basic channel information, a channel's subscribers, and their tiers and benefits. This is the default scope. If no scope is passed to the endpoint, this scope is assumed.",
+                "subscriber_read_full": "Use this when you're building applications that you want GameWisp subscribers to use. Provides access to the subscription endpoint in the User Resource. Allows access to endpoints that return full subscriber information, including user input on benefit data. Don't request this scope from a subscriber unless you absolutely need that information from subscribers. Useful if you want to build applications for GameWisp subscribers and do not necessarily have authorization for a channel to which a subscriber is subscribed.",
+                "user_read": "Use this when you're building applications that require user information: avatars, About Me, etc. Allows access to the information endpoint in the User Resource. Since this scope allows access to basic user information, it's usually good practice to request this scope along with whatever others you may need."
+            }
+        }
+    },
+    "href": {
+        "keys": "https://gamewisp.readme.io/docs/api-authorization",
+        "docs": "https://gamewisp.readme.io/docs",
+        "apps": "https://gamewisp.com/dashboard",
+        "provider": "https://gamewisp.com/"
+    }
+}
