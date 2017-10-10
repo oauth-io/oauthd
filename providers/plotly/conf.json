@@ -1,0 +1,51 @@
+{
+	"name": "Plotly",
+	"desc": "Plotly is the modern platform for agile business intelligence and data science.",
+	"url": "https://plot.ly/",
+	"oauth2": {
+		"authorize": {
+			"url": "/o/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "/o/token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"request": {
+			"url": "https://plot.ly/"
+		},
+		"refresh": {
+			"url": "/o/token",
+			"method": "post",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"read": "Read your private data, including plots.",
+					"write": "Update files, meta-information and Delete files.",
+					"create": "Create data, including plots, on your behalf."
+				},
+				"separator": " "
+			}
+		}
+	}
+}
