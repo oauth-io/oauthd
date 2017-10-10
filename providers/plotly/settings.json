@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://plot.ly/o/applications/register/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://plot.ly/o/applications/register/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://plot.ly/",
+				"docs": "https://plot.ly/api"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v2/users/current/"
+        }
+	}
+}
