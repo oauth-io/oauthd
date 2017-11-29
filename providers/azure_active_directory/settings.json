@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://apps.dev.microsoft.com/portal/register-app",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://apps.dev.microsoft.com/#/appList",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.microsoft.com/",
+				"docs": "https://docs.microsoft.com/azure/active-directory/develop/active-directory-appmodel-v2-overview"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/v1.0/me"
+        }
+	}
+}
