@@ -8,7 +8,7 @@
                                 "client_id": "{client_id}",
                                 "response_type": "code",
                                 "state": "{{state}}",
-                                "redirect_uri": "https://oauth.io/auth"
+                                "redirect_uri": "{{callback}}"
                         }
                 },
                 "access_token": {
@@ -22,7 +22,7 @@
                                 "client_secret": "{client_secret}",
                                 "code": "{{code}}",
                                 "grant_type": "authorization_code",
-                                "redirect_uri": "https://oauth.io/auth"
+                                "redirect_uri": "{{callback}}"
                         }
                 },
                 "refresh": "https://api.login.yahoo.com/oauth2/get_token",
