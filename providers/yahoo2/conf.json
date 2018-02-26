@@ -8,7 +8,7 @@
                                 "client_id": "{client_id}",
                                 "response_type": "code",
                                 "state": "{{state}}",
-                                "redirect_uri": "https://28e1598d.ngrok.io/auth"
+                                "redirect_uri": "https://oauth.io/auth"
                         }
                 },
                 "access_token": {
@@ -22,7 +22,7 @@
                                 "client_secret": "{client_secret}",
                                 "code": "{{code}}",
                                 "grant_type": "authorization_code",
-                                "redirect_uri": "https://28e1598d.ngrok.io/auth"
+                                "redirect_uri": "https://oauth.io/auth"
                         }
                 },
                 "refresh": "https://api.login.yahoo.com/oauth2/get_token",
@@ -33,7 +33,18 @@
                         "scope": {
                                 "values": {
                                         "sdct-r": "Grants read access to contacts.",
-                                        "sdct-w": "Grants read/write access to contacts"
+                                        "sdct-w": "Grants read/write access to contacts.",
+                                        "fspt-r": "Grants read access to fantasy sports.",
+                                        "fspt-w": "Grants read/write access to fantasy sports.",
+                                        "yfin-r": "Grants read access to finance.",
+                                        "yfin-w": "Grants read/write access to finance.",
+                                        "admg-w": "Grants read/write access to Gemini advertising.",
+                                        "gpub-r": "Grants read access to Gemini publishers.",
+                                        "msgr-w": "Grants read/write access to messenger.",
+                                        "sdps-r": "Grants read access to social directory profiles (public).",
+                                        "sdps-w": "Grants read/write access to social directory profiles (public).",
+                                        "sdpp-w": "Grants read/write access to social directory profiles (public & private).",
+                                        "sdrl-w": "Grants read/write access to social directory relationships."
                                 }
                         }
                 }
