@@ -1,0 +1,71 @@
+{
+  "name": "Line",
+    "desc": "LINE Login lets people easily create an account for your app or website using their LINE accounts. You can integrate LINE Login into your iOS, Android, or web app.",
+  "url": "https://api.line.me/oauth2/v2.1",
+  "oauth2": {
+    "authorize": {
+      "url": "https://access.line.me/oauth2/v2.1/authorize",
+      "query": {
+        "response_type": "code",
+        "client_id": "{client_id}",
+        "redirect_uri": "{{callback}}",
+        "state": "{{state}}",
+        "scope": "{scope}"
+      }
+    },
+    "access_token": {
+      "url": "/token",
+      "query": {
+        "grant_type": "authorization_code",
+        "code": "{{code}}",
+        "redirect_uri": "{{callback}}",
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}"
+      }
+    },
+    "request": {
+      "url": "https://api.line.me",
+      "headers": {
+        "Authorization": "Bearer {{token}}"
+      }
+    },
+    "refresh": {
+      "url": "/token",
+      "method": "post",
+      "query": {
+        "grant_type": "refresh_token",
+        "refresh_token": "{{refresh_token}}",
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}"
+      }
+    },
+    "revoke": {
+      "url": "/revoke",
+      "method": "post",
+      "query": {
+        "access_token": "{{token}}",
+        "client_id": "{client_id}",
+        "client_secret": "{client_secret}"
+      }
+    },
+    "parameters": {
+      "client_id": "string",
+      "client_secret": "string",
+      "scope": {
+                "values": {
+                    "profile": "Permission to get the user's profile information.",
+                    "openid": "Used to retrieve an ID token. For more information, see ID tokens.",
+                    "email": "Permission to get the user's email address. openid must be specified at the same time. For more information, see ID tokens."
+                },
+                "separator": "%20"
+      }
+    }
+  },
+  "href": {
+    "keys": "https://developers.line.me/console/register/provider/",
+    "docs": "https://developers.line.me/en/docs/",
+    "apps": "https://developers.line.me/console/",
+    "provider": "https://line.me"
+  }
+}
+
