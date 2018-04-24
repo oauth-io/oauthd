@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/method/users.get?fields=bdate,sex,photo_max_orig,contacts';
+            return '/method/users.get?fields=bdate,sex,photo_max_orig,contacts&v=5.74';
         }
 
     ],
