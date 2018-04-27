@@ -45,7 +45,7 @@ var me = {
             return me.response && me.response[0] && me.response[0].mobile_phone || undefined;
         },
         url: function(me) {
-            return "https://vk.com/id/" + me.response[0].id;
+            return "https://vk.com/id" + me.response[0].id;
         }
     }
 };
