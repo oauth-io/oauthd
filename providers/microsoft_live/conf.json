@@ -1,0 +1,42 @@
+{
+	"name": "Microsoft Live OAuth2",
+    "desc": "The Interactive Live SDK is an interactive tool for exploring the Live Connect APIs and learning how they can enrich your application without having to do any coding! This tool allows you to try out the APIs without having registered a Live application.",
+	"url": "https://login.microsoftonline.com",
+	"oauth2": {
+		"authorize": {
+			"url": "/common/oauth2/v2.0/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"response_mode": "query",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}",
+				"state": "{{state}}"
+			}
+		},
+		"access_token": "/common/oauth2/v2.0/token",
+		"request": {
+			"url": "https://apis.live.net",
+			"query": {
+				"access_token": "{{token}}"
+			}
+		},
+		"refresh": "/common/oauth2/v2.0/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"https://graph.microsoft.com/mail.send": "Send Email",
+					"https://graph.microsoft.com/mail.read": "Read Email"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://manage.dev.live.com/Applications/Create",
+		"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
+		"apps": "https://manage.dev.live.com/Applications",
+		"provider": "https://www.live.com/"
+	}
+}
