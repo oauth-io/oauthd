@@ -79,8 +79,8 @@ module.exports = (env) ->
 
 			defer.promise
 		typedKeys: () ->
-			if @constructor._cachedTypedKeys
-				return Q(@constructor._cachedTypedKeys)
+#			if @constructor._cachedTypedKeys
+#				return Q(@constructor._cachedTypedKeys)
 			defer = Q.defer()
 			keys = {}
 			@keys()
