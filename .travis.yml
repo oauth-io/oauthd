@@ -4,7 +4,7 @@ node_js:
 services:
  - redis
 before_install:
- - "npm install -g grunt-cli coffee-script jasmine-node"
+ - "npm install -g grunt-cli coffee-script jasmine-node@1.14.5"
 install:
  - "npm install"
 script:
