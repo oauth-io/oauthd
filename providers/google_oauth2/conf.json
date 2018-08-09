@@ -1,0 +1,141 @@
+{
+	"name": "Google Auth2",
+    "desc": "Google APIs (or Google AJAX APIs) is a set of JavaScript APIs developed by Google that allows interaction with Google Services and integration of rich, multimedia, search or feed-based Internet content into web applications. They extensively use AJAX scripting and can be easily loaded using Google Loader.",
+	"oauth2": {
+		"authorize": {
+			"url": "https://accounts.google.com/o/oauth2/v2/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}",
+				"access_type": "{access_type}"
+			}
+		},
+		"access_token": {
+			"url": "https://www.googleapis.com/oauth2/v4/token",
+			"extra": [
+				"id_token"
+			]
+		},
+		"request": "https://www.googleapis.com",
+		"refresh": "https://www.googleapis.com/oauth2/v4/token",
+		"revoke": {
+			"url": "/revoke",
+			"method": "post",
+			"query": {
+				"token": "{{token}}"
+			}
+		},
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"https://www.googleapis.com/auth/blogger.readonly": "View your Blogger account",
+					"https://www.googleapis.com/auth/freebase": "Sign in to Freebase with your account",
+					"https://www.googleapis.com/auth/fusiontables.readonly": "View your Fusion Tables",
+					"https://www.googleapis.com/auth/latitude.current.best": "Manage your best-available location",
+					"https://www.googleapis.com/auth/analytics": "View and manage your Google Analytics data",
+					"https://www.googleapis.com/auth/youtubepartner": "View and manage your assets and associated content on YouTube",
+					"https://www.googleapis.com/auth/drive.metadata.readonly": "View metadata for files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/tasks": "Manage your tasks",
+					"https://www.googleapis.com/auth/drive.file": "View and manage Google Drive files that you have opened or created with this app",
+					"https://www.googleapis.com/auth/orkut.readonly": "View your Orkut data",
+					"https://www.googleapis.com/auth/userinfo.profile": "View basic information about your account",
+					"https://www.googleapis.com/auth/urlshortener": "Manage your goo.gl short URLs",
+					"https://www.googleapis.com/auth/yt-analytics-monetary.readonly": "View YouTube Analytics monetary reports for your YouTube content",
+					"https://www.googleapis.com/auth/plus.me": "Know who you are on Google",
+					"https://www.googleapis.com/auth/drive": "View and manage the files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/adsense.readonly": "View your AdSense data",
+					"https://www.googleapis.com/auth/devstorage.full_control": "Manage your data and permissions in Google Cloud Storage",
+					"https://www.googleapis.com/auth/youtube": "Manage your YouTube account",
+					"https://www.googleapis.com/auth/devstorage.read_only": "View your data in Google Cloud Storage",
+					"https://www.googleapis.com/auth/adexchange.seller": "View and manage your Ad Exchange data",
+					"https://www.googleapis.com/auth/latitude.current.city": "Manage your city-level location",
+					"https://www.googleapis.com/auth/apps.groups.settings": "View and manage the settings of a Google Apps Group",
+					"https://www.googleapis.com/auth/apps.licensing": "Read/write access to License Manager API.",
+					"https://www.googleapis.com/auth/bigquery": "View and manage your data in Google BigQuery",
+					"https://www.googleapis.com/auth/coordinate.readonly": "View your Google Coordinate jobs",
+					"https://www.googleapis.com/auth/cloudprint": "View and manage your google cloud print data",
+					"https://www.googleapis.com/auth/coordinate": "View and manage your Google Maps Coordinate jobs",
+					"https://www.googleapis.com/auth/drive.readonly": "View the files and documents in your Google Drive",
+					"https://www.googleapis.com/auth/compute.readonly": "View your Google Compute Engine resources",
+					"https://www.googleapis.com/auth/orkut": "Manage your Orkut activity",
+					"https://www.googleapis.com/auth/siteverification": "Manage the list of sites and domains you control",
+					"https://www.googleapis.com/auth/yt-analytics.readonly": "View YouTube Analytics reports for your YouTube content",
+					"https://www.googleapis.com/auth/analytics.readonly": "View your Google Analytics data",
+					"https://www.googleapis.com/auth/books": "Manage your books",
+					"https://www.googleapis.com/auth/tasks.readonly": "View your tasks",
+					"https://www.googleapis.com/auth/devstorage.read_write": "Manage your data in Google Cloud Storage",
+					"https://www.googleapis.com/auth/fusiontables": "Manage your Fusion Tables",
+					"https://www.googleapis.com/auth/compute": "View and manage your Google Compute Engine resources",
+					"https://www.googleapis.com/auth/adsense": "View and manage your AdSense data",
+					"https://www.googleapis.com/auth/shoppingapi": "View your product data",
+					"https://www.googleapis.com/auth/blogger": "Manage your Blogger account",
+					"https://www.googleapis.com/auth/latitude.all.best": "Manage your best-available location and location history",
+					"https://www.googleapis.com/auth/dfareporting": "View and manage DoubleClick for Advertisers reports",
+					"https://www.googleapis.com/auth/userinfo.email": "View your email address",
+					"https://www.googleapis.com/auth/taskqueue.consumer": "Consume Tasks from your Taskqueues",
+					"https://www.googleapis.com/auth/drive.apps.readonly": "View your Google Drive apps",
+					"https://www.googleapis.com/auth/gan": "Manage your GAN data",
+					"https://www.googleapis.com/auth/adsensehost": "View and manage your AdSense host data and associated accounts",
+					"https://www.googleapis.com/auth/calendar": "Manage your calendars",
+					"https://www.googleapis.com/auth/youtube.upload": "Manage your YouTube videos",
+					"https://www.googleapis.com/auth/calendar.readonly": "View your calendars",
+					"https://www.googleapis.com/auth/adexchange.seller.readonly": "View your Ad Exchange data",
+					"https://www.googleapis.com/auth/prediction": "Manage your data in the Google Prediction API",
+					"https://www.googleapis.com/auth/siteverification.verify_only": "Manage your new site verifications with Google",
+					"https://www.googleapis.com/auth/gan.readonly": "View your GAN data",
+					"https://www.googleapis.com/auth/youtube.readonly": "View your YouTube account",
+					"https://www.googleapis.com/auth/latitude.all.city": "Manage your city-level location and location history",
+					"https://www.googleapis.com/auth/plus.login": "Know your name, basic info, and list of people you're connected to on Google+",
+					"https://www.googleapis.com/auth/drive.scripts": "Modify your Google Apps Script scripts' behavior",
+					"https://www.googleapis.com/auth/adexchange.buyer": "Manage your Ad Exchange buyer account configuration",
+					"https://www.googleapis.com/auth/taskqueue": "Manage your Tasks",
+					"https://www.googleapis.com/auth/drive.install": "Special scope used to let users approve installation of an app",
+					"https://www.googleapis.com/auth/drive.appdata": "Allows access to the Application Data folder",
+					"https://www.googleapis.com/auth/freebase.readonly": "view your Freebase account",
+					"https://www.googleapis.com/auth/tracks": "Google Maps Tracks API, This scope allows read and write access to your project's data.",
+					"https://www.googleapis.com/auth/mapsengine": "provides read and write access to the user's Maps Engine data from your application.",
+					"https://www.googleapis.com/auth/androidpublisher": "Access to the Google Play Android Developer",
+					"https://www.googleapis.com/auth/games": "Scope for accessing data from Google Play Games.",
+					"https://www.googleapis.com/auth/appstate": "Scope for using the App State service.",
+					"https://www.googleapis.com/auth/mapsengine.readonly": "provides read-only access to the user's Maps Engine data from your",
+					"https://www.googleapis.com/auth/structuredcontent": "Read/write access to Shopping Content API.",
+					"https://apps-apis.google.com/a/feeds/compliance/audit/": "Access to email Audit Api",
+					"https://www.googleapis.com/auth/apps/reporting/audit.readonly": "Access to the Admin Audit API ReadOnly",
+					"https://apps-apis.google.com/a/feeds/policies/": "Use this scope for OAuth access to the customerId operation",
+					"https://www.googleapis.com/auth/bigquery.readonly": "View your data in Google BigQuery",
+					"https://www.googleapis.com/auth/apps.order": "For reseller administrators and users read/write access when testing in the API's sandbox, or read/write access when calling an API operation directly.",
+					"https://www.googleapis.com/auth/apps.order.readonly": "In addition to the overall read/write OAuth scope, use the read only OAuth scope when retrieving the customer's data.",
+					"https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome",
+					"https://www.googleapis.com/auth/glass.timeline": "Glass timeline scope",
+					"https://www.google.com/m8/feeds": "read/write access to Contacts and Contact Groups",
+					"https://docs.google.com/feeds/": "Access to all Document List feeds. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+					"https://spreadsheets.google.com/feeds/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
+					"https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API.",
+					"https://mail.google.com/": "The scope for IMAP and SMTP access",
+					"openid": "Access to your id",
+					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
+					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
+				}
+			},
+			"access_type": {
+				"values": {
+					"online": "Will not provide a refresh_token",
+					"offline": "/!\\ Please use server-side only /!\\ If your application needs to refresh access tokens when the user is not present at the browser"
+				},
+				"cardinality": "1"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://code.google.com/apis/console/",
+		"docs": "http://code.google.com/more/",
+		"apps": "https://code.google.com/apis/console/",
+		"provider": "http://google.com/"
+	}
+}
