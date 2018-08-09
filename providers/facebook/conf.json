@@ -34,7 +34,6 @@
 				"values": {
 					"friends_groups": "Provides access to the list of groups the user is a member of as the groups connection",
 					"friends_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
-					"publish_actions": "Allows your app to publish to the Open Graph using Built-in Actions, Achievements, Scores, or Custom Actions. Your app can also publish other activity which is detailed in the Publishing Permissions doc. Note: The user-prompt for this permission will be displayed in the first screen of the Enhanced Auth Dialog and cannot be revoked as part of the authentication flow. However, a user can later revoke this permission in their Account Settings. If you want to be notified if this happens, you should subscribe to the permissions object within the Realtime API.",
 					"friends_relationship_details": "Provides access to the user's relationship preferences",
 					"user_events": "Provides access to the list of events the user is attending as the events connection",
 					"create_event": "Enables your application to create and modify events on the user's behalf",
