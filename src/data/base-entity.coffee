@@ -79,8 +79,12 @@ module.exports = (env) ->
 
 			defer.promise
 		typedKeys: () ->
-			if @constructor._cachedTypedKeys
-				return Q(@constructor._cachedTypedKeys)
+# 		Disable caching when looking up providers
+# 		If the cache is not disabled then 'Platform Settings' section of OAuth.io
+# 		which is used to configure OAuth server will not work,
+# 		i.e., settings are saved by cannot be retrieved properly unless the application is redeployed
+#			if @constructor._cachedTypedKeys
+#				return Q(@constructor._cachedTypedKeys)
 			defer = Q.defer()
 			keys = {}
 			@keys()
