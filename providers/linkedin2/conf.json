@@ -1,14 +1,14 @@
 {
     "name": "Linkedin (OAuth2)",
     "desc": "LinkedIn is the worlds largest business social networking hub.\nThe Linkedin REST API provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
-    "url": "https://www.linkedin.com/uas/oauth2",
+    "url": "https://www.linkedin.com/oauth",
     "oauth2": {
-        "authorize": "/authorization",
-        "access_token": "/accessToken",
+        "authorize": "/v2/authorization",
+        "access_token": "/v2/accessToken",
         "request": {
             "url": "https://api.linkedin.com",
-            "query": {
-                "oauth2_access_token": "{{token}}"
+            "headers": {
+              "Authorization": "Bearer {{token}}"
             }
         },
         "parameters": {
