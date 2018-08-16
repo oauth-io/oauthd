@@ -1,6 +1,6 @@
 var me = {
 
-    url: '/v1/people/~:(id,first-name,last-name,headline,picture-url,email-address,public-profile-url)?format=json',
+    url: '/v1/people/~:(id,first-name,last-name,headline,picture-url,email-address,public-profile-url,positions)?format=json',
     params: {},
     fields: {
         id: 'id',
