@@ -381,22 +381,7 @@ module.exports = (env) ->
 				if providers?.length > 0
 					callback null, providers
 				else
-					env.data.redis.get prefix + ':stored_keysets', (err, v) ->
-						if v != '1'
-							env.data.redis.set prefix + ':stored_keysets', '1', (err) ->
-								env.data.redis.keys prefix + ':k:*', (err, provider_keys) ->
-									return callback err if err
-									commands = []
-									providers = []
-									for key in provider_keys
-										p = key.replace(prefix + ':k:', '')
-										providers.push p
-										commands.push ['sadd', providers_key, p]
-									env.data.redis.multi(commands).exec (err) ->
-										return callback err if err
-										callback null, providers
-						else
-							callback null, providers
+					callback null, []
 
 	# check a domain
 	App.checkDomain = check check.format.key, 'string', (key, domain_str, callback) ->
