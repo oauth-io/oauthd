@@ -94,7 +94,6 @@
 					"user_location": "Provides access to the user's current location as the location property",
 					"friends_actions.news": "Allows you to retrieve the actions published by all applications using the built-in news.reads action.",
 					"user_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
-					"publish_stream": "Enables your app to post content, comments, and likes to a user's stream and to the streams of the user's friends. This is a superset publishing permission which also includes publish_actions. However, please note that Facebook recommends a user-initiated sharing model. Please read the Platform Policies to ensure you understand how to properly use this permission. Note, you do not need to request the publish_stream permission in order to use the Feed Dialog, the Requests Dialog or the Send Dialog.",
 					"user_relationship_details": "Provides access to the user's relationship preferences",
 					"user_likes": "Provides access to the list of all of the pages the user has liked as the likes connection",
 					"friends_checkins": "Provides read access to the authorized user's check-ins or a friend's check-ins that the user can see. This permission is superseded by user_status for new applications as of March, 2012.",
