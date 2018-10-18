@@ -16,9 +16,9 @@
 		},
 		"access_token": "/common/oauth2/v2.0/token",
 		"request": {
-			"url": "https://apis.live.net",
-			"query": {
-				"access_token": "{{token}}"
+			"url": "https://graph.microsoft.com/v1.0",
+			"headers": {
+				"Authorization": "Bearer {{token}}"
 			}
 		},
 		"refresh": "/common/oauth2/v2.0/token",
@@ -28,7 +28,10 @@
 			"scope": {
 				"values": {
 					"https://graph.microsoft.com/mail.send": "Send Email",
-					"https://graph.microsoft.com/mail.read": "Read Email"
+					"https://graph.microsoft.com/mail.read": "Read Email",
+					"https://graph.microsoft.com/contacts.read": "Read Contacts",
+					"https://graph.microsoft.com/user.read": "Read User Basic",
+					"https://graph.microsoft.com/user.read.all": "Read User All"
 				}
 			}
 		}
