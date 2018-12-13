@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://app.getresponse.com/manage_api.html",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://app.getresponse.com/manage_api.html",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.getresponse.com/",
+				"docs": "https://apidocs.getresponse.com/v3/"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/accounts"
+		}
+	}
+}
