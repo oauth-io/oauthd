@@ -1,0 +1,45 @@
+{
+	"name": "Act-On",
+	"desc": "Act-On is a software-as-a-service product for marketing automation developed by Act-On Software, a company headquartered in Beaverton, Oregon. It is used mostly by small to medium-sized businesses and departments of large enterprises.",
+	"url": "https://restapi.actonsoftware.com",
+	"oauth2": {
+		"authorize": {
+			"url": "/authorize",
+			"query": {
+				"scope": "PRODUCTION",
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"state": "{{state}}",
+				"redirect_uri": "{{callback}}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"query": {
+				"code": "{{code}}",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"grant_type": "authorization_code"
+			}
+		},
+		"request": {
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"refresh": {
+			"url": "/token",
+			"method": "post",
+			"query": {
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}",
+				"client_id": "{client_id}"
+			}
+		}
+	},
+	"href": {
+		"docs": "https://developer.act-on.com/documentation/",
+		"provider": "https://act-on.com"
+	}
+}
