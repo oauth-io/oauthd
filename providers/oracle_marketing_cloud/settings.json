@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCAB/Developers/AppCloud/Develop/develop-apps.htm",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCAB/Developers/AppCloud/Develop/develop-apps.htm",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://login.eloqua.com/",
+				"docs": "https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCAB/Developers/get_started_lp.htm"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/messages"
+		}
+	}
+}
