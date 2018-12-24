@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://www.reddit.com/prefs/apps",
+            		"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://www.reddit.com/prefs/apps",
+            		"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.reddit.com",
+				"docs": "https://www.reddit.com/dev/api/"
+			}
+		}
+	}
+}
