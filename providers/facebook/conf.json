@@ -32,6 +32,10 @@
 			"client_secret": "string",
 			"scope": {
 				"values": {
+					"instagram_basic": "Provides the ability to read Instagram accounts you have access to",
+					"instagram_content_publish": "Provides the ability to publish content to Instagram account you have access to",
+					"instagram_manage_comments": "Provides the ability to read Instagram accounts you have access to",
+					"instagram_manage_insights": "Provides the ability to read insights of Instagram account you have access to",
 					"friends_groups": "Provides access to the list of groups the user is a member of as the groups connection",
 					"friends_actions.music": "Allows you to retrieve the actions published by all applications using the built-in music.listens action.",
 					"friends_relationship_details": "Provides access to the user's relationship preferences",
