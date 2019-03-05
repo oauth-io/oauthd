@@ -1,0 +1,23 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://kit.snapchat.com/portal/apps/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://kit.snapchat.com/portal/apps/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.snapchat.com/",
+				"docs": "https://docs.snapchat.com/docs/",
+				"apps": "https://kit.snapchat.com/portal/apps/"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/loq/ping"
+        }
+	}
+}
