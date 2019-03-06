@@ -16,6 +16,7 @@
 
 crypto = require 'crypto'
 async = require 'async'
+randomstring = require 'randomstring'
 
 module.exports = (env) ->
 	data = {}
@@ -125,6 +126,15 @@ module.exports = (env) ->
 		shasum = crypto.createHash 'sha1'
 		shasum.update config.staticsalt + data
 		return shasum.digest 'base64'
+
+	data.generateCodeVerifier = () ->
+		return randomstring.generate(50);
+
+	data.generateCodeChallenge = (codeVerifier) ->
+		shasum = crypto.createHash 'sha256'
+			.update(codeVerifier)
+			.digest('base64');
+		return shasum.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
 
 	data.emptyStrIfNull = (val) ->
 		return new String("") if not val? or val.length == 0
