@@ -8,15 +8,25 @@
 			"query": {
 				"client_id": "{client_id}",
 				"client_secret": "{client_secret}",
-				"redirect_uri": "{{callback}}",
+				"redirect_uri": "https://oauth.io/auth",
 				"profile_fields": "'id','displayName','bitmoji'",
 				"scope": "{scope}",
 				"response_type": "code",
-				"code_challenge": "{{nonce}}{{nonce}}",
+				"code_challenge": "{{code_challenge}}",
 				"code_challenge_method": "S256"
 			}
-                },
-		"access_token": "/accounts/oauth2/token",
+		},
+		"access_token": {
+			"url": "/accounts/oauth2/token",
+			"query": {
+				"code": "{{code}}",
+				"code_verifier": "{{code_verifier}}",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "https://oauth.io/auth"
+			}
+		},
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
