@@ -18,7 +18,7 @@ querystring = require 'querystring'
 
 module.exports = (env) ->
 	config = env.config
-	codeVerifier = env.data.generateCodeVerifier()
+	codeVerifier = env.data.generateCodeVerifier() unless typeof env.data == 'undefined'
 	class OAuthBase
 		constructor: (oauthv, provider, parameters, app_options) ->
 			@_appOptions = app_options || {}
