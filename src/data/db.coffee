@@ -16,7 +16,6 @@
 
 crypto = require 'crypto'
 async = require 'async'
-randomstring = require 'randomstring'
 
 module.exports = (env) ->
 	data = {}
@@ -128,7 +127,10 @@ module.exports = (env) ->
 		return shasum.digest 'base64'
 
 	data.generateCodeVerifier = () ->
-		return randomstring.generate(50);
+		randomString = () ->
+			return Math.random().toString(36).substring(2, 15)
+		randomString = randomString().concat(randomString()).concat(randomString()).concat(randomString());
+		return randomString
 
 	data.generateCodeChallenge = (codeVerifier) ->
 		shasum = crypto.createHash 'sha256'
