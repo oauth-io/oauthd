@@ -126,6 +126,18 @@ module.exports = (env) ->
 		shasum.update config.staticsalt + data
 		return shasum.digest 'base64'
 
+	data.generateCodeVerifier = () ->
+		randomString = () ->
+			return Math.random().toString(36).substring(2, 15)
+		randomString = randomString().concat(randomString()).concat(randomString()).concat(randomString());
+		return randomString
+
+	data.generateCodeChallenge = (codeVerifier) ->
+		shasum = crypto.createHash 'sha256'
+			.update(codeVerifier)
+			.digest('base64');
+		return shasum.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
+
 	data.emptyStrIfNull = (val) ->
 		return new String("") if not val? or val.length == 0
 		return val

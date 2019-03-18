@@ -18,7 +18,7 @@ querystring = require 'querystring'
 
 module.exports = (env) ->
 	config = env.config
-
+	codeVerifier = env.data.generateCodeVerifier() unless typeof env.data == 'undefined'
 	class OAuthBase
 		constructor: (oauthv, provider, parameters, app_options) ->
 			@_appOptions = app_options || {}
@@ -37,7 +37,12 @@ module.exports = (env) ->
 
 		_replaceParam: (param, hard_params) ->
 			param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
-				return env.data.generateUid() if val == "nonce"
+				if val == "nonce"
+					return env.data.generateUid()
+				else if val == "code_verifier"
+					return codeVerifier
+				else if  val == "code_challenge"
+					return env.data.generateCodeChallenge(codeVerifier)
 				return hard_params[val] || ""
 			param = param.replace /\{(.*?)\}/g, (match, val) =>
 				return "" if ! @_params[val] || ! @_parameters[val]
