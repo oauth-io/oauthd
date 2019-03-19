@@ -20,7 +20,7 @@
                 "id_token"
             ]
         },
-        "request": "https://www.googleapis.com/",
+        "request": "https://www.googleapis.com/youtube/",
         "refresh": "/token",
         "revoke": {
             "url": "/revoke",
