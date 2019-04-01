@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return 'https://kit.snapchat.com/v1/me?query=%7Bme%7BdisplayName%2C%20externalId%2C%20bitmoji%7Bavatar%7D%7D%7D';
+            return 'https://kit.snapchat.com/v1/me?query={me{displayName, externalId, bitmoji{avatar}}}';
         }
 
     ],
