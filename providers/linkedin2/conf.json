@@ -21,9 +21,11 @@
                     "r_emailaddress": "The primary email address you use for your LinkedIn account",
                     "r_network": "Your 1st and 2nd degree connections",
                     "r_contactinfo": "Address, phone number, and bound accounts",
+                    "r_liteprofile": "Use user's name and photo",
                     "rw_nus": "Retrieve and post updates to LinkedIn as you",
                     "rw_company_admin": "Edit company pages for which I am an Admin and post status updates on behalf of those companies",
                     "rw_groups": "Retrieve and post group discussions as you",
+                    "w_member_social": "Post, comment and like posts on user's behalf",
                     "w_messages": "Send messages and invitations to connect as you",
                     "w_share": "Share content on Linkedin"
                 }
