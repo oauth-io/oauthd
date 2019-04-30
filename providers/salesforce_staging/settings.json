@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.salesforce.com/",
+				"docs": "http://www.salesforce.com/us/developer/docs/api_rest/index.htm"
+			}
+		},
+        "sample": {
+            "method": "get",
+            "url": "/id/ORG_ID/USER_ID"
+        }
+	}
+}
