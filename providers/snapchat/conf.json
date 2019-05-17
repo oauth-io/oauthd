@@ -1,0 +1,47 @@
+{
+	"name": "Snapchat",
+	"desc": "Snapchat is a camera. No, not the kind with a flashbulb and a lens cap. It's a new kind of camera that's connected to your friends and the world. Over 180 million people use it every day to talk, play, learn, and take some pictures, too.",
+	"url": "https://accounts.snapchat.com",
+	"oauth2": {
+		"authorize": {
+			"url" :"/accounts/oauth2/auth",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "https://oauth.io/auth",
+				"profile_fields": "'id','displayName','bitmoji'",
+				"scope": "{scope}",
+				"response_type": "code",
+				"code_challenge": "{{code_challenge}}",
+				"code_challenge_method": "S256"
+			}
+		},
+		"access_token": {
+			"url": "/accounts/oauth2/token",
+			"query": {
+				"code": "{{code}}",
+				"code_verifier": "{{code_verifier}}",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "https://oauth.io/auth"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"https://auth.snapchat.com/oauth2/api/user.display_name": "Provides the ability to read Snapchat user display name",
+					"https://auth.snapchat.com/oauth2/api/user.bitmoji.avatar": "Provides the ability to retrieve Snapchat user bitmoji avatar"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://kit.snapchat.com/portal",
+		"docs": "https://kit.snapchat.com/portal",
+		"apps": "https://kit.snapchat.com/portal",
+		"provider": "https://snapchat.com/"
+	}
+}

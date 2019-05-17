@@ -76,7 +76,7 @@ module.exports = (env) ->
 
 			info.getPluginsJson { activeOnly: true }
 				.then (plugins) ->
-					defer.resolve Object.keys plugins
+					defer.resolve plugins
 				.fail (e) ->
 					defer.reject e
 
@@ -111,8 +111,7 @@ module.exports = (env) ->
 					installed_plugins = _installed
 					return info.getActive()
 				.then (_active) ->
-					active_plugins = _active
-
+					active_plugins = Object.keys _active
 					inactive_plugins = []
 					for plugin in installed_plugins
 						if plugin not in active_plugins

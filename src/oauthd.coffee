@@ -1,7 +1,5 @@
 # oauthd
-# Copyright (C) 2014 Webshell SAS
-#
-# NEW LICENSE HERE
+# Copyright (C) 2017 Webshell SAS
 
 Q = require 'q'
 
@@ -10,25 +8,26 @@ async = require "async"
 colors = require "colors"
 
 # request FIX
-qs = require 'request/node_modules/qs'
+qs = require 'qs'
+
 
 exports.init = (env) ->
 	defer = Q.defer()
 	startTime = new Date
 	env = env || {}
 	# Env is the global environment object. It is usually the 'this' (or @) in other modules
-	
+
 	env.scaffolding = require('./scaffolding')()
 
 	coreModule = require './core'
 	dataModule = require './data'
-	
+
 	coreModule(env).initEnv() #inits env
 	coreModule(env).initConfig() #inits env.config
 	coreModule(env).initUtilities() # initializes env, env.utilities, ...
-	
+
 	dataModule(env) # initializes env.data
-	
+
 	coreModule(env).initOAuth() # might be exported in plugin later
 	coreModule(env).initPluginsEngine()
 
@@ -42,7 +41,7 @@ exports.init = (env) ->
 		result = result.replace /\*/g, '%2A'
 		return result
 
-	
+
 
 	env.pluginsEngine.init process.cwd(), (err) ->
 		if not err
@@ -52,13 +51,13 @@ exports.init = (env) ->
 					auth_plugin_present = true
 
 			if not auth_plugin_present
-				env.debug "No " + "auth".red + " plugin found"
-				env.debug "You need to install an " + "auth".red + " plugin to run the server"
+				console.error "No " + "auth".red + " plugin found"
+				console.error "You need to install an " + "auth".red + " plugin to run the server"
 				defer.reject()
 				process.exit()
 
 			# start server
-			env.debug "oauthd start server"
+			env.debug.display "oauthd start server"
 			exports.server = server = require('./server')(env)
 			async.series [
 				env.data.providers.getList,
@@ -69,11 +68,11 @@ exports.init = (env) ->
 					env.pluginsEngine.data.emit 'server', err
 					defer.reject err
 				else
-					env.debug 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
+					env.debug.display 'Server is ready (load time: ' + Math.round(((new Date) - startTime) / 10) / 100 + 's)', (new Date).toGMTString()
 					defer.resolve()
 
 			return defer.promise
 
 exports.installPlugins = () ->
 	require('../bin/cli/plugins')(['install'],{}).command()
-		
+

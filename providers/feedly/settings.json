@@ -1,0 +1,22 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "http://goo.gl/forms/bHt5g5mD4q",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "http://goo.gl/forms/bHt5g5mD4q",
+            "image": "key.png"
+        },
+        "install": {
+            "href": {
+                "provider": "http://www.feedly.com/",
+                "docs": "https://developer.feedly.com/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "http://cloud.feedly.com/v3/profile"
+        }
+    }
+}

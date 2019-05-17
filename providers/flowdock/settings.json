@@ -1,0 +1,28 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://www.flowdock.com/oauth/applications/new",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://www.flowdock.com/oauth/applications",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://www.flowdock.com/",
+                "docs": "https://www.flowdock.com/api"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/user"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/user"
+            }
+        }
+    }
+}

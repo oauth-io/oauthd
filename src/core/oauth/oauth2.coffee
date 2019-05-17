@@ -30,7 +30,11 @@ module.exports = (env) ->
 			@_createState opts, (err, state) =>
 				return callback err if err
 				configuration = @_oauthConfiguration.authorize
+				if not configuration.url?
+					return callback new Error('The provider is not properly configured internally. Please contact the provider owner if available.')
 				placeholderValues = { state: state.id, callback: @_serverCallbackUrl }
+				if opts.options?.scope
+					@_parameters['scope'] = opts.options.scope
 				query = @_buildQuery(configuration.query, placeholderValues, opts.options?.authorize)
 				callback null, @_buildAuthorizeUrl(configuration.url, query, state.id)
 
@@ -49,9 +53,10 @@ module.exports = (env) ->
 
 			configuration = @_oauthConfiguration.access_token
 			placeholderValues = { code: req.params.code, state: state.id, callback: @_serverCallbackUrl }
+			@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 			query = @_buildQuery(configuration.query, placeholderValues)
 			headers = @_buildHeaders(configuration)
-			options = @_buildRequestOptions(configuration, headers, query)
+			options = @_buildRequestOptions(configuration, headers, query, placeholderValues)
 			options.followAllRedirects = true
 
 			# do request to access_token
@@ -95,7 +100,8 @@ module.exports = (env) ->
 						access_token: response.body.access_token
 						token_type: response.body.token_type
 						expires_in: expire
-					result.refresh_token = response.body.refresh_token if response.body.refresh_token && keyset.response_type == "code"
+					if response.body.refresh_token && (@_appOptions.refresh_client || keyset.response_type == "code")
+						result.refresh_token = response.body.refresh_token
 					callback null, result
 
 		request: (req, callback) ->

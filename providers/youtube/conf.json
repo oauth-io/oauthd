@@ -20,7 +20,7 @@
                 "id_token"
             ]
         },
-        "request": "https://www.googleapis.com/",
+        "request": "https://www.googleapis.com/youtube/",
         "refresh": "/token",
         "revoke": {
             "url": "/revoke",
@@ -51,7 +51,8 @@
                     "email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
                     "profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user",
                     "https://www.googleapis.com/auth/gcm_for_chrome": "CloudMessaging for chrome",
-                    "https://www.googleapis.com/auth/youtubepartner-channel-audit": "View private information of your YouTube channel relevant during the audit process with a YouTube partner"
+                    "https://www.googleapis.com/auth/youtubepartner-channel-audit": "View private information of your YouTube channel relevant during the audit process with a YouTube partner",
+                    "https://www.googleapis.com/auth/youtube.force-ssl": "Manage your YouTube account"
                 }
             }
         }

@@ -2,7 +2,6 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            console.log(fetched_elts.provider_config.oauth1);
             return '/user?action=getbyuserid&userid=' + fetched_elts.userid;
         }
 

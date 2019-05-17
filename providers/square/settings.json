@@ -1,0 +1,28 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://connect.squareup.com/apps/new",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://connect.squareup.com/apps",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://squareup.com/",
+                "docs": "https://docs.connect.squareup.com/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/v1/me"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/v1/me"
+            }
+        }
+    }
+}

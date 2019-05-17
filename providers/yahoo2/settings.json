@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.yahoo.com/apps/create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developer.yahoo.com/apps/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://yahoo.com",
+				"docs": "https://developer.yahoo.com/oauth2/guide/"
+			}
+		},
+	        "sample": {
+			"method": "get",
+			"url": "https://social.yahooapis.com/v1/user/abcdef123/profile?format=json"
+		}
+	}
+}

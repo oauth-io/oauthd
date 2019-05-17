@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://apps.dev.microsoft.com/",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://apps.dev.microsoft.com/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.live.com/",
+				"docs": "https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-app-registration"
+			}
+		},
+	        "sample": {
+			"method": "get",
+			"url": "/v1.0/me"
+		}
+	}
+}

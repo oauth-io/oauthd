@@ -1,0 +1,41 @@
+{
+	"name": "Basecamp",
+	"desc": "Trusted by millions, Basecamp is the leading web-based project management and collaboration tool. To-dos, files, messages, schedules, and milestones.",
+	"url": "https://launchpad.37signals.com",
+	"oauth2": {
+		"authorize": {
+			"url":"/authorization/new",
+			"query": {
+				"type": "web_server",
+				"client_id": "{client_id}",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}"
+			}
+		},
+		"access_token": {
+			"url": "/authorization/token",
+			"query": {
+				"type": "web_server",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"code": "{{code}}"
+			},
+			"extra": [
+				"refresh_token"
+			]
+		},
+		"request": "https://3.basecampapi.com/",
+		"refresh": "/authorization/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	},
+	"href": {
+		"keys": "https://integrate.37signals.com/apps",
+		"docs": "https://github.com/basecamp/bc3-api",
+		"apps": "https://integrate.37signals.com/apps",
+		"provider": "https://basecamp.com/"
+	}
+}

@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/me';
+            return '/v2.5/me?fields=name,first_name,last_name,email,gender,location,locale,work,languages,birthday,relationship_status,hometown,picture';
         }
 
     ],
@@ -10,21 +10,25 @@ var me = {
     fields: {
         id: '=',
         avatar: function (me) {
-            return 'https://graph.facebook.com/' + me.id + '/picture';
+            return 'https://graph.facebook.com/v2.3/' + me.id + '/picture';
         },
         name: '=',
         firstname: 'first_name',
         lastname: 'last_name',
         email: '=',
         gender: function(me) {
-            return me.gender == 'male' ? 0 : 1;
+            if (me.gender == 'male')
+                return 0;
+            if (me.gender == 'female')
+                return 1;
+            return undefined;
         },
         location: function(me) {
             return me.location ? me.location.name : undefined;
         },
-        local: '=',
+        locale: '=',
         company: function(me) {
-            return me.work && me.work[0] ? me.work[0].employer.name : undefined;
+            return me.work && me.work[0] && me.work[0].employer ? me.work[0].employer.name : undefined;
         },
         occupation: function(me) {
             return me.work && me.work[0] ? me.work[0].position : undefined;
@@ -36,16 +40,24 @@ var me = {
         birthdate: function(me) {
             if (me.birthday) {
                 var array = me.birthday.split('/');
-                if (array) {
+                if (array.length == 3) {
                     return {
-                        day: array[0],
-                        month: array[1],
+                        day: array[1],
+                        month: array[0],
                         year: array[2]
+                    }
+                } else if (array.length == 2) {
+                    return {
+                        day: array[1],
+                        month: array[0]
+                    }
+                } else if (array.length == 1) {
+                    return {
+                        year: array[0]
                     }
                 }
             }
             return undefined;
-
         },
         url: function(me) {
             // app scoped id, username is deprecated (https://developers.facebook.com/docs/apps/upgrading#upgrading_v2_0_graph_api)

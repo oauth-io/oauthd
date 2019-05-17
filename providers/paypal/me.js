@@ -14,6 +14,8 @@ var me = {
         email: '=',
         avatar: 'picture',
         birthdate: function(me) {
+            if ( ! me.birthdate)
+                return
             var dates = me.birthdate.split('-');
             return {
                 day: dates[2] ? dates[2] : undefined,

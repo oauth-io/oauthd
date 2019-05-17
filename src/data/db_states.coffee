@@ -38,7 +38,6 @@ module.exports = (env) ->
 			dbdata.origin = data.origin if data.origin
 			dbdata.options = JSON.stringify(data.options) if data.options
 			dbdata.step = 0
-
 			env.data.redis.hmset 'st:' + id, dbdata, (err, res) ->
 				return callback err if err
 				if data.expire?
@@ -50,7 +49,7 @@ module.exports = (env) ->
 	exp.get = check check.format.key, (id, callback) ->
 		env.data.redis.hgetall 'st:' + id, (err, res) ->
 			return callback err if err
-			return callback() if not res
+			return callback() if not res || Object.keys(res).length == 0
 			res.expire = parseInt res.expire if res?.expire
 			res.id = id
 			res.options = JSON.parse(res.options) if res.options

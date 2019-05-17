@@ -1,5 +1,5 @@
 {
-	"name": "Live Connect",
+	"name": "Microsoft Live",
     "desc": "The Interactive Live SDK is an interactive tool for exploring the Live Connect APIs and learning how they can enrich your application without having to do any coding! This tool allows you to try out the APIs without having registered a Live application.",
 	"url": "https://login.live.com",
 	"oauth2": {
@@ -39,7 +39,11 @@
 					"wl.applications_create": "create new client IDs to interact with Live services",
 					"wl.emails": "read your email addresses",
 					"wl.postal_addresses": "read your postal addresses",
-					"wl.imap": "Read and write access to a user's email using IMAP, and send access using SMTP."
+					"wl.imap": "Read and write access to a user's email using IMAP, and send access using SMTP.",
+					"wl.signin": "Allows your application to take advantage of single sign-on capabilities.",
+					"onedrive.readonly": "Grants read-only permission to all of a user's OneDrive files, including files shared with the user.",
+					"onedrive.readwrite": "Grants read and write permission to all of a user's OneDrive files, including files shared with the user. To create sharing links, this scope is required.",
+					"onedrive.appfolder": "Grants read and write permissions to a specific folder for your application."
 				}
 			}
 		}

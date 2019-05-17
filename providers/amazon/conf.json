@@ -1,0 +1,49 @@
+{
+	"name": "Amazon",
+	"desc": "Online retailer of books, movies, music and games along with electronics, toys, apparel, sports, tools, groceries and general home and garden items.",
+	"url": "https://api.amazon.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://www.amazon.com/ap/oa",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "/auth/o2/token",
+			"query": {
+				"grant_type": "authorization_code",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"code": "{{code}}"
+			},
+			"extra": [
+				"refresh_token"
+			]
+		},
+		"request": "https://api.amazon.com",
+		"refresh": "/auth/o2/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"profile": "The profile scope includes a user's name and email address.",
+					"profile:user_id": "Only includes the user_id field of the profile.",
+					"postal_code": "This includes the user's zip/postal code number from their primary shipping address."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://sellercentral.amazon.com/gp/homepage.html",
+		"docs": "https://images-na.ssl-images-amazon.com/images/G/01/lwa/dev/docs/website-developer-guide._TTH_.pdf",
+		"apps": "https://sellercentral.amazon.com/gp/homepage.html",
+		"provider": "https://amazon.com/"
+	}
+}

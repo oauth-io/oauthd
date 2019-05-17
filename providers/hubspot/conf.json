@@ -1,0 +1,63 @@
+{
+	"name": "Hubspot",
+	"desc": "HubSpot offers a full stack of products for marketing, sales, and customer relationship management: powerful alone, and even better when used together.",
+	"url": "https://api.hubapi.com",
+	"oauth2": {
+		"authorize": {
+			"url": "https://app.hubspot.com/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"scope": "{scope}",
+				"redirect_uri": "{{callback}}"
+			}
+		},
+		"access_token": {
+			"url": "/oauth/v1/token",
+			"method": "post",
+			"query": {
+				"grant_type": "authorization_code",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}",
+				"code": "{{code}}"
+			}
+		},
+		"request": {
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"refresh": {
+			"url": "/oauth/v1/token",
+			"method": "post",
+			"query": {
+				"grant": "refresh_token",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"redirect_uri": "{{callback}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"contacts": "Contacts, Companies, and Deals, along with the associated property APIs, Engagements API, Owners API",
+					"content": "All COS APIs, Calendar API, Email and Email Events APIs",
+					"reports": "Keywords API",
+					"social": "Social Media API",
+					"automation": "Workflows API",
+					"timeline": "Timelines API",
+					"forms": "Forms API",
+					"files": "File Manager API",
+					"hubdb": "HubDB API",
+					"transactional-email": "Transactional Email API"
+				}
+			}
+		},
+		"href": {
+			"docs": "http://developers.hubspot.com/docs",
+			"provider": "https://www.hubspot.com"
+		}
+	}
+}

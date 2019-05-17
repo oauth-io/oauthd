@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://app.xero.com/Application/Add",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://app.xero.com/Application/Edit",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.xero.com/",
+				"docs": "https://developer.xero.com/"
+			}
+		}
+	}
+}

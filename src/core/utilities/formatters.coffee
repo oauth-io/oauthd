@@ -17,7 +17,7 @@
 restify = require 'restify'
 
 module.exports = (env) ->
-	
+
 	check = env.utilities.check
 	config = env.config
 
@@ -50,50 +50,50 @@ module.exports = (env) ->
 					result.message = res.message
 					result.data = body if typeof body == 'object' && Object.keys(body).length
 				else
+					if res.statusCode < 200 or res.statusCode >= 300
+						result.status = 'error'
 					body = null if not body?
 					result.data = body
 				body = result
 		return body
 
 	formatters =
-		'application/json; q=0.9': (req, res, body) ->
+		'application/json; q=0.9': (req, res, body, cb) ->
 			data = JSON.stringify buildReply(body, res)
 			res.setHeader 'Content-Type', "application/json; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(data)
-			return data
+			return cb null, data
 
-		'application/javascript; q=0.1': (req, res, body) ->
-			return "" if body instanceof Error && not config.debug
+		'application/javascript; q=0.1': (req, res, body, cb) ->
+			return cb null, "" if body instanceof Error && not config.debug
 			body = body.toString()
 			res.setHeader 'Content-Type', "application/javascript; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(body)
-			return body
+			return cb null, body
 
-		'text/html; q=0.1': (req, res, body) ->
+		'text/html; q=0.1': (req, res, body, cb) ->
 			if body instanceof Error
 				if body instanceof check.Error || body instanceof restify.RestError
-					msg = body.message
+					msg = check.escapeHtml body.message
 					if typeof body.body == 'object' && Object.keys(body.body).length
 						msg += "<br/>"
 						for k,v of body.body
-							msg += '<span style="color:red">' + k.toString() + "</span>: " + v.toString() + "<br/>"
+							msg += '<span style="color:red">' + (check.escapeHtml k.toString()) + "</span>: " + (check.escapeHtml v.toString()) + "<br/>"
 					else if typeof body.body == 'string' && body.body != ""
-						msg += '<br/><span style="color:red">' + body.body + '</span>'
+						msg += '<br/><span style="color:red">' + (check.escapeHtml body.body) + '</span>'
 					if config.debug && body.stack
-						if body.we_cause?.stack
-							msg += "<br/>" + body.we_cause.stack.split "<br/>"
-						else
-							msg += "<br/>" + body.stack.split "<br/>"
+						stack = if body.we_cause?.stack then body.we_cause.stack else body.stack
+						msg += "<br/>" + (check.escapeHtml stack).replace(/\n/g, '<br/>')
 					body = msg
 				else
 					body = "Internal error"
 			body = body.toString()
 			res.setHeader 'Content-Type', "text/html; charset=utf-8"
 			res.setHeader 'Content-Length', Buffer.byteLength(body)
-			return body
+			return cb null, body
 
 	{
 		formatters: formatters
 		build: (e,r) -> buildReply e || r, buildJsend: true
 	}
-		
+

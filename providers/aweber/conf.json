@@ -1,0 +1,17 @@
+{
+    "name": "AWeber",
+    "desc": "AWeber develops and runs an opt-in email marketing service used by over 120,000+ small businesses, bloggers and entrepreneurs around the globe.",
+    "url": "https://auth.aweber.com/1.0/oauth",
+    "oauth1": {
+        "request_token": "/request_token",
+        "authorize": "/authorize",
+        "access_token": "/access_token",
+        "request": "https://api.aweber.com/1.0/"
+    },
+    "href": {
+        "keys": "https://labs.aweber.com/apps",
+        "docs": "https://labs.aweber.com/docs/reference/1.0",
+        "apps": "https://labs.aweber.com/apps",
+        "provider": "http://aweber.com"
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "name": "Vertical Response",
+    "desc": "Email Marketing by VerticalResponse makes it easy to create and send emails that get great results to grow your business.",
+    "url": "https://vrapi.verticalresponse.com/api/v1/oauth",
+    "oauth2": {
+        "authorize": "/authorize",
+        "access_token": "/access_token",
+        "request": {
+            "url": "https://vrapi.verticalresponse.com/api/v1",
+            "headers": {
+                "Authorization": "Bearer {{token}}"
+            }
+        }
+    },
+    "href": {
+        "keys": "http://developers.verticalresponse.com/apps",
+        "docs": "http://developer.verticalresponse.com/docs",
+        "provider": "http://virtualresponse.com/"
+    }
+}

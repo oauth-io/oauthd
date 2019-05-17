@@ -1,7 +1,7 @@
 {
 	"name": "FitBit",
     "desc": "Fitbit is a website that offers tools for users to track their personal data, such as weight, activity, total sleep, etc. Fitbit also offers an API for developers to use to create tools and application that access Fitbit services and data. Users can then authenticate an external website/application to use their Fitbit data, and use the external application to push data to Fitbit. The API is still being developed.",
-	"url": "https://api.fitbit.com/oauth",
+	"url": "https://api.fitbit.com",
 	"mobile": {
 		"params": {
 			"display": "touch"
@@ -10,7 +10,33 @@
 	"oauth1": {
 		"request_token": "/request_token",
 		"authorize": "https://www.fitbit.com/oauth/authorize",
-		"access_token": "/access_token"
+		"access_token": "/oauth/access_token"
+	},
+	"oauth2": {
+		"authorize": "https://www.fitbit.com/oauth2/authorize",
+		"access_token": {
+			"url": "/oauth2/token",
+			"headers": {
+				"Authorization": "Basic !BASE64{client_id}:{client_secret}!BASE64"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"activity": "The activity scope includes activity data and exercise log related features, such as steps, distance, calories burned, and active minutes",
+					"heartrate": "The heartrate scope includes the continuous heart rate data and related analysis",
+					"location": "The location scope includes the GPS and other location data",
+					"nutrition": "The nutrition scope includes calorie consumption and nutrition related features, such as food/water logging, goals, and plans",
+					"profile": "The profile scope is the basic user information",
+					"settings": "The settings scope includes user account and device settings, such as alarms",
+					"sleep": "The sleep scope includes sleep logs and related sleep analysis",
+					"social": "The social scope includes friend-related features, such as friend list, invitations, and leaderboard",
+					"weight": "The weight scope includes weight and related information, such as body mass index, body fat percentage, and goals"
+				}
+			}
+		}
 	},
 	"href": {
 		"keys": "https://dev.fitbit.com/apps/new",

@@ -18,13 +18,14 @@ querystring = require 'querystring'
 
 module.exports = (env) ->
 	config = env.config
-
+	codeVerifier = env.data.generateCodeVerifier() unless typeof env.data == 'undefined'
 	class OAuthBase
-		constructor: (oauthv, provider, parameters) ->
+		constructor: (oauthv, provider, parameters, app_options) ->
+			@_appOptions = app_options || {}
 			@_params = {}
 			@_oauthv = oauthv
 			@_provider = provider
-			@_oauthConfiguration = provider[oauthv];
+			@_oauthConfiguration = provider[oauthv]
 			@_parameters = parameters
 			@_serverCallbackUrl = config.host_url + '/auth' # redirection url http(s)://domain/auth
 			@_setParams @_provider.parameters
@@ -36,7 +37,12 @@ module.exports = (env) ->
 
 		_replaceParam: (param, hard_params) ->
 			param = param.replace /\{\{(.*?)\}\}/g, (match, val) ->
-				return env.data.generateUid() if val == "nonce"
+				if val == "nonce"
+					return env.data.generateUid()
+				else if val == "code_verifier"
+					return codeVerifier
+				else if  val == "code_challenge"
+					return env.data.generateCodeChallenge(codeVerifier)
 				return hard_params[val] || ""
 			param = param.replace /\{(.*?)\}/g, (match, val) =>
 				return "" if ! @_params[val] || ! @_parameters[val]
@@ -70,6 +76,7 @@ module.exports = (env) ->
 		_buildAuthorizeUrl: (url, query, stateId) ->
 			url = @_replaceParam(url, {})
 			url += "?" + querystring.stringify(query)
+
 			return { url: url, state: stateId }
 
 		_buildServerRequestOptions: (req) ->
@@ -82,7 +89,7 @@ module.exports = (env) ->
 			}
 
 		_buildServerRequestUrl: (url, req, configurationUrl) ->
-			if typeof req.query == 'function' and typeof req.query() == 'string'
+			if typeof req.query == 'function' and typeof req.query() == 'string' and req.query().length > 0 and url.indexOf('?') == -1
 				url += "?" + req.query()
 			if ! url.match(/^[a-z]{2,16}:\/\//)
 				if url[0] != '/'
@@ -147,10 +154,10 @@ module.exports = (env) ->
 				headers[name] = param if param
 			return headers
 
-		_buildRequestOptions: (configuration, headers, query) ->
+		_buildRequestOptions: (configuration, headers, query, placeholderValues) ->
 			method = configuration.method?.toUpperCase() || 'POST'
 			options = {
-				url: @_replaceParam(configuration.url, {})
+				url: @_replaceParam(configuration.url, placeholderValues)
 				method: method
 				encoding: null
 				form: query if method != 'GET'

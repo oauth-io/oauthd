@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developers.hubspot.com/docs/faq/how-do-i-create-an-app-in-hubspot",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developers.hubspot.com/docs/faq/how-do-i-create-an-app-in-hubspot",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://www.hubspot.com/",
+				"docs": "https://developers.hubspot.com/docs/faq/how-do-i-create-an-app-in-hubspot"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/contacts/v1/lists"
+		}
+	}
+}

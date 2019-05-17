@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developers.intercom.com/building-apps/docs/setting-up-oauth",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developers.intercom.com/building-apps/docs/setting-up-oauth",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://intercom.com/",
+				"docs": "https://developers.intercom.com/intercom-api-reference"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/users"
+		}
+	}
+}

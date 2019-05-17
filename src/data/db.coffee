@@ -15,22 +15,92 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 crypto = require 'crypto'
-
+async = require 'async'
 
 module.exports = (env) ->
 	data = {}
+	config = env.config
 
 	if env.mode != 'test'
-		redis = require 'redis'	
+		Redis = require 'ioredis'
+		redis_options =
+			port: config.redis.port || 6379
+			host: config.redis.host || '127.0.0.1'
+			db: config.redis.database || 0
+			retryStrategy: (times) => Math.min(times * 100, 2000)
+		redis_options.password = config.redis.password if config.redis.password
+		data.redis = new Redis redis_options
+		_multi = data.redis.multi
+		data.redis.multi = (commands) =>
+			pipeline = if commands then _multi.call(data.redis, commands) else _multi.call(data.redis)
+			_exec = pipeline.exec
+			pipeline.exec = (cb) =>
+				return _exec.call(pipeline, (err, res) =>
+					return cb err if err
+					for k, r of res
+						err = r[0] if r[0]
+						res[k] = r[1]
+					return cb err if err
+					cb null, res
+				)
+			return pipeline
 	else
-		redis = require 'fakeredis'	
+		redis = require 'fakeredis'
+		data.redis = redis.createClient config.redis.port || 6379, config.redis.host || '127.0.0.1', config.redis.options || {}
+		data.redis.auth(config.redis.password) if config.redis.password
+		data.redis.select(config.redis.database) if config.redis.database
 
-	config = env.config
 	exit = env.utilities.exit
 
-	data.redis = redis.createClient config.redis.port, config.redis.host, config.redis.options
-	data.redis.auth(config.redis.password) if config.redis.password
-	data.redis.select(config.redis.database) if config.redis.database
+	oldkeys = data.redis.keys
+	data.redis.keys = (pattern, cb) ->
+		keys_response = []
+		cursor = -1
+		async.whilst () ->
+			return cursor != '0'
+		, (next) ->
+			if cursor == -1
+				cursor = 0
+			data.redis.send_command 'SCAN', [cursor, 'MATCH', pattern, 'COUNT', 100000], (err, response) ->
+				if err
+					return next(err)
+				cursor = response[0]
+				keys_array = response[1]
+				keys_response = keys_response.concat keys_array
+				next()
+		, (err) ->
+			return cb err if err
+			cb null, keys_response
+
+
+
+
+	oldhgetall = data.redis.hgetall
+	data.redis.hgetall = (key, pattern, cb) ->
+		if not cb?
+			cb  = pattern
+			pattern = '*'
+		final_response = {}
+		cursor = undefined
+		async.whilst () ->
+			return cursor != '0'
+		, (next) ->
+			if cursor == undefined
+				cursor = 0
+			data.redis.send_command 'HSCAN', [key, cursor, 'MATCH', pattern, 'COUNT', 100], (err, response) ->
+				if err
+					return next(err)
+				cursor = response[0]
+				array = response[1]
+				for i in [0..array.length] by 2
+					if array[i] and array[i+1]
+						final_response[array[i]] = array[i+1]
+				next()
+		, (err) ->
+			return cb err if err
+			cb null, final_response
+
+
 
 	data.redis.on 'error', (err) ->
 		data.redis.last_error = 'Error while connecting to redis DB (' + err.message + ')'
@@ -55,6 +125,18 @@ module.exports = (env) ->
 		shasum = crypto.createHash 'sha1'
 		shasum.update config.staticsalt + data
 		return shasum.digest 'base64'
+
+	data.generateCodeVerifier = () ->
+		randomString = () ->
+			return Math.random().toString(36).substring(2, 15)
+		randomString = randomString().concat(randomString()).concat(randomString()).concat(randomString());
+		return randomString
+
+	data.generateCodeChallenge = (codeVerifier) ->
+		shasum = crypto.createHash 'sha256'
+			.update(codeVerifier)
+			.digest('base64');
+		return shasum.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '')
 
 	data.emptyStrIfNull = (val) ->
 		return new String("") if not val? or val.length == 0

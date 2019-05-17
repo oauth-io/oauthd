@@ -7,8 +7,28 @@ module.exports = (env) ->
 	init: () ->
 		return
 	registerWs: () ->
+		if not env.middlewares.connectauth
+			env.middlewares.connectauth = {}
+		if not env.middlewares.connectauth.all
+			env.middlewares.connectauth.all = []
+		# Chain of middlewares that are applied to each Auth endpoints
+		createMiddlewareChain = () ->
+			(req, res, next) ->
+				chain = []
+				i = 0
+				for k, middleware of env.middlewares.connectauth.all
+					do (middleware) ->
+						chain.push (callback) ->
+							middleware req, res, callback
+				if chain.length == 0
+					return next()
+				async.waterfall chain, () ->
+					next()
+
+		middlewares_connectauth_chain = createMiddlewareChain()
+
 		# oauth: refresh token
-		env.server.post env.config.base + '/auth/refresh_token/:provider', (req, res, next) ->
+		env.server.post env.config.base + '/auth/refresh_token/:provider', middlewares_connectauth_chain, (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, key: env.utilities.check.format.key, secret: env.utilities.check.format.key, token:'string'
 			e.check req.params, provider:'string'
@@ -28,7 +48,7 @@ module.exports = (env) ->
 						oa.refresh req.body.token, keyset, env.send(res,next)
 
 		# iframe injection for IE
-		env.server.get env.config.base + '/auth/iframe', (req, res, next) ->
+		env.server.get env.config.base + '/auth/iframe', middlewares_connectauth_chain, (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			res.setHeader 'p3p', 'CP="IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT"'
 			e = new env.utilities.check.Error
@@ -68,10 +88,10 @@ module.exports = (env) ->
 			next()
 
 		# oauth: get access token from server
-		env.server.post env.config.base + '/auth/access_token', (req, res, next) ->
+		env.server.post env.config.base + '/auth/access_token', middlewares_connectauth_chain, (req, res, next) ->
 			e = new env.utilities.check.Error
 			e.check req.body, code: env.utilities.check.format.key, key: env.utilities.check.format.key, secret: env.utilities.check.format.key
-			
+
 			return next e if e.failed()
 			env.data.states.get req.body.code, (err, state) ->
 				return next err if err
@@ -127,17 +147,18 @@ module.exports = (env) ->
 					view += '\twindow.close();\n'
 				else
 					view += 'var opener = window.opener || window.parent.window.opener;\n'
+					view += '\n'
 					view += 'if (opener)\n'
 					view += '\topener.postMessage(msg, "' + data.origin + '");\n'
 					view += '\twindow.close();\n'
-			view += '})();</script></head><body></body></html>'
+			view += '})();</script></head><body style="text-align:center">\n'
+			view += '<div style="display:inline-block; padding: 4px; border: 1px solid black">Your browser does not support popup. Please open this site with your default browser.<br />'
+			view += '<a href="' + data.origin + '">' + data.origin + '</a></div>'
+			view += '</body></html>'
 			res.send view
 			next()
 
-		
-
-		# oauth: handle callbacks
-		env.server.get env.config.base + '/auth', (req, res, next) ->
+		auth_middleware = (req, res, next) ->
 			res.setHeader 'Content-Type', 'text/html'
 			getState = (callback) ->
 				return callback null, req.params.state if req.params.state
@@ -154,38 +175,60 @@ module.exports = (env) ->
 				env.data.states.get stateid, (err, state) ->
 					return next err if err
 					return next new env.utilities.check.Error 'state', 'invalid or expired' if not state
-					callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
-					return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
-					async.parallel [
-							(cb) -> env.data.providers.getExtended state.provider, cb
-							(cb) -> env.data.apps.getKeyset state.key, state.provider, cb
-					], (err, r) =>
+					req.stateid = stateid
+					req.state = state
+					next()
+
+		# oauth: handle callbacks
+		env.server.get env.config.base + '/auth', auth_middleware, middlewares_connectauth_chain, (req, res, next) ->
+			stateid = req.stateid
+			state = req.state
+			delete req.stateid
+			delete req.state
+			callback = clientCallback state:state.options.state, provider:state.provider, redirect_uri:state.redirect_uri, origin:state.origin, redirect_type:state.redirect_type, req, res, next
+			return callback req.error if req.error
+			return callback new env.utilities.check.Error 'state', 'code already sent, please use /access_token' if state.step != "0"
+			async.parallel [
+					(cb) -> env.data.providers.getExtended state.provider, cb
+					(cb) -> env.data.apps.getKeyset state.key, state.provider, cb
+			], (err, r) =>
+				return callback err if err
+				provider = r[0]
+				parameters = r[1].parameters
+				response_type = r[1].response_type
+				app_options = r[1].options
+				oa = new env.utilities.oauth[state.oauthv](provider, parameters, app_options)
+				oa.access_token state, req, (e, r) ->
+					status = if e then 'error' else 'success'
+					env.callhook 'connect.auth', req, res, (err) ->
 						return callback err if err
-						provider = r[0]
-						parameters = r[1].parameters
-						response_type = r[1].response_type
-						oa = new env.utilities.oauth[state.oauthv](provider, parameters)
-						oa.access_token state, req, (e, r) ->
-							status = if e then 'error' else 'success'
-							env.callhook 'connect.auth', req, res, (err) ->
-								return callback err if err
-								env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
-								return callback e if e
+						env.events.emit 'connect.callback', req:req, origin:state.origin, key:state.key, provider:state.provider, parameters:state.options?.parameters, status:status
+						return callback e if e
 
-								env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
-									return callback e if e
+						env.callhook 'connect.backend', results:r, key:state.key, provider:state.provider, status:status, (e) ->
+							return callback e if e
 
-									if response_type != 'token'
-										env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
-									if response_type != 'code'
-										delete r.refresh_token
-									if response_type == 'code'
-										r = {}
-									if response_type != 'token'
-										r.code = stateid
-									if response_type == 'token'
-										env.data.states.del stateid, (->)
-									callback null, r, response_type
+							# If not client side mode, store the tokens
+							if state.options.state_type != 'client'
+								env.data.states.set stateid, token:JSON.stringify(r), step:1, (->)
+
+							# Delete or keep refresh token from front-end response
+							if not app_options.refresh_client
+								delete r.refresh_token
+
+							# If server_side only, remove everything and put the code
+							if response_type == 'code'
+								r = {}
+
+							# If a state was given by client, give him only the code
+							if state.options.state_type != 'client'
+								r.code = stateid
+
+							# Remove the state from db for client_side mode
+							if state.options.state_type == 'client'
+								env.data.states.del stateid, (->)
+
+							callback null, r, response_type
 
 		# oauth: popup or redirection to provider's authorization url
 		env.server.get env.config.base + '/auth/:provider', (req, res, next) ->
@@ -225,7 +268,9 @@ module.exports = (env) ->
 			}[req.params.oauthv]
 			provider_conf = undefined
 			async.waterfall [
+				# Checks domain against registered origins
 				(cb) -> env.data.apps.checkDomain key, ref, cb
+				# Send error if invalid domain
 				(valid, cb) ->
 					return cb new env.utilities.check.Error 'Origin "' + ref + '" does not match any registered domain/url on ' + env.config.url.host if not valid
 					if req.params.redirect_uri
@@ -236,6 +281,7 @@ module.exports = (env) ->
 					return cb new env.utilities.check.Error 'Redirect "' + req.params.redirect_uri + '" does not match any registered domain on ' + env.config.url.host if not valid
 
 					env.data.providers.getExtended req.params.provider, cb
+				# Check type of OAuth, retrieve keyset
 				(provider, cb) ->
 					if oauthv and not provider[oauthv]
 						return cb new env.utilities.check.Error "oauthv", "Unsupported oauth version: " + oauthv
@@ -243,38 +289,63 @@ module.exports = (env) ->
 					oauthv ?= 'oauth2' if provider.oauth2
 					oauthv ?= 'oauth1' if provider.oauth1
 					env.data.apps.getKeyset key, req.params.provider, (e,r) -> cb e,r,provider
+				# Got keyset, error if inexistant,
 				(keyset, provider, cb) ->
 					return cb new env.utilities.check.Error 'This app is not configured for ' + provider.provider if not keyset
 					{parameters, response_type} = keyset
-					if response_type != 'token' and (not options.state or options.state_type)
+					if response_type == 'code' and (not options.state or options.state_type)
 						return cb new env.utilities.check.Error 'You must provide a state when server-side auth'
 					env.callhook 'connect.auth', req, res, (err) ->
 						return cb err if err
 						env.events.emit 'connect.auth', req:req, key:key, provider:provider.provider, parameters:parameters
 						options.response_type = response_type
 						options.parameters = parameters
+						options.state_type = 'client' if req.params.mobile
 						opts = oauthv:oauthv, key:key, origin:origin, redirect_uri:req.params.redirect_uri, options:options
 						opts.redirect_type = req.params.redirect_type if req.params.redirect_type
 						oa = new env.utilities.oauth[oauthv](provider, parameters)
 						oa.authorize opts, cb
 				(authorize, cb) ->
-						return cb null, authorize.url if not req.oaio_uid
-						env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
-							return cb err if err
-							env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
-							cb null, authorize.url
+					return cb null, authorize.url if not req.oaio_uid
+					env.data.redis.set 'cli:state:' + req.oaio_uid, authorize.state, (err) ->
+						return cb err if err
+						env.data.redis.expire 'cli:state:' + req.oaio_uid, 1200
+						cb null, authorize.url
 			], (err, url) ->
 				return callback err if err
+				isJson = (value) ->
+					try
+						JSON.stringify(value)
+						return true
+					catch e
+						return false
 
-				#Fitbit needs this for mobile
-				if provider_conf.mobile?.params? and req.params.mobile == 'true'
-					for k,v of provider_conf.mobile.params
-						if url.indexOf('?') == -1
-							url += '?'
-						else
-							url += '&'
-						url += k + '=' + v
-				
+				#Fitbit and tripit needs this for mobile
+				if provider_conf.mobile?
+					if provider_conf.mobile?.params? and req.params.mobile == 'true'
+						for k,v of provider_conf.mobile.params
+							if url.indexOf('?') == -1
+								url += '?'
+							else
+								url += '&'
+							url += k + '=' + v
+					if isJson(req.params.opts)
+						opts = JSON.parse(req.params.opts)
+						if opts.mobile is 'true' and provider_conf.mobile?.url?
+							url_split = url.split("/oauth/authorize")
+							if url_split.length is 2
+								url = provider_conf.mobile.url + '/oauth/authorize/' + url_split[1]
+
+				# For api like socrata, the endpoint change for every Socrata-powered data site
+				if provider_conf.redefine_endpoint
+					if isJson(req.params.opts)
+						opts = JSON.parse(req.params.opts)
+						if opts.endpoint
+							url_split = url.split("/oauth/")
+							if opts.endpoint[opts.endpoint.length - 1] is '/'
+								opts.endpoint = opts.endpoint.slice(0, opts.endpoint.length - 1)
+							if url_split.length is 2
+								url = opts.endpoint + '/oauth/' + url_split[1]
 				res.setHeader 'Location', url
 				res.send 302
 				next()

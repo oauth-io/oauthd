@@ -1,0 +1,18 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://bufferapp.com/developers/apps/create",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://bufferapp.com/developers/apps",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://bufferapp.com",
+				"docs": "https://bufferapp.com/developers/api"
+			}
+		}
+	}
+}

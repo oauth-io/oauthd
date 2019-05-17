@@ -71,10 +71,7 @@ describe 'Core - env.pluginsEngine module', () ->
 		catch e
 			env.debug "err", e if e
 		finally
-			expect(consolelogs[0][0]).toBe("Error loading plugin.json (undefined_plugin)")
-			path = "Cannot find module '" + process.cwd()+ "/plugins/undefined_plugin/plugin.json'"
-			expect(consolelogs[1][0]).toBe(path.yellow)
-			expect(consolelogs[2][0]).toBe("Loading " + "undefined_plugin".blue)
+			expect(consolelogs[0][0]).toBe("Cannot find addon undefined_plugin")
 			expect(env.pluginsEngine.plugin['undefined_plugin']).toBeUndefined()
 			expect(env.plugins['undefined_plugin']).toBeUndefined()
 			expect(env.plugins.undefined_plugin).toBeUndefined()
@@ -92,7 +89,7 @@ describe 'Core - env.pluginsEngine module', () ->
 	it 'env.pluginsEngine.list should return an array containing \'plugin_test\'', (done) ->
 		expect(env.pluginsEngine.list).toBeDefined()
 		expect(typeof env.pluginsEngine.list).toBe("function")
-		
+
 		process.chdir process.cwd() + '/tests/instance_test'
 		env.pluginsEngine.init process.cwd(), (err) ->
 			expect(err).toBeNull()
@@ -192,7 +189,7 @@ describe 'Core - env.pluginsEngine module', () ->
 					expect(env.test2Var).toBe(43)
 					done()
 				), 3000
-			
+
 
 
 

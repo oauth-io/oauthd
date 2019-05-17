@@ -1,0 +1,28 @@
+{
+    "settings": {
+        "createApp": {
+            "url": "https://developers.line.me/console/register/provider/",
+            "image": "config.png"
+        },
+        "copyingKey": {
+            "url": "https://developers.line.me/console/profile/",
+            "image": "keys.png"
+        },
+        "install": {
+            "href": {
+                "provider": "https://line.me",
+                "docs": "https://developers.line.me/console/register/provider/"
+            }
+        },
+        "sample": {
+            "method": "get",
+            "url": "/user"
+        },
+        "endpoints": {
+            "me": {
+                "method": "get",
+                "url": "/user"
+            }
+        }
+    }
+}

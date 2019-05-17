@@ -1,0 +1,23 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://login.uber.com/applications/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developers.vendhq.com/developer/applications",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "http://www.vendhq.com/",
+				"docs": "https://developers.vendhq.com/documentation",
+				"apps": "https://developers.vendhq.com/developer/applications"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/api/users"
+		}
+	}
+}

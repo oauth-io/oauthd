@@ -48,7 +48,7 @@ module.exports = function(grunt) {
                 match: '.',
                 matchall: false,
                 extensions: 'js',
-                specNameMatcher: 'spec',
+                specNameMatcher: 'spec'
             },
             all: ['./tests/spec/']
         }

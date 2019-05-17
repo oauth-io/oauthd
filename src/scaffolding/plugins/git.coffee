@@ -6,18 +6,12 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 	createDefer = Q.defer()
 	exec = env.exec
 	cwd = cwd || process.cwd()
-	# try 
-	# 	plugin_data = require cwd + '/plugins/' + plugin_name
-	# 	console.log 'HELLO'
-	# catch e
-	# 	console.log 'HELLO', e
-	# 	return;
 
 	plugin_location = cwd + '/plugins/' + plugin_name
 	fetched = false
 	if not fs.existsSync plugin_location + '/.git'
 		createDefer.reject new Error('No .git file.')
-		
+
 	execGit = (commands, callback) ->
 		full_command = 'cd ' + plugin_location + ';'
 		if (fetch && not fetched)
@@ -27,7 +21,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			full_command += ' git ' + v + ';'
 		exec full_command , () ->
 			callback.apply null, arguments
-	
+
 	git =
 		getCurrentVersion: () ->
 			defer = Q.defer()
@@ -44,7 +38,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 					behind = stdout.match /\*.*\[behind (\d+)\]/
 					behind = behind?[1]
 				version = {}
-				
+
 				if tag?
 					version.version = tag
 
@@ -71,14 +65,14 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 			changes = version_detail[3]
 			minor = version_detail[2]
 			major = version_detail[1]
-			
+
 			major: major
 			minor: minor
 			changes: changes
 
 		isNumericalVersion: (version) ->
 			return version.match /(\d+)\.(\d+)\.(\d+)/
-		
+
 		isNumericalMask: (version) ->
 			return version.match /^(\d+)\.(\d+|x)\.(\d+|x)$/
 
@@ -104,7 +98,7 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 
 		matchVersion: (mask, version) ->
 			mask_ = mask.match /(\d+)\.(\d+|x)\.(\d+|x)/
-			md = 
+			md =
 				major: mask_[1]
 				minor: mask_[2]
 				changes: mask_[3]
@@ -213,6 +207,6 @@ module.exports = (env, plugin_name, fetch, cwd) ->
 				stdout = stdout.replace /[\s]/, ''
 				defer.resolve(stdout == process.cwd() + '/plugins/' + plugin_name)
 			defer.promise
-	
+
 	createDefer.resolve(git)
 	createDefer.promise

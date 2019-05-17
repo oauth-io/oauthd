@@ -38,14 +38,14 @@ module.exports = (env) ->
 		env.hooks[name] ?= []
 		env.hooks[name].push fn
 
-	
+
 	global_interface = undefined
 	pluginsEngine.load = (plugin_name) ->
-		try 
+		try
 			plugin_data = require(env.pluginsEngine.cwd + '/plugins/' + plugin_name + '/plugin.json')
 		catch e
-			env.debug 'Error loading plugin.json (' + plugin_name + ')'
-			env.debug e.message.yellow
+			# env.debug 'Error loading plugin.json (' + plugin_name + ')'
+			# env.debug e.message.yellow
 			plugin_data = {
 				name: plugin_name
 			}
@@ -58,7 +58,7 @@ module.exports = (env) ->
 
 		if not plugin_data.name? or plugin_data.name isnt plugin_name
 			plugin_data.name = plugin_name
-		
+
 
 
 		if plugin_data.type isnt 'global-interface'
@@ -67,6 +67,9 @@ module.exports = (env) ->
 			global_interface = plugin_data
 
 	loadPlugin = (plugin_data) ->
+		if not fs.existsSync(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name)
+			env.debug "Cannot find addon " + plugin_data.name
+			return
 		env.debug "Loading " + plugin_data.name.blue
 		try
 			plugin = require(env.pluginsEngine.cwd + '/plugins/' + plugin_data.name + plugin_data.main)(env)
@@ -78,7 +81,7 @@ module.exports = (env) ->
 				pluginsEngine.plugin[plugin_data.name]?.plugin_config = plugin_data
 		catch e
 			env.debug "Error while loading plugin " + plugin_data.name
-			env.debug e.message.yellow + ' at line ' + e.lineNumber?.red		  
+			env.debug e.stack.yellow # + ' at line ' + e.lineNumber?.red
 
 	pluginsEngine.init = (cwd, callback) ->
 		env.pluginsEngine.cwd = cwd
@@ -95,7 +98,6 @@ module.exports = (env) ->
 					loadPlugin(global_interface)
 				return callback null
 			.fail (e) ->
-				console.log e
 				return callback e
 
 	pluginsEngine.list = (callback) ->
@@ -109,12 +111,12 @@ module.exports = (env) ->
 			.fail (err) ->
 				env.debug 'An error occured: ' + err
 				return callback err
-			
-				
-			
+
+
+
 
 	pluginsEngine.run = (name, args, callback) ->
-		if typeof args == 'function'	
+		if typeof args == 'function'
 			callback = args
 			args = []
 		args.push null
@@ -170,7 +172,7 @@ module.exports = (env) ->
 		defer.promise
 
 	extended_endpoints = []
-	
+
 	pluginsEngine.describeAPIEndpoint = (endpoint_description) ->
 		extended_endpoints.push endpoint_description
 

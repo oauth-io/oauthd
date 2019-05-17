@@ -14,6 +14,15 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
+escapeHtml = (text) ->
+	map =
+		'&': '&amp;'
+		'<': '&lt;'
+		'>': '&gt;'
+		'"': '&quot;'
+		"'": '&#039;'
+	return text.replace /[&<>"']/g, (m) -> map[m]
+
 module.exports = (env) ->
 	_check = (arg, format, errors) ->
 		if format instanceof RegExp
@@ -117,7 +126,7 @@ module.exports = (env) ->
 		formats = arguments
 		return =>
 			# Here arguments is the array of arguments of the called returned method
-			
+
 			# shallow copies the arguments array
 			args = Array.prototype.slice.call arguments
 			# pops last value of args, not of arguments (as args is a copy)
@@ -125,10 +134,10 @@ module.exports = (env) ->
 
 			# formats is the arguments array of the check method
 			if args.length != formats.length
-				# if the arguments count of the second fn is not the same as the the original hat fn 
+				# if the arguments count of the second fn is not the same as the the original hat fn
 				# (without callbacks of course). Means that the arguments given to the function are wrong
-				return callback new CheckError 'Bad parameters count' 
-			
+				return callback new CheckError 'Bad parameters count'
+
 			# Creates a new instance of CheckError
 			error = new CheckError 'Bad parameters format'
 			# loops through the format parameters
@@ -140,7 +149,13 @@ module.exports = (env) ->
 			# here we call callback (the last argument given to the )
 			return callback error if error.failed()
 			# if all args were right, call the hatted fn with the original arguments
-			return checked.apply @, arguments
+			try
+				return checked.apply @, arguments
+			catch e
+				err = new Error 'Uncaught exception: ' + e.message
+				err.stack = e.stack if e.stack
+				return callback err
+
 
 	check.clone = (cloned) -> =>
 		return cloned.apply @, _clone arguments
@@ -150,9 +165,10 @@ module.exports = (env) ->
 
 	check.Error = CheckError
 	check.nullv = {} # this means a null
+	check.escapeHtml = escapeHtml
 
 	check.format =
-		mail: /^[a-zA-Z0-9._%\-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+		mail: /^[a-zA-Z0-9._%\-\+]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,5}$/
 		provider: /^[a-zA-Z0-9._\-]{2,}$/
 		key: /^[a-zA-Z0-9\-_]{23,27}$/
 

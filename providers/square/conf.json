@@ -1,0 +1,41 @@
+{
+	"name": "Square",
+	"desc": "The Square Connect API enables you to build apps for millions of Square merchants—or a custom solution for just one.",
+	"url": "https://connect.squareup.com",
+	"oauth2": {
+		"authorize": "/oauth2/authorize",
+		"access_token": "/oauth2/token",
+		"request": {
+			"headers": {
+				"Authorization": "Bearer {{token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+          "MERCHANT_PROFILE_READ": "Retrieve Mechant",
+          "PAYMENTS_READ": "List Payments, Retrieve Payment, List Refunds",
+          "PAYMENTS_WRITE": "Create Refund",
+          "SETTLEMENTS_READ": "List Settlements, Retrieve Settlement",
+          "BANK_ACCOUNTS_READ": "List Bank Accounts, Retrieve Bank Account",
+          "ITEMS_READ": "All items-related GET endpoints",
+          "ITEMS_WRITE": "All items-related POST, PUT, and DELETE endpoints",
+          "ORDERS_READ": "List Orders, Retrieve Order",
+          "ORDERS_WRITE": "Update Order",
+          "EMPLOYEES_READ": "List Employees, Retrieve Employee, List Roles, Retrieve Role",
+          "EMPLOYEES_WRITE": "Create Employee, Update Employee, Create Role, Update Role",
+          "TIMECARDS_READ": "List Timecards, Retrieve Timecard, List Timecard Events",
+          "TIMECARDS_WRITE": "Create Timecard, Update Timecard"
+        }
+			}
+		}
+	},
+	"href": {
+		"keys": "https://connect.squareup.com/apps",
+		"docs": "https://docs.connect.squareup.com/",
+		"apps": "https://connect.squareup.com/apps",
+		"provider": "https://squareup.com/"
+	}
+}

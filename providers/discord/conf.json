@@ -1,0 +1,80 @@
+{
+    "name": "Discord",
+    "desc": "All-in-one voice and text chat for gamers that’s free, secure, and works on both your desktop and phone.",
+    "url": "https://discordapp.com/api/oauth2",
+    "oauth2": {
+        "authorize": {
+            "url": "/authorize",
+            "query": {
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}",
+                "response_type": "code",
+                "scope": "{scope}",
+                "state": "{{state}}"
+            }
+        },
+        "access_token": {
+            "url": "/token",
+            "format": "json",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "code": "{{code}}",
+                "grant_type": "authorization_code",
+                "redirect_uri": "{{callback}}"
+            },
+            "extra": [
+                "refresh_token"
+            ]
+        },
+        "refresh": {
+            "url": "/token",
+            "format": "json",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "grant_type": "refresh_token",
+                "refresh_token": "{{refresh_token}}"
+            }
+        },
+        "request": {
+            "headers": {
+                "Authorization": "Bearer {{token}}"
+            }
+        },
+        "revoke": {
+            "url": "/token/revoke",
+            "query": {
+                "client_id": "{client_id}",
+                "client_secret": "{client_secret}",
+                "refresh_token": "{{token}}"
+            }
+        }
+    },
+    "parameters": {
+        "client_id": "string",
+        "client_secret": "string",
+        "scope": {
+            "values": {
+                "bot": "For oauth2 bots, this puts the bot in the user's selected guild by default",
+                "connections": "Allows /users/@me/connections to return linked Twitch and YouTube accounts",
+                "email": "Enables /users/@me to return an email",
+                "identify": "Allows /users/@me without email",
+                "guilds": "Allows /users/@me/guilds to return basic information about all of a user's guilds",
+                "guilds.join": "Allows /invites/{invite.id} to be used for joining a user's guild",
+                "gdm.join": "Allows your app to join users to a group dm",
+                "messages.read": "For local rpc server api access, this allows you to read messages from all client channels (otherwise restricted to channels/guilds your app creates)",
+                "rpc": "For local rpc server access, this allows you to control a user's local Discord client",
+                "rpc.api": "For local rpc server api access, this allows you to access the API as the local user",
+                "rpc.notifications.read": "For local rpc server api access, this allows you to receive notifications pushed out to the user",
+                "webhook.incoming": "This generates a webhook that is returned in the oauth token response for authorization code grants"
+            }
+        }
+    },
+    "href": {
+        "keys": "https://discordapp.com/developers/applications/me",
+        "docs": "https://discordapp.com/developers/docs/intro",
+        "apps": "https://discordapp.com/developers/applications/authorized",
+        "provider": "https://discordapp.com/"
+    }
+}

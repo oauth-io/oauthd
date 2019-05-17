@@ -1,0 +1,25 @@
+{
+	"name": "Vend",
+	"desc": "Vend is point-of-sale, inventory, and customer loyalty software for iPad, Mac & PC. Easily manage and scale your business, from one store to many, in the cloud.",
+	"url": "https://secure.vendhq.com/",
+	"oauth2": {
+		"authorize": {
+      "url": "https://secure.vendhq.com/connect",
+      "extra": [
+        "domain_prefix"
+      ]
+    },
+		"access_token": "https://{{domain_prefix}}.vendhq.com/api/1.0/token",
+		"refresh": "https://{{domain_prefix}}.vendhq.com/api/1.0/token",
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	},
+	"href": {
+		"keys": "https://developers.vendhq.com/developer/applications/create",
+		"docs": "https://developers.vendhq.com/documentation/oauth.html",
+		"apps": "https://developers.vendhq.com/developer/applications",
+		"provider": "https://developers.vendhq.com/"
+	}
+}

@@ -16,7 +16,10 @@
 			"scope": {
 				"values": {
 					"profile": "Access the basic profile information on a user's Uber account including their first name, email address, and profile picture.",
-					"history": "Pull trip data including the locations, times, and product type of a user's historical pickups and drop-offs."
+					"history": "Pull trip data including the locations, times, and product type of a user's historical pickups and drop-offs.",
+					"history_lite": "Same as history but without city information.",
+					"request": "Make requests for Uber Products on behalf of users.",
+					"request_receipt": "Get receipt details for Requests made by application."
 				}
 			}
 		}

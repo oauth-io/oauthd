@@ -14,7 +14,7 @@ module.exports = (scaffolding) ->
 				obj[key] ?= {}
 				for k, v of value
 					obj[key][k] = v
-				jf.writeFile process.cwd() + '/plugins.json', obj, (err) ->
+				jf.writeFile process.cwd() + '/plugins.json', obj, {spaces: 2}, (err) ->
 					return defer.reject err if err
 					defer.resolve()
 		defer.promise

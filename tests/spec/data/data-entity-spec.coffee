@@ -18,14 +18,14 @@ describe 'Data - Entity module', () ->
 		dataModule(env)
 
 		env.debug = () ->
-			logs.push(arguments)
+			# logs.push(arguments)
 
 		class UserClass extends env.data.Entity
 			@prefix: 'testuser'
 			@incr: 'testuser:i'
 
 		User = UserClass
-		
+
 
 	it 'Creating a new entity', (done) ->
 		user = new User()
@@ -44,7 +44,7 @@ describe 'Data - Entity module', () ->
 			.then () ->
 				expect(typeof user.id).toBe('number')
 
-			
+
 				user2 = new User()
 
 				user2.props.name = 'Leo'
@@ -62,7 +62,7 @@ describe 'Data - Entity module', () ->
 
 
 
-		
+
 
 	it 'Updating a saved entity', (done) ->
 		user = new User()

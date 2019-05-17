@@ -90,7 +90,7 @@ module.exports = (env) ->
 			@_setExtraRequestAuthorizeParameters(req, placeholderValues)
 			query = @_buildQuery(configuration.query, placeholderValues)
 			headers = @_buildHeaders(configuration)
-			options = @_buildRequestOptions(configuration, headers, query)
+			options = @_buildRequestOptions(configuration, headers, query, placeholderValues)
 			options.oauth = {
 				callback: query.oauth_callback
 				consumer_key: @_parameters.client_id
@@ -102,6 +102,8 @@ module.exports = (env) ->
 				options.oauth.verifier = req.params.oauth_verifier
 			else
 				options.oauth.verifier = ''
+			if ( ! options.oauth.callback)
+				delete options.oauth.callback
 			delete query.oauth_callback
 
 			# do request to access_token

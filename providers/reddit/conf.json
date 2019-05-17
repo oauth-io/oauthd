@@ -1,0 +1,54 @@
+{
+	"name": "Reddit",
+    	"desc": "Reddit is social news aggregation, web content rating, and discussion website.",
+	"url": "https://www.reddit.com/api/v1",
+	"oauth2": {
+		"authorize": "/authorize",
+		"access_token": {
+			"url": "/access_token",
+			"headers": {
+				"Authorization": "Basic !BASE64{client_id}:{client_secret}!BASE64"
+			},
+			"query": {
+				"grant_type": "authorization_code",
+				"redirect_uri": "{{callback}}",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"refresh": "/access_token",
+		"parameters": {
+			"client_secret": "string",
+			"client_id": "string",
+			"scope": {
+				"values": {
+					"identity": "Access your reddit username and signup date.",
+					"edit": "Edit and delete your comments and submissions.",
+					"flair": "Select your subreddit flair. Change link flair on your submissions.",
+					"history": "Access your voting history and comments or submissions you've saved or hidden.",
+					"modconfig": "Manage the configuration, sidebar, and CSS of subreddits you moderate.",
+					"modflair": "Manage and assign flair in subreddits you moderate.",
+					"modlog": "Access the moderation log in subreddits you moderate.",
+					"modposts": "Approve, remove, mark nsfw, and distinguish content in subreddits you moderate.",
+					"modwiki": "Change editors and visibility of wiki pages in subreddits you moderate.",
+					"mysubreddits": "Access the list of subreddits you moderate, contribute to, and subscribe to.",
+					"privatemessages": "Access your inbox and send private messages to other users.",
+					"read": "Access posts and comments through your account.",
+					"report": "Report content for rules violations. Hide & show individual submissions.",
+					"save": "Save and unsave comments and submissions.",
+					"submit": "Submit links and comments from your account.",
+					"subscribe": "Manage your subreddit subscriptions. Manage \"friends\" - users whose content you follow.",
+					"vote": "Submit and change your votes on comments and submissions.",
+					"wikiedit": "Edit wiki pages on your behalf.",
+					"wikiread": "Read wiki pages through your account."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://www.reddit.com/prefs/apps",
+		"docs": "https://www.reddit.com/dev/api/",
+		"apps": "https://www.reddit.com/prefs/apps",
+		"provider": "https://www.reddit.com/"
+	}
+}

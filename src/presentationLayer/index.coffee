@@ -16,10 +16,6 @@ module.exports = (env) ->
 
 	api.init()
 
-	env.server.use (req, res, next) ->
-		res.setHeader 'Content-Type', 'application/json'
-		next()
-
 	env.bootPathCache = =>
 		chain = restify.conditionalRequest()
 		chain.unshift (req, res, next) =>

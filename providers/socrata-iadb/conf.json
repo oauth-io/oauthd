@@ -1,0 +1,41 @@
+{
+	"name": "Socrata - mydata.IADB.org",
+	"desc": "Socrata is a company that provides social data discovery services for opening government data.",
+	"url": "https://mydata.iadb.org/oauth",
+	"usage_desc": "Since the endpoint change for every Socrata-powered data site, you need to specify which dataset endpoint you are targeting. Default targeted website is 'https://mydata.iadb.org'. ",
+	"usage_example": "OAuth.popup('socrata', {endpoint: 'https://data.cityofboston.gov'}).done(function(result) { console.log(result) })",
+	"redefine_endpoint": true,
+	"oauth2": {
+		"authorize": {
+			"url": "https://mydata.iadb.org/oauth/authorize",
+			"query": {
+				"client_id": "{client_id}",
+				"response_type": "code",
+				"redirect_uri": "{{callback}}",
+				"scope": "{scope}"
+			},
+			"format": "url"
+		},
+		"access_token": {
+			"url": "https://mydata.iadb.org/oauth/access_token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "{{callback}}",
+				"code": "{{code}}"
+			},
+			"format": "json"
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string"
+		}
+	},
+	"href": {
+		"keys": "http://dev.socrata.com/docs/app-tokens.html",
+		"docs": "http://dev.socrata.com/docs/endpoints.html",
+		"apps": "http://dev.socrata.com/docs/app-tokens.html",
+		"provider": "https://socrata.com"
+	}
+}

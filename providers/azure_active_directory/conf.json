@@ -1,0 +1,67 @@
+{
+    "name": "Microsoft Azure Active Directory",
+    "desc": "The Azure Active Directory is an interactive tool for exploring the  Azure Active Directory and learning how they can enrich your application without having to do any coding! This tool allows you to try out the APIs without having registered a Live application.",
+    "url": "https://login.microsoftonline.com/common",
+    "oauth2": {
+        "authorize": {
+            "url": "/oauth2/v2.0/authorize",
+            "query": {
+                "client_id": "{client_id}",
+                "redirect_uri": "{{callback}}",
+                "scope": "{scope}",
+                "access_type": "{access_type}",
+                "response_type": "code",
+                "state": "{{state}}"
+            }
+        },
+        "access_token": {
+            "url": "/oauth2/v2.0/token",
+            "query": {
+                "client_id": "{client_id}",
+                "scope": "{scope}",
+                "grant_type": "authorization_code",
+                "client_secret": "{client_secret}",
+                "code": "{{code}}",
+                "redirect_uri": "{{callback}}"
+            },
+            "extra": [
+                "refresh_token"
+            ]
+        },
+        "refresh": {
+            "url": "/oauth2/v2.0/token",
+            "query": {
+                "client_id": "{client_id}",
+                "scope": "{scope}",
+                "refresh_token": "{{refresh_token}}",
+                "grant_type": "refresh_token",
+                "client_secret": "{client_secret}",
+                "redirect_uri": "{{callback}}"
+            },
+            "extra": [
+                "id_token"
+            ]
+        },
+        "request": {
+            "url": "https://graph.microsoft.com",
+            "headers": {
+                "Authorization": "bearer {{token}}"
+            }
+        },
+        "parameters": {
+            "client_id": "string",
+            "client_secret": "string",
+            "scope": {
+                "values": {
+                    "https://graph.microsoft.com/User.Read": "User read"
+                }
+            }
+        }
+    },
+    "href": {
+        "keys": "https://apps.dev.microsoft.com/portal/register-app",
+        "docs": "https://docs.microsoft.com/azure/active-directory/develop/active-directory-appmodel-v2-overview",
+        "apps": "https://apps.dev.microsoft.com/#/appList",
+        "provider": "https://www.microsoft.com/pl-pl/"
+    }
+}

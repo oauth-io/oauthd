@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://integrate.37signals.com/apps/new",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://integrate.37signals.com/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://basecamp.com/",
+				"docs": "https://github.com/basecamp/bc3-api"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "https://launchpad.37signals.com/authorization.json"
+		}
+	}
+}

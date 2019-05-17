@@ -1,0 +1,22 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://sellercentral.amazon.com/gp/homepage.html",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://sellercentral.amazon.com/gp/homepage.html",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://amazon.com/",
+				"docs": "https://images-na.ssl-images-amazon.com/images/G/01/lwa/dev/docs/website-developer-guide._TTH_.pdf"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "https://api.amazon.com/user/profile"
+		}
+	}
+}

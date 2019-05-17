@@ -1,14 +1,14 @@
 {
     "name": "Linkedin (OAuth2)",
     "desc": "LinkedIn is the worlds largest business social networking hub.\nThe Linkedin REST API provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
-    "url": "https://www.linkedin.com/uas/oauth2",
+    "url": "https://www.linkedin.com/oauth",
     "oauth2": {
-        "authorize": "/authorization",
-        "access_token": "/accessToken",
+        "authorize": "/v2/authorization",
+        "access_token": "/v2/accessToken",
         "request": {
             "url": "https://api.linkedin.com",
-            "query": {
-                "oauth2_access_token": "{{token}}"
+            "headers": {
+              "Authorization": "Bearer {{token}}"
             }
         },
         "parameters": {
@@ -21,10 +21,13 @@
                     "r_emailaddress": "The primary email address you use for your LinkedIn account",
                     "r_network": "Your 1st and 2nd degree connections",
                     "r_contactinfo": "Address, phone number, and bound accounts",
+                    "r_liteprofile": "Use user's name and photo",
                     "rw_nus": "Retrieve and post updates to LinkedIn as you",
                     "rw_company_admin": "Edit company pages for which I am an Admin and post status updates on behalf of those companies",
                     "rw_groups": "Retrieve and post group discussions as you",
-                    "w_messages": "Send messages and invitations to connect as you"
+                    "w_member_social": "Post, comment and like posts on user's behalf",
+                    "w_messages": "Send messages and invitations to connect as you",
+                    "w_share": "Share content on Linkedin"
                 }
             }
         }

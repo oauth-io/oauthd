@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://www.tumblr.com/oauth/register",
+			"url": "https://www.tumblr.com/oauth/register",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.tumblr.com/oauth/apps",
+			"url": "https://www.tumblr.com/oauth/apps",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.tumblr.com/",
-				"docs": "http://www.tumblr.com/docs/en/api/v2"
+				"provider": "https://www.tumblr.com/",
+				"docs": "https://www.tumblr.com/docs/en/api/v2"
 			}
 		},
         "sample": {

@@ -8,9 +8,9 @@
 		"access_token": "/access_token"
 	},
 	"href": {
-		"keys": "https://dev.twitter.com/apps/new",
+		"keys": "https://apps.twitter.com/app/new",
 		"docs": "https://dev.twitter.com/docs",
-		"apps": "https://dev.twitter.com/apps",
+		"apps": "https://apps.twitter.com/",
 		"provider": "https://www.twitter.com/"
 	}
 }
