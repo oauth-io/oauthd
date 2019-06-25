@@ -27,7 +27,20 @@
                     "rw_groups": "Retrieve and post group discussions as you",
                     "w_member_social": "Post, comment and like posts on user's behalf",
                     "w_messages": "Send messages and invitations to connect as you",
-                    "w_share": "Share content on Linkedin"
+                    "w_share": "Share content on Linkedin",
+                    "r_ad_campaigns": "View advertising campaigns you manage",
+                    "r_ads": "Retrieve your advertising accounts",
+                    "r_ads_leadgen_automation": "Access your Lead Gen Forms and retrieve leads",
+                    "r_ads_reporting": "Retrieve reporting for your advertising accounts",
+                    "r_feed": "Retrieve posts by your network from your LinkedIn feed",
+                    "r_member_social":	"Retrieve your posts, comments, likes, and other engagement data",
+                    "r_organization_social": "Retrieve your organizations' posts, including any comments, likes and other engagement data",
+                    "rw_ad_campaigns": "Manage your advertising campaigns",
+                    "rw_ads": "Manage your advertising accounts",
+                    "rw_dmp_segments": "Create and manage your matched audiences",
+                    "rw_organization_admin": "Manage your organizations' pages and retrieve reporting data",
+                    "rw_organization": "Manage your organization's page and post updates",
+                    "w_organization_social": "Post, comment and like posts on your organization's behalf"
                 }
             }
         }
