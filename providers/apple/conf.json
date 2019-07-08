@@ -23,6 +23,16 @@
 				"redirect_uri": "https://oauth.io/auth"
 			}
 		},
+		"refresh": {
+			"url": "/token",
+			"format": "json",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
 		"parameters": {
 			"client_id": "string",
 			"client_secret": "string",
