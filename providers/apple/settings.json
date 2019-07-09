@@ -1,0 +1,23 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.apple.com/account/resources/identifiers/serviceId",
+			"image": "config.png"
+		},
+		"copyingKey": {
+			"url": "https://developer.apple.com/account/resources/authkeys/",
+			"image": "keys.png"
+		},
+		"install": {
+			"href": {
+				"provider": "https://developer.apple.com",
+				"docs": "https://developer.apple.com/documentation/signinwithapplerestapi",
+				"apps": "https://developer.apple.com/account/resources/identifiers"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/api/1.0/me"
+		}
+	}
+}

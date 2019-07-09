@@ -1,0 +1,52 @@
+{
+	"name": "Apple",
+	"desc": "Possibility to sign-in with Apple.",
+	"url": "https://appleid.apple.com/auth",
+	"oauth2": {
+		"authorize": {
+			"url" :"/authorize",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"redirect_uri": "https://oauth.io/auth",
+				"state": "{{state}}",
+				"scope": "{scope}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"query": {
+				"code": "{{code}}",
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "authorization_code",
+				"redirect_uri": "https://oauth.io/auth"
+			}
+		},
+		"refresh": {
+			"url": "/token",
+			"query": {
+				"client_id": "{client_id}",
+				"client_secret": "{client_secret}",
+				"grant_type": "refresh_token",
+				"refresh_token": "{{refresh_token}}"
+			}
+		},
+		"parameters": {
+			"client_id": "string",
+			"client_secret": "string",
+			"scope": {
+				"values": {
+					"name": "User name",
+					"email": "User email"
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://developer.apple.com/account/resources/authkeys/list",
+		"docs": "https://developer.apple.com/documentation/signinwithapplerestapi",
+		"apps": "https://developer.apple.com/account/resources/identifiers/list",
+		"provider": "https://developer.apple.com/"
+	}
+}
