@@ -56,8 +56,7 @@
                     "profile": "Permission to get the user's profile information.",
                     "openid": "Used to retrieve an ID token. For more information, see ID tokens.",
                     "email": "Permission to get the user's email address. openid must be specified at the same time. For more information, see ID tokens."
-                },
-                "separator": "%20"
+                }
       }
     }
   },
