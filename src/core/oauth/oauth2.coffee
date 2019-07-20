@@ -71,6 +71,7 @@ module.exports = (env) ->
 					result =
 						access_token: response.access_token
 						token_type: response.body.token_type
+						id_token: response.body.id_token
 						expires_in: expire
 						base: @_provider.baseurl
 						request: requestclone
