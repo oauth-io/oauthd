@@ -40,7 +40,8 @@
                     "rw_dmp_segments": "Create and manage your matched audiences",
                     "rw_organization_admin": "Manage your organizations' pages and retrieve reporting data",
                     "rw_organization": "Manage your organization's page and post updates",
-                    "w_organization_social": "Post, comment and like posts on your organization's behalf"
+                    "w_organization_social": "Post, comment and like posts on your organization's behalf",
+                    "r_organization_lookup": "Read organizations by ids"
                 }
             }
         }
