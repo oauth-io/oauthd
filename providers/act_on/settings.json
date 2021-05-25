@@ -1,0 +1,20 @@
+{
+	"settings": {
+		"createApp": {
+			"url": "https://developer.act-on.com/provision/"
+		},
+		"copyingKey": {
+			"url": "https://developer.act-on.com/provision/"
+		},
+		"install": {
+			"href": {
+				"provider": "https://act-on.com/",
+				"docs": "https://developer.act-on.com/documentation/"
+			}
+		},
+		"sample": {
+			"method": "get",
+			"url": "/api/1/list"
+		}
+	}
+}
