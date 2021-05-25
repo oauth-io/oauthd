@@ -1,0 +1,47 @@
+{
+	"name": "GetResponse",
+	"desc": "GetResponse offers a complete suite of simple-yet-powerful solutions, scaled and customized for small and large companies for email marketing and online campaign management.",
+	"url": "https://api.getresponse.com/v3",
+	"oauth2": {
+		"authorize": {
+			"url": "https://app.getresponse.com/oauth2_authorize.html",
+			"query": {
+				"response_type": "code",
+				"client_id": "{client_id}",
+				"state": "{{ state }}"
+			}
+		},
+		"access_token": {
+			"url": "/token",
+			"headers": {
+				"Authorization": "Basic !BASE64{client_id}:{client_secret}!BASE64"
+			},
+			"query": {
+				"grant_type": "authorization_code",
+				"code": "{{ code }}"
+			}
+		},
+		"request": {
+			"url": "https://api.getresponse.com/v3",
+			"headers": {
+				"Authorization": "Bearer {{ token }}"
+			}
+		},
+		"refresh": {
+			"url": "/token",
+			"headers": {
+				"Authorization": "Basic !BASE64{client_id}:{client_secret}!BASE64"
+			},
+			"query": {
+				"grant_type": "refresh_token",
+				"refresh_token": "{{ refresh_token }}"
+			}
+		}
+	},
+	"href": {
+		"keys": "https://app.getresponse.com/manage_api.html?",
+		"docs": "https://apidocs.getresponse.com/v3",
+		"apps": "https://app.getresponse.com/manage_api.html",
+		"provider": "https://www.getresponse.com/"
+	}
+}
