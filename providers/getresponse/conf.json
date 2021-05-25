@@ -8,7 +8,7 @@
 			"query": {
 				"response_type": "code",
 				"client_id": "{client_id}",
-				"state": "{{state}}"
+				"state": "{{ state }}"
 			}
 		},
 		"access_token": {
@@ -18,13 +18,13 @@
 			},
 			"query": {
 				"grant_type": "authorization_code",
-				"code": "{{code}}"
+				"code": "{{ code }}"
 			}
 		},
 		"request": {
 			"url": "https://api.getresponse.com/v3",
 			"headers": {
-				"Authorization": "Bearer {{token}}"
+				"Authorization": "Bearer {{ token }}"
 			}
 		},
 		"refresh": {
@@ -34,7 +34,7 @@
 			},
 			"query": {
 				"grant_type": "refresh_token",
-				"refresh_token": "{{refresh_token}}"
+				"refresh_token": "{{ refresh_token }}"
 			}
 		}
 	},
