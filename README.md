@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/oauth-io/oauthd.svg?branch=master)](https://travis-ci.org/oauth-io/oauthd)  [![npm version](https://badge.fury.io/js/oauthd.svg)](https://badge.fury.io/js/oauthd) [![dependencies Status](https://david-dm.org/oauth-io/oauthd/status.svg)](https://david-dm.org/oauth-io/oauthd)
 
+ [![Join the chat at https://gitter.im/oauth-io/oauthd](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/oauth-io/oauthd?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **oauthd**, also known as the 'oauth Daemon' is the open source version of
 [OAuth.io](https://oauth.io)'s core.
