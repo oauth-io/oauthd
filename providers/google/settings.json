@@ -14,10 +14,10 @@
 				"docs": "http://code.google.com/more/"
 			}
 		},
-        "sample": {
-            "method": "get",
-            "url": "/plus/v1/people/me"
-        },
-        "jsfiddle": "http://jsfiddle.net/willjcksn/LMH5k/embedded/"
+    "sample": {
+      "method": "get",
+      "url": "/oauth2/v3/userinfo"
+    },
+    "jsfiddle": "http://jsfiddle.net/willjcksn/LMH5k/embedded/"
 	}
 }
