@@ -3,7 +3,16 @@
     "desc": "LinkedIn is the worlds largest business social networking hub.\nThe Linkedin REST API provides a simple, consistent representation of people, companies, jobs, and the interactions and relationships between them.",
     "url": "https://www.linkedin.com/oauth",
     "oauth2": {
-        "authorize": "/v2/authorization",
+        "authorize": {
+            "url": "/v2/authorization",
+            "query": {
+                "client_id": "{client_id}",
+                "response_type": "code",
+                "redirect_uri": "{{callback}}",
+                "state": "{{state}}",
+                "scope": "{scope}"
+            }
+        },
         "access_token": "/v2/accessToken",
         "request": {
             "url": "https://api.linkedin.com",
@@ -16,36 +25,36 @@
             "client_secret": "string",
             "scope": {
                 "values": {
+                    "r_1st_connections_size": "READ access to the number of 1st-degree connections within the authenticated member's network.",
                     "r_ad_campaigns": "View advertising campaigns you manage",
                     "r_ads": "Retrieve your advertising accounts",
                     "r_ads_leadgen_automation": "Access your Lead Gen Forms and retrieve leads",
                     "r_ads_reporting": "Retrieve reporting for your advertising accounts",
                     "r_basicprofile": "Use your basic profile including your name, photo, headline, and current positions",
+                    "r_contactinfo": "Address, phone number, and bound accounts",
                     "r_emailaddress": "Use the primary email address associated with your LinkedIn account",
-                    "r_liteprofile": "Use your name, headline, and photo",
+                    "r_feed": "Retrieve posts by your network from your LinkedIn feed",
+                    "r_fullprofile": "Full profile including experience, education, skills, and recommendations",
+                    "r_liteprofile": "Retrieve the member's lite profile including their id, name, and profile picture.",
                     "r_member_social": "Retrieve your posts, comments, likes, and other engagement data",
+                    "r_network": "Your 1st and 2nd degree connections",
+                    "r_organization_lookup": "Read organizations by ids",
                     "r_organization_social": "Retrieve your organizations' posts, including any comments, likes and other engagement data",
+                    "r_primarycontact": "Retrieve primary authenticated member handles (email or phone number) on the authenticated user's behalf.",
+                    "r_sales_nav_analytics": "Analytics Services APIs",
+                    "r_targeting": "Discover targeting facets and targeting entities. This scope is provided to all LMS Ads partners, please do not request this scope in your OAuth flow.",
                     "rw_ad_campaigns": "Manage your advertising campaigns",
                     "rw_ads": "Manage your advertising accounts",
                     "rw_company_admin": "For V1 calls, Manage your organization's page and post updates",
                     "rw_dmp_segments": "Create and manage your matched audiences",
-                    "rw_organization_admin": "Manage your organizations' pages and retrieve reporting data",
-                    "rw_organization": "For V2 calls, Manage your organization's page and post updates",
-                    "w_member_social": "Post, comment and like posts on your behalf",
-                    "w_organization_social": "Post, comment and like posts on your organization's behalf",
-                    "w_share": "Post updates to LinkedIn as you",
-                    "r_targeting": "Discover targeting facets and targeting entities. This scope is provided to all LMS Ads partners, please do not request this scope in your OAuth flow.",
-                    "r_organization_lookup": "Read organizations by ids",
-                    "r_1st_connections_size": "READ access to the number of 1st-degree connections within the authenticated member's network.",
-                    "r_sales_nav_analytics": "Analytics Services APIs",
-                    "r_primarycontact": "Retrieve primary authenticated member handles (email or phone number) on the authenticated user's behalf.",                    
-                    "r_fullprofile": "Full profile including experience, education, skills, and recommendations",
-                    "r_network": "Your 1st and 2nd degree connections",
-                    "r_contactinfo": "Address, phone number, and bound accounts",
-                    "rw_nus": "Retrieve and post updates to LinkedIn as you",
                     "rw_groups": "Retrieve and post group discussions as you",
+                    "rw_nus": "Retrieve and post updates to LinkedIn as you",
+                    "rw_organization": "For V2 calls, Manage your organization's page and post updates",
+                    "rw_organization_admin": "Manage your organizations' pages and retrieve reporting data",
+                    "w_member_social": "Post, comment and like posts on your behalf",
                     "w_messages": "Send messages and invitations to connect as you",
-                    "r_feed": "Retrieve posts by your network from your LinkedIn feed"
+                    "w_organization_social": "Post, comment and like posts on your organization's behalf",
+                    "w_share": "Post updates to LinkedIn as you"
                 }
             }
         }
