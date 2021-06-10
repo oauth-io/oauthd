@@ -1,7 +1,9 @@
 {
 	"name": "Google Auth2",
     "desc": "Google APIs (or Google AJAX APIs) is a set of JavaScript APIs developed by Google that allows interaction with Google Services and integration of rich, multimedia, search or feed-based Internet content into web applications. They extensively use AJAX scripting and can be easily loaded using Google Loader.",
+
 	"oauth2": {
+
 		"authorize": {
 			"url": "https://accounts.google.com/o/oauth2/v2/auth",
 			"query": {
@@ -13,14 +15,21 @@
 				"access_type": "{access_type}"
 			}
 		},
+
 		"access_token": {
 			"url": "https://www.googleapis.com/oauth2/v4/token",
+      "headers": {
+        "Authorization": "Bearer {{token}}"
+      },
 			"extra": [
 				"id_token"
 			]
 		},
+
 		"request": "https://www.googleapis.com",
+
 		"refresh": "https://www.googleapis.com/oauth2/v4/token",
+
 		"revoke": {
 			"url": "/revoke",
 			"method": "post",
@@ -28,6 +37,7 @@
 				"token": "{{token}}"
 			}
 		},
+
 		"parameters": {
 			"client_secret": "string",
 			"client_id": "string",
@@ -132,6 +142,7 @@
 			}
 		}
 	},
+
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "http://code.google.com/more/",
