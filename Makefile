@@ -1,5 +1,6 @@
 .PHONY: all install build \
-				publish-prerelease prerelease-version
+				publish-prerelease prerelease-version \
+				npm-publish
 
 all: build
 
@@ -18,7 +19,10 @@ build:
 
 PRERELEASE_ID=rc
 
-publish-prerelease: prerelease-version
+publish-prerelease: prerelease-version npm-publish
 
 prerelease-version:
 	$(NPM) version prerelease --preid=$(PRERELEASE_ID)
+
+npm-publish:
+	$(NPM) publish
