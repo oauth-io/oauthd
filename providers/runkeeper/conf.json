@@ -8,9 +8,9 @@
 		"request": "https://api.runkeeper.com"
 	},
 	"href": {
-		"keys": "http://runkeeper.com/partner/applications/register",
-		"docs": "http://developer.runkeeper.com/healthgraph/overview",
-		"apps": "http://runkeeper.com/partner/applications",
-		"provider": "http://runkeeper.com/"
+		"keys": "https://runkeeper.com/partner/applications/register",
+		"docs": "https://developer.runkeeper.com/healthgraph/overview",
+		"apps": "https://runkeeper.com/partner/applications",
+		"provider": "https://runkeeper.com/"
 	}
 }

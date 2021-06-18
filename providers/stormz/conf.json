@@ -24,7 +24,7 @@
 	},
 	"href": {
 		"keys": "https://stormz.me/oauth/applications/new",
-		"docs": "http://developer.stormz.me/",
+		"docs": "https://developer.stormz.me/",
 		"apps": "https://stormz.me/oauth/applications",
 		"provider": "https://stormz.me/"
 	}

@@ -33,9 +33,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://dev.socrata.com/docs/app-tokens.html",
-		"docs": "http://dev.socrata.com/docs/endpoints.html",
-		"apps": "http://dev.socrata.com/docs/app-tokens.html",
+		"keys": "https://dev.socrata.com/docs/app-tokens.html",
+		"docs": "https://dev.socrata.com/docs/endpoints.html",
+		"apps": "https://dev.socrata.com/docs/app-tokens.html",
 		"provider": "https://socrata.com"
 	}
 }

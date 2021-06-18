@@ -12,7 +12,7 @@
 	},
 	"href": {
 		"keys": "https://app.xero.com/Application/Add",
-		"docs": "http://developer.xero.com/",
+		"docs": "https://developer.xero.com/",
 		"apps": "https://app.xero.com/Application",
 		"provider": "https://www.xero.com/"
 	}

@@ -18,8 +18,8 @@
 		}
 	},
 	"href": {
-		"keys": "http://box.com/developers/services/edit/",
-		"docs": "http://developers.box.com/docs/",
+		"keys": "https://box.com/developers/services/edit/",
+		"docs": "https://developers.box.com/docs/",
 		"apps": "https://www.box.com/developers/services",
 		"provider": "https://www.box.com/"
 	}

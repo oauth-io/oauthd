@@ -1,3 +1,3 @@
-var google_me = require('../google/me');
+var gplus_me = require('../google_plus/me');
 
-module.exports = google_me;
+module.exports = gplus_me;

@@ -1,15 +1,15 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://app.renren.com/developers/createAppNew"
+			"url": "https://app.renren.com/developers/createAppNew"
 		},
 		"copyingKey": {
-			"url": "http://app.renren.com/developers/newapp"
+			"url": "https://app.renren.com/developers/newapp"
 		},
 		"install": {
 			"href": {
-				"provider": "http://renren.com",
-				"docs": "http://wiki.dev.renren.com/wiki/"
+				"provider": "https://renren.com",
+				"docs": "https://wiki.dev.renren.com/wiki/"
 			}
 		}
 	}

@@ -31,9 +31,9 @@
         }
     },
     "href": {
-        "keys": "http://www.flickr.com/services/apps/create/",
-        "docs": "http://www.flickr.com/services/api/",
-        "apps": "http://www.flickr.com/services/apps/",
-        "provider": "http://www.flickr.com/"
+        "keys": "https://www.flickr.com/services/apps/create/",
+        "docs": "https://www.flickr.com/services/api/",
+        "apps": "https://www.flickr.com/services/apps/",
+        "provider": "https://www.flickr.com/"
     }
 }

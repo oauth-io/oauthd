@@ -8,8 +8,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://yandex.ru/",
-				"docs": "http://api.yandex.ru/oauth/doc"
+				"provider": "https://yandex.ru/",
+				"docs": "https://api.yandex.ru/oauth/doc"
 			}
 		},
         "sample": {

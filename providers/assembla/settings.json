@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "https://www.assembla.com/",
-				"docs": "http://api-doc.assembla.com/content/api_reference.html"
+				"docs": "https://api-doc.assembla.com/content/api_reference.html"
 			}
 		},
         "sample": {

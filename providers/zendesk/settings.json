@@ -2,8 +2,8 @@
     "settings": {
         "install": {
             "href": {
-                "provider": "http://zendesk.com/",
-                "docs": "http://developer.zendesk.com"
+                "provider": "https://zendesk.com/",
+                "docs": "https://developer.zendesk.com"
             }
         },
         "sample": {

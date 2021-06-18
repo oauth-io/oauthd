@@ -9,7 +9,7 @@
 		"install": {
 			"href": {
 				"provider": "https://stormz.me/",
-				"docs": "http://developer.stormz.me/"
+				"docs": "https://developer.stormz.me/"
 			}
 		},
         "sample": {

@@ -8,9 +8,9 @@
 		"refresh": "/oauth_token"
 	},
 	"href": {
-		"keys": "http://app.asana.com/-/account_api",
-		"apps": "http://app.asana.com/-/account_api",
-		"docs": "http://developer.asana.com/documentation",
+		"keys": "https://app.asana.com/-/account_api",
+		"apps": "https://app.asana.com/-/account_api",
+		"docs": "https://developer.asana.com/documentation",
 		"provider": "https://asana.com"
 	}
 }

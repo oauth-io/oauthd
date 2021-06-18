@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://yahoo.com",
+				"provider": "https://yahoo.com",
 				"docs": "https://developer.yahoo.com/oauth2/guide/"
 			}
 		},

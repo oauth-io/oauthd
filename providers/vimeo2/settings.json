@@ -9,7 +9,7 @@
 		"install": {
 			"href": {
 				"provider": "https://vimeo.com/",
-				"docs": "http://developer.vimeo.com/apis/start"
+				"docs": "https://developer.vimeo.com/apis/start"
 			}
 		},
 		"sample": {

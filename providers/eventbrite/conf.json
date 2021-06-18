@@ -15,8 +15,8 @@
         "access_token": "/token"
     },
     "href": {
-        "keys": "http://www.eventbrite.com/api/key/",
-        "docs": "http://developer.eventbrite.com/doc/",
+        "keys": "https://www.eventbrite.com/api/key/",
+        "docs": "https://developer.eventbrite.com/doc/",
         "apps": "https://www.eventbrite.com/api/key",
         "provider": "https://www.eventbrite.com/"
     }

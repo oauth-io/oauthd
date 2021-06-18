@@ -31,9 +31,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.twitch.tv/kraken/oauth2/clients/new",
+		"keys": "https://www.twitch.tv/kraken/oauth2/clients/new",
 		"docs": "https://github.com/justintv/Twitch-API/blob/master/authentication.md",
-		"apps": "http://www.twitch.tv/settings/connections",
-		"provider": "http://twitch.tv/"
+		"apps": "https://www.twitch.tv/settings/connections",
+		"provider": "https://twitch.tv/"
 	}
 }

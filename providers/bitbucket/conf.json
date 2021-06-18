@@ -9,7 +9,7 @@
 	},
 	"href": {
 		"keys": "https://bitbucket.org/account",
-		"docs": "http://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs",
+		"docs": "https://confluence.atlassian.com/display/BITBUCKET/Using+the+Bitbucket+REST+APIs",
 		"apps": "https://bitbucket.org/account",
 		"provider": "https://bitbucket.org/"
 	}

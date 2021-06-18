@@ -28,9 +28,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://dev.t.qq.com/apps/add/1",
-		"docs": "http://wiki.open.t.qq.com/index.php/",
-		"apps": "http://dev.t.qq.com/development",
-		"provider": "http://t.qq.com"
+		"keys": "https://dev.t.qq.com/apps/add/1",
+		"docs": "https://wiki.open.t.qq.com/index.php/",
+		"apps": "https://dev.t.qq.com/development",
+		"provider": "https://t.qq.com"
 	}
 }

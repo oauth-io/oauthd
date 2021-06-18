@@ -9,8 +9,8 @@
 	},
 	"href": {
 		"keys": "https://www.skyrock.com/developer/application/application_create.php",
-		"docs": "http://www.skyrock.com/developer/documentation/",
-		"apps": "http://www.skyrock.com/developer/application/",
-		"provider": "http://www.skyrock.com/"
+		"docs": "https://www.skyrock.com/developer/documentation/",
+		"apps": "https://www.skyrock.com/developer/application/",
+		"provider": "https://www.skyrock.com/"
 	}
 }

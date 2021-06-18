@@ -31,9 +31,9 @@
         }
     },
     "href": {
-        "keys": "http://disqus.com/api/applications/register/",
-        "docs": "http://disqus.com/api/docs/",
-        "apps": "http://disqus.com/api/applications/",
-        "provider": "http://disqus.com/"
+        "keys": "https://disqus.com/api/applications/register/",
+        "docs": "https://disqus.com/api/docs/",
+        "apps": "https://disqus.com/api/applications/",
+        "provider": "https://disqus.com/"
     }
 }

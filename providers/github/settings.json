@@ -11,7 +11,7 @@
         "install": {
             "href": {
                 "provider": "https://github.com/",
-                "docs": "http://developer.github.com/v3/"
+                "docs": "https://developer.github.com/v3/"
             }
         },
         "sample": {
@@ -24,6 +24,6 @@
                 "url": "/user"
             }
         },
-        "jsfiddle": "http://jsfiddle.net/willjcksn/2hb6B/embedded/"
+        "jsfiddle": "https://jsfiddle.net/willjcksn/2hb6B/embedded/"
     }
 }

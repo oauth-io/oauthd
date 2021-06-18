@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "https://www.wordpress.com/",
-				"docs": "http://developer.wordpress.com/docs/api/"
+				"docs": "https://developer.wordpress.com/docs/api/"
 			}
 		},
         "sample": {

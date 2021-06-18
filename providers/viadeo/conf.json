@@ -8,9 +8,9 @@
 		"request": "https://api.viadeo.com"
 	},
 	"href": {
-		"keys": "http://dev.viadeo.com/dashboard/",
-		"apps": "http://dev.viadeo.com/dashboard/",
-		"docs": "http://dev.viadeo.com/documentation/",
+		"keys": "https://dev.viadeo.com/dashboard/",
+		"apps": "https://dev.viadeo.com/dashboard/",
+		"docs": "https://dev.viadeo.com/documentation/",
 		"provider": "https://www.viadeo.com"
 	}
 }

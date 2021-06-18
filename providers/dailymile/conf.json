@@ -12,9 +12,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.dailymile.com/api/consumers/new",
-		"docs": "http://www.dailymile.com/api/documentation",
-		"apps": "http://www.dailymile.com/api/",
-		"provider": "http://dailymile.com"
+		"keys": "https://www.dailymile.com/api/consumers/new",
+		"docs": "https://www.dailymile.com/api/documentation",
+		"apps": "https://www.dailymile.com/api/",
+		"provider": "https://dailymile.com"
 	}
 }

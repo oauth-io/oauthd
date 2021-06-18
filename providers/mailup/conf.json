@@ -9,9 +9,9 @@
         "request": "https://services.mailup.com/API/v1.1/Rest/ConsoleService.svc/Console"
     },
     "href": {
-        "keys": "http://developers.mailup.com/setupen",
-        "docs": "http://help.mailup.com/display/mailupapi/Getting+started+with+the+MailUp+API",
-        "apps": "http://developers.mailup.com/setupen",
-        "provider": "http://mailup.com/"
+        "keys": "https://developers.mailup.com/setupen",
+        "docs": "https://help.mailup.com/display/mailupapi/Getting+started+with+the+MailUp+API",
+        "apps": "https://developers.mailup.com/setupen",
+        "provider": "https://mailup.com/"
     }
 }

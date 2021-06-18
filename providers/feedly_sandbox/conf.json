@@ -1,10 +1,10 @@
 {
     "name": "Feedly",
     "desc": "Millions of users depend on their feedly for inspiration, information, and to feed their passions. But one size does not fit all. Individuals have different workflows, different habits, and different devices. In our efforts to evolve feedly from a product to a platform, we have therefore decided to open up the feedly API. Developers are welcome to deliver new applications, experiences, and innovations via the feedly cloud. We feel strongly that this will help to accelerate innovation and better serve our users.",
-    "url": "http://sandbox.feedly.com/",
+    "url": "https://sandbox.feedly.com/",
     "oauth2": {
         "authorize": {
-            "url": "http://sandbox.feedly.com/v3/auth/auth",
+            "url": "https://sandbox.feedly.com/v3/auth/auth",
             "query": {
                 "client_id": "{client_id}",
                 "response_type": "code",
@@ -14,7 +14,7 @@
             }
         },
         "access_token": {
-            "url": "http://sandbox.feedly.com/v3/auth/token",
+            "url": "https://sandbox.feedly.com/v3/auth/token",
             "query": {
                 "code": "{{code}}",
                 "client_id": "{client_id}",
@@ -25,7 +25,7 @@
             }
         },
         "refresh": {
-            "url": "http://sandbox.feedly.com/v3/auth/token",
+            "url": "https://sandbox.feedly.com/v3/auth/token",
             "query": {
                 "refresh_token": "{{refresh_token}}",
                 "client_id": "{client_id}",
@@ -42,7 +42,7 @@
     "href": {
         "keys": "https://developer.feedly.com/",
         "docs": "https://developer.feedly.com/",
-        "apps": "http://www.feedly.com/apps.html",
-        "provider": "http://www.feedly.com/"
+        "apps": "https://www.feedly.com/apps.html",
+        "provider": "https://www.feedly.com/"
     }
 }

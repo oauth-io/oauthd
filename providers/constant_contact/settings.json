@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.constantcontact.com/",
+				"provider": "https://www.constantcontact.com/",
 				"docs": "https://developer.constantcontact.com/docs/developer-guides/api-documentation-index.html"
 			}
 		},

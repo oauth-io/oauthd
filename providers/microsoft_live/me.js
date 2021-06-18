@@ -2,7 +2,7 @@ var me = {
     fetch: [
 
         function(fetched_elts) {
-            return '/v1.0/me';
+            return '/me';
         }
 
     ],

@@ -1,7 +1,7 @@
 {
-        "name": "Intelage",
-        "desc": "Intelage Description",
-        "url": "https://intelage.oauth.io/",
+	"name": "Intelage",
+	"desc": "Global trade made easy, for everyone",
+	"url": "https://intelage.oauth.io/",
         "oauth2": {
                 "request_token": "https://intelage.oauth.io/oauth/token",
                 "authorize": "https://intelage.oauth.io/authorize",
@@ -11,16 +11,17 @@
                         "client_id": "string",
                         "scope": {
                                 "values": {
-                                        "openid": "Enable OpenID (required).",
-                                        "email": "Grants read access to emails."
-                                }
-                        }
-                }
-        },
-        "href": {
-                "keys": "https://intelage.com/createKey.html",
-                "docs": "https://intelage.com/everything.html",
-                "apps": "https://intelage.com/projects",
-                "provider": "https://intelage.com"
-        }
+                                        "openid": "Enable OpenID.",
+                                        "email": "Grants read access to emails.",
+                                        "offline_access": "Get refresh token."
+				}
+			}
+		}
+	},
+	"href": {
+		"keys": "https://intelage.com/dashboard/createKey.html",
+		"docs": "https://intelage.com/everything.html",
+		"apps": "https://intelage.com/projects",
+		"provider": "https://intelage.com"
+	}
 }

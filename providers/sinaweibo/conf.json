@@ -38,9 +38,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://open.weibo.com/development",
-		"docs": "http://open.weibo.com/wiki/",
-		"apps": "http://open.weibo.com/apps",
-		"provider": "http://weibo.com"
+		"keys": "https://open.weibo.com/development",
+		"docs": "https://open.weibo.com/wiki/",
+		"apps": "https://open.weibo.com/apps",
+		"provider": "https://weibo.com"
 	}
 }

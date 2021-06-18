@@ -27,9 +27,9 @@
         }
     },
     "href": {
-        "keys": "http://www.mixcloud.com/developers/create/",
-        "docs": "http://www.mixcloud.com/developers/documentation",
-        "apps": "http://www.mixcloud.com/developers",
-        "provider": "http://www.mixcloud.com"
+        "keys": "https://www.mixcloud.com/developers/create/",
+        "docs": "https://www.mixcloud.com/developers/documentation",
+        "apps": "https://www.mixcloud.com/developers",
+        "provider": "https://www.mixcloud.com"
     }
 }

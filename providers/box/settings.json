@@ -1,7 +1,7 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://box.com/developers/services/edit/"
+			"url": "https://box.com/developers/services/edit/"
 		},
 		"copyingKey": {
 			"url": "https://www.box.com/developers/services"
@@ -9,7 +9,7 @@
 		"install": {
 			"href": {
 				"provider": "https://www.box.com/",
-				"docs": "http://developers.box.com/docs/"
+				"docs": "https://developers.box.com/docs/"
 			}
 		},
         "sample": {

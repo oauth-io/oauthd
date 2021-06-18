@@ -19,8 +19,8 @@
         }
     },
     "href": {
-        "keys": "http://bitly.com/a/oauth_apps",
-        "docs": "http://dev.bitly.com/",
+        "keys": "https://bitly.com/a/oauth_apps",
+        "docs": "https://dev.bitly.com/",
         "apps": "https://bitly.com/a/oauth_apps",
         "provider": "https://bitly.com/"
     }

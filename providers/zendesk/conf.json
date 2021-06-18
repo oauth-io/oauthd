@@ -31,7 +31,7 @@
 		}
 	},
 	"href": {
-		"docs": "http://developer.zendesk.com",
-		"provider": "http://zendesk.com/"
+		"docs": "https://developer.zendesk.com",
+		"provider": "https://zendesk.com/"
 	}
 }

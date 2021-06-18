@@ -16,8 +16,8 @@
 	},
 	"href": {
 		"keys": "https://us6.admin.mailchimp.com/account/oauth2/client",
-		"docs": "http://apidocs.mailchimp.com/",
+		"docs": "https://apidocs.mailchimp.com/",
 		"apps": "https://us6.admin.mailchimp.com/account/api/",
-		"provider": "http://mailchimp.com/"
+		"provider": "https://mailchimp.com/"
 	}
 }

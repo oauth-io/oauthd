@@ -1,9 +1,7 @@
 {
-	"name": "Google Auth2",
+	"name": "Google OAuth2",
     "desc": "Google APIs (or Google AJAX APIs) is a set of JavaScript APIs developed by Google that allows interaction with Google Services and integration of rich, multimedia, search or feed-based Internet content into web applications. They extensively use AJAX scripting and can be easily loaded using Google Loader.",
-
 	"oauth2": {
-
 		"authorize": {
 			"url": "https://accounts.google.com/o/oauth2/v2/auth",
 			"query": {
@@ -15,21 +13,14 @@
 				"access_type": "{access_type}"
 			}
 		},
-
 		"access_token": {
 			"url": "https://www.googleapis.com/oauth2/v4/token",
-      "headers": {
-        "Authorization": "Bearer {{token}}"
-      },
 			"extra": [
 				"id_token"
 			]
 		},
-
 		"request": "https://www.googleapis.com",
-
 		"refresh": "https://www.googleapis.com/oauth2/v4/token",
-
 		"revoke": {
 			"url": "/revoke",
 			"method": "post",
@@ -37,10 +28,9 @@
 				"token": "{{token}}"
 			}
 		},
-
 		"parameters": {
-			"client_secret": "string",
 			"client_id": "string",
+			"client_secret": "string",
 			"scope": {
 				"values": {
 					"https://www.googleapis.com/auth/blogger.readonly": "View your Blogger account",
@@ -57,6 +47,12 @@
 					"https://www.googleapis.com/auth/urlshortener": "Manage your goo.gl short URLs",
 					"https://www.googleapis.com/auth/yt-analytics-monetary.readonly": "View YouTube Analytics monetary reports for your YouTube content",
 					"https://www.googleapis.com/auth/plus.me": "Know who you are on Google",
+					"https://www.googleapis.com/auth/plus.media.upload": "Grants permission for the app to upload photos and videos on behalf of the user.",
+					"https://www.googleapis.com/auth/plus.login": "Know your name, basic info, and list of people you're connected to on Google+",
+					"https://www.googleapis.com/auth/plus.stream.write": "Grants permission for the app to create posts or comments on behalf of a user. The Google+ Domains API only allows creation of restricted posts, and only allows comments to be added to restricted posts.",
+					"https://www.googleapis.com/auth/plus.stream.read": "Grants permission for the app to read Google+ posts and comments by the user, or that are visible to the user. The Google+ Domains API only permits reading posts by people in the same Google Apps domain as the user, and comments on those posts. Comments made by people outside of the Google Apps domain of the user are accessible using the Google+ Domains API if they were made on posts authored by people in the domain.",
+					"https://www.googleapis.com/auth/plus.circles.write": "Grants permission for the app to create circles, delete circles, add people and pages to the user's circles, and remove people and pages from the user's circles. The Google+ Domains API only permits adding and removing people in the same Google Apps domain as the user",
+					"https://www.googleapis.com/auth/plus.circles.read":"Grants the app permission to read the names of the user's circles, and the people and pages that are members of each circle.",
 					"https://www.googleapis.com/auth/drive": "View and manage the files and documents in your Google Drive",
 					"https://www.googleapis.com/auth/adsense.readonly": "View your AdSense data",
 					"https://www.googleapis.com/auth/devstorage.full_control": "Manage your data and permissions in Google Cloud Storage",
@@ -100,7 +96,6 @@
 					"https://www.googleapis.com/auth/gan.readonly": "View your GAN data",
 					"https://www.googleapis.com/auth/youtube.readonly": "View your YouTube account",
 					"https://www.googleapis.com/auth/latitude.all.city": "Manage your city-level location and location history",
-					"https://www.googleapis.com/auth/plus.login": "Know your name, basic info, and list of people you're connected to on Google+",
 					"https://www.googleapis.com/auth/drive.scripts": "Modify your Google Apps Script scripts' behavior",
 					"https://www.googleapis.com/auth/adexchange.buyer": "Manage your Ad Exchange buyer account configuration",
 					"https://www.googleapis.com/auth/taskqueue": "Manage your Tasks",
@@ -127,7 +122,11 @@
 					"https://docs.googleusercontent.com/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://spreadsheets.google.com/feeds/": "Google docs. Google Documents List API has been officially deprecated as of September 14, 2012. It will continue to work as per our deprecation policy, but we encourage you to move to the Google Drive API.",
 					"https://www.googleapis.com/auth/apps.groups.migration": "Read and write access to Groups Migration API.",
+					"https://www.googleapis.com/auth/appengine.admin": "App engine admin scope.",
 					"https://mail.google.com/": "The scope for IMAP and SMTP access",
+					"https://www.googleapis.com/auth/gmail.modify": "All read/write operations except immediate, permanent deletion of threads and messages, bypassing Trash.",
+					"https://www.googleapis.com/auth/gmail.readonly": "Read all resources and their metadata—no write operations.",
+					"https://www.googleapis.com/auth/gmail.compose": "Create, read, update, and delete drafts. Send messages and drafts.",
 					"openid": "Access to your id",
 					"email": "Get access to your mail. The presence of email requests that the ID Token include email and email_verified claims, and that these values be included in the information available at the userinfo endpoint.",
 					"profile": "Get access to your profile. profile will provide an Access Token that can be used to obtain user profile information from the Userinfo endpoint. We recommend using Google+ Sign-In if your application needs user profile information because the Google+ APIs provide a richer set of data that can be controlled by the user"
@@ -142,7 +141,6 @@
 			}
 		}
 	},
-
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "http://code.google.com/more/",

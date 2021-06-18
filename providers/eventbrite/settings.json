@@ -1,7 +1,7 @@
 {
     "settings": {
         "createApp": {
-            "url": "http://www.eventbrite.com/api/key/",
+            "url": "https://www.eventbrite.com/api/key/",
             "image": "config.png"
         },
         "copyingKey": {
@@ -11,7 +11,7 @@
         "install": {
             "href": {
                 "provider": "https://www.eventbrite.com/",
-                "docs": "http://developer.eventbrite.com/doc/"
+                "docs": "https://developer.eventbrite.com/doc/"
             }
         },
         "sample": {

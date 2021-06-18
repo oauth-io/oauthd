@@ -44,7 +44,7 @@
 	},
 	"href": {
 		"keys": "https://github.com/settings/applications/new",
-		"docs": "http://developer.github.com/v3/",
+		"docs": "https://developer.github.com/v3/",
 		"apps": "https://github.com/settings/applications",
 		"provider": "https://github.com/"
 	}

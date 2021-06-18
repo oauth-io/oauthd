@@ -13,9 +13,9 @@
 		"refresh": "/token"
 	},
 	"href": {
-		"keys": "http://www.deviantart.com/submit/app/",
-		"docs": "http://www.deviantart.com/developers/",
+		"keys": "https://www.deviantart.com/submit/app/",
+		"docs": "https://www.deviantart.com/developers/",
 		"apps": "https://www.deviantart.com/settings/myapps",
-		"provider": "http://deviantart.com/"
+		"provider": "https://deviantart.com/"
 	}
 }

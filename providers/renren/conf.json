@@ -1,7 +1,7 @@
 {
 	"name": "Renren",
     "desc": "Renren is a Chinese social network to find old friends and meet new ones. The Renren API is an open platform based on Open Social. After authenticating, developers can retrieve friend lists and check friend status between users. The API also has access to notifications and invitations. Two of the more unique services provided by the API lets users pay for certain applications and allows developers to register new users.",
-	"url": "http://graph.renren.com/oauth",
+	"url": "https://graph.renren.com/oauth",
 	"oauth2": {
 		"authorize": "/authorize",
 		"access_token": {
@@ -56,9 +56,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://app.renren.com/developers/createAppNew",
-		"docs": "http://wiki.dev.renren.com/wiki/",
-		"apps": "http://app.renren.com/developers/newapp",
-		"provider": "http://renren.com"
+		"keys": "https://app.renren.com/developers/createAppNew",
+		"docs": "https://wiki.dev.renren.com/wiki/",
+		"apps": "https://app.renren.com/developers/newapp",
+		"provider": "https://renren.com"
 	}
 }

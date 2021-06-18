@@ -1,12 +1,12 @@
 {
   "settings": {
     "createApp": {
-      "url": "http://support.nimble.com/customer/portal/articles/1194074-nimble-api-access#1"
+      "url": "https://support.nimble.com/customer/portal/articles/1194074-nimble-api-access#1"
     },
     "install": {
       "href": {
-        "provider": "http://nimble.com/",
-        "docs": "http://nimble.readthedocs.org/"
+        "provider": "https://nimble.com/",
+        "docs": "https://nimble.readthedocs.org/"
       }
     }
   }

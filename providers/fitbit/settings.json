@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.fitbit.com/",
+				"provider": "https://www.fitbit.com/",
 				"docs": "https://wiki.fitbit.com/display/API/Fitbit+API"
 			}
 		},

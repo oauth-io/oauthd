@@ -9,8 +9,8 @@
 	},
 	"href": {
 		"keys": "https://api.imgur.com/oauth2/addclient",
-		"docs": "http://api.imgur.com/",
-		"apps": "http://imgur.com/account/settings/apps",
-		"provider": "http://imgur.com/"
+		"docs": "https://api.imgur.com/",
+		"apps": "https://imgur.com/account/settings/apps",
+		"provider": "https://imgur.com/"
 	}
 }

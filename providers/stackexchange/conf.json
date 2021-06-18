@@ -32,9 +32,9 @@
         }
     },
     "href": {
-        "keys": "http://stackapps.com/apps/oauth/register",
+        "keys": "https://stackapps.com/apps/oauth/register",
         "docs": "https://api.stackexchange.com/docs",
-        "apps": "http://stackapps.com/apps/oauth/",
+        "apps": "https://stackapps.com/apps/oauth/",
         "provider": "https://stackexchange.com/"
     }
 }

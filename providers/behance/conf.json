@@ -31,9 +31,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.behance.net/dev/register",
-		"docs": "http://www.behance.net/dev/api/endpoints/",
-		"apps": "http://www.behance.net/dev/apps",
-		"provider": "http://www.behance.net/"
+		"keys": "https://www.behance.net/dev/register",
+		"docs": "https://www.behance.net/dev/api/endpoints/",
+		"apps": "https://www.behance.net/dev/apps",
+		"provider": "https://www.behance.net/"
 	}
 }

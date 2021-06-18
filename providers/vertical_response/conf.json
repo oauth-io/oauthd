@@ -13,8 +13,8 @@
         }
     },
     "href": {
-        "keys": "http://developers.verticalresponse.com/apps",
-        "docs": "http://developer.verticalresponse.com/docs",
-        "provider": "http://virtualresponse.com/"
+        "keys": "https://developers.verticalresponse.com/apps",
+        "docs": "https://developer.verticalresponse.com/docs",
+        "provider": "https://virtualresponse.com/"
     }
 }

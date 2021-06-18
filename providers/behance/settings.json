@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://www.behance.net/dev/register",
+			"url": "https://www.behance.net/dev/register",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.behance.net/dev/apps",
+			"url": "https://www.behance.net/dev/apps",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.behance.net/",
-				"docs": "http://www.behance.net/dev/api/endpoints/"
+				"provider": "https://www.behance.net/",
+				"docs": "https://www.behance.net/dev/api/endpoints/"
 			}
 		}
 	}

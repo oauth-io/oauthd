@@ -1,7 +1,7 @@
 {
 	"name": "SurveyGizmo",
 	"desc": "SurveyGizmo is an advanced (but easy to use) online survey software tool that comes with amazing customer service.",
-	"url": "http://restapi.surveygizmo.com/head/oauth",
+	"url": "https://restapi.surveygizmo.com/head/oauth",
 	"oauth1": {
 		"request_token": "/request_token",
 		"authorize": "/authenticate",
