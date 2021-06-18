@@ -10,14 +10,14 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
-				"docs": "http://code.google.com/more/"
+				"provider": "https://google.com/",
+				"docs": "https://code.google.com/more/"
 			}
 		},
     "sample": {
       "method": "get",
       "url": "/oauth2/v3/userinfo"
     },
-    "jsfiddle": "http://jsfiddle.net/willjcksn/LMH5k/embedded/"
+    "jsfiddle": "https://jsfiddle.net/willjcksn/LMH5k/embedded/"
 	}
 }

@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.freebase.com/",
+				"provider": "https://www.freebase.com/",
 				"docs": "https://developers.google.com/freebase/"
 			}
 		}

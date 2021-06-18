@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
+				"provider": "https://google.com/",
 				"docs": "https://developers.google.com/site-verification/"
 			}
 		}

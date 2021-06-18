@@ -52,8 +52,8 @@
 	},
 	"href": {
 		"keys": "https://code.google.com/apis/console/",
-		"docs": "http://code.google.com/apis/urlshortener/v1/getting_started.html",
+		"docs": "https://code.google.com/apis/urlshortener/v1/getting_started.html",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

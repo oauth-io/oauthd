@@ -8,8 +8,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
-				"docs": "http://code.google.com/more/"
+				"provider": "https://google.com/",
+				"docs": "https://code.google.com/more/"
 			}
 		}
 	}

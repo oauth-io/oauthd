@@ -10,10 +10,10 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
+				"provider": "https://google.com/",
 				"docs": "https://developers.google.com/google-apps/calendar/firstapp"
 			}
 		},
-		"jsfiddle": "http://jsfiddle.net/willjcksn/vmCh3/embedded/"
+		"jsfiddle": "https://jsfiddle.net/willjcksn/vmCh3/embedded/"
 	}
 }

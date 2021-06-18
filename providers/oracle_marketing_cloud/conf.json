@@ -29,7 +29,7 @@
 		}
 	},
 	"href": {
-		"docs": "http://docs.oracle.com/cloud/latest/marketingcs_gs/OMCAB/",
+		"docs": "https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCAB/",
 		"apps": "https://YOUR_BASESITE./apps/Cloud/Developer/App",
 		"provider": "https://login.eloqua.com/"
 	}

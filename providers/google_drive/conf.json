@@ -61,6 +61,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/drive/",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

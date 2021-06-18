@@ -57,6 +57,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/google-apps/tasks/firstapp",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

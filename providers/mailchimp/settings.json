@@ -10,8 +10,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://mailchimp.com/",
-				"docs": "http://apidocs.mailchimp.com/"
+				"provider": "https://mailchimp.com/",
+				"docs": "https://apidocs.mailchimp.com/"
 			}
 		},
         "sample": {

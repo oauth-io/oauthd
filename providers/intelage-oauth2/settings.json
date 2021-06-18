@@ -10,8 +10,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://yahoo.com",
-				"docs": "http://developer.yahoo.com/everything.html"
+				"provider": "https://yahoo.com",
+				"docs": "https://developer.yahoo.com/everything.html"
 			}
 		},
         "sample": {

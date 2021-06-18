@@ -19,8 +19,8 @@
     },
     "href": {
         "keys": "https://code.google.com/apis/console/",
-        "docs": "http://code.google.com/more/",
+        "docs": "https://code.google.com/more/",
         "apps": "https://code.google.com/apis/console/",
-        "provider": "http://google.com/"
+        "provider": "https://google.com/"
     }
 }

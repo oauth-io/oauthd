@@ -23,6 +23,6 @@
 		"keys": "https://developers.kakao.com/apps",
 		"docs": "https://developers.kakao.com/docs",
 		"apps": "https://developers.kakao.com/apps",
-		"provider": "http://kakao.com/"
+		"provider": "https://kakao.com/"
 	}
 }

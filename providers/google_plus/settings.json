@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
+				"provider": "https://google.com/",
 				"docs": "https://developers.google.com/+/api/"
 			}
 		},
@@ -18,6 +18,6 @@
             "method": "get",
             "url": "/plus/v1/people/me"
         },
-        "jsfiddle": "http://jsfiddle.net/thyb/JMTVz/embedded/"
+        "jsfiddle": "https://jsfiddle.net/thyb/JMTVz/embedded/"
 	}
 }
