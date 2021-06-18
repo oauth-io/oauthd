@@ -1,15 +1,15 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://dev.t.qq.com/apps/add/1"
+			"url": "https://dev.t.qq.com/apps/add/1"
 		},
 		"copyingKey": {
-			"url": "http://dev.t.qq.com/development"
+			"url": "https://dev.t.qq.com/development"
 		},
 		"install": {
 			"href": {
-				"provider": "http://t.qq.com",
-				"docs": "http://wiki.open.t.qq.com/index.php/"
+				"provider": "https://t.qq.com",
+				"docs": "https://wiki.open.t.qq.com/index.php/"
 			}
 		},
         "sample": {

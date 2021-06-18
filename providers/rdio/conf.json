@@ -1,25 +1,25 @@
 {
 	"name": "Rdio",
 	"desc": "Rdio is an online music service that offers ad-supported free streaming service and ad-free subscription services in 60 countries. Rdio’s API allows developers to add music to a web or mobile application with the ability to search, access and play all of the artists, songs, albums, playlists, and charts in Rdio’s catalog.",
-	"url": "http://api.rdio.com/oauth",
+	"url": "https://api.rdio.com/oauth",
 	"oauth1": {
 		"authorize": {
 			"url": "https://www.rdio.com/oauth/authorize"
 		},
 		"access_token": {
-			"url": "http://api.rdio.com/oauth/access_token"
+			"url": "https://api.rdio.com/oauth/access_token"
 		},
 		"request_token": {
-			"url": "http://api.rdio.com/oauth/request_token"
+			"url": "https://api.rdio.com/oauth/request_token"
 		},
 		"request": {
 			"url": "https://api.rdio.com/1/"
 		}
 	},
 	"href": {
-		"keys": "http://rdio.mashery.com/apps/myapps",
-		"docs": "http://www.rdio.com/developers/docs/",
-		"apps": "http://rdio.mashery.com/apps/myapps",
-		"provider": "http://www.rdio.com/"
+		"keys": "https://rdio.mashery.com/apps/myapps",
+		"docs": "https://www.rdio.com/developers/docs/",
+		"apps": "https://rdio.mashery.com/apps/myapps",
+		"provider": "https://www.rdio.com/"
 	}
 }

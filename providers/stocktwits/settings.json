@@ -10,8 +10,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://stocktwits.com/",
-				"docs": "http://stocktwits.com/developers/docs"
+				"provider": "https://stocktwits.com/",
+				"docs": "https://stocktwits.com/developers/docs"
 			}
 		},
         "sample": {

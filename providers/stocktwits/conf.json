@@ -38,8 +38,8 @@
 	},
 	"href": {
 		"keys": "https://stocktwits.com/developers/apps/new",
-		"docs": "http://stocktwits.com/developers/docs/api",
+		"docs": "https://stocktwits.com/developers/docs/api",
 		"apps": "https://stocktwits.com/developers/apps",
-		"provider": "http://stocktwits.com/"
+		"provider": "https://stocktwits.com/"
 	}
 }

@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.foursquare.com/",
+				"provider": "https://www.foursquare.com/",
 				"docs": "https://developer.foursquare.com/overview/"
 			}
 		},

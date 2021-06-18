@@ -1,11 +1,11 @@
 {
     "settings": {
         "createApp": {
-            "url": "http://stackapps.com/apps/oauth/register",
+            "url": "https://stackapps.com/apps/oauth/register",
             "image": "config.png"
         },
         "copyingKey": {
-            "url": "http://stackapps.com/apps/oauth/",
+            "url": "https://stackapps.com/apps/oauth/",
             "image": "keys.png"
         },
         "install": {

@@ -8,9 +8,9 @@
         "access_token": "/access_token"
     },
     "href": {
-        "keys": "http://www.plurk.com/PlurkApp/register",
-        "docs": "http://www.plurk.com/API#toc",
-        "apps": "http://www.plurk.com/PlurkApp/",
-        "provider": "http://www.plurk.com/"
+        "keys": "https://www.plurk.com/PlurkApp/register",
+        "docs": "https://www.plurk.com/API#toc",
+        "apps": "https://www.plurk.com/PlurkApp/",
+        "provider": "https://www.plurk.com/"
     }
 }

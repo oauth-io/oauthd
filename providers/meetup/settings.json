@@ -1,17 +1,17 @@
 {
     "settings": {
         "createApp": {
-            "url": "http://www.meetup.com/meetup_api/oauth_consumers/create/",
+            "url": "https://www.meetup.com/meetup_api/oauth_consumers/create/",
             "image": "config.png"
         },
         "copyingKey": {
-            "url": "http://www.meetup.com/meetup_api/oauth_consumers/",
+            "url": "https://www.meetup.com/meetup_api/oauth_consumers/",
             "image": "keys.png"
         },
         "install": {
             "href": {
-                "provider": "http://www.meetup.com/",
-                "docs": "http://www.meetup.com/meetup_api/"
+                "provider": "https://www.meetup.com/",
+                "docs": "https://www.meetup.com/meetup_api/"
             }
         },
         "sample": {

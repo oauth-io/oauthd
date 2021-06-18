@@ -55,6 +55,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/blogger/docs/3.0/getting_started",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

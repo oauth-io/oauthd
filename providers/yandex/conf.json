@@ -20,8 +20,8 @@
 	},
 	"href": {
 		"keys": "https://oauth.yandex.ru/client/new",
-		"docs": "http://api.yandex.ru/oauth/doc",
+		"docs": "https://api.yandex.ru/oauth/doc",
 		"apps": "https://oauth.yandex.ru/client/my",
-		"provider": "http://yandex.ru/"
+		"provider": "https://yandex.ru/"
 	}
 }

@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "https://www.strava.com/settings/api",
-				"docs": "http://strava.github.io/api/"
+				"docs": "https://strava.github.io/api/"
 			}
 		}
 	}

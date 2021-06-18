@@ -56,7 +56,7 @@
 			}
 		},
 		"href": {
-			"docs": "http://developers.hubspot.com/docs",
+			"docs": "https://developers.hubspot.com/docs",
 			"provider": "https://www.hubspot.com"
 		}
 	}

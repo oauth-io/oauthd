@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.vendhq.com/",
+				"provider": "https://www.vendhq.com/",
 				"docs": "https://developers.vendhq.com/documentation",
 				"apps": "https://developers.vendhq.com/developer/applications"
 			}

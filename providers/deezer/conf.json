@@ -44,9 +44,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://developers.deezer.com/myapps/create",
-		"docs": "http://developers.deezer.com",
-		"apps": "http://developers.deezer.com/myapps",
-		"provider": "http://www.deezer.com/"
+		"keys": "https://developers.deezer.com/myapps/create",
+		"docs": "https://developers.deezer.com",
+		"apps": "https://developers.deezer.com/myapps",
+		"provider": "https://www.deezer.com/"
 	}
 }

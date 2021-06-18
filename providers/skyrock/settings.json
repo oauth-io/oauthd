@@ -5,13 +5,13 @@
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.skyrock.com/developer/application/",
+			"url": "https://www.skyrock.com/developer/application/",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.skyrock.com/",
-				"docs": "http://www.skyrock.com/developer/documentation/"
+				"provider": "https://www.skyrock.com/",
+				"docs": "https://www.skyrock.com/developer/documentation/"
 			}
 		},
         "sample": {

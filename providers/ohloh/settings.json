@@ -11,7 +11,7 @@
 		"install": {
 			"href": {
 				"provider": "https://www.ohloh.net/",
-				"docs": "http://meta.ohloh.net/reference/"
+				"docs": "https://meta.ohloh.net/reference/"
 			}
 		},
         "sample": {

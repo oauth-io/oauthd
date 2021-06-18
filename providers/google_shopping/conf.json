@@ -55,6 +55,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/shopping-search/v1/getting_started",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

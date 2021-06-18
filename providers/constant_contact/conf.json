@@ -19,6 +19,6 @@
         "keys": "https://constantcontact.mashery.com/apps/mykeys",
         "docs": "https://constantcontact.mashery.com/io-docs",
         "apps": "https://constantcontact.mashery.com/apps/register",
-        "provider": "http://constantcontact.com/"
+        "provider": "https://constantcontact.com/"
     }
 }

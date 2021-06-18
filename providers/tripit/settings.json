@@ -10,8 +10,8 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.tripit.com/",
-				"docs": "http://tripit.github.com/api/doc/v1/"
+				"provider": "https://www.tripit.com/",
+				"docs": "https://tripit.github.com/api/doc/v1/"
 			}
 		},
         "sample": {

@@ -10,7 +10,7 @@
         },
         "install": {
             "href": {
-                "provider": "http://www.linkedin.com/",
+                "provider": "https://www.linkedin.com/",
                 "docs": "https://developer.linkedin.com/documents/linkedin-api-resource-map",
                 "apps": "https://www.linkedin.com/secure/developer"
             }
@@ -25,6 +25,6 @@
                 "url": "/v1/people/~:(id, first-name,last-name,headline,picture-url)?format=json"
             }
         },
-        "jsfiddle": "http://jsfiddle.net/thyb/Ar4xC/1/embedded/"
+        "jsfiddle": "https://jsfiddle.net/thyb/Ar4xC/1/embedded/"
     }
 }

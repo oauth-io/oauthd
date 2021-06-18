@@ -20,8 +20,8 @@
 		}
 	},
 	"href": {
-		"keys": "http://dev.evernote.com/doc/",
-		"docs": "http://dev.evernote.com/doc/",
+		"keys": "https://dev.evernote.com/doc/",
+		"docs": "https://dev.evernote.com/doc/",
 		"apps": "https://sandbox.evernote.com/AuthorizedServices.action",
 		"provider": "https://sandbox.evernote.com"
 	}

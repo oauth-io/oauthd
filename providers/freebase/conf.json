@@ -55,6 +55,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/freebase/",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://www.freebase.com/"
+		"provider": "https://www.freebase.com/"
 	}
 }

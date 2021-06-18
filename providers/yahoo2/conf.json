@@ -53,6 +53,6 @@
                 "keys": "https://developer.yahoo.com/apps/create/",
                 "docs": "https://developer.yahoo.com/oauth2/guide/",
                 "apps": "https://developer.apps.yahoo.com/projects",
-                "provider": "http://yahoo.com"
+                "provider": "https://yahoo.com"
         }
 }

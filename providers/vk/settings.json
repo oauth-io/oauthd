@@ -17,6 +17,6 @@
             "method": "get",
             "url": "/method/users.get"
         },
-        "jsfiddle": "http://jsfiddle.net/thyb/rXSjp/2/embedded/"
+        "jsfiddle": "https://jsfiddle.net/thyb/rXSjp/2/embedded/"
     }
 }

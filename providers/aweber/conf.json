@@ -12,6 +12,6 @@
         "keys": "https://labs.aweber.com/apps",
         "docs": "https://labs.aweber.com/docs/reference/1.0",
         "apps": "https://labs.aweber.com/apps",
-        "provider": "http://aweber.com"
+        "provider": "https://aweber.com"
     }
 }

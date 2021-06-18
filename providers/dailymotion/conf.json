@@ -12,9 +12,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.dailymotion.com/profile/developer/new",
-		"docs": "http://www.dailymotion.com/doc/api/graph-api.html",
-		"apps": "http://www.dailymotion.com/profile/developer",
-		"provider": "http://www.dailymotion.com/"
+		"keys": "https://www.dailymotion.com/profile/developer/new",
+		"docs": "https://www.dailymotion.com/doc/api/graph-api.html",
+		"apps": "https://www.dailymotion.com/profile/developer",
+		"provider": "https://www.dailymotion.com/"
 	}
 }

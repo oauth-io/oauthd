@@ -42,6 +42,6 @@
 		"keys": "https://dev.fitbit.com/apps/new",
 		"docs": "https://wiki.fitbit.com/display/API/Fitbit+API",
 		"apps": "https://dev.fitbit.com/apps",
-		"provider": "http://www.fitbit.com/"
+		"provider": "https://www.fitbit.com/"
 	}
 }

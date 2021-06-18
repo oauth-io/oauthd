@@ -20,9 +20,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.meetup.com/meetup_api/oauth_consumers/create/",
-		"docs": "http://www.meetup.com/meetup_api/",
-		"apps": "http://www.meetup.com/meetup_api/oauth_consumers/",
-		"provider": "http://www.meetup.com/"
+		"keys": "https://www.meetup.com/meetup_api/oauth_consumers/create/",
+		"docs": "https://www.meetup.com/meetup_api/",
+		"apps": "https://www.meetup.com/meetup_api/oauth_consumers/",
+		"provider": "https://www.meetup.com/"
 	}
 }

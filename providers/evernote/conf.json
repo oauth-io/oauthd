@@ -20,9 +20,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://dev.evernote.com/doc/",
-		"docs": "http://dev.evernote.com/doc/",
+		"keys": "https://dev.evernote.com/doc/",
+		"docs": "https://dev.evernote.com/doc/",
 		"apps": "https://www.evernote.com/AuthorizedServices.action",
-		"provider": "http://evernote.com"
+		"provider": "https://evernote.com"
 	}
 }

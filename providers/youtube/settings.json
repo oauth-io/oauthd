@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://google.com/",
+				"provider": "https://google.com/",
 				"docs": "https://developers.google.com/youtube/v3"
 			}
 		},
@@ -18,6 +18,6 @@
             "method": "get",
             "url": "/users/me/settings"
         },
-        "jsfiddle": "http://jsfiddle.net/willjcksn/EHTGx/embedded/"
+        "jsfiddle": "https://jsfiddle.net/willjcksn/EHTGx/embedded/"
 	}
 }

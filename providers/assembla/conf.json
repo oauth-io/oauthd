@@ -8,7 +8,7 @@
 	},
 	"href": {
 		"keys": "https://www.assembla.com/user/edit/manage_clients",
-		"docs": "http://api-doc.assembla.com/content/api_reference.html",
+		"docs": "https://api-doc.assembla.com/content/api_reference.html",
 		"apps": "https://www.assembla.com/user/edit/manage_clients",
 		"provider": "https://www.assembla.com/"
 	}

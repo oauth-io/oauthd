@@ -50,7 +50,7 @@
 	},
 	"href": {
 		"keys": "https://manage.dev.live.com/Applications/Create",
-		"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
+		"docs": "https://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
 		"apps": "https://manage.dev.live.com/Applications",
 		"provider": "https://www.live.com/"
 	}

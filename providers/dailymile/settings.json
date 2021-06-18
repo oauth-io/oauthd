@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://www.dailymile.com/api/consumers/new",
+			"url": "https://www.dailymile.com/api/consumers/new",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.dailymile.com/api/",
+			"url": "https://www.dailymile.com/api/",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://dailymile.com",
-				"docs": "http://www.dailymile.com/api/documentation"
+				"provider": "https://dailymile.com",
+				"docs": "https://www.dailymile.com/api/documentation"
 			}
 		},
         "sample": {

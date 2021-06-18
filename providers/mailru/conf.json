@@ -40,9 +40,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://api.mail.ru/sites/my/add/",
-		"docs": "http://api.mail.ru/docs/",
-		"apps": "http://api.mail.ru/sites/my/",
-		"provider": "http://api.mail.ru/"
+		"keys": "https://api.mail.ru/sites/my/add/",
+		"docs": "https://api.mail.ru/docs/",
+		"apps": "https://api.mail.ru/sites/my/",
+		"provider": "https://api.mail.ru/"
 	}
 }

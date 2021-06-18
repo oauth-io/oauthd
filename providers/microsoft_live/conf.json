@@ -27,18 +27,23 @@
 			"client_secret": "string",
 			"scope": {
 				"values": {
+					"openid": "OpenID",
+					"email": "Get Email",
+					"profile": "Get Profile",
+					"https://graph.microsoft.com/user.read": "Read User Profile",
+					"https://graph.microsoft.com/people.read": "Read People Information",
+					"https://graph.microsoft.com/user.read.all": "Read All User Profile",
+					"https://graph.microsoft.com/user.readbasic.all": "Read All Basic User Profile",
+					"https://graph.microsoft.com/contacts.read": "Read Contact",
 					"https://graph.microsoft.com/mail.send": "Send Email",
-					"https://graph.microsoft.com/mail.read": "Read Email",
-					"https://graph.microsoft.com/contacts.read": "Read Contacts",
-					"https://graph.microsoft.com/user.read": "Read User Basic",
-					"https://graph.microsoft.com/user.read.all": "Read User All"
+					"https://graph.microsoft.com/mail.read": "Read Email"
 				}
 			}
 		}
 	},
 	"href": {
 		"keys": "https://manage.dev.live.com/Applications/Create",
-		"docs": "http://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
+		"docs": "https://msdn.microsoft.com/en-us/library/live/hh243648.aspx",
 		"apps": "https://manage.dev.live.com/Applications",
 		"provider": "https://www.live.com/"
 	}

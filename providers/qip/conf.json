@@ -23,9 +23,9 @@
         }
     },
     "href": {
-        "keys": "http://developers.store.qip.ru/applications/new",
-        "docs": "http://store.qip.ru/docs/OpenApi.credentials",
-        "apps": "http://developers.store.qip.ru/applications",
-        "provider": "http://qip.ru/"
+        "keys": "https://developers.store.qip.ru/applications/new",
+        "docs": "https://store.qip.ru/docs/OpenApi.credentials",
+        "apps": "https://developers.store.qip.ru/applications",
+        "provider": "https://qip.ru/"
     }
 }

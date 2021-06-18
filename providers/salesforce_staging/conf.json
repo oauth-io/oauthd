@@ -39,9 +39,9 @@
         }
     },
     "href": {
-        "keys": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
-        "docs": "http://www.salesforce.com/us/developer/docs/api_rest/index.htm",
-        "apps": "http://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
-        "provider": "http://www.salesforce.com/"
+        "keys": "https://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+        "docs": "https://www.salesforce.com/us/developer/docs/api_rest/index.htm",
+        "apps": "https://www.salesforce.com/us/developer/docs/api_rest/Content/intro_defining_remote_access_applications.htm",
+        "provider": "https://www.salesforce.com/"
     }
 }

@@ -55,6 +55,6 @@
 		"keys": "https://code.google.com/apis/console/",
 		"docs": "https://developers.google.com/site-verification/",
 		"apps": "https://code.google.com/apis/console/",
-		"provider": "http://google.com/"
+		"provider": "https://google.com/"
 	}
 }

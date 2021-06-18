@@ -27,7 +27,7 @@
   },
   "href": {
     "keys": "https://www.flowdock.com/oauth/applications/new",
-    "docs": "http://www.flowdock.com/api/",
+    "docs": "https://www.flowdock.com/api/",
     "apps": "https://www.flowdock.com/oauth/applications",
     "provider": "https://www.flowdock.com/"
   }

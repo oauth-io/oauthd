@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://www.mixcloud.com/developers/create/",
+			"url": "https://www.mixcloud.com/developers/create/",
             "image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.mixcloud.com/developers",
+			"url": "https://www.mixcloud.com/developers",
             "image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.mixcloud.com",
-				"docs": "http://www.mixcloud.com/developers/documentation"
+				"provider": "https://www.mixcloud.com",
+				"docs": "https://www.mixcloud.com/developers/documentation"
 			}
 		},
         "sample": {

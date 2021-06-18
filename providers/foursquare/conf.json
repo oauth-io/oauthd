@@ -24,6 +24,6 @@
         "keys": "https://fr.foursquare.com/developers/register",
         "docs": "https://developer.foursquare.com/overview/",
         "apps": "https://foursquare.com/developers/apps",
-        "provider": "http://www.foursquare.com/"
+        "provider": "https://www.foursquare.com/"
     }
 }

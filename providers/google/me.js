@@ -2,7 +2,9 @@
 
 module.exports = {
     fetch: [
-        function(fetched_elts) { return "https://googleapis.com/oauth2/v3/userinfo"; },
+        function(fetched_elts) {
+            return "/oauth2/v3/userinfo";
+        },
     ],
 
     params: {},

@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://developers.deezer.com/myapps/create",
+			"url": "https://developers.deezer.com/myapps/create",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://developers.deezer.com/myapps",
+			"url": "https://developers.deezer.com/myapps",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.deezer.com/",
-				"docs": "http://developers.deezer.com"
+				"provider": "https://www.deezer.com/",
+				"docs": "https://developers.deezer.com"
 			}
 		},
         "sample": {

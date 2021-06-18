@@ -1,17 +1,17 @@
 {
 	"settings": {
 		"createApp": {
-			"url": "http://www.plurk.com/PlurkApp/register",
+			"url": "https://www.plurk.com/PlurkApp/register",
 			"image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://www.plurk.com/PlurkApp/",
+			"url": "https://www.plurk.com/PlurkApp/",
 			"image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://www.plurk.com/",
-				"docs": "http://www.plurk.com/API#toc"
+				"provider": "https://www.plurk.com/",
+				"docs": "https://www.plurk.com/API#toc"
 			}
 		},
         "sample": {

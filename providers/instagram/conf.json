@@ -32,9 +32,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://instagram.com/developer/clients/register/",
-		"docs": "http://instagram.com/developer/",
-		"apps": "http://instagram.com/developer/clients/manage/",
-		"provider": "http://instagram.com"
+		"keys": "https://instagram.com/developer/clients/register/",
+		"docs": "https://instagram.com/developer/",
+		"apps": "https://instagram.com/developer/clients/manage/",
+		"provider": "https://instagram.com"
 	}
 }

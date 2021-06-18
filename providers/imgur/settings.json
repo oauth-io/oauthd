@@ -5,13 +5,13 @@
             "image": "config.png"
 		},
 		"copyingKey": {
-			"url": "http://imgur.com/account/settings/apps",
+			"url": "https://imgur.com/account/settings/apps",
             "image": "keys.png"
 		},
 		"install": {
 			"href": {
-				"provider": "http://imgur.com/",
-				"docs": "http://api.imgur.com/"
+				"provider": "https://imgur.com/",
+				"docs": "https://api.imgur.com/"
 			}
 		},
         "sample": {

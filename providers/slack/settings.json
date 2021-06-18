@@ -10,7 +10,7 @@
 		},
 		"install": {
 			"href": {
-				"provider": "http://slack.com/",
+				"provider": "https://slack.com/",
 				"docs": "https://api.slack.com/"
 			}
 		},

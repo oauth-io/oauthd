@@ -1,10 +1,10 @@
 {
 	"name": "Odnoklassniki",
     "desc": "Odnoklassniki is a Russian social network to reconnect with friends and play games. The Odnoklassniki API provides developers with the ability to include their applications within the frame of the site. The applications, with authentication, have access to user data and friend lists. The service also includes JavaScript and ActionScript APIs to access basic features like invites and notifications.",
-	"url": "http://api.odnoklassniki.ru/oauth",
+	"url": "https://api.odnoklassniki.ru/oauth",
 	"oauth2": {
 		"authorize": {
-			"url": "http://www.odnoklassniki.ru/oauth/authorize",
+			"url": "https://www.odnoklassniki.ru/oauth/authorize",
 			"query": {
 				"client_id": "{client_id}",
 				"response_type": "code",
@@ -33,9 +33,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://www.odnoklassniki.ru/devaccess",
-		"docs": "http://apiok.ru/wiki/display/TS/Home",
-		"apps": "http://www.odnoklassniki.ru/dk?st.cmd=appsInfoMyDevList",
-		"provider": "http://www.odnoklassniki.ru/"
+		"keys": "https://www.odnoklassniki.ru/devaccess",
+		"docs": "https://apiok.ru/wiki/display/TS/Home",
+		"apps": "https://www.odnoklassniki.ru/dk?st.cmd=appsInfoMyDevList",
+		"provider": "https://www.odnoklassniki.ru/"
 	}
 }

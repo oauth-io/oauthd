@@ -1,4 +1,6 @@
-.PHONY: all install build
+.PHONY: all install build \
+				publish-prerelease prerelease-version \
+				npm-publish
 
 all: build
 
@@ -10,3 +12,17 @@ install:
 
 build:
 	$(GRUNT)
+
+###################
+# Release process #
+###################
+
+PRERELEASE_ID=rc
+
+publish-prerelease: prerelease-version npm-publish
+
+prerelease-version:
+	$(NPM) version prerelease --preid=$(PRERELEASE_ID)
+
+npm-publish:
+	$(NPM) publish

@@ -22,9 +22,9 @@
 		}
 	},
 	"href": {
-		"keys": "http://soundcloud.com/you/apps/new",
-		"docs": "http://developers.soundcloud.com/docs/api/reference",
-		"apps": "http://soundcloud.com/you/apps",
-		"provider": "http://soundcloud.com"
+		"keys": "https://soundcloud.com/you/apps/new",
+		"docs": "https://developers.soundcloud.com/docs/api/reference",
+		"apps": "https://soundcloud.com/you/apps",
+		"provider": "https://soundcloud.com"
 	}
 }
