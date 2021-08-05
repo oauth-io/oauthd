@@ -120,7 +120,8 @@
 			},
 			"api_version": {
 				"values": {
-					"v4.0/": "API version 4.0"
+          "v4.0/": "API version 4.0",
+					"v5.0/": "API version 5.0"
 				},
 				"cardinality": "1"
 			}
