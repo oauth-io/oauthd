@@ -19,10 +19,13 @@ build:
 
 PRERELEASE_ID=rc
 
-publish-prerelease: prerelease-version npm-publish
+publish-prerelease: prerelease-version npm-publish-prerelease
 
 prerelease-version:
 	$(NPM) version prerelease --preid=$(PRERELEASE_ID)
+
+npm-publish-prerelease:
+	$(NPM) publish --tag=next
 
 npm-publish:
 	$(NPM) publish
