@@ -39,7 +39,7 @@
     "test": "test"
   },
   "dependencies": {
-    "async": "^2.1.2",
+    "async": "^3.2.2",
     "body-parser": "^1.15.2",
     "colors": "^1.1.2",
     "cookie-parser": "^1.4.3",
